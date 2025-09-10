@@ -1,98 +1,72 @@
 import { useState, useEffect } from "react"
 import { useCart } from "../context/CartContext"
+import { type ShippingAddress } from "../../../shared/shipping-address"
+
+// Example country code map
+const countryCodeMap: Record<string, string> = {
+	"US": "US",
+	"Canada": "CA",
+	"Mexico": "MX"
+}
 
 // Vite public environment variables
 const SQUARE_APPLICATION_ID = import.meta.env.VITE_SQUARE_APPLICATION_ID || ""
 const SQUARE_LOCATION_ID = import.meta.env.VITE_SQUARE_LOCATION_ID || ""
 
-// Full shipping address type
-interface ShippingAddress {
-	name: string
-	email: string
-	phone: string
-	line1: string
-	line2: string
-	city: string
-	state: string
-	postalCode: string
-	country: string
-}
-
 declare global {
-    interface Window {
- 	   Square?: any;
-    }
+	interface Window {
+		Square?: any
+	}
 }
 
-// CheckoutForm component
 export default function CheckoutForm() {
-	// ------------------------
-	// Cart & totals
-	// ------------------------
 	const { cart: cartItems } = useCart()
 
-	// ------------------------
-	// State
-	// ------------------------
 	const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
-		name: "",
+		firstName: "",
+		lastName: "",
 		email: "",
 		phone: "",
-		line1: "",
-		line2: "",
+		addressLine1: "",
+		addressLine2: "",
 		city: "",
 		state: "",
 		postalCode: "",
-		country: ""
+		country: "US"
 	})
+
 	const [shippingCost, setShippingCost] = useState(0)
 	const [total, setTotal] = useState(0)
 	const [nonce, setNonce] = useState<string | null>(null)
 	const [cardInstance, setCardInstance] = useState<any>(null)
 
-	// ------------------------
-	// Calculate totals whenever cart or shipping changes
-	// ------------------------
+	// Calculate totals
 	useEffect(() => {
 		const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
 		setTotal(subtotal + shippingCost)
 	}, [cartItems, shippingCost])
 
-	// ------------------------
-	// Example flat shipping calculation
-	// You could replace this with real logic later
-	// ------------------------
+	// Flat shipping
 	useEffect(() => {
-		if (shippingAddress.postalCode) {
-			setShippingCost(5) // flat $5 shipping
-		} else {
-			setShippingCost(0)
-		}
+		setShippingCost(shippingAddress.postalCode ? 5 : 0)
 	}, [shippingAddress])
 
-	// ------------------------
 	// Initialize Square Card
-	// ------------------------
 	useEffect(() => {
 		async function initializeSquare() {
-			if (!window.Square) return console.error("Square.js not loaded");
-			console.log("Initializing Square card...");
+			if (!window.Square) return console.error("Square.js not loaded")
 			try {
-				const payments = window.Square.payments(SQUARE_APPLICATION_ID, SQUARE_LOCATION_ID);
-				const card = await payments.card();
-				await card.attach("#card-container");
-				setCardInstance(card);
-				console.log("Card instance ready", card);
+				const payments = window.Square.payments(SQUARE_APPLICATION_ID, SQUARE_LOCATION_ID)
+				const card = await payments.card()
+				await card.attach("#card-container")
+				setCardInstance(card)
 			} catch (err) {
-				console.error("Square card init error:", err);
+				console.error("Square card init error:", err)
 			}
 		}
-		initializeSquare();
-	}, []);
+		initializeSquare()
+	}, [])
 
-	// ------------------------
-	// Generate Payment Method (nonce)
-	// ------------------------
 	const handleGenerateNonce = async () => {
 		if (!cardInstance) return alert("Payment form not ready yet")
 		try {
@@ -108,31 +82,17 @@ export default function CheckoutForm() {
 		}
 	}
 
-	// ------------------------
-	// Handle final payment
-	// ------------------------
 	const handlePayment = async () => {
-		
-		if (!nonce) {
-			alert("Please generate a payment method first")
-			return
-		}
+		if (!nonce) return alert("Please generate a payment method first")
 
-			// Convert country to ISO 2-letter code
-		const countryCodeMap: Record<string, string> = {
-			"United States": "US",
-			"Canada": "CA",
-			"Mexico": "MX",
-			// add more as needed
-		}
-
+		// Map country to ISO code
 		const shippingWithISO = {
 			...shippingAddress,
 			country: countryCodeMap[shippingAddress.country] || shippingAddress.country
 		}
-		
+
 		try {
-			const response = await fetch("http://localhost:4000/api/pay", {
+			const response = await fetch("http://localhost:4000/api/square-pay", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
@@ -156,9 +116,6 @@ export default function CheckoutForm() {
 		}
 	}
 
-	// ------------------------
-	// Render
-	// ------------------------
 	return (
 		<div className="checkout-form" style={{ maxWidth: 600, margin: "0 auto" }}>
 			<h2>Checkout</h2>
@@ -168,11 +125,20 @@ export default function CheckoutForm() {
 				<h3>Shipping Information</h3>
 
 				<label>
-					Name:
+					First Name:
 					<input
 						type="text"
-						value={shippingAddress.name}
-						onChange={e => setShippingAddress({ ...shippingAddress, name: e.target.value })}
+						value={shippingAddress.firstName}
+						onChange={e => setShippingAddress({ ...shippingAddress, firstName: e.target.value })}
+					/>
+				</label>
+
+				<label>
+					Last Name:
+					<input
+						type="text"
+						value={shippingAddress.lastName}
+						onChange={e => setShippingAddress({ ...shippingAddress, lastName: e.target.value })}
 					/>
 				</label>
 
@@ -198,8 +164,8 @@ export default function CheckoutForm() {
 					Address Line 1:
 					<input
 						type="text"
-						value={shippingAddress.line1}
-						onChange={e => setShippingAddress({ ...shippingAddress, line1: e.target.value })}
+						value={shippingAddress.addressLine1}
+						onChange={e => setShippingAddress({ ...shippingAddress, addressLine1: e.target.value })}
 					/>
 				</label>
 
@@ -207,8 +173,8 @@ export default function CheckoutForm() {
 					Address Line 2:
 					<input
 						type="text"
-						value={shippingAddress.line2}
-						onChange={e => setShippingAddress({ ...shippingAddress, line2: e.target.value })}
+						value={shippingAddress.addressLine2 ?? ""}
+						onChange={e => setShippingAddress({ ...shippingAddress, addressLine2: e.target.value })}
 					/>
 				</label>
 
@@ -241,11 +207,14 @@ export default function CheckoutForm() {
 
 				<label>
 					Country:
-					<input
-						type="text"
+					<select
 						value={shippingAddress.country}
 						onChange={e => setShippingAddress({ ...shippingAddress, country: e.target.value })}
-					/>
+					>
+						<option value="US">United States</option>
+						<option value="CA">Canada</option>
+						<option value="MX">Mexico</option>
+					</select>
 				</label>
 			</div>
 
@@ -256,7 +225,7 @@ export default function CheckoutForm() {
 					id="card-container"
 					style={{
 						marginBottom: 10,
-						height: 50, // ensure card is visible
+						height: 50,
 						border: "1px solid #ccc",
 						borderRadius: 4
 					}}
@@ -267,7 +236,6 @@ export default function CheckoutForm() {
 				<p>Total: ${total.toFixed(2)}</p>
 			</div>
 
-			{/* Final Pay Button */}
 			<button onClick={handlePayment} style={{ padding: "10px 20px", fontSize: 16 }}>
 				Pay Now
 			</button>
