@@ -4,7 +4,7 @@ import { createContext, useContext,
 
 // Import Product type
 import { type Product, type ProductOptions, 
-	equalsProductOptions} from "../types/product"
+	equalsProductOptions} from "../../../shared/product"
 
 export interface CartItem extends Product {
 	// Product already has: id, name, price, etc.

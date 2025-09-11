@@ -1,4 +1,4 @@
-import { type Product, allSizes, allColors } from "../types/product"
+import { type Product, allSizes, allColors } from "../../../shared/product"
 
 export const products: Product[] = [
   {

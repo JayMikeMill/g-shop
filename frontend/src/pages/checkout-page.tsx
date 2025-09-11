@@ -1,0 +1,71 @@
+import { useState, useEffect } from "react"
+import { useCart } from "../context/cart-context"
+import { type ShippingAddress } from "../../../shared/shipping-address"
+import ShippingForm from "../components/shipping-form"
+import PaymentForm from "../components/payment-form"
+import "../css/checkout-page.css"
+import OrderPreview from "../components/order-preview"
+
+export default function CheckoutPage() {
+	const { cart: cartItems } = useCart()
+	const [loading, setLoading] = useState(false)
+	const [message, setMessage] = useState<string | null>(null)
+
+	const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
+		firstName: "",
+		lastName: "",
+		email: "",
+		phone: "",
+		addressLine1: "",
+		addressLine2: "",
+		city: "",
+		state: "",
+		postalCode: "",
+		country: "US"
+	})
+
+	const [shippingCost, setShippingCost] = useState(0)
+	const [total, setTotal] = useState(0)
+
+	useEffect(() => {
+		const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+		setTotal(subtotal + shippingCost)
+	}, [cartItems, shippingCost])
+
+	useEffect(() => {
+		setShippingCost(shippingAddress.postalCode ? 5 : 0)
+	}, [shippingAddress])
+
+	return (
+		<div className="checkout-form">
+			<h2>Checkout</h2>
+			<OrderPreview />
+			
+			<ShippingForm 
+				shippingAddress={shippingAddress} 
+				setShippingAddress={setShippingAddress} 
+			/>
+			
+			<PaymentForm 
+				total={total} 
+				cartItems={cartItems} 
+				shippingAddress={shippingAddress} 
+				setLoading={setLoading}
+				setMessage={setMessage}
+			/>
+
+			{loading && (
+				<div className="spinner-overlay">
+					<div className="spinner"></div>
+					<span>Processing payment...</span>
+				</div>
+			)}
+
+			{message && (
+				<div className="message-overlay">
+					{message}
+				</div>
+			)}
+		</div>
+	)
+}

@@ -1,0 +1,30 @@
+:root {
+  /* Colors */
+  --color-primary: #3b82f6;
+  --color-primary-hover: #2563eb;
+  --color-background: #f9f9f9;
+  --color-card-bg: #ffffff;
+  --color-text: #333;
+  --color-input-bg: #fdfdfd;
+  --color-input-border: #ccc;
+  --color-button-bg: var(--color-primary);
+  --color-button-hover: var(--color-primary-hover);
+  --color-button-text: #fff;
+
+  /* Fonts */
+  --font-family: 'Inter', sans-serif;
+  --font-size-base: 1rem;
+  --font-size-title: 1.25rem;
+  --font-size-price: 1.1rem;
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* Border radius */
+  --border-radius: 12px;
+  --card-border-radius: 16px;
+}

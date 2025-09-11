@@ -1,0 +1,81 @@
+.site-header {
+	width: 100%;
+	background-color: var(--color-primary);
+	color: var(--color-text);
+	box-sizing: border-box;
+	padding: 0 20px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+	position: sticky;
+	top: 0;
+	z-index: 1000;
+	font-family: var(--font-family);
+}
+
+.header-inner {
+	max-width: 1200px;
+	margin: 0 auto;
+	display: flex;
+	align-items: center;
+	height: 60px; /* Fixed header height */
+	position: relative;
+}
+
+.logo img {
+	height: 40px; /* Shrinks the logo to fit header */
+	width: auto;
+	cursor: pointer;
+}
+
+.site-name {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 1.5rem;
+	font-weight: bold;
+	white-space: nowrap;
+	pointer-events: none;
+	color: var(--color-text);
+}
+
+.header-nav {
+	margin-left: auto;
+	display: flex;
+	align-items: center;
+	gap: 15px;
+}
+
+.icon-btn {
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: var(--color-text);
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 5px;
+}
+
+.icon-btn:hover {
+	opacity: 0.8;
+}
+
+.cart-btn {
+	position: relative;
+}
+
+.cart-badge {
+	position: absolute;
+	top: -5px;
+	right: -5px;
+	background-color: red;
+	color: white;
+	font-size: 0.7rem;
+	font-weight: bold;
+	padding: 2px 6px;
+	border-radius: 50%;
+	min-width: 18px;
+	text-align: center;
+	box-sizing: border-box;
+}

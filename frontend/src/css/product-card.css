@@ -1,0 +1,57 @@
+.product-card {
+  width: 200px; /* or any desired width */
+  height: 350px; /* fixed height for all cards */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* ensures spacing between elements */
+  padding: var(--spacing-md);
+  background: var(--color-card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  font-family: var(--font-family);
+  color: var(--color-text);
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.product-card h2 {
+  font-size: 1.1rem;
+  margin: 0 0 var(--spacing-sm) 0;
+  height: 2.4em; /* fix height to avoid uneven titles */
+  overflow: hidden;
+}
+
+.product-card img {
+  max-height: 120px; /* adjust as needed */
+  width: auto;
+  max-width: 100%;
+  object-fit: contain; /* ensures image scales down to fit */
+  margin: 0 auto var(--spacing-sm) auto;
+  flex-shrink: 0;
+}
+
+.product-card .card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.product-card .price {
+  font-weight: 600;
+}
+
+.product-card select {
+  padding: 4px 8px;
+  font-family: var(--font-family);
+}
+
+.product-card button {
+  padding: 8px;
+  font-size: var(--font-size-base);
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  border: none;
+  background: var(--color-primary);
+  color: white;
+}

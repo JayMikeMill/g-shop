@@ -9,7 +9,7 @@ import SuperJSON from "superjson";           // BigInt-safe serialization]
 
 import { SquareError } from "square";        // Square error handling
 
-import { processPayment } from "./square-interface";
+import { processPayment } from "./square-api";
 import { type PaymentInfo } from "../shared/payment-info";
 
 // ------------------------
@@ -32,7 +32,7 @@ app.use(bodyParser.json());
 // Payment endpoint
 // ------------------------
 
-app.post("/api/square-pay", async (req, res) => {
+app.post("/api/square-pay-server", async (req, res) => {
 	const paymentInfo = req.body as PaymentInfo;
 
     try {
@@ -59,5 +59,5 @@ const PORT = 4000;
 app.listen(PORT, () => {
     console.log("Square token loaded:", process.env.SQUARE_ACCESS_TOKEN);
     console.log(`Server running on http://localhost:${PORT}`);
-    console.log("POST /api/square-pay is ready for Square payments");
+    console.log("POST /api/square-pay-server is ready for Square payments");
 });

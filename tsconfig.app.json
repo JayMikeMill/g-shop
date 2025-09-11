@@ -24,5 +24,5 @@
     "noUncheckedSideEffectImports": true,
   },
 
-  "include": ["frontend/src"]
+  "include": ["frontend/src", "shared/product.ts"]
 }

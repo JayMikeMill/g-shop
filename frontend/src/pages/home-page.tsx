@@ -1,7 +1,7 @@
-import ProductList from "../components/ProductList"
+import ProductList from "../components/product-list"
 import { products } from "../data/products"
 
-export default function Home() {
+export default function HomePage() {
   return (
 		<div>
 			<h1>Our Products</h1>

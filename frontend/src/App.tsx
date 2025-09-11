@@ -1,8 +1,10 @@
 import { Routes, Route } from 'react-router-dom';
-import Header from "./components/Header";
-import Home from "./pages/Home";
-import CartPage from "./pages/CartPage";
-import CheckoutPage from './pages/CheckoutPage';
+import SiteHeader from "./components/site-header";
+import HomePage from "./pages/home-page";
+import CartPage from "./pages/cart-page";
+import CheckoutPage from './pages/checkout-page';
+import AdminDashboard from './pages/admin-dashboard';
+
 
 export default function App() {
 	return (
@@ -15,7 +17,7 @@ export default function App() {
 			}}
 		>
 			{/* Header with logo, title, and menu */}
-			<Header />
+			<SiteHeader />
 
 			{/* Main content */}
 			<main
@@ -34,9 +36,10 @@ export default function App() {
 				>
 					{/* React Router handles page navigation */}
 					<Routes>
-						<Route path="/" element={<Home/>} />
+						<Route path="/" element={<HomePage/>} />
+						<Route path="/admin" element={<AdminDashboard />} />
 						<Route path="/cart" element={<CartPage />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
+            			<Route path="/checkout" element={<CheckoutPage />} />
 					</Routes>
 				</div>
 			</main>
