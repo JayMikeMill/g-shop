@@ -1,8 +1,8 @@
-import { useCart, getCartTotals } from "../context/cart-context";
 import { SITE } from "../config";
 import { useNavigate } from "react-router-dom";
 import { Home, ShoppingCart } from "lucide-react";
-import "../css/site-header.css";
+import { useCart, getCartTotals } from "@contexts/cart-context";
+import "@css/site-header.css";
 
 export default function SiteHeader() {
 	const navigate = useNavigate();

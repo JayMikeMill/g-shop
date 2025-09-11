@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import type { Product } from "../../../shared/product";
-import { useAuth } from "../context/auth-context";
-import { useProductManager } from "../context/product-manager";
-
-import "../css/admin-dashboard.css";
+import { getAuth } from "firebase/auth";
+import type { Product } from "@shared/product";
+import { useAuth } from "@contexts/auth-context";
+import { useProductManager } from "@contexts/product-manager";
+import "@css/admin-dashboard.css";
 
 export default function AdminDashboard() {
 	const { user, login, logout, loading: authLoading } = useAuth();
@@ -35,6 +35,7 @@ export default function AdminDashboard() {
 			await login(email, password);
 			setEmail("");
 			setPassword("");
+            console.log("Current user:", getAuth().currentUser);
 		} catch (err: any) {
 			setLoginError(err.message || "Failed to login");
 		}

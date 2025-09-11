@@ -1,4 +1,4 @@
-import CartPreview from "../components/cart-preview"
+import CartPreview from "@components/cart-preview"
 
 
 export default function CartPage() {

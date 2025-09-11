@@ -1,9 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
-import SiteHeader from "./components/site-header";
-import HomePage from "./pages/home-page";
-import CartPage from "./pages/cart-page";
-import CheckoutPage from './pages/checkout-page';
-import AdminDashboard from './pages/admin-dashboard';
+import SiteHeader from "@components/site-header";
+import HomePage from "@pages/home-page";
+import CartPage from "@pages/cart-page";
+import CheckoutPage from '@pages/checkout-page';
+import AdminDashboard from '@pages/admin-dashboard';
 
 
 export default function App() {

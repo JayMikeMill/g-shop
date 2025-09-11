@@ -1,5 +1,5 @@
-import { type ShippingAddress } from "../../../shared/shipping-address"
-import "../css/shipping-form.css"
+import { type ShippingAddress } from "@shared/shipping-address"
+import "@css/shipping-form.css"
 
 interface ShippingFormProps {
   shippingAddress: ShippingAddress

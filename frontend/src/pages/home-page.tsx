@@ -1,5 +1,5 @@
-import ProductList from "../components/product-list"
-import { products } from "../data/products"
+import ProductList from "@components/product-list"
+import { products } from "@data/products"
 
 export default function HomePage() {
   return (

@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react"
-import { useCart } from "../context/cart-context"
-import { type ShippingAddress } from "../../../shared/shipping-address"
-import ShippingForm from "../components/shipping-form"
-import PaymentForm from "../components/payment-form"
-import "../css/checkout-page.css"
-import OrderPreview from "../components/order-preview"
+import { useCart } from "@contexts/cart-context"
+import { type ShippingAddress } from "@shared/shipping-address"
+import ShippingForm from "@components/shipping-form"
+import PaymentForm from "@components/payment-form"
 
+import OrderPreview from "@components/order-preview"
+import "@css/checkout-page.css"
 export default function CheckoutPage() {
 	const { cart: cartItems } = useCart()
 	const [loading, setLoading] = useState(false)

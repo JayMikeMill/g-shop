@@ -3,14 +3,11 @@ import { createContext, useContext,
     useState, type ReactNode} from "react"
 
 // Import Product type
-import { type Product, type ProductOptions, 
-	equalsProductOptions} from "../../../shared/product"
+import type { Product, ProductOptions } from "@shared/product"
+import { equalsProductOptions } from "@shared/product"
 
-export interface CartItem extends Product {
-	// Product already has: id, name, price, etc.
-	options: ProductOptions
-	quantity: number // How many of this item are in the cart
-}
+// Import CartItem type
+import type { CartItem } from "@shared/CartItem"
 
 // -------------------------
 // 1. Define what the context will hold

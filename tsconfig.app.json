@@ -22,7 +22,19 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
+
+    /* code paths */
+    "baseUrl": "frontend/src",
+    "paths": {
+      "@pages/*": ["pages/*"],
+      "@components/*": ["components/*"],
+      "@contexts/*": ["contexts/*"],
+      "@shared/*": ["../../shared/*"],
+      "@types/*": ["../../shared/*"],
+      "@data/*": ["data/*"],
+      "@css/*": ["css/*"]
+    }
   },
 
-  "include": ["frontend/src", "shared/product.ts"]
+  "include": ["frontend/src"]
 }

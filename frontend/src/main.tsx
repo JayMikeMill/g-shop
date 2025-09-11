@@ -3,9 +3,9 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App'
 import { BrowserRouter } from 'react-router-dom';
-import { ProductManagerProvider } from "./context/product-manager";
-import { CartProvider } from './context/cart-context'
-import { AuthProvider } from './context/auth-context';
+import { ProductManagerProvider } from "@contexts/product-manager";
+import { CartProvider } from '@contexts/cart-context'
+import { AuthProvider } from '@contexts/auth-context';
 
 createRoot(document.getElementById('root')!).render(
   <AuthProvider>

@@ -33,5 +33,7 @@ export const Color = {
 	Green: "Green",
 	Black: "Black",
 } as const;
+
 export type Color = typeof Color[keyof typeof Color];
 export const allColors: Color[] = Object.values(Color);
+

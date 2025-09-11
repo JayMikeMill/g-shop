@@ -1,7 +1,7 @@
 import { useState } from "react"
-import { useCart } from "../context/cart-context"
-import { Size, type Product } from "../../../shared/product"
-import "../css/product-card.css" // import the CSS
+import { useCart } from "@contexts/cart-context"
+import { Size, type Product } from "@shared/product"
+import "@css/product-card.css" // import the CSS
 
 interface ProductCardProps {
   product: Product
