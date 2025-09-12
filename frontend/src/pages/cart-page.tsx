@@ -1,6 +1,6 @@
-import CartPreview from "@components/cart-preview"
+import ShoppingCart from "@components/shopping-cart"
 
 
 export default function CartPage() {
-  return <CartPreview/>
+  return <ShoppingCart/>
 }

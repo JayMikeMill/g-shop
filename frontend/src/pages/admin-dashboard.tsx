@@ -1,11 +1,12 @@
 // src/pages/AdminDashboard.tsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@contexts/auth-context";
 import { useProducts } from "@contexts/products-context";
 import type { Product } from "@shared/product";
 
 import LoginDialog from "@components/login-dialog";
 import ProductDialog from "@components/product-dialog";
+import AdminProductList from "@components/admin-product-list";
 import "@css/admin-dashboard.css";
 
 export default function AdminDashboard() {
@@ -18,19 +19,17 @@ export default function AdminDashboard() {
 	const [showProductDialog, setShowProductDialog] = useState(false);
 	const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
-	// Load products after login
-	useEffect(() => {
+	const loadProducts = useCallback(async () => {
 		if (!user) return;
-
-		async function loadProducts() {
-			setLoading(true);
-			const allProducts = await productManager.fetchProducts();
-			setProducts(allProducts);
-			setLoading(false);
-		}
-
-		loadProducts();
+		setLoading(true);
+		const allProducts = await productManager.fetchProducts();
+		setProducts(allProducts);
+		setLoading(false);
 	}, [user, productManager]);
+
+	useEffect(() => {
+		loadProducts();
+	}, [loadProducts]);
 
 	const handleLogout = async () => {
 		await logout();
@@ -47,44 +46,48 @@ export default function AdminDashboard() {
 		setShowProductDialog(true);
 	};
 
-	const handleDelete = async (product: Product) => {
-		await productManager.deleteProduct(product);
-		setProducts(products.filter(p => p.id !== product.id));
+	const handleDialogClose = () => {
+		setShowProductDialog(false);
+		setEditingProduct(null);
+		loadProducts(); // Refresh products when dialog closes
 	};
 
-	if (authLoading) return <p>Loading...</p>;
+	const handleDelete = async (product: Product) => {
+		if (window.confirm(`Are you sure you want to delete ${product.name}?`)) {
+			await productManager.deleteProduct(product);
+			loadProducts(); // Refresh products after deletion
+		}
+	};
+
+	if (authLoading) return <p className="loading-text">Authenticating...</p>;
 
 	// Show login dialog if not logged in
 	if (!user) return <LoginDialog />;
 
 	return (
 		<div className="admin-container">
-			<h1>Admin - Manage Products</h1>
-			<button onClick={handleLogout}>Logout</button>
-			<button onClick={openAddDialog}>Add Product</button>
+			<div className="admin-header">
+				<h1>Admin Dashboard</h1>
+				<div>
+					<button className="admin-add-button" onClick={openAddDialog}>Add Product</button>
+					<button className="admin-logout-button" onClick={handleLogout}>Logout</button>
+				</div>
+			</div>
 
 			{loading ? (
-				<p>Loading products...</p>
+				<p className="loading-text">Loading products...</p>
 			) : (
-				<div className="admin-productsGrid">
-					{products.map(p => (
-						<div key={p.id} className="admin-productCard">
-							<img src={p.image} alt={p.name} className="admin-productImage" />
-							<h3>{p.name}</h3>
-							<p>${p.price.toFixed(2)}</p>
-							<p>{p.description}</p>
-							<button onClick={() => openEditDialog(p)}>Edit</button>
-							<button onClick={() => handleDelete(p)}>Delete</button>
-						</div>
-					))}
-				</div>
+				<AdminProductList
+					products={products}
+					onEdit={openEditDialog}
+					onDelete={handleDelete}
+				/>
 			)}
 
 			{showProductDialog && (
 				<ProductDialog
 					product={editingProduct}
-					onClose={() => setShowProductDialog(false)}
-					onUpdate={setProducts}
+					onClose={handleDialogClose}
 				/>
 			)}
 		</div>

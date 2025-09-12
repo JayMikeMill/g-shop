@@ -14,4 +14,15 @@ export const FirebaseStorageProvider: ImageStorageProvider = {
 		const storageRef = ref(storage, imageUrl);
 		await deleteObject(storageRef);
 	},
+	uploadImages: async (imageFiles: File[], folder = "products") => {
+		const imageUrls = await Promise.all(
+			imageFiles.map(file => FirebaseStorageProvider.uploadImage(file, folder))
+		);
+		return imageUrls;
+	},
+	deleteImages: async (imageUrls: string[]) => {
+		await Promise.all(
+			imageUrls.map(url => FirebaseStorageProvider.deleteImage(url))
+		);
+	},
 };

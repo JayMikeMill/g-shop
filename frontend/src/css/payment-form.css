@@ -6,7 +6,7 @@
   padding: var(--spacing-lg);
   background: var(--color-card-bg);
   border-radius: var(--border-radius);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--box-shadow);
   font-family: var(--font-family);
   color: var(--color-text);
 }
@@ -16,13 +16,6 @@
   font-size: 1.75rem;
   margin-bottom: var(--spacing-lg);
   text-align: center;
-}
-
-
-.payment-form .card-container:focus-within {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-  outline: none;
 }
 
 .payment-form .total {
@@ -45,7 +38,7 @@
 }
 
 .payment-form button:hover {
-  background-color: var(--color-primary-hover);
+  background-color: var(--color-primary-dark);
   transform: translateY(-1px);
 }
 

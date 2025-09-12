@@ -6,13 +6,13 @@ export interface Product {
 	price: number;
 	sizes: Size[];
 	colors: Color[];
-	image: string;
+	images: string[];
 	description: string;
 }
 
 export interface ProductOptions {
-	size: Size;
-	color: Color;
+	size?: Size;
+	color?: Color;
 }
 
 export const equalsProductOptions = (a: ProductOptions, b: ProductOptions) =>
@@ -36,4 +36,3 @@ export const Color = {
 
 export type Color = typeof Color[keyof typeof Color];
 export const allColors: Color[] = Object.values(Color);
-

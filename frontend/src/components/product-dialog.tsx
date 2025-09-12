@@ -5,26 +5,25 @@ import { useProducts } from "@contexts/products-context";
 import "@css/dialog.css";
 
 interface ProductDialogProps {
-	product?: Product | null; // If null or undefined, we are adding a new product
+	product: Product | null; // If null, we are adding a new product
 	onClose: () => void;       // Callback to close dialog
-	onUpdate: (products: Product[]) => void; // Callback to update product list
 }
 
-export default function ProductDialog({ product, onClose, onUpdate }: ProductDialogProps) {
+export default function ProductDialog({ product, onClose }: ProductDialogProps) {
 	const productManager = useProducts();
 
 	// Form state
 	const [name, setName] = useState(product?.name || "");
 	const [price, setPrice] = useState(product?.price || 0);
 	const [description, setDescription] = useState(product?.description || "");
-	const [imageFile, setImageFile] = useState<File | null>(null);
+	const [imageFiles, setImageFiles] = useState<File[]>([]);
 
 	useEffect(() => {
 		// Reset form when product changes
 		setName(product?.name || "");
 		setPrice(product?.price || 0);
 		setDescription(product?.description || "");
-		setImageFile(null);
+		setImageFiles([]);
 	}, [product]);
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -32,20 +31,20 @@ export default function ProductDialog({ product, onClose, onUpdate }: ProductDia
 
 		try {
 			if (product) {
-				// TODO: implement update product logic in Firebase
-				alert("Edit functionality not implemented yet");
+				// Editing an existing product
+				await productManager.editProduct(
+					{ ...product, name, price, description },
+					imageFiles
+				);
 			} else {
-				if (!imageFile) return alert("Image required");
-				await productManager.addProduct({
-                    name, price, description,
-                    sizes: [],
-                    colors: []
-                }, imageFile);
+				// Adding a new product
+				if (imageFiles.length === 0) return alert("At least one image is required");
+				await productManager.addProduct(
+					{ name, price, description, sizes: [], colors: [] },
+					imageFiles
+				);
 			}
 
-			// Refresh product list
-			const allProducts = await productManager.fetchProducts();
-			onUpdate(allProducts);
 			onClose();
 		} catch (err: any) {
 			alert(err.message || "Error saving product");
@@ -57,6 +56,9 @@ export default function ProductDialog({ product, onClose, onUpdate }: ProductDia
 			<div className="dialog">
 				<h2>{product ? "Edit Product" : "Add Product"}</h2>
 				<form onSubmit={handleSubmit}>
+					<label>Images
+						<input type="file" multiple onChange={e => setImageFiles(Array.from(e.target.files || []))} />
+					</label>
 					<label>Name
 						<input type="text" value={name} onChange={e => setName(e.target.value)} required />
 					</label>
@@ -65,9 +67,6 @@ export default function ProductDialog({ product, onClose, onUpdate }: ProductDia
 					</label>
 					<label>Description
 						<textarea value={description} onChange={e => setDescription(e.target.value)} required />
-					</label>
-					<label>Image
-						<input type="file" onChange={e => setImageFile(e.target.files?.[0] || null)} />
 					</label>
 					<button type="submit">{product ? "Save Changes" : "Add Product"}</button>
 					<button type="button" onClick={onClose}>Cancel</button>

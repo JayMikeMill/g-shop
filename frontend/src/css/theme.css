@@ -1,30 +1,41 @@
 :root {
-  /* Colors */
-  --color-primary: #3b82f6;
-  --color-primary-hover: #2563eb;
-  --color-background: #f9f9f9;
-  --color-card-bg: #ffffff;
-  --color-text: #333;
-  --color-input-bg: #fdfdfd;
-  --color-input-border: #ccc;
+  /* Colors - Feminine Nail Salon Palette */
+  --color-primary: #C8A2C8; /* Lilac */
+  --color-primary-dark: #A474A4; /* Darker Lilac */
+  --color-secondary: #E0E0E0; /* Light Gray */
+  --color-success: #B2D3C2; /* Sage Green */
+  --color-danger: #F4A29E; /* Gentle Coral */
+  --color-warning: #FDFD96; /* Buttery Yellow */
+  --color-info: #B0E0E6; /* Powder Blue */
+  --color-light: #FDF7F7; /* Rosy Off-white */
+  --color-dark: #4B4B4B; /* Charcoal Gray */
+  --color-background: #f9f5f5;
+  --color-background-rgb: 253, 247, 247;
+  --color-card-bg: #FFFFFF;
+  --color-text: var(--color-dark);
+  --color-input-bg: #fff;
+  --color-input-border: #DCDCDC;
   --color-button-bg: var(--color-primary);
-  --color-button-hover: var(--color-primary-hover);
+  --color-button-hover: var(--color-primary-dark);
   --color-button-text: #fff;
 
   /* Fonts */
   --font-family: 'Inter', sans-serif;
   --font-size-base: 1rem;
-  --font-size-title: 1.25rem;
-  --font-size-price: 1.1rem;
+  --font-size-title: 1.5rem;
+  --font-size-price: 1.25rem;
 
   /* Spacing */
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 3rem;
 
   /* Border radius */
-  --border-radius: 12px;
-  --card-border-radius: 16px;
+  --border-radius: 0.25rem;
+  --card-border-radius: 0.5rem;
+
+  /* Box shadow */
+  --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }

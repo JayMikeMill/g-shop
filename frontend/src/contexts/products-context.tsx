@@ -10,6 +10,7 @@ import {
 	fetchProductsFromFirebase,
 	addProductToFirebase,
 	deleteProductFromFirebase,
+	editProductInFirebase,
 } from "../data/firebase-products";
 
 // ----------------------
@@ -21,10 +22,13 @@ interface ProductsInterface {
 	fetchProducts: () => Promise<Product[]>;
 
 	// Add a product, including uploading an image
-	addProduct: (product: Omit<Product, "id" | "image">, imageFile: File) => Promise<void>;
+	addProduct: (product: Omit<Product, "id" | "images">, imageFiles: File[]) => Promise<void>;
 
 	// Delete a product and its associated image
 	deleteProduct: (product: Product) => Promise<void>;
+
+	// Edit a product, optionally with a new image
+	editProduct: (product: Product, imageFiles: File[]) => Promise<void>;
 }
 
 // ----------------------
@@ -46,9 +50,9 @@ export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 	};
 
 	// Function to add a product
-	const addProduct = async (product: Omit<Product, "id" | "image">, imageFile: File) => {
+	const addProduct = async (product: Omit<Product, "id" | "images">, imageFiles: File[]) => {
 		// Call the Firebase wrapper to add product and upload image
-		await addProductToFirebase(product, imageFile);
+		await addProductToFirebase(product, imageFiles);
 	};
 
 	// Function to delete a product
@@ -57,9 +61,15 @@ export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 		await deleteProductFromFirebase(product);
 	};
 
+	// Function to edit a product
+	const editProduct = async (product: Product, imageFiles: File[]) => {
+		// Call the Firebase wrapper to edit the product
+		await editProductInFirebase(product, imageFiles);
+	};
+
 	// Provide these functions to all child components via context
 	return (
-		<ProductsContext.Provider value={{ fetchProducts, addProduct, deleteProduct }}>
+		<ProductsContext.Provider value={{ fetchProducts, addProduct, deleteProduct, editProduct }}>
 			{children}
 		</ProductsContext.Provider>
 	);

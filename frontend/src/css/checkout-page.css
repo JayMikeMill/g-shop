@@ -4,7 +4,7 @@
   padding: var(--spacing-lg);
   background: var(--color-card-bg);
   border-radius: var(--border-radius);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.05); /* very subtle shadow, optional */
+  box-shadow: var(--box-shadow);
   font-family: var(--font-family);
   color: var(--color-text);
 }

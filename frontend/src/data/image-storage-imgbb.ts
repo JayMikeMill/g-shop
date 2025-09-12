@@ -27,4 +27,15 @@ export const ImgbbStorageProvider: ImageStorageProvider = {
 		// For simplicity, we won't implement deletion here unless you store delete_url in DB
 		console.warn("ImgBB deletion not implemented. Store delete_url if you need this.");
 	},
+
+	uploadImages: async (imageFiles: File[]) => {
+		const imageUrls = await Promise.all(
+			imageFiles.map(file => ImgbbStorageProvider.uploadImage(file))
+		);
+		return imageUrls;
+	},
+
+	deleteImages: async (imageUrls: string[]) => {
+		console.warn("ImgBB deletion not implemented. Store delete_url if you need this.");
+	},
 };

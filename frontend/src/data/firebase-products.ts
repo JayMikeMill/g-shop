@@ -1,11 +1,8 @@
 // Import Firebase Firestore functions for working with database
-import { collection, addDoc, getDocs, deleteDoc, doc } from "firebase/firestore";
-
-// Import Firebase Storage functions for handling images/files
-import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore";
 
 // Import initialized Firebase instances (db = Firestore, storage = Storage)
-import { db, storage } from "@data/firebase-api";
+import { db } from "@data/firebase-api";
 
 // Choose which provider you want here
 import type { ImageStorageProvider } from "@data/image-storage-interface";
@@ -46,17 +43,17 @@ export const fetchProductsFromFirebase = async (): Promise<Product[]> => {
 // Add a new product with an image
 // ----------------------
 export const addProductToFirebase = async (
-	product: Omit<Product, "id" | "image">, // Product fields without id or image
-	imageFile: File                          // Image file to upload
+	product: Omit<Product, "id" | "images">, // Product fields without id or image
+	imageFiles: File[]                          // Image file to upload
 ): Promise<void> => {
 	// Ensure an image file exists
-	if (!imageFile) throw new Error("Image file required");
+	if (imageFiles.length === 0) throw new Error("Image files required");
 
 	// Get the public URL of the uploaded image
-	const imageUrl = await imageProvider.uploadImage(imageFile);
+	const imageUrls = await imageProvider.uploadImages(imageFiles);
 
 	// Add product document to Firestore with the image URL included
-	await addDoc(productsCollection, { ...product, image: imageUrl });
+	await addDoc(productsCollection, { ...product, images: imageUrls });
 };
 
 // ----------------------
@@ -64,8 +61,34 @@ export const addProductToFirebase = async (
 // ----------------------
 export const deleteProductFromFirebase = async (product: Product): Promise<void> => {
 	// Delete the image from Storage
-	if (product.image) await imageProvider.deleteImage(product.image);
+	if (product.images) await imageProvider.deleteImages(product.images);
 
 	// Delete the Firestore document using the product ID
 	await deleteDoc(doc(productsCollection, product.id));
+};
+
+// ----------------------
+// Edit a product in Firestore and optionally replace its image
+// ----------------------
+export const editProductInFirebase = async (
+    product: Product,                // Product data with ID
+    imageFiles: File[]           // Optional new image file
+): Promise<void> => {
+
+    const productRef = doc(productsCollection, product.id);
+    const productData: Partial<Product> = { ...product };
+    delete (productData as any).id; // Do not write id inside the document
+
+    // If a new image is provided, upload it and update the image URL
+    if (imageFiles.length > 0) {
+        // Delete the old image if it exists
+        if (product.images) {
+            await imageProvider.deleteImages(product.images);
+        }
+        // Upload the new image and get its URL
+        productData.images = await imageProvider.uploadImages(imageFiles);
+    }
+
+    // Update the document in Firestore
+    await updateDoc(productRef, productData);
 };

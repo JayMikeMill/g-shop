@@ -4,7 +4,7 @@
 	padding: var(--spacing-md);
 	background: var(--color-card-bg);
 	border-radius: var(--border-radius);
-	box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+	box-shadow: var(--box-shadow);
 	font-family: var(--font-family);
 	color: var(--color-text);
 }
@@ -25,8 +25,8 @@
 	display: flex;
 	align-items: center;
 	gap: var(--spacing-md);
-	padding: var(--spacing-xs 0);
-	border-bottom: 1px solid #e0e0e0; /* light divider */
+	padding: var(--spacing-xs) 0;
+	border-bottom: 1px solid var(--color-input-border);
 }
 
 .order-item-image {
