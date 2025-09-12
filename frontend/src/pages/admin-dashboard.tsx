@@ -68,7 +68,7 @@ export default function AdminDashboard() {
 		<div className="admin-container">
 			<div className="admin-header">
 				<h1>Admin Dashboard</h1>
-				<div>
+				<div className="admin-actions">
 					<button className="admin-add-button" onClick={openAddDialog}>Add Product</button>
 					<button className="admin-logout-button" onClick={handleLogout}>Logout</button>
 				</div>

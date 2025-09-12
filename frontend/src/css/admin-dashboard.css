@@ -1,14 +1,13 @@
 /* src/css/admin-dashboard.css */
 
 .admin-container {
-	width: 90%;
-	max-width: 1400px;
-	margin: var(--spacing-lg) auto;
-	padding: var(--spacing-lg);
+	width: 100%;
+	max-width: 100%;
 	font-family: var(--font-family);
     background-color: var(--color-background);
-    border-radius: var(--card-border-radius);
-    box-shadow: var(--box-shadow);
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
 }
 
 .admin-header {
@@ -18,12 +17,25 @@
     margin-bottom: var(--spacing-lg);
     border-bottom: 1px solid var(--color-input-border);
     padding-bottom: var(--spacing-md);
+	flex-shrink: 0;
+    padding-top: 20px;
+	padding-left: 20px;
+	padding-right: 20px;
 }
 
 .admin-header h1 {
 	font-size: 1.8rem;
     margin: 0;
     color: var(--color-text);
+}
+
+.admin-actions button {
+	width: 120px;
+	display: block;
+}
+
+.admin-actions button:first-child {
+	margin-bottom: var(--spacing-sm);
 }
 
 .admin-container button {
@@ -49,14 +61,15 @@
 .admin-logout-button { background-color: var(--color-danger); }
 .admin-logout-button:hover { background-color: var(--color-danger); filter: brightness(90%); }
 
-.edit-button { background-color: var(--color-warning); color: var(--color-text); }
-.edit-button:hover { background-color: var(--color-warning); filter: brightness(90%); }
+.edit-button { background-color: var(--color-primary); color: var(--color-button-text); }
+.edit-button:hover { background-color: var(--color-primary); filter: brightness(90%); }
 
-.delete-button { background-color: var(--color-secondary); }
-.delete-button:hover { background-color: var(--color-secondary); filter: brightness(90%); }
+.delete-button { background-color: var(--color-danger); color: var(--color-button-text); }
+.delete-button:hover { background-color: var(--color-danger); filter: brightness(90%); }
 
 .table-container {
     overflow-x: auto;
+	flex-grow: 1;
 }
 
 .products-table {
@@ -74,6 +87,12 @@
     text-align: left;
     vertical-align: middle;
     border-bottom: 1px solid var(--color-input-border);
+}
+
+.products-table thead th {
+	position: sticky;
+	top: 0;
+	z-index: 1;
 }
 
 .products-table th {
@@ -109,16 +128,27 @@
 
 .product-description {
     max-width: 300px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal;
+    word-break: break-word;
     font-size: 0.9em;
     color: var(--color-secondary);
     margin: 0;
 }
 
+.action-buttons button {
+	width: 80px;
+	display: block;
+	margin-bottom: var(--spacing-sm);
+}
+
 .action-buttons button:not(:last-child) {
     margin-right: var(--spacing-sm);
+}
+
+.actions-cell {
+	position: sticky;
+	right: 0;
+	background-color: var(--color-card-bg);
 }
 
 .loading-text {
@@ -126,4 +156,37 @@
     padding: var(--spacing-lg);
     font-size: 1.2rem;
     color: var(--color-secondary);
+}
+
+.price-cell {
+    display: flex;
+    flex-direction: column;
+}
+
+.discount-value {
+    color: var(--color-danger);
+    font-size: 0.9em;
+}
+
+.tags-cell .tag {
+    background-color: var(--color-primary);
+    color: var(--color-button-text);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius);
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+    margin: 2px;
+}
+
+@media (max-width: 992px) {
+    .hide-on-tablet {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .hide-on-mobile {
+        display: none;
+    }
 }

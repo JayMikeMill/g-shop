@@ -13,7 +13,6 @@ const imageProvider: ImageStorageProvider = ImgbbStorageProvider;
 
 // Import TypeScript type for Product
 import type { Product } from "@shared/product";
-import { getAuth } from "firebase/auth";
 
 // ----------------------
 // Reference to the "products" collection in Firestore
@@ -25,9 +24,6 @@ const productsCollection = collection(db, "products");
 // Fetch all products from Firestore
 // ----------------------
 export const fetchProductsFromFirebase = async (): Promise<Product[]> => {
-	const auth = getAuth();
-	console.log("Current user in fetchProductsFromFirebase:", auth.currentUser);
-	
 	// Get all documents in the "products" collection
 	const snapshot = await getDocs(productsCollection);
 

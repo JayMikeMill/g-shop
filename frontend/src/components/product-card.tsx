@@ -1,88 +1,65 @@
-import { useState } from "react"
-import { useCart } from "@contexts/cart-context"
-import { Size, type Product } from "@shared/product"
-import "@css/product-card.css"
+import { useCart } from "@contexts/cart-context";
+import { type Product } from "@shared/product";
+import "@css/product-card.css";
 
 interface ProductCardProps {
-  product: Product
+    product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const { addToCart } = useCart()
+    const { addToCart } = useCart();
 
-  const [selectedSize, setSelectedSize] = useState(product.sizes && product.sizes.length > 0 ? product.sizes[0] : undefined)
-  const [currentImage, setCurrentImage] = useState(0)
+    const handleAddToCart = () => {
+        const size = product.sizes && product.sizes.length > 0 ? product.sizes[0] : undefined;
+        const color = product.colors && product.colors.length > 0 ? product.colors[0] : undefined;
+        addToCart(product, { size, color });
+    };
 
-  const handleAddToCart = () => {
-    const color = product.colors && product.colors.length > 0 ? product.colors[0] : undefined; // default color
-
-    if (product.sizes.length > 0 && !selectedSize) {
-      // a size is required, but not selected
-      return;
+    let discountedPrice: number | null = null;
+    if (product.discount) {
+        if (typeof product.discount === 'string') {
+            if (product.discount.includes('%')) {
+                const percentage = parseFloat(product.discount.replace('%', ''));
+                discountedPrice = product.price * (1 - percentage / 100);
+            } else {
+                const amount = parseFloat(product.discount);
+                discountedPrice = product.price - amount;
+            }
+        } else if (typeof product.discount === 'number') {
+            // Legacy format, a number between 0 and 1 representing a percentage
+            discountedPrice = product.price * (1 - product.discount);
+        }
     }
 
-    addToCart(product, { size: selectedSize, color })
-  }
-
-  const nextImage = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (product.images && product.images.length > 1) {
-      setCurrentImage(i => (i + 1) % product.images.length)
-    }
-  }
-
-  const prevImage = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (product.images && product.images.length > 1) {
-      setCurrentImage(i => (i - 1 + product.images.length) % product.images.length)
-    }
-  }
-
-  const hasSizes = product.sizes && product.sizes.length > 0;
-
-  return (
-    <div className="product-card">
-      <div className="image-container">
-        {product.images && product.images.length > 0 ? (
-          <img src={product.images[currentImage]} alt={`${product.name} ${currentImage + 1}`} />
-        ) : (
-          <div className="no-image">No Image Available</div>
-        )}
-        {product.images && product.images.length > 1 && (
-            <>
-                <button onClick={prevImage} className="nav-btn prev-btn">&lt;</button>
-                <button onClick={nextImage} className="nav-btn next-btn">&gt;</button>
-            </>
-        )}
-      </div>
-      <div className="product-info">
-        <h3 className="product-name">{product.name}</h3>
-        <p className="product-price">${product.price.toFixed(2)}</p>
-        <div className="product-actions">
-            {hasSizes && (
-              <select
-                value={selectedSize}
-                onChange={e => {
-                  e.stopPropagation();
-                  setSelectedSize(e.target.value as Size)}
-                }
-                className="size-select"
-              >
-                {product.sizes.map(size => (
-                  <option key={size} value={size}>{size}</option>
-                ))}
-              </select>
-            )}
-            <button 
-              className="add-to-cart-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleAddToCart();
-              }}
-              disabled={hasSizes && !selectedSize}
-            >Add to Cart</button>
+    return (
+        <div className="product-card" onClick={handleAddToCart}>
+            <div className="image-container">
+                {product.images && product.images.length > 0 ? (
+                    <img src={product.images[0]} alt={product.name} />
+                ) : (
+                    <div className="no-image">No Image Available</div>
+                )}
+                {product.tags && product.tags.length > 0 && (
+                    <div className="tags">
+                        {product.tags.map(tag => (
+                            <span key={tag} className="tag">{tag}</span>
+                        ))}
+                    </div>
+                )}
+            </div>
+            <div className="product-info">
+                <h3 className="product-name">{product.name}</h3>
+                <div className="price-container">
+                    {discountedPrice !== null && discountedPrice < product.price ? (
+                        <>
+                            <p className="original-price">${product.price.toFixed(2)}</p>
+                            <p className="discounted-price">${discountedPrice.toFixed(2)}</p>
+                        </>
+                    ) : (
+                        <p className="product-price">${product.price.toFixed(2)}</p>
+                    )}
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  )
+    );
 }

@@ -9,32 +9,58 @@ interface AdminProductListProps {
 }
 
 export default function AdminProductList({ products, onEdit, onDelete }: AdminProductListProps) {
+
+    const formatDiscount = (discount: string | number | undefined): string => {
+        if (!discount) return 'N/A';
+
+        if (typeof discount === 'string') {
+            if (discount.includes('%')) {
+                const value = parseFloat(discount.replace('%', ''));
+                return `-${value}%`;
+            } else {
+                const value = parseFloat(discount);
+                return `-$${value.toFixed(2)}`;
+            }
+        } else { // Fallback for legacy number-based discounts
+            return `-${(discount * 100).toFixed(0)}%`;
+        }
+    };
+
   return (
     <div className="table-container">
       <table className="products-table">
         <thead>
           <tr>
-            <th style={{ textAlign: 'center' }}>Image</th>
-            <th style={{ textAlign: 'center' }}>Name</th>
-            <th style={{ textAlign: 'center' }}>Description</th>
-            <th style={{ textAlign: 'center' }}>Price</th>
-            <th style={{ textAlign: 'center' }}>Actions</th>
+            <th>Image</th>
+            <th>Name</th>
+            <th className="hide-on-mobile">Description</th>
+            <th>Price</th>
+            <th className="hide-on-tablet">Tags</th>
+            <th className="actions-cell">Actions</th>
           </tr>
         </thead>
         <tbody>
           {products.map(p => (
             <tr key={p.id}>
-              <td style={{ textAlign: 'center' }}>
+              <td>
                 {p.images && p.images.length > 0 ? (
                   <img src={p.images[0]} alt={p.name} className="table-product-image" />
                 ) : (
                   <div className="table-product-image-placeholder">No Image</div>
                 )}
               </td>
-              <td style={{ textAlign: 'center' }}>{p.name}</td>
-              <td style={{ textAlign: 'center' }}><p className="product-description">{p.description}</p></td>
-              <td style={{ textAlign: 'center' }}>${p.price.toFixed(2)}</td>
-              <td className="action-buttons" style={{ textAlign: 'center' }}>
+              <td>{p.name}</td>
+              <td className="hide-on-mobile"><p className="product-description">{p.description}</p></td>
+              <td>
+                <div className="price-cell">
+                    <span>${p.price.toFixed(2)}</span>
+                    {p.discount && <span className="discount-value">{formatDiscount(p.discount)}</span>}
+                </div>
+              </td>
+              <td className="hide-on-tablet tags-cell">
+                {p.tags?.map(tag => <span key={tag} className="tag">{tag}</span>) || 'N/A'}
+              </td>
+              <td className="action-buttons actions-cell">
                 <button className="edit-button" onClick={() => onEdit(p)}>Edit</button>
                 <button className="delete-button" onClick={() => onDelete(p)}>Delete</button>
               </td>

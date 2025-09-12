@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import SiteHeader from "@components/site-header";
 import SiteFooter from '@components/site-footer';
 import HomePage from "@pages/home-page";
@@ -8,13 +8,16 @@ import AdminDashboard from '@pages/admin-dashboard';
 import AboutPage from './pages/about-page';
 
 export default function App() {
+	const location = useLocation();
+	const isAdminPage = location.pathname === '/admin';
+
 	return (
 		<div>
 			<SiteHeader />
 			<main>
 				<div
 					style={{
-						padding: "20px",
+						padding: isAdminPage ? '0px' : '20px',
 					}}
 				>
 					<Routes>

@@ -1,0 +1,273 @@
+/* frontend/src/css/product-dialog.css */
+.product-dialog {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100%;
+    padding: 0 0.5rem; /* Add side padding */
+    border-radius: 0;
+    overflow: hidden; /* Prevent content from breaking out */
+    box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+    .product-dialog {
+        width: 800px;
+        max-width: 90vw;
+        height: auto;
+        max-height: 90vh;
+        border-radius: var(--border-radius-lg);
+    }
+}
+
+/* Form structure for scrolling content and static footer */
+.product-dialog .product-form {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Allow form to fill available space */
+    overflow: hidden; /* Prevent form itself from scrolling */
+    padding: 1rem 0;
+    gap: 1rem;
+}
+
+.product-dialog .dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0; /* Prevent header from shrinking */
+}
+
+.product-dialog .dialog-header h2 {
+    margin: 0;
+}
+
+.product-dialog .close-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--color-text-secondary);
+}
+
+/* This is the main scrollable area for inputs */
+.product-dialog .form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem 1.5rem; /* row-gap | column-gap */
+    overflow-y: auto; /* Make this part scrollable */
+    flex-grow: 1; /* Allow it to take up space */
+    padding: 0 0.5rem; /* Padding for scroll content */
+}
+
+@media (min-width: 768px) {
+    .product-dialog .form-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.product-dialog .image-upload-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0; /* Prevent from growing beyond grid cell */
+}
+
+.product-dialog .image-previews {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding: 0.5rem;
+    border: 1px solid var(--color-input-border);
+    border-radius: var(--border-radius);
+    height: 120px; /* Fixed height for scrolling */
+    flex-wrap: nowrap; /* Prevent wrapping */
+    background-color: var(--color-input-bg);
+}
+
+.product-dialog .image-preview {
+    position: relative;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    height: 100%; /* Match container height */
+    width: 100px;
+    flex-shrink: 0;
+    cursor: grab;
+    user-select: none; /* Prevents text selection during drag */
+    -webkit-user-select: none; /* For Safari */
+}
+
+.product-dialog .image-preview.dragging {
+    opacity: 0.4;
+    cursor: grabbing;
+}
+
+
+.product-dialog .image-preview .image-label {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    background-color: rgba(0,0,0,0.6);
+    color: white;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    pointer-events: none; /* Make sure it doesn't interfere with clicks/drags */
+}
+
+.product-dialog .image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none; /* Prevents image drag behavior */
+}
+
+.product-dialog .image-preview button {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    padding: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.product-dialog .product-details-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.product-dialog .price-discount-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 1rem;
+}
+
+.product-dialog .price-input-wrapper {
+    flex: 1;
+    min-width: 0;
+}
+
+.product-dialog .discount-group {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.product-dialog .discount-input {
+    width: 100%;
+}
+
+/* Shared styling for all form controls */
+.product-dialog input[type="text"],
+.product-dialog input[type="number"],
+.product-dialog .discount-selector,
+.product-dialog textarea {
+    box-sizing: border-box; /* Consistent sizing */
+    width: 100%;
+}
+
+
+/* Make inputs and select same, shorter height */
+.product-dialog input[type="text"],
+.product-dialog input[type="number"],
+.product-dialog .discount-selector {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.9rem;
+    height: 30px;
+}
+
+.product-dialog textarea {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.9rem;
+    min-height: 70px;
+}
+
+
+.product-dialog .input-with-symbol {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.product-dialog .input-with-symbol .symbol {
+    position: absolute;
+    left: var(--spacing-sm);
+    pointer-events: none;
+    color: var(--color-text-secondary);
+}
+
+.product-dialog .input-with-symbol input[type="number"] {
+    padding-left: calc(var(--spacing-sm) + 1rem);
+}
+
+/* Static footer */
+.product-dialog .dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem 0.5rem;
+    gap: 1rem;
+    border-top: 1px solid var(--color-border);
+    flex-shrink: 0; /* Prevent footer from shrinking */
+}
+
+.file-input-label {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.file-input-label:hover {
+    opacity: 0.9;
+}
+
+.product-dialog input[type="file"] {
+    display: none;
+}
+
+/* Image Lightbox */
+.image-lightbox-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000; /* Higher than dialog */
+}
+
+.image-lightbox-content {
+    max-width: 90vw;
+    max-height: 90vh;
+}
+
+.image-lightbox-content img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: var(--border-radius-lg);
+}

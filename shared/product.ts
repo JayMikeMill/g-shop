@@ -8,6 +8,8 @@ export interface Product {
 	colors: Color[];
 	images: string[];
 	description: string;
+	discount?: string; // Can be a percentage like "15%" or a fixed amount like "10"
+	tags?: string[];
 }
 
 export interface ProductOptions {

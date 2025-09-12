@@ -3,11 +3,9 @@
     border-radius: var(--card-border-radius);
     box-shadow: var(--box-shadow-sm);
     transition: all 0.3s ease;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
     overflow: hidden;
     border: 1px solid var(--color-input-border);
+    cursor: pointer;
 }
 
 .product-card:hover {
@@ -18,7 +16,7 @@
 .image-container {
     position: relative;
     width: 100%;
-    padding-top: 100%; /* 1:1 Aspect Ratio */
+    padding-top: 100%; 
 }
 
 .image-container img, .no-image {
@@ -38,79 +36,48 @@
     color: var(--color-secondary);
 }
 
-.nav-btn {
+.tags {
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.7);
-    border: none;
-    color: #333;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    display: flex;
+    gap: var(--spacing-xs);
 }
 
-.product-card:hover .nav-btn {
-    opacity: 1;
+.tag {
+    background-color: var(--color-primary);
+    color: var(--color-button-text);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius);
+    font-size: 0.8rem;
+    font-weight: 600;
 }
-
-.prev-btn { left: var(--spacing-sm); }
-.next-btn { right: var(--spacing-sm); }
 
 .product-info {
     padding: var(--spacing-md);
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
 }
 
 .product-name {
-    font-size: var(--font-size-base);
+    font-size: 1rem;
     font-weight: 600;
     margin: 0 0 var(--spacing-sm);
     color: var(--color-text-primary);
 }
 
-.product-price {
-    font-size: var(--font-size-price);
-    color: var(--color-primary);
-    margin: 0 0 var(--spacing-md);
-    font-weight: bold;
-}
-
-.product-actions {
-    margin-top: auto;
+.price-container {
     display: flex;
+    align-items: center;
     gap: var(--spacing-sm);
 }
 
-.size-select {
-    flex-grow: 1;
-    padding: var(--spacing-sm);
-    border: 1px solid var(--color-input-border);
-    border-radius: var(--border-radius);
-    background-color: var(--color-input-bg);
-    color: var(--color-text);
+.product-price, .discounted-price {
+    font-size: 1.1rem;
+    color: var(--color-primary);
+    font-weight: bold;
 }
 
-.add-to-cart-btn {
-    padding: var(--spacing-sm) var(--spacing-md);
-    background-color: var(--color-primary);
-    color: var(--color-button-text);
-    border: none;
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.add-to-cart-btn:hover {
-    background-color: var(--color-primary-dark);
-}
-
-.add-to-cart-btn:disabled {
-    background-color: var(--color-secondary);
-    cursor: not-allowed;
+.original-price {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    text-decoration: line-through;
 }
