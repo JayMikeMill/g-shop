@@ -4,7 +4,7 @@ import { useProducts } from "@contexts/products-context";
 import type { Product } from "@shared/product";
 import AdminProductList from "@components/admin-product-list";
 import ProductDialog from "@components/product-dialog";
-import { useAdminPageHeader } from "./dashboard";
+import { useAdminPageHeader } from "@pages/admin/dashboard";
 
 export default function Products() {
   const { fetchProducts, deleteProduct } = useProducts();
