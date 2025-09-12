@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react"
 import { useCart } from "@contexts/cart-context"
-import { type ShippingAddress } from "@shared/shipping-address"
+import { type ShippingAddress } from "@shared/shipping-info"
 import ShippingForm from "@components/shipping-form"
-import PaymentForm from "@components/payment-form"
+import PaymentFormSquare from "@components/payment-form-square"
 
 import OrderPreview from "@components/order-preview"
 import "@css/checkout-page.css"
@@ -46,9 +46,9 @@ export default function CheckoutPage() {
 				setShippingAddress={setShippingAddress} 
 			/>
 			
-			<PaymentForm 
+			<PaymentFormSquare 
 				total={total} 
-				cartItems={cartItems} 
+				orderItems={cartItems} 
 				shippingAddress={shippingAddress} 
 				setLoading={setLoading}
 				setMessage={setMessage}

@@ -2,15 +2,18 @@ import { VercelRequest, VercelResponse } from "@vercel/node";
 import SuperJSON from "superjson";
 import { SquareError } from "square";
 
-import { processPayment } from "../backend/square-api";
-import { type PaymentInfo } from "../shared/payment-info";
+import { processPayment } from "./square-api";
+import { type PaymentInfoSquare } from "@shared/payment-info";
+import { log } from "console";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
 	if (req.method !== "POST") {
 		return res.status(405).json({ error: "Method not allowed" });
 	}
 
-	const paymentInfo = req.body as PaymentInfo;
+	const paymentInfo = req.body as PaymentInfoSquare;
+
+	log("Received payment info:", paymentInfo);
 
 	try {
 		const serialized = await processPayment(paymentInfo);

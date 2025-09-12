@@ -3,8 +3,8 @@ import crypto from "crypto";                 // For idempotency keys
 import SuperJSON from "superjson";           // BigInt-safe serialization
 
 import { SquareClient, SquareEnvironment, Square } from "square";
-import { mapToSquareAddress } from "../shared/shipping-address"; // Shared type
-import { type PaymentInfo } from "../shared/payment-info";
+import { mapToSquareAddress } from "@shared/shipping-info"; // Shared type
+import { type PaymentInfoSquare } from "@shared/payment-info";
 import { log } from "console";
 import path from "path";
 
@@ -21,8 +21,9 @@ const client = new SquareClient({
 });
 
 // --- Helper Function ---
-export async function processPayment(paymentinfo: PaymentInfo) {
+export async function processPayment(paymentinfo: PaymentInfoSquare) {
     const { nonce, amount, orderItems, shipping } = paymentinfo;
+
 	log("Processing payment with info:", paymentinfo);
 	log("Using Square access token:", process.env.SQUARE_ACCESS_TOKEN);
 	// Create the payment request

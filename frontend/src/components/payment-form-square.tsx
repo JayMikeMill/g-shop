@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react"
 
 // Import shared types for shipping address and cart items
-import { type ShippingAddress } from "@shared/shipping-address"
-import type { CartItem } from "@shared/CartItem"
+import { type ShippingAddress } from "@shared/shipping-info"
+import type { StoreItem } from "@shared/store-item"
 
 // Import component-specific CSS
 import "@css/payment-form.css"
@@ -24,17 +24,17 @@ declare global {
 }
 
 // Props expected by the PaymentForm component
-interface PaymentFormProps {
+interface SquarePaymentFormProps {
   total: number                  // Total amount to charge
-  cartItems: CartItem[]          // Items in the cart
+  orderItems: StoreItem[]          // Items in the cart
   shippingAddress: ShippingAddress
   setLoading: (loading: boolean) => void
   setMessage: (msg: string | null) => void
 }
 
 // PaymentForm component
-export default function PaymentForm(
-  { total, cartItems, shippingAddress, setLoading, setMessage }: PaymentFormProps
+export default function PaymentFormSquare(
+  { total, orderItems, shippingAddress, setLoading, setMessage }: SquarePaymentFormProps
 ) {
   // State to store the Square card instance
   const [cardInstance, setCardInstance] = useState<any>(null)
@@ -57,6 +57,7 @@ export default function PaymentForm(
         // Attach the card form to the DOM
         await card.attach("#card-container")
         setCardInstance(card)
+        
       } catch (err) {
         console.error("Square card init error:", err)
       }
@@ -84,7 +85,8 @@ export default function PaymentForm(
   // Handle the payment process
   const handlePayment = async () => {
     const nonce = await handleGenerateNonce()
-    if (!nonce) return alert("Please generate a payment method first")
+
+    if (!nonce) return alert("Could not get payment info")
 
     // Convert country to ISO code if necessary
     const shippingWithISO = { ...shippingAddress, country: countryCodeMap[shippingAddress.country] || shippingAddress.country }
@@ -96,7 +98,7 @@ export default function PaymentForm(
       const response = await fetch(SQUARE_PAY_API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nonce, amount: total, orderItems: cartItems, shipping: shippingWithISO })
+        body: JSON.stringify({ nonce, amount: total, orderItems: orderItems, shipping: shippingWithISO })
       })
 
       const data = await response.json()

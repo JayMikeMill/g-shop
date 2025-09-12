@@ -46,7 +46,7 @@ export default function ShoppingCart() {
 				{cart.map((item, index) => (
 					<div className="cart-item-card" key={index}>
 						<div className="item-image">
-							<img src={item.image} alt={item.name} />
+							<img src={item.images[0]} alt={item.name} />
 						</div>
 						<div className="item-details">
 							<h3>{item.name}</h3>

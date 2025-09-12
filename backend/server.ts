@@ -9,8 +9,8 @@ import SuperJSON from "superjson";           // BigInt-safe serialization]
 
 import { SquareError } from "square";        // Square error handling
 
-import { processPayment } from "./square-api";
-import { type PaymentInfo } from "../shared/payment-info";
+import { processPayment } from "@api/square-api";
+import { type PaymentInfoSquare } from "../shared/payment-info";
 
 // ------------------------
 // Load environment variables
@@ -33,7 +33,7 @@ app.use(bodyParser.json());
 // ------------------------
 
 app.post("/api/square-pay-server", async (req, res) => {
-	const paymentInfo = req.body as PaymentInfo;
+	const paymentInfo = req.body as PaymentInfoSquare;
 
     try {
 		const serialized = await processPayment(paymentInfo);

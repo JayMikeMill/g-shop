@@ -13,7 +13,7 @@ export default defineConfig({
       "@data": path.resolve(__dirname, "frontend/src/data"),
       "@css": path.resolve(__dirname, "frontend/src/css"),
       "@shared": path.resolve(__dirname, "shared"),
-      "@types": path.resolve(__dirname, "shared")
+      "@api": path.resolve(__dirname, "api"),
     }
   }
 })

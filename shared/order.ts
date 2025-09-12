@@ -1,17 +1,25 @@
-import { StoreItem } from "@shared/store-item";
+import { StoreItem } from "./store-item";
+import { ShippingInfo } from "./shipping-info";
+import { PaymentInfo } from "./payment-info";
 
 export type Order = {
 	userId: string;
-	status: "pending" | "paid" | "shipped" | "delivered" | "cancelled";
+	status: OrderStatus;
 	createdAt: number; // Unix TimeStamp
     updatedAt: number; // Unix TimeStamp
-	totalAmount: number; // cents
-	currency: string;
-	paymentStatus: "pending" | "paid" | "refunded";
-	paymentMethod: string;
 	products: StoreItem[];
-	shippingAddress: ShippingAddress;
-	shippingMethod: string;
-	trackingNumber?: string | null;
+	totalAmount: number; // cents
+	paymentInfo: PaymentInfo;
+	shippingInfo: ShippingInfo;
 	notes?: string;
 };
+
+const OrderStatuses = {
+	PENDING: "pending",
+	PAID: "paid",
+	SHIPPED: "shipped",
+	DELIVERED: "delivered",
+	CANCELLED: "cancelled",
+} as const;
+
+export type OrderStatus = typeof OrderStatuses[keyof typeof OrderStatuses];

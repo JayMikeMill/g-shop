@@ -6,16 +6,16 @@ import { createContext, useContext,
 import type { Product, ProductOptions } from "@shared/product"
 import { equalsProductOptions } from "@shared/product"
 
-// Import CartItem type
-import type { CartItem } from "@shared/CartItem"
+// Import StoreItem type
+import type { StoreItem } from "@shared/store-item"
 
 // -------------------------
 // 1. Define what the context will hold
 // -------------------------
 interface CartContextType {
-	cart: CartItem[]                                      // The current cart items
+	cart: StoreItem[]                                      // The current cart items
 	addToCart: (product: Product, options: ProductOptions) => void   // Function to add items
-	removeFromCart: (item: CartItem) => void             // Function to remove items
+	removeFromCart: (item: StoreItem) => void             // Function to remove items
 	clearCart: () => void                                 // Function to empty the cart
 }
 
@@ -34,7 +34,7 @@ interface CartProviderProps {
 
 export const CartProvider = ({ children }: CartProviderProps) => {
 	// The cart state
-	const [cart, setCart] = useState<CartItem[]>([]) // starts empty
+	const [cart, setCart] = useState<StoreItem[]>([]) // starts empty
 
 	// Add item to cart
 	const addToCart = (product: Product, options: ProductOptions) => {
@@ -60,7 +60,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
 
 	// Remove item from cart if quantity == 1, 
 	// else decrease quantity
-	const removeFromCart = (item: CartItem) => {
+	const removeFromCart = (item: StoreItem) => {
 		setCart(prevCart => {
 			const existingIndex = prevCart.findIndex(
 				c => c.id === item.id && equalsProductOptions(c.options, item.options)
@@ -98,7 +98,7 @@ export const useCart = () => {
 }
 
 
-export const getCartTotals = (cart: CartItem[]) => {
+export const getCartTotals = (cart: StoreItem[]) => {
 	const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0)
 	const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
 	return { totalItems, totalPrice }

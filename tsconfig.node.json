@@ -10,11 +10,18 @@
     "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmitOnError": false
+    "noEmitOnError": false,
+
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["./shared/*"],
+      "@api/*": ["./api/*"]
+    }
   },
 
   "include": [
     "backend/**/*.ts",
-    "shared/**/*.ts"
+    "shared/**/*.ts",
+    "api/**/*.ts",
   ]
 }

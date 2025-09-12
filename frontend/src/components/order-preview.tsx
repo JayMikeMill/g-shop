@@ -31,7 +31,7 @@ export default function OrderPreview() {
 				{cart.map((item, index) => (
 					<div className="order-item" key={index}>
 						{/* Product image */}
-						<img src={item.image} alt={item.name} className="order-item-image" />
+						<img src={item.images[0]} alt={item.name} className="order-item-image" />
 
 						{/* Product details */}
 						<div className="order-item-info">
