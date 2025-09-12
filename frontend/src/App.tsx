@@ -1,15 +1,17 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import SiteHeader from "@components/site-header";
 import SiteFooter from '@components/site-footer';
 import HomePage from "@pages/home-page";
 import CartPage from "@pages/cart-page";
 import CheckoutPage from '@pages/checkout-page';
-import AdminDashboard from '@pages/admin-dashboard';
+import AdminDashboard from '@pages/admin/dashboard';
 import AboutPage from './pages/about-page';
+import Products from '@pages/admin/products';
+import Orders from '@pages/admin/orders';
 
 export default function App() {
 	const location = useLocation();
-	const isAdminPage = location.pathname === '/admin';
+	const isAdminPage = location.pathname.startsWith('/admin');
 
 	return (
 		<div>
@@ -22,7 +24,11 @@ export default function App() {
 				>
 					<Routes>
 						<Route path="/" element={<HomePage/>} />
-						<Route path="/admin" element={<AdminDashboard />} />
+						<Route path="/admin" element={<AdminDashboard />}>
+              <Route index element={<Navigate to="products" replace />} />
+              <Route path="products" element={<Products />} />
+              <Route path="orders" element={<Orders />} />
+            </Route>
 						<Route path="/cart" element={<CartPage />} />
             			<Route path="/checkout" element={<CheckoutPage />} />
 						<Route path="/about" element={<AboutPage />} />

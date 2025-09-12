@@ -1,6 +1,6 @@
 // src/components/AdminProductList.tsx
 import type { Product } from "@shared/product";
-import "@css/admin-dashboard.css";
+import "@css/admin-product-list.css";
 
 interface AdminProductListProps {
   products: Product[];
@@ -32,10 +32,10 @@ export default function AdminProductList({ products, onEdit, onDelete }: AdminPr
         <thead>
           <tr>
             <th>Image</th>
-            <th>Name</th>
-            <th className="hide-on-mobile">Description</th>
-            <th>Price</th>
-            <th className="hide-on-tablet">Tags</th>
+            <th className="name-cell">Name</th>
+            <th className="price-cell">Price</th>
+            <th>Tags</th>
+            <th>Description</th>
             <th className="actions-cell">Actions</th>
           </tr>
         </thead>
@@ -49,17 +49,21 @@ export default function AdminProductList({ products, onEdit, onDelete }: AdminPr
                   <div className="table-product-image-placeholder">No Image</div>
                 )}
               </td>
-              <td>{p.name}</td>
-              <td className="hide-on-mobile"><p className="product-description">{p.description}</p></td>
-              <td>
-                <div className="price-cell">
+              <td className="name-cell">{p.name}</td>
+              <td className="price-cell">
+                <div className="price-container">
                     <span>${p.price.toFixed(2)}</span>
                     {p.discount && <span className="discount-value">{formatDiscount(p.discount)}</span>}
                 </div>
               </td>
-              <td className="hide-on-tablet tags-cell">
-                {p.tags?.map(tag => <span key={tag} className="tag">{tag}</span>) || 'N/A'}
+              <td className="tags-cell">
+                {p.tags && p.tags.length > 0 ? (
+                    <div className="tags-container">
+                        {p.tags.map(tag => <span key={tag} className="tag">{tag}</span>)}
+                    </div>
+                ) : 'N/A'}
               </td>
+              <td><p className="product-description">{p.description}</p></td>
               <td className="action-buttons actions-cell">
                 <button className="edit-button" onClick={() => onEdit(p)}>Edit</button>
                 <button className="delete-button" onClick={() => onDelete(p)}>Delete</button>
