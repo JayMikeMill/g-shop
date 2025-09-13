@@ -1,25 +1,31 @@
-import { VercelRequest, VercelResponse } from "@vercel/node";
+// src/payments.ts
+import { Request, Response } from "express";
 import SuperJSON from "superjson";
+
+import { PaymentData } from "./payment-data";
+import { processPayment } from "./square";
 import { SquareError } from "square";
 
-import { processPayment } from "./square-api";
-import { type PaymentInfoSquare } from "@shared/payment-info";
 import { log } from "console";
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+/**
+ * Handles an HTTP request for processing a Square payment.
+ * Can be mounted on any Express server or serverless platform.
+ */
+export async function handlePayment(req: Request, res: Response) {
 	if (req.method !== "POST") {
 		return res.status(405).json({ error: "Method not allowed" });
 	}
 
-	const paymentInfo = req.body as PaymentInfoSquare;
+	const data = req.body as PaymentData;
 
-	log("Received payment info:", paymentInfo);
+	log("Received payment info:", data);
 
 	try {
-		const serialized = await processPayment(paymentInfo);
+		const serialized = await processPayment(data);
 		res.setHeader("Content-Type", "application/json");
 		res.send(serialized.json);
-	} catch (error) {
+	} catch (error: any) {
 		if (error instanceof SquareError) {
 			console.error("Square API error:", error.body);
 			const serialized = SuperJSON.serialize({ error: error.body });

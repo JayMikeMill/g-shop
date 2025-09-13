@@ -39,14 +39,3 @@ export const ShippingMethods = {
 } as const;
 
 export type ShippingMethod = typeof ShippingMethods[keyof typeof ShippingMethods];
-
-
-// Function to map custom ShippingAddress to Square.Address
-export const mapToSquareAddress = (addr: ShippingAddress): Square.Address => ({
-	addressLine1: addr.addressLine1,
-	addressLine2: addr.addressLine2,
-	locality: addr.city,
-	administrativeDistrictLevel1: addr.state,
-	postalCode: addr.postalCode,
-	country: addr.country as Square.Country
-})

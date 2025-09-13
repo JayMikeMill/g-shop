@@ -3,11 +3,9 @@ import crypto from "crypto";                 // For idempotency keys
 import SuperJSON from "superjson";           // BigInt-safe serialization
 
 import { SquareClient, SquareEnvironment, Square } from "square";
-import { mapToSquareAddress } from "@shared/shipping-info"; // Shared type
-import { type PaymentInfoSquare } from "@shared/payment-info";
+import { PaymentData, mapToSquareAddress } from "./payment-data";
 import { log } from "console";
 import path from "path";
-
 
 // Load environment variables
 // Load backend .env even if we run from project root
@@ -21,11 +19,12 @@ const client = new SquareClient({
 });
 
 // --- Helper Function ---
-export async function processPayment(paymentinfo: PaymentInfoSquare) {
-    const { nonce, amount, orderItems, shipping } = paymentinfo;
+export async function processPayment(data: PaymentData) {
+    const { nonce, amount, items, shipping } = data;
 
-	log("Processing payment with info:", paymentinfo);
+	log("Processing payment with info:", data);
 	log("Using Square access token:", process.env.SQUARE_ACCESS_TOKEN);
+	
 	// Create the payment request
 	const requestBody: Square.CreatePaymentRequest = {
 		sourceId: nonce || "cnon:card-nonce-ok", // Sandbox default nonce
@@ -34,7 +33,7 @@ export async function processPayment(paymentinfo: PaymentInfoSquare) {
 			amount: BigInt(Math.round(amount * 100)), // Dollars → cents
 			currency: "USD"
 		},
-		note: `Order with ${orderItems?.length || 0} items`,
+		note: `Order with ${items?.length || 0} items`,
 		shippingAddress:  mapToSquareAddress(shipping)
 	};
 
