@@ -5,19 +5,28 @@ import { PaymentAdapter } from "@adapters/payment/payment-interface";
 export class OrderService {
 	constructor(private db: DBAdapter, private payment: PaymentAdapter) {}
 
-	// Create order in DB
 	async createOrder(order: Order): Promise<Order> {
 		order.status = "pending";
-		order.createdAt = new Date();
+		order.createdAt = Date.now();
 		return this.db.createOrder(order);
 	}
 
-	// Get order by ID
 	async getOrder(id: string): Promise<Order | null> {
 		return this.db.getOrder(id);
 	}
 
-	// Process payment for an order
+	async getAllOrders(limit?: number, startAfterId?: string): Promise<Order[]> {
+		return this.db.getAllOrders(limit, startAfterId); // Paginated fetch
+	}
+
+	async updateOrder(id: string, update: Partial<Order>): Promise<Order | null> {
+		return this.db.updateOrder(id, update);
+	}
+
+	async deleteOrder(id: string): Promise<void> {
+		await this.db.deleteOrder(id);
+	}
+
 	async payOrder(orderId: string, source: string): Promise<Order | null> {
 		const order = await this.db.getOrder(orderId);
 		if (!order) return null;
@@ -25,7 +34,7 @@ export class OrderService {
 		const paymentResult = await this.payment.processPayment(order.total, source);
 		if (paymentResult.success) {
 			order.status = "paid";
-			await this.db.createOrder(order); // overwrite
+			await this.db.createOrder(order); // overwrite in DB
 		}
 
 		return order;

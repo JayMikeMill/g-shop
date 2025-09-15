@@ -28,4 +28,4 @@ dist-ssr
 
 # Backend environment variables
 backend/.env
-.vercel
+backend/src/config/firebase/NailStoreFirebaseServiceAccount.json

@@ -6,7 +6,7 @@ const app = express();
 app.use(bodyParser.json());
 
 // Mount all API routes
-app.use("/api", routes);
+app.use("/api/v1", routes);
 
 // Start server
 const PORT = process.env.PORT || 5000;

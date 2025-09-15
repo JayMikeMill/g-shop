@@ -3,12 +3,13 @@ import { ShippingInfo } from "./shipping-info";
 import { PaymentInfo } from "./payment-info";
 
 export type Order = {
+	id: string;
 	userId: string;
 	status: OrderStatus;
 	createdAt: number; // Unix TimeStamp
     updatedAt: number; // Unix TimeStamp
 	products: StoreItem[];
-	totalAmount: number; // cents
+	total: number; // cents
 	paymentInfo: PaymentInfo;
 	shippingInfo: ShippingInfo;
 	notes?: string;
