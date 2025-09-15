@@ -1,5 +1,5 @@
 import { Product } from "@models/product";
-import { DBAdapter } from "@adapters/db/db-interface";
+import { DBAdapter } from "@adapters/db/db-adapter";
 
 export class ProductService {
 	constructor(private db: DBAdapter) {}

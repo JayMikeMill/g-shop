@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { UserService } from "@services/user-service";
-import { FirebaseDB } from "@adapters/db/firebase-db";
-import { FirebaseAuth } from "@adapters/auth/firebase-auth";
+import { FirebaseDBAdapter } from "@adapters/db/firebase-db-adapter";
+import { FirebaseAuthAdapter } from "@adapters/auth/firebase-auth-adapter";
 import crypto from "crypto";
 
-const db = new FirebaseDB();
-const auth = new FirebaseAuth();
+const db = new FirebaseDBAdapter();
+const auth = new FirebaseAuthAdapter();
 const userService = new UserService(db, auth);
 
 // Create user (register)

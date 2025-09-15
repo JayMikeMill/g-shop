@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import { AuthService } from "@services/auth-service";
-import { FirebaseAuth } from "@adapters/auth/firebase-auth";
+import { FirebaseAuthAdapter } from "@adapters/auth/firebase-auth-adapter";
 
 
 // Create the adapter
-const firebaseAdapter = new FirebaseAuth();
+const firebaseAdapter = new FirebaseAuthAdapter();
 
 // Inject it into AuthService
 const authService = new AuthService(firebaseAdapter);

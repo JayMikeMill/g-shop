@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { createOrder, getOrder, getAllOrders, 
-    updateOrder, deleteOrder, payOrder } from "@controllers/order-controller";
+    updateOrder, deleteOrder } from "@controllers/order-controller";
 
 const router = Router();
 
@@ -18,8 +18,5 @@ router.put("/:id", updateOrder);
 
 // Delete order by ID
 router.delete("/:id", deleteOrder);
-
-// Pay for an order
-router.post("/:orderId/pay", payOrder);
 
 export default router;

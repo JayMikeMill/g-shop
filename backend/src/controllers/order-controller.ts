@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { FirebaseDB } from "@adapters/db/firebase-db";
-import { SquarePayment } from "@adapters/payment/square-payment";
+import { FirebaseDBAdapter } from "@adapters/db/firebase-db-adapter";
+import { SquarePaymentAdapter } from "@adapters/payment/square-payment-adapter";
 import { OrderService } from "@services/order-service";
 
-const db = new FirebaseDB();
-const payment = new SquarePayment();
+const db = new FirebaseDBAdapter();
+const payment = new SquarePaymentAdapter();
 const orderService = new OrderService(db, payment);
 
 // Create order
@@ -56,19 +56,6 @@ export const deleteOrder = async (req: Request, res: Response) => {
 	try {
 		await orderService.deleteOrder(req.params.id);
 		res.json({ message: "Order deleted" });
-	} catch (err: any) {
-		res.status(500).json({ error: err.message });
-	}
-};
-
-// Pay for order
-export const payOrder = async (req: Request, res: Response) => {
-	try {
-		const { orderId } = req.params;
-		const { source } = req.body;
-		const order = await orderService.payOrder(orderId, source);
-		if (!order) return res.status(404).json({ error: "Order not found" });
-		res.json(order);
 	} catch (err: any) {
 		res.status(500).json({ error: err.message });
 	}

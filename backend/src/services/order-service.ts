@@ -1,6 +1,6 @@
 import { Order } from "@models/order";
-import { DBAdapter } from "@adapters/db/db-interface";
-import { PaymentAdapter } from "@adapters/payment/payment-interface";
+import { DBAdapter } from "@adapters/db/db-adapter";
+import { PaymentAdapter } from "@adapters/payment/payment-adapter";
 
 export class OrderService {
 	constructor(private db: DBAdapter, private payment: PaymentAdapter) {}
@@ -25,18 +25,5 @@ export class OrderService {
 
 	async deleteOrder(id: string): Promise<void> {
 		await this.db.deleteOrder(id);
-	}
-
-	async payOrder(orderId: string, source: string): Promise<Order | null> {
-		const order = await this.db.getOrder(orderId);
-		if (!order) return null;
-
-		const paymentResult = await this.payment.processPayment(order.total, source);
-		if (paymentResult.success) {
-			order.status = "paid";
-			await this.db.createOrder(order); // overwrite in DB
-		}
-
-		return order;
 	}
 }

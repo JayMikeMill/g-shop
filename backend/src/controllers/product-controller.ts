@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { ProductService } from "@services/product-service";
-import { FirebaseDB } from "@adapters/db/firebase-db";
+import { FirebaseDBAdapter } from "@adapters/db/firebase-db-adapter";
 
-const db = new FirebaseDB();
+const db = new FirebaseDBAdapter();
 const productService = new ProductService(db);
 
 // Create product

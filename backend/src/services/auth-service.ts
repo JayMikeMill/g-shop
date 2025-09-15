@@ -1,5 +1,5 @@
 // @services/authService.ts
-import { AuthAdapter } from "@adapters/auth/auth-interface";
+import { AuthAdapter } from "@adapters/auth/auth-adapter";
 import { User } from "@models/user";
 
 export class AuthService {

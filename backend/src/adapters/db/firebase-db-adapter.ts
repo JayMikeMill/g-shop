@@ -1,10 +1,10 @@
 import { User } from "@models/user";
 import { Product } from "@models/product";
 import { Order } from "@models/order";
-import { DBAdapter } from "@adapters/db/db-interface";
+import { DBAdapter } from "@adapters/db/db-adapter";
 import { db } from "@config/firebase/firebase-admin";
 
-export class FirebaseDB implements DBAdapter {
+export class FirebaseDBAdapter implements DBAdapter {
 
 	// ---------- USERS ----------
 	async createUser(user: User): Promise<User> {

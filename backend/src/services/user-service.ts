@@ -1,6 +1,6 @@
 import { User } from "@models/user";
-import { DBAdapter } from "@adapters/db/db-interface";
-import { AuthAdapter } from "@adapters/auth/auth-interface";
+import { DBAdapter } from "@adapters/db/db-adapter";
+import { AuthAdapter } from "@adapters/auth/auth-adapter";
 
 export class UserService {
 	constructor(private db: DBAdapter, private auth: AuthAdapter) {}

@@ -1,10 +1,8 @@
-import { AuthAdapter } from "./auth-interface";
+import { AuthAdapter } from "./auth-adapter";
 import { User } from "@models/user";
-import { getAuth } from "firebase-admin/auth";
+import { auth } from "@config/firebase/firebase-admin";
 
-const auth = getAuth();
-
-export class FirebaseAuth implements AuthAdapter {
+export class FirebaseAuthAdapter implements AuthAdapter {
 	async register(user: User, password: string): Promise<User> {
 		const record = await auth.createUser({ uid: user.id, email: user.email, password });
 		return { ...user, id: record.uid };
