@@ -7,7 +7,7 @@ import { FirebaseAuthAdapter } from "@adapters/auth/firebase-auth-adapter";
 const firebaseAdapter = new FirebaseAuthAdapter();
 
 // Inject it into AuthService
-const authService = new AuthService(firebaseAdapter);
+export const authService = new AuthService(firebaseAdapter);
 
 export const register = async (req: Request, res: Response) => {
 	try {

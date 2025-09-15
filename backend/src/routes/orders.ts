@@ -1,22 +1,20 @@
 import { Router } from "express";
-import { createOrder, getOrder, getAllOrders, 
-    updateOrder, deleteOrder } from "@controllers/order-controller";
+import { createOrder, getOrder, getAllOrders, updateOrder, deleteOrder } from "@controllers/order-controller";
+import { requireAuth, requireAdmin, requireOwner } from "@middleware/authorization";
 
 const router = Router();
 
-// Create a new order
-router.post("/", createOrder);
-
-// Get an order by ID
+// Public: Anyone can view all orders or a specific order (customize as needed)
+router.get("/", getAllOrders);
 router.get("/:id", getOrder);
 
-// Get all orders (pagination: ?limit=10&startAfterId=xyz)
-router.get("/", getAllOrders);
+// Authenticated users: Only logged-in users can create orders
+router.post("/", requireAuth, createOrder);
 
-// Update order by ID
-router.put("/:id", updateOrder);
+// Only the owner can update their order, or admin (add admin logic in controller if needed)
+router.put("/:id", requireAuth, requireOwner, updateOrder);
 
-// Delete order by ID
-router.delete("/:id", deleteOrder);
+// Only admin can delete orders
+router.delete("/:id", requireAuth, requireAdmin, deleteOrder);
 
 export default router;

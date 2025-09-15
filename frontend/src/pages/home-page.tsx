@@ -1,23 +1,27 @@
 import ProductList from "@components/product-list";
-import { fetchProductsFromFirebase } from "@data/firebase-products";
-import { useEffect, useState } from "react";
-import type { Product } from "@models/product";
 import ProductLoader from "@components/product-loader";
 import "@css/home-page.css";
+import { useEffect, useState } from "react";
+import { useProducts } from "@contexts/products-context";
+import type { Product } from "@models/product";
 
 export default function HomePage() {
+  const { getAllProducts } = useProducts(); // Use the context hook
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getProducts = async () => {
-      const firebaseProducts = await fetchProductsFromFirebase();
-      setProducts(firebaseProducts);
-      setLoading(false);
+    // Fetch products using the context, with a limit (e.g., 20)
+    const fetch = async () => {
+      try {
+        const result = await getAllProducts(20); // You can add a cursor for pagination if needed
+        setProducts(result);
+      } finally {
+        setLoading(false);
+      }
     };
-
-    getProducts();
-  }, []);
+    fetch();
+  }, [getAllProducts]);
 
   return (
     <div className="home-page-container">
