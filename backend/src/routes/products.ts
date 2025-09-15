@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createProduct, getProduct, getAllProducts, updateProduct, deleteProduct } from "@controllers/product-controller";
+import { createProduct, getProduct, getProducts, updateProduct, deleteProduct } from "@controllers/product-controller";
 import { requireAuth, requireAdmin } from "@middleware/authorization";
 
 const router = Router();
@@ -11,6 +11,6 @@ router.delete("/:id", requireAuth, requireAdmin, deleteProduct);
 
 // Public: Anyone can view products
 router.get("/:id", getProduct);
-router.get("/", getAllProducts);
+router.get("/", getProducts);
 
 export default router;

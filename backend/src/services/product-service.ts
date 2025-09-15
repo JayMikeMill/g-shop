@@ -10,8 +10,8 @@ export class ProductService {
 		return db.getProduct(id);
 	}
 
-	static async getAllProducts(limit?: number, startAfterId?: string): Promise<Product[]> {
-		return db.getAllProducts(limit, startAfterId); // Paginated fetch
+	static async getProducts(options?: { limit?: number; startAfterId?: string; sortBy?: string; sortOrder?: "asc" | "desc" }): Promise<Product[]> {
+		return db.getProducts(options);
 	}
 
 	static async updateProduct(id: string, update: Partial<Product>): Promise<Product | null> {

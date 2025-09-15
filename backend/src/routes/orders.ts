@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { createOrder, getOrder, getAllOrders, updateOrder, deleteOrder } from "@controllers/order-controller";
+import { createOrder, getOrder, getOrders, updateOrder, deleteOrder } from "@controllers/order-controller";
 import { requireAuth, requireAdmin, requireOwner } from "@middleware/authorization";
 
 const router = Router();
 
 // Only admin can view all orders
-router.get("/", requireAuth, requireAdmin, getAllOrders);
+router.get("/", requireAuth, requireAdmin, getOrders);
 
 // Only the owner or admin can view a specific order
 router.get("/:id", requireAuth, (req, res, next) => {

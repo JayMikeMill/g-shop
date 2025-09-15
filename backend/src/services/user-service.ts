@@ -12,8 +12,8 @@ export class UserService {
 		return db.getUser(id);
 	}
 
-	static async getAllUsers(limit?: number, startAfterId?: string): Promise<User[]> {
-		return db.getAllUsers(limit, startAfterId); // Paginated fetch
+	static async getUsers(options?: { limit?: number; startAfterId?: string; sortBy?: string; sortOrder?: "asc" | "desc" }): Promise<User[]> {
+		return db.getUsers(options);
 	}
 
 	static async updateUser(id: string, update: Partial<User>): Promise<User | null> {

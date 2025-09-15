@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { User } from "@models/user"; // Import your User type
-import { authService } from "@controllers/auth-controller"; // Import the shared AuthService instance
+import { AuthService } from "@services/auth-service" // Import the shared AuthService instance
 
 // Extend Express Request type to include 'user' of your User type
 declare module "express-serve-static-core" {
@@ -22,7 +22,7 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
   const token = authHeader.split(" ")[1];
   try {
     // Use the controller's AuthService to verify the token
-    const user = await authService.verify(token);
+    const user = await AuthService.verify(token);
     if (!user) {
       return res.status(401).json({ error: "Invalid or expired token" });
     }

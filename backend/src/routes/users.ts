@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createUser, getUser, getAllUsers, 
+import { createUser, getUser, getUsers, 
     updateUser, deleteUser } from "@controllers/user-controller";
 import { requireAuth, requireAdmin, requireOwner } from "@middleware/authorization";
 
@@ -20,7 +20,7 @@ router.put("/:id", requireAuth, (req, res, next) => {
 }, updateUser);
 
 // Only admin can view all users or delete users
-router.get("/", requireAuth, requireAdmin, getAllUsers);
+router.get("/", requireAuth, requireAdmin, getUsers);
 router.delete("/:id", requireAuth, requireAdmin, deleteUser);
 
 export default router;

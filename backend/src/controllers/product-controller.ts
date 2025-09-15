@@ -23,11 +23,14 @@ export const getProduct = async (req: Request, res: Response) => {
 };
 
 // Get all products (with pagination)
-export const getAllProducts = async (req: Request, res: Response) => {
+export const getProducts = async (req: Request, res: Response) => {
 	try {
-		const limit = parseInt(req.query.limit as string) || 10;
-		const startAfterId = req.query.startAfterId as string | undefined;
-		const products = await ProductService.getAllProducts(limit, startAfterId);
+		const options: any = {};
+		if (req.query.limit) options.limit = parseInt(req.query.limit as string);
+		if (req.query.startAfterId) options.startAfterId = req.query.startAfterId as string;
+		if (req.query.sortBy) options.sortBy = req.query.sortBy as string;
+		if (req.query.sortOrder) options.sortOrder = req.query.sortOrder as "asc" | "desc";
+		const products = await ProductService.getProducts(options);
 		res.json(products);
 	} catch (err: any) {
 		res.status(500).json({ error: err.message });

@@ -12,8 +12,8 @@ export class OrderService {
 		return db.getOrder(id);
 	}
 
-	static async getAllOrders(limit?: number, startAfterId?: string): Promise<Order[]> {
-		return db.getAllOrders(limit, startAfterId); // Paginated fetch
+	static async getOrders(options?: { limit?: number; startAfterId?: string; sortBy?: string; sortOrder?: "asc" | "desc" }): Promise<Order[]> {
+		return db.getOrders(options);
 	}
 
 	static async updateOrder(id: string, update: Partial<Order>): Promise<Order | null> {
