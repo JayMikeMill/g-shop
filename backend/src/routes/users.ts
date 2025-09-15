@@ -1,22 +1,26 @@
 import { Router } from "express";
 import { createUser, getUser, getAllUsers, 
     updateUser, deleteUser } from "@controllers/user-controller";
+import { requireAuth, requireAdmin, requireOwner } from "@middleware/authorization";
 
 const router = Router();
 
-// Create a new user
+// Anyone can register
 router.post("/", createUser);
 
-// Get a user by ID
-router.get("/:id", getUser);
+// Only the user themselves OR an admin can view or update a user
+router.get("/:id", requireAuth, (req, res, next) => {
+  if (req.user?.role === "admin") return next();
+  return requireOwner(req, res, next);
+}, getUser);
 
-// Get all users (pagination: ?limit=10&startAfterId=xyz)
-router.get("/", getAllUsers);
+router.put("/:id", requireAuth, (req, res, next) => {
+  if (req.user?.role === "admin") return next();
+  return requireOwner(req, res, next);
+}, updateUser);
 
-// Update user by ID
-router.put("/:id", updateUser);
-
-// Delete user by ID
-router.delete("/:id", deleteUser);
+// Only admin can view all users or delete users
+router.get("/", requireAuth, requireAdmin, getAllUsers);
+router.delete("/:id", requireAuth, requireAdmin, deleteUser);
 
 export default router;

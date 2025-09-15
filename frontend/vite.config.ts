@@ -10,6 +10,7 @@ export default defineConfig({
       "@pages": path.resolve(__dirname, "./src/pages"),
       "@components": path.resolve(__dirname, "./src/components"),
       "@contexts": path.resolve(__dirname, "./src/contexts"),
+      "@services": path.resolve(__dirname, "./src/services"),
       "@data": path.resolve(__dirname, "./src/data"),
       "@css": path.resolve(__dirname, "./src/css"),
       "@models": path.resolve(__dirname, "../shared/models"),

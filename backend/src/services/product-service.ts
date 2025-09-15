@@ -1,29 +1,27 @@
 import { Product } from "@models/product";
-import { DBAdapter } from "@adapters/db/db-adapter";
+import { db } from "@config/adapters";
 
 export class ProductService {
-	constructor(private db: DBAdapter) {}
-
-	async createProduct(product: Product): Promise<Product> {
-		return this.db.createProduct(product);
+	static async createProduct(product: Product): Promise<Product> {
+		return db.createProduct(product);
 	}
 
-	async getProduct(id: string): Promise<Product | null> {
-		return this.db.getProduct(id);
+	static async getProduct(id: string): Promise<Product | null> {
+		return db.getProduct(id);
 	}
 
-	async getAllProducts(limit?: number, startAfterId?: string): Promise<Product[]> {
-		return this.db.getAllProducts(limit, startAfterId); // Paginated fetch
+	static async getAllProducts(limit?: number, startAfterId?: string): Promise<Product[]> {
+		return db.getAllProducts(limit, startAfterId); // Paginated fetch
 	}
 
-	async updateProduct(id: string, update: Partial<Product>): Promise<Product | null> {
-		return this.db.updateProduct(id, update);
+	static async updateProduct(id: string, update: Partial<Product>): Promise<Product | null> {
+		return db.updateProduct(id, update);
 	}
 
-	async deleteProduct(id: string): Promise<boolean> {
-		const existing = await this.db.getProduct(id);
+	static async deleteProduct(id: string): Promise<boolean> {
+		const existing = await db.getProduct(id);
 		if (!existing) return false;
-		await this.db.deleteProduct(id);
+		await db.deleteProduct(id);
 		return true;
 	}
 }

@@ -1,23 +1,21 @@
 // @services/authService.ts
-import { AuthAdapter } from "@adapters/auth/auth-adapter";
+import { auth } from "@config/adapters";
 import { User } from "@models/user";
 
 export class AuthService {
-	constructor(private authAdapter: AuthAdapter) {} // <-- pass adapter in
-
-	async register(user: User, password: string): Promise<User> {
-		return this.authAdapter.register(user, password);
+	static async register(user: User, password: string): Promise<User> {
+		return auth.register(user, password);
 	}
 
-	async login(email: string, password: string) {
-		return this.authAdapter.login(email, password);
+	static async login(email: string, password: string) {
+		return auth.login(email, password);
 	}
 
-	async verify(token: string): Promise<User | null> {
-		return this.authAdapter.verifyToken(token);
+	static async verify(token: string): Promise<User | null> {
+		return auth.verifyToken(token);
 	}
 
-	async logout(userId: string) {
-		return this.authAdapter.logout(userId);
+	static async logout(userId: string) {
+		return auth.logout(userId);
 	}
 }

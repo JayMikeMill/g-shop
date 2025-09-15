@@ -1,5 +1,5 @@
 import axios from "axios";
-const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:5000/api/v1";
+const API_BASE = import.meta.env.VITE_APP_API_URL || "http://localhost:5000/api/v1";
 
 export const getAllUsers = async (limit: number, cursor?: string) => {
   const res = await axios.get(`${API_BASE}/users`, { params: { limit, cursor } });

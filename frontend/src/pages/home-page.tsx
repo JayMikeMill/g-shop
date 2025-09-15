@@ -13,9 +13,8 @@ export default function HomePage() {
   useEffect(() => {
     // Fetch products using the context, with a limit (e.g., 20)
     const fetch = async () => {
-      try {
-        const result = await getAllProducts(20); // You can add a cursor for pagination if needed
-        setProducts(result);
+      try { // You can add a cursor for pagination if needed
+        const result = await getAllProducts(20);
       } finally {
         setLoading(false);
       }

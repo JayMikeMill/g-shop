@@ -1,15 +1,12 @@
-import express from "express";
-import bodyParser from "body-parser";
-import routes from "@routes/index";
+import http from "http";
+import app from "./app";
 
-const app = express();
-app.use(bodyParser.json());
+let currentApp = app;
 
-// Mount all API routes
-app.use("/api/v1", routes);
+const PORT = process.env.SERVER_PORT || 5000;
 
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const server = http.createServer((req, res) => currentApp(req, res));
+
+server.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`);
 });

@@ -1,22 +1,16 @@
 import { Router } from "express";
-import { createProduct, getProduct, getAllProducts, 
-    updateProduct, deleteProduct } from "@controllers/product-controller";
+import { createProduct, getProduct, getAllProducts, updateProduct, deleteProduct } from "@controllers/product-controller";
+import { requireAuth, requireAdmin } from "@middleware/authorization";
 
 const router = Router();
 
-// Create a new product
-router.post("/", createProduct);
+// Only admin can create, update, or delete products
+router.post("/", requireAuth, requireAdmin, createProduct);
+router.put("/:id", requireAuth, requireAdmin, updateProduct);
+router.delete("/:id", requireAuth, requireAdmin, deleteProduct);
 
-// Get a product by ID
+// Public: Anyone can view products
 router.get("/:id", getProduct);
-
-// Get all products (pagination: ?limit=10&startAfterId=xyz)
 router.get("/", getAllProducts);
-
-// Update product by ID
-router.put("/:id", updateProduct);
-
-// Delete product by ID
-router.delete("/:id", deleteProduct);
 
 export default router;

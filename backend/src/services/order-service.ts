@@ -1,29 +1,26 @@
 import { Order } from "@models/order";
-import { DBAdapter } from "@adapters/db/db-adapter";
-import { PaymentAdapter } from "@adapters/payment/payment-adapter";
+import { db } from "@config/adapters";
 
 export class OrderService {
-	constructor(private db: DBAdapter, private payment: PaymentAdapter) {}
-
-	async createOrder(order: Order): Promise<Order> {
+	static async createOrder(order: Order): Promise<Order> {
 		order.status = "pending";
 		order.createdAt = Date.now();
-		return this.db.createOrder(order);
+		return db.createOrder(order);
 	}
 
-	async getOrder(id: string): Promise<Order | null> {
-		return this.db.getOrder(id);
+	static async getOrder(id: string): Promise<Order | null> {
+		return db.getOrder(id);
 	}
 
-	async getAllOrders(limit?: number, startAfterId?: string): Promise<Order[]> {
-		return this.db.getAllOrders(limit, startAfterId); // Paginated fetch
+	static async getAllOrders(limit?: number, startAfterId?: string): Promise<Order[]> {
+		return db.getAllOrders(limit, startAfterId); // Paginated fetch
 	}
 
-	async updateOrder(id: string, update: Partial<Order>): Promise<Order | null> {
-		return this.db.updateOrder(id, update);
+	static async updateOrder(id: string, update: Partial<Order>): Promise<Order | null> {
+		return db.updateOrder(id, update);
 	}
 
-	async deleteOrder(id: string): Promise<void> {
-		await this.db.deleteOrder(id);
+	static async deleteOrder(id: string): Promise<void> {
+		await db.deleteOrder(id);
 	}
 }
