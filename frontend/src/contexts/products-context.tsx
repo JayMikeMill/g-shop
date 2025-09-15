@@ -1,75 +1,53 @@
 // React imports
 import React, { createContext, useContext } from "react";
+import * as productService from "@services/product-service";
 
 // Product type definition shared across app
 import type { Product } from "@models/product";
-
-// Firebase wrapper functions for product operations
-// These functions handle actual Firebase calls (Firestore + Storage)
-import {
-	fetchProductsFromFirebase,
-	addProductToFirebase,
-	deleteProductFromFirebase,
-	editProductInFirebase,
-} from "../data/firebase-products";
 
 // ----------------------
 // Interface for the context
 // ----------------------
 // This defines what functions and data the context will provide to any component
-interface ProductsInterface {
+interface ProductsContextType {
 	// Fetch all products from Firebase
-	fetchProducts: () => Promise<Product[]>;
+	getAllProducts: (limit: number, cursor?: string) => Promise<Product[]>;
 
 	// Add a product, including uploading an image
-	addProduct: (product: Omit<Product, "id" | "images">, imageFiles: File[]) => Promise<void>;
+	createProduct: (product: any) => Promise<Product>;
 
 	// Delete a product and its associated image
-	deleteProduct: (product: Product) => Promise<void>;
+	deleteProduct: (id: string) => Promise<any>;
 
 	// Edit a product, optionally with a new image
-	editProduct: (product: Product, imageFiles: File[]) => Promise<void>;
+	updateProduct: (id: string, product: any) => Promise<Product>;
+
+	// Get a single product by ID
+	getProduct: (id: string) => Promise<Product>;
 }
 
 // ----------------------
 // Create the context
 // ----------------------
 // Initially null; will be provided by the ProductManagerProvider
-const ProductsContext = createContext<ProductsInterface | null>(null);
+const ProductsContext = createContext<ProductsContextType | null>(null);
 
 // ----------------------
 // ProductManagerProvider component
 // ----------------------
 // Wrap parts of the app where you want to use product functions
 export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-
-	// Function to fetch products
-	const fetchProducts = async (): Promise<Product[]> => {
-		// Call the Firebase wrapper to get all products
-		return await fetchProductsFromFirebase();
-	};
-
-	// Function to add a product
-	const addProduct = async (product: Omit<Product, "id" | "images">, imageFiles: File[]) => {
-		// Call the Firebase wrapper to add product and upload image
-		await addProductToFirebase(product, imageFiles);
-	};
-
-	// Function to delete a product
-	const deleteProduct = async (product: Product) => {
-		// Call the Firebase wrapper to delete the product and its image
-		await deleteProductFromFirebase(product);
-	};
-
-	// Function to edit a product
-	const editProduct = async (product: Product, imageFiles: File[]) => {
-		// Call the Firebase wrapper to edit the product
-		await editProductInFirebase(product, imageFiles);
-	};
-
-	// Provide these functions to all child components via context
+	// All functions simply wrap the service and propagate errors
 	return (
-		<ProductsContext.Provider value={{ fetchProducts, addProduct, deleteProduct, editProduct }}>
+		<ProductsContext.Provider
+			value={{
+				getAllProducts: productService.getAllProducts,
+				createProduct: productService.createProduct,
+				getProduct: productService.getProduct,
+				updateProduct: productService.updateProduct,
+				deleteProduct: productService.deleteProduct,
+			}}
+		>
 			{children}
 		</ProductsContext.Provider>
 	);
@@ -79,11 +57,11 @@ export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 // Custom hook to access product functions
 // ----------------------
 // Makes it easy to use the context in any component
-export const useProducts = (): ProductsInterface => {
-	const context = useContext(ProductsContext);
+export const useProducts = () => {
+	const ctx = useContext(ProductsContext);
 
 	// Safety check: ensure the hook is used within the provider
-	if (!context) throw new Error("useProductManager must be inside ProductManagerProvider");
+	if (!ctx) throw new Error("useProducts must be used within ProductsProvider");
 
-	return context;
+	return ctx;
 };

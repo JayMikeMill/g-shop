@@ -4,7 +4,7 @@
 // - useEffect: to run side effects like listening to auth state changes
 // - useState: to store component or context state
 // - ReactNode: type for children (any valid React elements)
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import React, { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 // Firebase type for the logged-in user
 import { type User } from "firebase/auth";
