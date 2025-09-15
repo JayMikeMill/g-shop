@@ -4,8 +4,8 @@ import { auth } from "@config/firebase/firebase-admin";
 
 export class FirebaseAuthAdapter implements AuthAdapter {
 	async register(user: User, password: string): Promise<User> {
-		const record = await auth.createUser({ uid: user.id, email: user.email, password });
-		return { ...user, id: record.uid };
+		const record = await auth.createUser({ email: user.email, password });
+		return { ...user, id: record.uid } as User;
 	}
 
 	// Stub login to satisfy interface

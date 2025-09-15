@@ -1,7 +1,9 @@
+import { Address } from "./shipping-info";
+
 export interface User {
 	id: string;
 	name: string;
 	email: string;
-	passwordHash?: string; // Only for internal storage
-	role?: "user" | "admin";
+	address?: Address
+	role?: "user" | "staff" | "admin";
 }

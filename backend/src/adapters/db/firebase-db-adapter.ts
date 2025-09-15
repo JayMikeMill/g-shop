@@ -6,19 +6,6 @@ import { DBAdapter } from "@adapters/db/db-adapter";
 import { db } from "@config/firebase/firebase-admin";
 
 export class FirebaseDBAdapter implements DBAdapter {
-	// Aliases for interface compatibility
-	async getAllUsers(limit?: number, startAfterId?: string): Promise<User[]> {
-		return this.getUsers({ limit, startAfterId });
-	}
-
-	async getAllProducts(limit?: number, startAfterId?: string): Promise<Product[]> {
-		return this.getProducts({ limit, startAfterId });
-	}
-
-	async getAllOrders(limit?: number, startAfterId?: string): Promise<Order[]> {
-		return this.getOrders({ limit, startAfterId });
-	}
-
 	// ---------- USERS ----------
 	async createUser(user: User): Promise<User> {
 		await db.collection("users").doc(user.id).set(user);
@@ -30,14 +17,15 @@ export class FirebaseDBAdapter implements DBAdapter {
 		return docSnap.exists ? (docSnap.data() as User) : null;
 	}
 
-	async getUsers(options?: { limit?: number; startAfterId?: string; sortBy?: string; sortOrder?: "asc" | "desc" }): Promise<User[]> {
-		const { limit, startAfterId, sortBy, sortOrder } = options || {};
+	async getUsers(options?: { limit?: number; page?: number; sortBy?: string; sortOrder?: "asc" | "desc" }): Promise<User[]> {
+		const { limit, page, sortBy, sortOrder } = options || {};
 		let query: FirebaseFirestore.Query = db.collection("users");
 		if (sortBy) {
 			query = query.orderBy(sortBy, sortOrder || "asc");
 		}
-		if (startAfterId !== undefined) {
-			query = query.startAfter(startAfterId);
+		if (page !== undefined && limit) {
+			// Skip to the correct page using offset
+			query = query.offset(page * limit);
 		}
 		if (limit) {
 			query = query.limit(limit);
@@ -69,14 +57,14 @@ export class FirebaseDBAdapter implements DBAdapter {
 		return docSnap.exists ? (docSnap.data() as Product) : null;
 	}
 
-	async getProducts(options?: { limit?: number; startAfterId?: string; sortBy?: string; sortOrder?: "asc" | "desc" }): Promise<Product[]> {
-		const { limit, startAfterId, sortBy, sortOrder } = options || {};
+	async getProducts(options?: { limit?: number; page?: number; sortBy?: string; sortOrder?: "asc" | "desc" }): Promise<Product[]> {
+		const { limit, page, sortBy, sortOrder } = options || {};
 		let query: FirebaseFirestore.Query = db.collection("products");
 		if (sortBy) {
 			query = query.orderBy(sortBy, sortOrder || "asc");
 		}
-		if (startAfterId !== undefined) {
-			query = query.startAfter(startAfterId);
+		if (page !== undefined && limit) {
+			query = query.offset(page * limit);
 		}
 		if (limit) {
 			query = query.limit(limit);
@@ -108,14 +96,14 @@ export class FirebaseDBAdapter implements DBAdapter {
 		return docSnap.exists ? (docSnap.data() as Order) : null;
 	}
 
-	async getOrders(options?: { limit?: number; startAfterId?: string; sortBy?: string; sortOrder?: "asc" | "desc" }): Promise<Order[]> {
-		const { limit, startAfterId, sortBy, sortOrder } = options || {};
+	async getOrders(options?: { limit?: number; page?: number; sortBy?: string; sortOrder?: "asc" | "desc" }): Promise<Order[]> {
+		const { limit, page, sortBy, sortOrder } = options || {};
 		let query: FirebaseFirestore.Query = db.collection("orders");
 		if (sortBy) {
 			query = query.orderBy(sortBy, sortOrder || "asc");
 		}
-		if (startAfterId !== undefined) {
-			query = query.startAfter(startAfterId);
+		if (page !== undefined && limit) {
+			query = query.offset(page * limit);
 		}
 		if (limit) {
 			query = query.limit(limit);

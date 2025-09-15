@@ -12,7 +12,7 @@ export class OrderService {
 		return db.getOrder(id);
 	}
 
-	static async getOrders(options?: { limit?: number; startAfterId?: string; sortBy?: string; sortOrder?: "asc" | "desc" }): Promise<Order[]> {
+	static async getOrders(options?: { limit?: number; page?: number; sortBy?: string; sortOrder?: "asc" | "desc" }): Promise<Order[]> {
 		return db.getOrders(options);
 	}
 

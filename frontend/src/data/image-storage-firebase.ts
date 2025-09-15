@@ -1,6 +1,6 @@
 // src/data/image-storage-firebase.ts
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
-import { storage } from "@data/firebase-api";
+import { storage } from "@services/firebase/firebase-api";
 import type { ImageStorageProvider } from "@data/image-storage-interface";
 
 export const FirebaseStorageProvider: ImageStorageProvider = {

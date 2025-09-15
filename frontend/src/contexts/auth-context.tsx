@@ -1,5 +1,8 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import * as authService from "@services/auth-service";
+
+import "@services/firebase/firebase-api"
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
+import { useApi } from "@hooks/use-api";
 
 // This is the user type returned by your backend
 interface AuthUser {
@@ -26,6 +29,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem("token"));
   const [loading, setLoading] = useState(true);
 
+  const { getUsers, verifyToken } = useApi();
+
   // On mount, verify token if present
   useEffect(() => {
     if (token) {
@@ -36,27 +41,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line
   }, []);
 
-  // Login using backend API, store token and user in state/localStorage
+  // Login using Firebase client SDK, then verify with backend
   const login = async (email: string, password: string) => {
     setLoading(true);
     try {
-      const res = await authService.login({ email, password });
-      setToken(res.token);
-      setUser(res.user);
-      localStorage.setItem("token", res.token);
+      const auth = getAuth();
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const idToken = await userCredential.user.getIdToken();
+      localStorage.setItem("token", idToken);
+      setToken(idToken);
+      
+      // Now verify with backend to get user info
+      const verUser = await verifyToken();
+      setUser(verUser);
     } finally {
       setLoading(false);
     }
   };
 
-  // Register using backend API, store token and user in state/localStorage
+  // Register using Firebase client SDK, then verify with backend
   const register = async (name: string, email: string, password: string) => {
     setLoading(true);
     try {
-      const res = await authService.register({ name, email, password });
-      setToken(res.token);
+      const auth = getAuth();
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      // Optionally update displayName here if needed
+      const idToken = await userCredential.user.getIdToken();
+      localStorage.setItem("token", idToken);
+      setToken(idToken);
+
+      // Now verify with backend to get user info
+      const res = await verifyToken();
       setUser(res.user);
-      localStorage.setItem("token", res.token);
     } finally {
       setLoading(false);
     }
@@ -70,7 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null);
         return;
       }
-      const res = await authService.verifyToken(token);
+      const res = await verifyToken();
       setUser(res.user || null);
     } catch {
       setUser(null);
@@ -81,13 +97,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Logout using backend API, clear state and localStorage
+  // Logout using Firebase client SDK, clear state and localStorage
   const logout = async () => {
     setLoading(true);
     try {
-      if (token) {
-        await authService.logout(token);
-      }
+      const auth = getAuth();
+      await signOut(auth);
     } finally {
       setUser(null);
       setToken(null);

@@ -2,22 +2,21 @@ import { User } from "@models/user";
 import { db, auth } from "@config/adapters";
 
 export class UserService {
-	static async register(user: User, password: string): Promise<User> {
-		const createdUser = await auth.register(user, password);
-		await db.createUser(createdUser);
-		return createdUser;
+	static async createUser(user: User, password?: string): Promise<User> {
+		const userToCreate = password ? await auth.register(user, password) : user;
+		return db.createUser(userToCreate);
 	}
 
 	static async getUser(id: string): Promise<User | null> {
-		return db.getUser(id);
+		return db.getUser(id) as Promise<User | null>;
 	}
 
-	static async getUsers(options?: { limit?: number; startAfterId?: string; sortBy?: string; sortOrder?: "asc" | "desc" }): Promise<User[]> {
-		return db.getUsers(options);
+	static async getUsers(options?: { limit?: number; page?: number; sortBy?: string; sortOrder?: "asc" | "desc" }): Promise<User[]> {
+		return db.getUsers(options) as Promise<User[]>;
 	}
 
 	static async updateUser(id: string, update: Partial<User>): Promise<User | null> {
-		return db.updateUser(id, update);
+		return db.updateUser(id, update) as Promise<User | null>;
 	}
 
 	static async deleteUser(id: string): Promise<void> {

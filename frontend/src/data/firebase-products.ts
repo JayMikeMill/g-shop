@@ -2,7 +2,7 @@
 import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore";
 
 // Import initialized Firebase instances (db = Firestore, storage = Storage)
-import { db } from "@data/firebase-api";
+import { db } from "@services/firebase/firebase-api";
 
 // Choose which provider you want here
 import type { ImageStorageProvider } from "@data/image-storage-interface";

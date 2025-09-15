@@ -1,5 +1,5 @@
 export type ShippingInfo = {
-	address: ShippingAddress;
+	address: Address;
 	method: ShippingMethod;
 	carrier: ShippingCarrier;
 	trackingNumber?: string | null;
@@ -7,7 +7,7 @@ export type ShippingInfo = {
 	notes?: string;
 };
 
-export type ShippingAddress = {
+export type Address = {
 	firstName: string
 	lastName: string
 	email: string

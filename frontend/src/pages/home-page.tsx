@@ -1,12 +1,12 @@
 import ProductList from "@components/product-list";
 import ProductLoader from "@components/product-loader";
 import "@css/home-page.css";
+
 import { useEffect, useState } from "react";
-import { useProducts } from "@contexts/products-context";
 import type { Product } from "@models/product";
+import { getProducts } from "@services/product-service";
 
 export default function HomePage() {
-  const { getAllProducts } = useProducts(); // Use the context hook
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -14,13 +14,14 @@ export default function HomePage() {
     // Fetch products using the context, with a limit (e.g., 20)
     const fetch = async () => {
       try { // You can add a cursor for pagination if needed
-        const result = await getAllProducts(20);
+        const result = await getProducts({ limit: 20 });
+        setProducts(result);
       } finally {
         setLoading(false);
       }
     };
     fetch();
-  }, [getAllProducts]);
+  }, [getProducts]);
 
   return (
     <div className="home-page-container">

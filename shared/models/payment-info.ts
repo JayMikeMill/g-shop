@@ -1,4 +1,4 @@
-import { type ShippingAddress } from "./shipping-info";
+import { type Address } from "./shipping-info";
 
 export type PaymentInfo = {
     amount: number;
@@ -11,7 +11,7 @@ export type PaymentInfoSquare = {
     nonce: string;
     amount: number;
     orderItems: { name: string; price: number; quantity: number }[];
-    shipping: ShippingAddress;
+    shipping: Address;
 }
 
 const PaymentStatuses = {

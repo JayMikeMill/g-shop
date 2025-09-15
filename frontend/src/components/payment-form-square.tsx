@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 
 // Import shared types for shipping address and cart items
-import { type ShippingAddress } from "@models/shipping-info"
+import { type Address } from "@models/shipping-info"
 import type { StoreItem } from "@models/store-item"
 
 // Import component-specific CSS
@@ -27,7 +27,7 @@ declare global {
 interface SquarePaymentFormProps {
   total: number                  // Total amount to charge
   orderItems: StoreItem[]          // Items in the cart
-  shippingAddress: ShippingAddress
+  shippingAddress: Address
   setLoading: (loading: boolean) => void
   setMessage: (msg: string | null) => void
 }

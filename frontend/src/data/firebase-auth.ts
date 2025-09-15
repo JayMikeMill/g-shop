@@ -1,5 +1,5 @@
 // src/data/firebase-auth.ts
-import { auth } from "@data/firebase-api";
+import { auth } from "@services/firebase/firebase-api";
 import { signInWithEmailAndPassword, signOut, type User } from "firebase/auth";
 
 // Login function

@@ -10,7 +10,7 @@ export class ProductService {
 		return db.getProduct(id);
 	}
 
-	static async getProducts(options?: { limit?: number; startAfterId?: string; sortBy?: string; sortOrder?: "asc" | "desc" }): Promise<Product[]> {
+	static async getProducts(options?: { limit?: number; page?: number; sortBy?: string; sortOrder?: "asc" | "desc" }): Promise<Product[]> {
 		return db.getProducts(options);
 	}
 

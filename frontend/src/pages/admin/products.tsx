@@ -1,21 +1,25 @@
 // frontend/src/pages/admin/products.tsx
 import { useState, useMemo, useEffect } from "react";
-import { useProducts } from "@contexts/products-context";
+import { useAuth } from "@contexts/auth-context";
+import LoginDialog from "@components/login-dialog";
 import type { Product } from "@models/product";
 import AdminProductList from "@components/admin-product-list";
 import ProductDialog from "@components/product-dialog";
 import { useAdminPageHeader } from "@pages/admin/dashboard";
+import { getProducts, deleteProduct } from "@services/product-service";
 
 export default function Products() {
-  const { fetchProducts, deleteProduct } = useProducts();
+  const { user, loading: authLoading } = useAuth();
   const { setPageHeader } = useAdminPageHeader();
-
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-
   const [isAdding, setIsAdding] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+
+  if (!authLoading && !user) {
+    return <LoginDialog />;
+  }
 
   useEffect(() => {
     const headerContent = (
@@ -25,14 +29,13 @@ export default function Products() {
       </>
     );
     setPageHeader(headerContent);
-
     return () => setPageHeader(null);
   }, [isAdding, setPageHeader]);
 
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const fetchedProducts = await fetchProducts();
+      const fetchedProducts = await getProducts();
       setProducts(fetchedProducts);
       setError(null);
     } catch (err) {
@@ -54,7 +57,7 @@ export default function Products() {
 
   const handleDeleteProduct = async (product: Product) => {
     if (window.confirm(`Are you sure you want to delete ${product.name}?`)) {
-        await deleteProduct(product);
+        await deleteProduct(product.id);
         loadProducts();
     }
   };

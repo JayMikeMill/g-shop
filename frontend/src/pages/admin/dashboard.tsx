@@ -1,6 +1,7 @@
 // frontend/src/pages/admin/dashboard.tsx
 import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '@contexts/auth-context';
+import LoginDialog from '@components/login-dialog';
 import '@css/admin-dashboard.css';
 import { createContext, useState, useContext } from 'react';
 
@@ -13,9 +14,13 @@ const AdminPageHeaderContext = createContext({
 export const useAdminPageHeader = () => useContext(AdminPageHeaderContext);
 
 export default function AdminDashboard() {
-  const { logout } = useAuth();
-  // 2. State for the header
+  const { user, loading, logout } = useAuth();
   const [pageHeader, setPageHeader] = useState<React.ReactNode>(null);
+
+  // Only allow access if user is logged in
+  if (!loading && !user) {
+    return <LoginDialog />;
+  }
 
   return (
     <div className="admin-container">
@@ -29,7 +34,6 @@ export default function AdminDashboard() {
         <NavLink to="/admin/orders" className={({ isActive }) => `admin-button ${isActive ? 'active' : ''}`}>Orders</NavLink>
       </nav>
 
-      {/* 3. Render the page header here */}
       {pageHeader && (
         <header className="admin-page-header">
           {pageHeader}
@@ -37,7 +41,6 @@ export default function AdminDashboard() {
       )}
 
       <main className="admin-content">
-        {/* 4. Provide the setter to the children */}
         <AdminPageHeaderContext.Provider value={{ setPageHeader }}>
           <Outlet />
         </AdminPageHeaderContext.Provider>

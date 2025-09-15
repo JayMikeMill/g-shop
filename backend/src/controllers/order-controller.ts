@@ -28,7 +28,7 @@ export const getOrders = async (req: Request, res: Response) => {
 	try {
 		const options: any = {};
 		if (req.query.limit) options.limit = parseInt(req.query.limit as string);
-		if (req.query.startAfterId) options.startAfterId = req.query.startAfterId as string;
+		if (req.query.page) options.page = parseInt(req.query.page as string);
 		if (req.query.sortBy) options.sortBy = req.query.sortBy as string;
 		if (req.query.sortOrder) options.sortOrder = req.query.sortOrder as "asc" | "desc";
 		const orders = await OrderService.getOrders(options);

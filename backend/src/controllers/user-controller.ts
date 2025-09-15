@@ -5,9 +5,9 @@ import { UserService } from "@services/user-service";
 // Create user (register)
 export const createUser = async (req: Request, res: Response) => {
 	try {
-		const { name, email, password } = req.body;
-		const user = await UserService.register({ id: crypto.randomUUID(), name, email }, password);
-		res.json(user);
+		const { user, password } = req.body;
+		const createdUser = await UserService.createUser(user, password);
+		res.json(createdUser);
 	} catch (err: any) {
 		res.status(500).json({ error: err.message });
 	}
@@ -29,7 +29,7 @@ export const getUsers = async (req: Request, res: Response) => {
 	try {
 		const options: any = {};
 		if (req.query.limit) options.limit = parseInt(req.query.limit as string);
-		if (req.query.startAfterId) options.startAfterId = req.query.startAfterId as string;
+		if (req.query.page) options.page = parseInt(req.query.page as string);
 		if (req.query.sortBy) options.sortBy = req.query.sortBy as string;
 		if (req.query.sortOrder) options.sortOrder = req.query.sortOrder as "asc" | "desc";
 		const users = await UserService.getUsers(options);

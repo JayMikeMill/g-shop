@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { useCart } from "@contexts/cart-context"
-import { type ShippingAddress } from "@models/shipping-info"
+import { type Address } from "@models/shipping-info"
 import ShippingForm from "@components/shipping-form"
 import PaymentFormSquare from "@components/payment-form-square"
 
@@ -11,7 +11,7 @@ export default function CheckoutPage() {
 	const [loading, setLoading] = useState(false)
 	const [message, setMessage] = useState<string | null>(null)
 
-	const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
+	const [shippingAddress, setShippingAddress] = useState<Address>({
 		firstName: "",
 		lastName: "",
 		email: "",

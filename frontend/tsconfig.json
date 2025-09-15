@@ -29,6 +29,7 @@
       "@pages/*": ["src/pages/*"], 
       "@components/*": ["src/components/*"],
       "@contexts/*": ["src/contexts/*"],
+      "@hooks/*": ["src/hooks/*"],
       "@services/*": ["src/services/*"],
       "@models/*": ["../shared/models/*"],
       "@data/*": ["src/data/*"],

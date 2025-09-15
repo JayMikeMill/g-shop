@@ -1,9 +1,9 @@
-import { type ShippingAddress } from "@models/shipping-info"
+import { type Address } from "@models/shipping-info"
 import "@css/shipping-form.css"
 
 interface ShippingFormProps {
-  shippingAddress: ShippingAddress
-  setShippingAddress: (address: ShippingAddress) => void
+  shippingAddress: Address
+  setShippingAddress: (address: Address) => void
 }
 
 const countries = [
@@ -13,7 +13,7 @@ const countries = [
 ]
 
 export default function ShippingForm({ shippingAddress, setShippingAddress }: ShippingFormProps) {
-  const handleChange = (field: keyof ShippingAddress, value: string) => {
+  const handleChange = (field: keyof Address, value: string) => {
     setShippingAddress({ ...shippingAddress, [field]: value })
   }
 

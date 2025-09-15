@@ -1,7 +1,7 @@
 // src/components/ProductDialog.tsx
 import { useState, useEffect, useRef } from "react";
 import type { Product } from "@models/product";
-import { useProducts } from "@contexts/products-context";
+import { createProduct, updateProduct } from "@services/product-service";
 import "@css/dialog.css";
 import "@css/product-dialog.css";
 
@@ -11,8 +11,6 @@ interface ProductDialogProps {
 }
 
 export default function ProductDialog({ product, onClose }: ProductDialogProps) {
-	const productManager = useProducts();
-
 	// Form state
 	const [name, setName] = useState("");
 	const [price, setPrice] = useState(0);
@@ -119,17 +117,27 @@ export default function ProductDialog({ product, onClose }: ProductDialogProps) 
 
 			if (product) {
 				// Editing an existing product
-				await productManager.editProduct(
-					{ ...product, name, price, description, discount: discountString, tags: tagsArray, images: imagePreviews },
-					imageFiles
-				);
+				await updateProduct(product.id, {
+					name,
+					price,
+					description,
+					discount: discountString,
+					tags: tagsArray,
+					images: imagePreviews
+				});
 			} else {
 				// Adding a new product
 				if (imageFiles.length === 0) return alert("At least one image is required");
-				await productManager.addProduct(
-					{ name, price, description, sizes: ["S", "M", "L"], colors: ["Red", "Blue"], discount: discountString, tags: tagsArray },
-					imageFiles
-				);
+				await createProduct({
+					name,
+					price,
+					description,
+					sizes: ["S", "M", "L"],
+					colors: ["Red", "Blue"],
+					discount: discountString,
+					tags: tagsArray,
+					images: imagePreviews
+				});
 			}
 
 			onClose();
