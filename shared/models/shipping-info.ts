@@ -1,5 +1,3 @@
-import { Square } from "square"
-
 export type ShippingInfo = {
 	address: ShippingAddress;
 	method: ShippingMethod;

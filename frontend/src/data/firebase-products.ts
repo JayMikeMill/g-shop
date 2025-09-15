@@ -12,7 +12,7 @@ import { ImgbbStorageProvider } from "@data/image-storage-imgbb";
 const imageProvider: ImageStorageProvider = ImgbbStorageProvider;
 
 // Import TypeScript type for Product
-import type { Product } from "@shared/product";
+import type { Product } from "@models/product";
 
 // ----------------------
 // Reference to the "products" collection in Firestore

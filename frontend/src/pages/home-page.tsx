@@ -1,7 +1,7 @@
 import ProductList from "@components/product-list";
 import { fetchProductsFromFirebase } from "@data/firebase-products";
 import { useEffect, useState } from "react";
-import type { Product } from "@shared/product";
+import type { Product } from "@models/product";
 import ProductLoader from "@components/product-loader";
 import "@css/home-page.css";
 

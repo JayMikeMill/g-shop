@@ -1,6 +1,6 @@
 import express from "express";
 import { json } from "body-parser";
-import { handlePayment } from "./payments/process";
+import { handlePayment } from "./services/payments/process";
 
 const app = express();
 app.use(json());

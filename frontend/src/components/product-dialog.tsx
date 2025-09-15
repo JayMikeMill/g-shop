@@ -1,6 +1,6 @@
 // src/components/ProductDialog.tsx
 import { useState, useEffect, useRef } from "react";
-import type { Product } from "@shared/product";
+import type { Product } from "@models/product";
 import { useProducts } from "@contexts/products-context";
 import "@css/dialog.css";
 import "@css/product-dialog.css";

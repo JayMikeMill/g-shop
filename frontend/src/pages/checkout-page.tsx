@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { useCart } from "@contexts/cart-context"
-import { type ShippingAddress } from "@shared/shipping-info"
+import { type ShippingAddress } from "@models/shipping-info"
 import ShippingForm from "@components/shipping-form"
 import PaymentFormSquare from "@components/payment-form-square"
 

@@ -1,5 +1,5 @@
 import { useCart } from "@contexts/cart-context";
-import { type Product } from "@shared/product";
+import { type Product } from "@models/product";
 import "@css/product-card.css";
 
 interface ProductCardProps {

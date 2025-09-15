@@ -1,7 +1,7 @@
 // frontend/src/pages/admin/products.tsx
 import { useState, useMemo, useEffect } from "react";
 import { useProducts } from "@contexts/products-context";
-import type { Product } from "@shared/product";
+import type { Product } from "@models/product";
 import AdminProductList from "@components/admin-product-list";
 import ProductDialog from "@components/product-dialog";
 import { useAdminPageHeader } from "@pages/admin/dashboard";

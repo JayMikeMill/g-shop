@@ -2,7 +2,7 @@
 import React, { createContext, useContext } from "react";
 
 // Product type definition shared across app
-import type { Product } from "@shared/product";
+import type { Product } from "@models/product";
 
 // Firebase wrapper functions for product operations
 // These functions handle actual Firebase calls (Firestore + Storage)

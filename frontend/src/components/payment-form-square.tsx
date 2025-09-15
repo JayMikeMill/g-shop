@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react"
 
 // Import shared types for shipping address and cart items
-import { type ShippingAddress } from "@shared/shipping-info"
-import type { StoreItem } from "@shared/store-item"
+import { type ShippingAddress } from "@models/shipping-info"
+import type { StoreItem } from "@models/store-item"
 
 // Import component-specific CSS
 import "@css/payment-form.css"

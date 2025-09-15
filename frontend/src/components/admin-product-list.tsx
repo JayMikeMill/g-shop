@@ -1,5 +1,5 @@
 // src/components/AdminProductList.tsx
-import type { Product } from "@shared/product";
+import type { Product } from "@models/product";
 import "@css/admin-product-list.css";
 
 interface AdminProductListProps {

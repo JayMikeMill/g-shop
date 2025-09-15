@@ -3,11 +3,11 @@ import { createContext, useContext,
     useState, type ReactNode} from "react"
 
 // Import Product type
-import type { Product, ProductOptions } from "@shared/product"
-import { equalsProductOptions } from "@shared/product"
+import type { Product, ProductOptions } from "@models/product"
+import { equalsProductOptions } from "@models/product"
 
 // Import StoreItem type
-import type { StoreItem } from "@shared/store-item"
+import type { StoreItem } from "@models/store-item"
 
 // -------------------------
 // 1. Define what the context will hold
