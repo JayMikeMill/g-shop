@@ -1,13 +1,15 @@
 import express from "express";
-import { json } from "body-parser";
-import { handlePayment } from "./services/payments/process";
+import bodyParser from "body-parser";
+import routes from "./routes/index";
 
 const app = express();
-app.use(json());
+app.use(bodyParser.json());
 
-// Mount handlePayment directly as the route handler
-// It handles sending the response itself
-app.post("/processPayment", handlePayment);
+// Mount all API routes
+app.use("/api", routes);
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Server running on port ${port}`));
+// Start server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+	console.log(`Server running on port ${PORT}`);
+});

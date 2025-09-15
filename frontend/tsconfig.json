@@ -24,14 +24,14 @@
     "noUncheckedSideEffectImports": true, // disallow unsafe side-effect imports
 
     /* code paths */
-    "baseUrl": "./src", // root for imports
+    "baseUrl": "./", // root for imports
     "paths": { // aliases
-      "@pages/*": ["pages/*"], 
-      "@components/*": ["components/*"],
-      "@contexts/*": ["contexts/*"],
-      "@models/*": ["../../shared/models/*"],
-      "@data/*": ["data/*"],
-      "@css/*": ["css/*"],
+      "@pages/*": ["src/pages/*"], 
+      "@components/*": ["src/components/*"],
+      "@contexts/*": ["src/contexts/*"],
+      "@models/*": ["../shared/models/*"],
+      "@data/*": ["src/data/*"],
+      "@css/*": ["src/css/*"],
     }
   },
 
