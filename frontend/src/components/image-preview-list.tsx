@@ -46,16 +46,21 @@ const ImagePreviewList: React.FC<ImagePreviewListProps> = ({
   };
 
   return (
-    <div className="flex gap-2 overflow-x-auto p-2 border border-gray-300 rounded h-[120px] bg-gray-50 flex-nowrap">
+    <div
+      className="flex gap-2 p-2 border border-gray-300 rounded bg-gray-50
+	overflow-x-auto h-[120px] flex-nowrap
+	md:grid md:grid-cols-2 md:auto-rows-min md:h-full md:overflow-y-auto"
+    >
       {imagePreviews.map((preview, index) => (
         <div
           key={preview}
           data-index={index}
           className={[
-            "relative rounded overflow-hidden h-full w-[100px] flex-shrink-0 cursor-grab select-none",
+            "relative rounded-lg overflow-hidden flex-shrink-0 cursor-grab select-none",
             isDragging && dragItem.current === index
               ? "opacity-40 cursor-grabbing"
               : "",
+            "w-[100px] h-[100px] md:w-full md:h-[100px]",
           ].join(" ")}
           draggable
           onDragStart={() => {

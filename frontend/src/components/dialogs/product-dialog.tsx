@@ -266,144 +266,141 @@ export default function ProductDialog({
 
   return (
     <div className="fixed inset-0 bg-overlay flex justify-center items-center z-50">
-      <div className="bg-surface p-lg rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden border border-border flex flex-col gap-lg">
+      <div className="bg-surface p-lg rounded-lg shadow-xl w-full max-w-4xl h-[90vh] flex flex-col border border-border overflow-hidden">
         {/* Header */}
-        <div className="flex justify-center border-b border-border pb-md mb-md">
+        <div className="flex justify-center border-b border-border pb-md mb-md flex-shrink-0">
           <h2 className="text-xl font-bold text-text text-center">
             {product ? "Edit Product" : "Add Product"}
           </h2>
         </div>
 
-        {/* Form */}
+        {/* Content: Images + Form */}
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-lg overflow-y-auto"
-          onContextMenu={(e) => e.preventDefault()}
+          className="flex flex-col flex-1 gap-lg overflow-hidden"
         >
-          {isSavingProduct && (
-            <div className="absolute inset-0 bg-surface bg-opacity-80 flex items-center justify-center z-10 rounded-lg">
-              <div className="spinner" />
-            </div>
-          )}
+          <div className="flex flex-1 flex-col md:flex-row gap-md overflow-hidden">
+            {/* Image Container */}
+            <div className="md:w-1/3 flex flex-col gap-md md:h-full overflow-y-auto">
+              <div className="flex justify-start mb-md flex-shrink-0">
+                <label className="bg-primary text-textOnPrimary px-md py-1 rounded font-bold text-sm cursor-pointer">
+                  Add Image
+                  <input
+                    type="file"
+                    onChange={handleImageChange}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                </label>
+              </div>
 
-          {/* Image Upload */}
-          <div className="flex flex-col gap-md">
-            <div className="flex justify-start mb-md">
-              <label className="bg-primary text-textOnPrimary px-md py-1 rounded font-bold text-sm cursor-pointer">
-                Add Image
+              {pendingCropFile && (
+                <CropDialog
+                  file={pendingCropFile}
+                  onCropComplete={handleCropComplete}
+                  onCancel={handleCropCancel}
+                />
+              )}
+
+              <ImagePreviewList
+                imagePreviews={imagePreviews}
+                onRemove={removeImage}
+                onSort={handleSort}
+                onLightbox={setLightboxImage}
+                isDragging={isDragging}
+                dragItem={dragItem}
+                dragOverItem={dragOverItem}
+                setIsDragging={setIsDragging}
+              />
+            </div>
+
+            {/* Form Fields */}
+            <div className="flex-1 flex flex-col gap-md overflow-y-auto">
+              <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
+                Name
                 <input
-                  type="file"
-                  onChange={handleImageChange}
-                  accept="image/*"
-                  className="hidden"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  className="px-md py-1 h-8 border border-border rounded-lg bg-input text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
                 />
               </label>
-            </div>
 
-            {pendingCropFile && (
-              <CropDialog
-                file={pendingCropFile}
-                onCropComplete={handleCropComplete}
-                onCancel={handleCropCancel}
-              />
-            )}
-
-            <ImagePreviewList
-              imagePreviews={imagePreviews}
-              onRemove={removeImage}
-              onSort={handleSort}
-              onLightbox={setLightboxImage}
-              isDragging={isDragging}
-              dragItem={dragItem}
-              dragOverItem={dragOverItem}
-              setIsDragging={setIsDragging}
-            />
-          </div>
-
-          {/* Product Details */}
-          <div className="flex flex-col gap-md">
-            <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
-              Name
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="px-md py-1 h-8 border border-border rounded-lg bg-input text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
-              />
-            </label>
-
-            <div className="flex gap-md items-end">
-              <label className="flex-1 flex flex-col gap-1 text-sm font-semibold text-textSecondary">
-                Price
-                <div className="relative">
-                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-textSecondary">
-                    $
-                  </span>
-                  <input
-                    type="number"
-                    value={price}
-                    onChange={(e) => setPrice(parseFloat(e.target.value))}
-                    required
-                    step="0.01"
-                    className="pl-6 pr-md py-1 h-8 border border-border rounded-lg bg-input text-text w-full focus:outline-none focus:ring-2 focus:ring-primary transition"
-                  />
-                </div>
-              </label>
-
-              <div className="flex-1 flex gap-1 items-end">
+              <div className="flex gap-md items-end">
                 <label className="flex-1 flex flex-col gap-1 text-sm font-semibold text-textSecondary">
-                  Discount
+                  Price
                   <div className="relative">
                     <span className="absolute left-2 top-1/2 -translate-y-1/2 text-textSecondary">
-                      {discountType}
+                      $
                     </span>
                     <input
                       type="number"
-                      className="pl-6 pr-md py-1 h-8 border border-border rounded-lg bg-input text-text w-full focus:outline-none focus:ring-2 focus:ring-primary transition"
-                      value={discountValue}
-                      onChange={(e) =>
-                        setDiscountValue(parseFloat(e.target.value))
-                      }
+                      value={price}
+                      onChange={(e) => setPrice(parseFloat(e.target.value))}
+                      required
                       step="0.01"
+                      className="pl-6 pr-md py-1 h-8 border border-border rounded-lg bg-input text-text w-full focus:outline-none focus:ring-2 focus:ring-primary transition"
                     />
                   </div>
                 </label>
 
-                <select
-                  className="ml-1 px-2 py-1 h-8 border border-border rounded-lg bg-background text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
-                  value={discountType}
-                  onChange={(e) => setDiscountType(e.target.value as "%" | "$")}
-                >
-                  <option value="%">%</option>
-                  <option value="$">$</option>
-                </select>
+                <div className="flex-1 flex gap-1 items-end">
+                  <label className="flex-1 flex flex-col gap-1 text-sm font-semibold text-textSecondary">
+                    Discount
+                    <div className="relative">
+                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-textSecondary">
+                        {discountType}
+                      </span>
+                      <input
+                        type="number"
+                        className="pl-6 pr-md py-1 h-8 border border-border rounded-lg bg-input text-text w-full focus:outline-none focus:ring-2 focus:ring-primary transition"
+                        value={discountValue}
+                        onChange={(e) =>
+                          setDiscountValue(parseFloat(e.target.value))
+                        }
+                        step="0.01"
+                      />
+                    </div>
+                  </label>
+
+                  <select
+                    className="ml-1 px-2 py-1 h-8 border border-border rounded-lg bg-background text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
+                    value={discountType}
+                    onChange={(e) =>
+                      setDiscountType(e.target.value as "%" | "$")
+                    }
+                  >
+                    <option value="%">%</option>
+                    <option value="$">$</option>
+                  </select>
+                </div>
               </div>
+
+              <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
+                Tags (comma-separated)
+                <input
+                  type="text"
+                  value={tags}
+                  onChange={(e) => setTags(e.target.value)}
+                  className="px-md py-1 h-8 border border-border rounded-lg bg-input text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
+                />
+              </label>
+
+              <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
+                Description
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  required
+                  className="px-md py-1 border border-border rounded-lg bg-input text-text focus:outline-none focus:ring-2 focus:ring-primary transition min-h-[60px]"
+                />
+              </label>
             </div>
-
-            <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
-              Tags (comma-separated)
-              <input
-                type="text"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-                className="px-md py-1 h-8 border border-border rounded-lg bg-input text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
-              />
-            </label>
-
-            <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
-              Description
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-                className="px-md py-1 border border-border rounded-lg bg-input text-text focus:outline-none focus:ring-2 focus:ring-primary transition min-h-[60px]"
-              />
-            </label>
           </div>
 
           {/* Form Buttons */}
-          <div className="flex justify-end gap-2 pt-md border-t border-border mt-md">
+          <div className="flex justify-end gap-2 pt-md border-t border-border mt-md flex-shrink-0">
             <button
               type="button"
               onClick={onClose}
