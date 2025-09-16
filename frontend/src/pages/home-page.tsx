@@ -4,7 +4,7 @@ import "@css/home-page.css";
 
 import { useEffect, useState } from "react";
 import type { Product } from "@models/product";
-import { useApi } from "@hooks/use-api";
+import { useApi } from "@api/use-api";
 
 
 

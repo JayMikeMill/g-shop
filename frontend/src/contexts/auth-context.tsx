@@ -1,8 +1,8 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
-import "@services/firebase/firebase-api"
+import "@api/firebase/firebase-api"
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
-import { verifyToken } from "@hooks/api";
+import { verifyToken } from "@api/backend-api";
 
 // This is the user type returned by your backend
 interface AuthUser {

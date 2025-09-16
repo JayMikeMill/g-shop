@@ -47,6 +47,33 @@ function authHeaders(token?: string | null) {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+// STORAGE APIs
+export const uploadImage = async (file: string | Buffer, filename: string, token?: string | null) => {
+  const res = await axios.post(
+    `${API_BASE}/storage/image`,
+    { file, filename },
+    { headers: authHeaders(token) }
+  );
+  return res.data as { url: string };
+};
+
+export const uploadFile = async (file: string | Buffer, filename: string, contentType?: string, token?: string | null) => {
+  const res = await axios.post(
+    `${API_BASE}/storage/file`,
+    { file, filename, contentType },
+    { headers: authHeaders(token) }
+  );
+  return res.data as { url: string };
+};
+
+export const deleteFile = async (url: string, token?: string | null) => {
+  const res = await axios.delete(
+    `${API_BASE}/storage`,
+    { data: { url }, headers: authHeaders(token) }
+  );
+  return res.data as { success: boolean };
+};
+
 // User APIs
 export const createUser = async (user: User, password?: string, token?: string | null) => {
   const res = await axios.post(`${API_BASE}/users`, { user, password }, { headers: authHeaders(token) });

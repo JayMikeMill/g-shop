@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import type { Product } from "@models/product";
 
-import { useApi } from "@hooks/use-api";
+import { useApi } from "@api/use-api";
 
 import "@css/dialog.css";
 import "@css/product-dialog.css";

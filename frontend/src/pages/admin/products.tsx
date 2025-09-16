@@ -6,7 +6,7 @@ import type { Product } from "@models/product";
 import AdminProductList from "@components/admin-product-list";
 import ProductDialog from "@components/dialogs/product-dialog";
 import { useAdminPageHeader } from "@pages/admin/dashboard";
-import { useApi } from "@hooks/use-api";
+import { useApi } from "@api/use-api";
 
 export default function Products() {
   const { user, loading: authLoading } = useAuth();

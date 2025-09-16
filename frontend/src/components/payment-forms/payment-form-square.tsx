@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 // Import shared types for shipping address and cart items
 import { type Address } from "@models/shipping-info"
 import type { StoreItem } from "@models/store-item"
-import { useApi } from "@hooks/use-api";
+import { useApi } from "@api/use-api";
 
 // Import component-specific CSS
 import "@css/payment-form.css"

@@ -4,13 +4,11 @@ import { PaymentData } from "@models/payment-data";
 
 import { SquareClient, SquareEnvironment, Square, } from "square";
 
-
 import dotenv from "dotenv";                 // Load environment variables
 import crypto from "crypto";                 // For idempotency keys
 import path from "path";
 import SuperJSON from "superjson";
 import { Address } from "@models/shipping-info";
-import { payment } from "@config/adapters";
 
 // Load environment variables
 // Load backend .env even if we run from project root
