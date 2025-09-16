@@ -1,3 +1,5 @@
+import { Address } from "./shipping-info";
+
 export type PaymentData = {
     nonce: string;
     amount: number;
@@ -8,12 +10,5 @@ export type PaymentData = {
         quantity: number 
     }[];
 
-    shipping: {
-        addressLine1: String,
-	    addressLine2: String,
-	    locality: String,
-	    administrativeDistrictLevel1: String,
-	    postalCode: String,
-	    country: String
-    };
+    address: Address;
 }

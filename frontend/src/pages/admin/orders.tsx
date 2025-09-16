@@ -2,7 +2,7 @@
 import { useEffect } from 'react';
 import { useAdminPageHeader } from './dashboard';
 import { useAuth } from "@contexts/auth-context";
-import LoginDialog from "@components/login-dialog";
+import LoginDialog from "@components/dialogs/login-dialog";
 
 export default function Orders() {
   const { user, loading } = useAuth();

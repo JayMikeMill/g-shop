@@ -1,7 +1,7 @@
 // frontend/src/pages/admin/dashboard.tsx
 import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '@contexts/auth-context';
-import LoginDialog from '@components/login-dialog';
+import LoginDialog from '@components/dialogs/login-dialog';
 import '@css/admin-dashboard.css';
 import { createContext, useState, useContext } from 'react';
 

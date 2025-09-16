@@ -1,10 +1,10 @@
 // frontend/src/pages/admin/products.tsx
 import { useState, useMemo, useEffect } from "react";
 import { useAuth } from "@contexts/auth-context";
-import LoginDialog from "@components/login-dialog";
+import LoginDialog from "@components/dialogs/login-dialog";
 import type { Product } from "@models/product";
 import AdminProductList from "@components/admin-product-list";
-import ProductDialog from "@components/product-dialog";
+import ProductDialog from "@components/dialogs/product-dialog";
 import { useAdminPageHeader } from "@pages/admin/dashboard";
 import { useApi } from "@hooks/use-api";
 

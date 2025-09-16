@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 // Import shared types for shipping address and cart items
 import { type Address } from "@models/shipping-info"
 import type { StoreItem } from "@models/store-item"
+import { useApi } from "@hooks/use-api";
 
 // Import component-specific CSS
 import "@css/payment-form.css"
@@ -11,12 +12,6 @@ import "@css/payment-form.css"
 // Square environment variables (from Vite)
 const SQUARE_APPLICATION_ID = import.meta.env.VITE_SQUARE_APPLICATION_ID || ""
 const SQUARE_LOCATION_ID = import.meta.env.VITE_SQUARE_LOCATION_ID || ""
-
-// Toggle between local dev server and production endpoint
-const SQUARE_PAY_SERVER = false
-const SQUARE_PAY_API_URL = SQUARE_PAY_SERVER ? 
-  "http://localhost:4000/api/square-pay-server" : 
-  "/api/square-pay"
 
 // Extend the window object to include Square
 declare global {
@@ -41,6 +36,9 @@ export default function PaymentFormSquare(
 
   // Mapping for country codes to ISO standard
   const countryCodeMap: Record<string, string> = { US: "US", Canada: "CA", MX: "MX" }
+
+  const { processPayment } = useApi();
+
 
   // Initialize Square payments when the component mounts
   useEffect(() => {
@@ -94,20 +92,20 @@ export default function PaymentFormSquare(
     try {
       setLoading(true) // Show loading indicator
 
-      // Send payment request to backend
-      const response = await fetch(SQUARE_PAY_API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nonce, amount: total, orderItems: orderItems, shipping: shippingWithISO })
-      })
-
-      const data = await response.json()
+      const response = await processPayment(
+        { nonce, 
+          amount: total, 
+          items: orderItems, 
+          address: shippingAddress });
+      
+      const payment = response.payment;
+      console.log("Payment response data:", payment)
 
       // Display result message
-      if (data.status === "COMPLETED") 
-        setMessage("Payment successful! Order ID: " + data.orderId)
+      if (payment.status === "COMPLETED") 
+        setMessage("Payment successful! Order ID: " + payment.orderId)
       else 
-        setMessage("Payment failed: " + data.error)
+        setMessage("Payment failed: " + payment.error)
 
     } catch (err) {
       console.error("Payment error:", err)

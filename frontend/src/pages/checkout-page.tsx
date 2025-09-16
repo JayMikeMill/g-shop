@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { useCart } from "@contexts/cart-context"
 import { type Address } from "@models/shipping-info"
 import ShippingForm from "@components/shipping-form"
-import PaymentFormSquare from "@components/payment-form-square"
+import PaymentFormSquare from "@components/payment-forms/payment-form-square"
 
 import OrderPreview from "@components/order-preview"
 import "@css/checkout-page.css"

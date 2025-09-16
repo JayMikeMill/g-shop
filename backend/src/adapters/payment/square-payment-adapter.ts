@@ -9,11 +9,13 @@ import dotenv from "dotenv";                 // Load environment variables
 import crypto from "crypto";                 // For idempotency keys
 import path from "path";
 import SuperJSON from "superjson";
+import { Address } from "@models/shipping-info";
+import { payment } from "@config/adapters";
 
 // Load environment variables
 // Load backend .env even if we run from project root
 // Load the .env located in the same folder as this file
-dotenv.config({ path: path.resolve(__dirname, ".env") });
+dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 
 
 // Initialize Square client
@@ -25,7 +27,7 @@ const client = new SquareClient({
 
 export class SquarePaymentAdapter implements PaymentAdapter {
 	async processPayment(data: PaymentData) {
-		const { nonce, amount, items, shipping } = data;
+		const { nonce, amount, items, address } = data;
 
 		console.log("Processing payment with info:", data);
 		console.log("Using Square access token:", process.env.SQUARE_ACCESS_TOKEN);
@@ -39,16 +41,19 @@ export class SquarePaymentAdapter implements PaymentAdapter {
 				currency: "USD"
 			},
 			note: `Order with ${items?.length || 0} items`,
-			shippingAddress:  mapToSquareAddress(shipping)
+			shippingAddress:  mapToSquareAddress(address)
 		};
 
-		console.log("Square request body:", requestBody);
-		console.log("Payments:", client.payments);
+
 		// Call Square API
 		const response = await client.payments.create(requestBody);
+		const payment = SuperJSON.serialize(response.payment);
 
 		// Serialize safely
-		return SuperJSON.serialize(response.payment).json?.toString	() || "";
+		const result = JSON.parse(JSON.stringify(payment.json))
+		console.log("Square payment response:", result);
+		
+		return result;
 	}
 
 	async refundPayment(paymentId: string, amount?: number) {
@@ -80,7 +85,7 @@ export class SquarePaymentAdapter implements PaymentAdapter {
 
 
 // Function to map custom ShippingAddress to Square.Address
-const mapToSquareAddress = (addr: any): Square.Address => ({
+const mapToSquareAddress = (addr: Address): Square.Address => ({
 	addressLine1: addr.addressLine1,
 	addressLine2: addr.addressLine2,
 	locality: addr.city,

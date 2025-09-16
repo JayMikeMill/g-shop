@@ -26,20 +26,22 @@ export const logout = async (token: string) => {
 };
 
 // PAYMENT APIs
-export const processPayment = async (payment: any, token?: string | null) => {
-  const res = await axios.post(`${API_BASE}/payments`, payment, { headers: authHeaders(token) });
-  return res.data;
+export const processPayment = async (payment: PaymentData, token?: string | null) => {
+  const res = await axios.post(`${API_BASE}/payments/process`, payment, { headers: authHeaders(token) });
+  return res.data as any;
 };
 
 export const refundPayment = async (paymentId: string, token?: string | null) => {
   const res = await axios.post(`${API_BASE}/payments/refund`, { paymentId }, { headers: authHeaders(token) });
-  return res.data;
+  return res.data as any;
 };
+
 import axios from "axios";
 import type { User } from "@models/user";
 import type { Product } from "@models/product";
+import type { PaymentData } from "@models/payment-data";
 
-const API_BASE = import.meta.env.VITE_APP_API_URL || "http://localhost:5000/api/v1";
+const API_BASE = import.meta.env.VITE_APP_API_URL || "http://localhost:3000/api/v1";
 
 function authHeaders(token?: string | null) {
   return token ? { Authorization: `Bearer ${token}` } : {};

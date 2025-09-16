@@ -2,6 +2,7 @@ import { useAuth } from "@contexts/auth-context";
 import type { User } from "@models/user";
 import * as api from "@hooks/api";
 import type { Product } from "@models/product";
+import type { PaymentData } from "@models/payment-data"; // Add this import, adjust the path if needed
 
 
 export function useApi() {
@@ -36,7 +37,7 @@ export function useApi() {
     logout: () => token ? api.logout(token) : Promise.reject("No token"),
 
     // Payment
-    processPayment: (payment: any) => api.processPayment(payment, token),
+    processPayment: (payment: PaymentData) => api.processPayment(payment, token),
     refundPayment: (paymentId: string) => api.refundPayment(paymentId, token),
   };
 }
