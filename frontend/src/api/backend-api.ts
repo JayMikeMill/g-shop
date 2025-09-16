@@ -1,3 +1,14 @@
+import axios from "axios";
+import type { User } from "@models/user";
+import type { Product } from "@models/product";
+import type { PaymentData } from "@models/payment-data";
+
+const API_BASE = import.meta.env.VITE_API_URL;
+
+function authHeaders(token?: string | null) {
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 // AUTH APIs
 export const register = async (payload: any) => {
   const res = await axios.post(`${API_BASE}/auth/register`, payload);
@@ -35,17 +46,6 @@ export const refundPayment = async (paymentId: string, token?: string | null) =>
   const res = await axios.post(`${API_BASE}/payments/refund`, { paymentId }, { headers: authHeaders(token) });
   return res.data as any;
 };
-
-import axios from "axios";
-import type { User } from "@models/user";
-import type { Product } from "@models/product";
-import type { PaymentData } from "@models/payment-data";
-
-const API_BASE = import.meta.env.VITE_APP_API_URL || "http://localhost:3000/api/v1";
-
-function authHeaders(token?: string | null) {
-  return token ? { Authorization: `Bearer ${token}` } : {};
-}
 
 // STORAGE APIs
 

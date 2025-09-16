@@ -309,7 +309,7 @@ export default function ProductDialog({ product, onClose }: ProductDialogProps) 
 						<button type="submit" className="primary-button" disabled={isProcessingImages || isSavingProduct}>
 							{isSavingProduct ? "Saving..." : (isProcessingImages ? "Processing Images..." : (product ? "Save Changes" : "Add Product"))}
 						</button>
-/* Dialog loading overlay styles */
+
 <style>{`
 .dialog-loading-overlay {
 	position: absolute;
