@@ -18,7 +18,7 @@ export default function Products() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   const { getProducts, deleteProduct } = useApi();
-  
+
   if (!authLoading && !user) {
     return <LoginDialog />;
   }
@@ -80,9 +80,9 @@ export default function Products() {
         />
       )}
       <AdminProductList
-          products={sortedProducts}
-          onEdit={setEditingProduct}
-          onDelete={handleDeleteProduct}
+        products={sortedProducts}
+        onEdit={setEditingProduct}
+        onDelete={handleDeleteProduct}
       />
     </div>
   );

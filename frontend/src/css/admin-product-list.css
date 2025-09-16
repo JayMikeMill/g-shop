@@ -2,7 +2,7 @@
 
 .table-container {
     overflow-x: auto;
-	flex-grow: 1;
+    /* Remove fixed height to allow natural growth */
 }
 
 .products-table {
@@ -38,7 +38,7 @@
 }
 
 .products-table tbody tr {
-    height: 110px;
+    /* Remove fixed height so rows grow with content */
 }
 
 .products-table tbody tr:hover {
