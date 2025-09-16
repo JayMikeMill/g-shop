@@ -4,7 +4,6 @@ import CropDialog from "../crop-dialog";
 import ImagePreviewList from "../image-preview-list";
 import type { Product } from "@models/product";
 
-
 import { useApi } from "@api/use-api";
 import { processImageOnly } from "@utils/image-processing";
 
@@ -12,379 +11,423 @@ import "@css/dialog.css";
 import "@css/product-dialog.css";
 
 interface ProductDialogProps {
-	product: Product | null; // If null, we are adding a new product
-	onClose: () => void;       // Callback to close dialog
+  product: Product | null; // If null, we are adding a new product
+  onClose: () => void; // Callback to close dialog
 }
 
-export default function ProductDialog({ product, onClose }: ProductDialogProps) {
-	// Form state
-	const [name, setName] = useState("");
-	const [price, setPrice] = useState(0);
-	const [description, setDescription] = useState("");
-	const [imageFiles, setImageFiles] = useState<File[]>([]);
-	const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-	const [processedImages, setProcessedImages] = useState<any[]>([]); // Store processed blobs and preview
-	const [isProcessingImages, setIsProcessingImages] = useState(false);
-	// const [isUploadingImages, setIsUploadingImages] = useState(false);
-	const [isSavingProduct, setIsSavingProduct] = useState(false);
-	const [discountValue, setDiscountValue] = useState(0);
-	const [discountType, setDiscountType] = useState<"%" | "$">("%");
-	const [tags, setTags] = useState("");
-	// For lightbox, store the preview URL of the image to show
-	const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+export default function ProductDialog({
+  product,
+  onClose,
+}: ProductDialogProps) {
+  // Form state
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState(0);
+  const [description, setDescription] = useState("");
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [processedImages, setProcessedImages] = useState<any[]>([]); // Store processed blobs and preview
+  const [isProcessingImages, setIsProcessingImages] = useState(false);
+  // const [isUploadingImages, setIsUploadingImages] = useState(false);
+  const [isSavingProduct, setIsSavingProduct] = useState(false);
+  const [discountValue, setDiscountValue] = useState(0);
+  const [discountType, setDiscountType] = useState<"%" | "$">("%");
+  const [tags, setTags] = useState("");
+  // For lightbox, store the preview URL of the image to show
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
-	// Drag and drop state
-	const dragItem = useRef<number | null>(null);
-	const dragOverItem = useRef<number | null>(null);
-	const [isDragging, setIsDragging] = useState(false);
+  // Drag and drop state
+  const dragItem = useRef<number | null>(null);
+  const dragOverItem = useRef<number | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
-	const { createProduct, updateProduct, uploadImage } = useApi();
+  const { createProduct, updateProduct, uploadImage } = useApi();
 
-	useEffect(() => {
-		document.body.classList.add("body-no-scroll");
-		return () => {
-			document.body.classList.remove("body-no-scroll");
-		};
-	}, []);
+  useEffect(() => {
+    document.body.classList.add("body-no-scroll");
+    return () => {
+      document.body.classList.remove("body-no-scroll");
+    };
+  }, []);
 
-		useEffect(() => {
-			setName(product?.name || "");
-			setPrice(product?.price || 0);
-			setDescription(product?.description || "");
-			setImageFiles([]);
-			// Extract preview URLs from ProductImageSet[] for display
-			setImagePreviews(product?.images?.map(imgSet => imgSet.preview || imgSet.main) || []);
-			setTags(product?.tags?.join(", ") || "");
+  useEffect(() => {
+    setName(product?.name || "");
+    setPrice(product?.price || 0);
+    setDescription(product?.description || "");
+    setImageFiles([]);
+    // Extract preview URLs from ProductImageSet[] for display
+    setImagePreviews(
+      product?.images?.map((imgSet) => imgSet.preview || imgSet.main) || []
+    );
+    setTags(product?.tags?.join(", ") || "");
 
-			if (product && product.discount) {
-				const discountStr = product.discount;
-				if (discountStr.includes("%")) {
-					setDiscountType("%");
-					setDiscountValue(parseFloat(discountStr.replace("%", "")));
-				} else { // Fixed amount
-					setDiscountType("$");
-					setDiscountValue(parseFloat(discountStr));
-				}
-			} else {
-				setDiscountType("%");
-				setDiscountValue(0);
-			}
-		}, [product]);
+    if (product && product.discount) {
+      const discountStr = product.discount;
+      if (discountStr.includes("%")) {
+        setDiscountType("%");
+        setDiscountValue(parseFloat(discountStr.replace("%", "")));
+      } else {
+        // Fixed amount
+        setDiscountType("$");
+        setDiscountValue(parseFloat(discountStr));
+      }
+    } else {
+      setDiscountType("%");
+      setDiscountValue(0);
+    }
+  }, [product]);
 
-	const [imageProgress, setImageProgress] = useState<number[]>([]);
-	// Cropping state
-	const [pendingCropFiles, setPendingCropFiles] = useState<File[]>([]);
-	const [pendingCropFile, setPendingCropFile] = useState<File|null>(null);
-	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const files = Array.from(e.target.files || []);
-		if (files.length > 0) {
-			setPendingCropFiles(prev => [...prev, ...files]);
-		}
-	};
+  const [imageProgress, setImageProgress] = useState<number[]>([]);
+  // Cropping state
+  const [pendingCropFiles, setPendingCropFiles] = useState<File[]>([]);
+  const [pendingCropFile, setPendingCropFile] = useState<File | null>(null);
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      setPendingCropFiles((prev) => [...prev, ...files]);
+    }
+  };
 
-	// When pendingCropFile is null and there are files in the queue, pop the next one
-	useEffect(() => {
-		if (!pendingCropFile && pendingCropFiles.length > 0) {
-			setPendingCropFile(pendingCropFiles[0]);
-			setPendingCropFiles(prev => prev.slice(1));
-		}
-	}, [pendingCropFile, pendingCropFiles]);
+  // When pendingCropFile is null and there are files in the queue, pop the next one
+  useEffect(() => {
+    if (!pendingCropFile && pendingCropFiles.length > 0) {
+      setPendingCropFile(pendingCropFiles[0]);
+      setPendingCropFiles((prev) => prev.slice(1));
+    }
+  }, [pendingCropFile, pendingCropFiles]);
 
-	const handleCropComplete = async (croppedBlob: Blob, previewUrl: string) => {
-		setIsProcessingImages(true);
-		try {
-			// Wrap cropped blob as File for processImageOnly
-			const croppedFile = new File([croppedBlob], pendingCropFile?.name || "cropped.webp", { type: "image/webp" });
-			const { mainBlob, previewBlob, thumbBlob } = await processImageOnly(croppedFile);
-			setProcessedImages(prev => [...prev, { mainBlob, previewBlob, thumbBlob, previewUrl, name: croppedFile.name }]);
-			setImagePreviews(prev => [...prev, previewUrl]);
-		} catch (err: any) {
-			alert(err?.message || "Error processing cropped image");
-		} finally {
-			setIsProcessingImages(false);
-			setPendingCropFile(null); // Will trigger next file in queue if any
-		}
-	};
+  const handleCropComplete = async (croppedBlob: Blob, previewUrl: string) => {
+    setIsProcessingImages(true);
+    try {
+      // Wrap cropped blob as File for processImageOnly
+      const croppedFile = new File(
+        [croppedBlob],
+        pendingCropFile?.name || "cropped.webp",
+        { type: "image/webp" }
+      );
+      const { mainBlob, previewBlob, thumbBlob } =
+        await processImageOnly(croppedFile);
+      setProcessedImages((prev) => [
+        ...prev,
+        {
+          mainBlob,
+          previewBlob,
+          thumbBlob,
+          previewUrl,
+          name: croppedFile.name,
+        },
+      ]);
+      setImagePreviews((prev) => [...prev, previewUrl]);
+    } catch (err: any) {
+      alert(err?.message || "Error processing cropped image");
+    } finally {
+      setIsProcessingImages(false);
+      setPendingCropFile(null); // Will trigger next file in queue if any
+    }
+  };
 
-	const handleCropCancel = () => setPendingCropFile(null);
+  const handleCropCancel = () => setPendingCropFile(null);
 
-	const removeImage = (index: number) => {
-		const newImagePreviews = [...imagePreviews];
-		newImagePreviews.splice(index, 1);
-		setImagePreviews(newImagePreviews);
+  const removeImage = (index: number) => {
+    const newImagePreviews = [...imagePreviews];
+    newImagePreviews.splice(index, 1);
+    setImagePreviews(newImagePreviews);
 
-		const newImageFiles = [...imageFiles];
-		newImageFiles.splice(index, 1);
-		setImageFiles(newImageFiles);
+    const newImageFiles = [...imageFiles];
+    newImageFiles.splice(index, 1);
+    setImageFiles(newImageFiles);
 
-		const newProcessedImages = [...processedImages];
-		newProcessedImages.splice(index, 1);
-		setProcessedImages(newProcessedImages);
+    const newProcessedImages = [...processedImages];
+    newProcessedImages.splice(index, 1);
+    setProcessedImages(newProcessedImages);
 
-		const newImageProgress = [...imageProgress];
-		newImageProgress.splice(index, 1);
-		setImageProgress(newImageProgress);
-	};
+    const newImageProgress = [...imageProgress];
+    newImageProgress.splice(index, 1);
+    setImageProgress(newImageProgress);
+  };
 
-	const handleSort = (from: number, to: number) => {
-		if (from === to) return;
-		const newImagePreviews = [...imagePreviews];
-		const draggedItemContent = newImagePreviews.splice(from, 1)[0];
-		newImagePreviews.splice(to, 0, draggedItemContent);
-		setImagePreviews(newImagePreviews);
-	};
+  const handleSort = (from: number, to: number) => {
+    if (from === to) return;
+    const newImagePreviews = [...imagePreviews];
+    const draggedItemContent = newImagePreviews.splice(from, 1)[0];
+    newImagePreviews.splice(to, 0, draggedItemContent);
+    setImagePreviews(newImagePreviews);
+  };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
+    try {
+      const tagsArray = tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter((tag) => tag !== "");
+      const discountString =
+        discountValue > 0
+          ? discountType === "%"
+            ? `${discountValue}%`
+            : `${discountValue}`
+          : "";
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
+      // Require at least one image, whether new or existing
+      const hasImages =
+        processedImages.length > 0 ||
+        (product && product.images && product.images.length > 0);
+      const hasPreview = imagePreviews.length > 0;
+      if (!hasImages && !hasPreview) {
+        alert("At least one image is required");
+        return;
+      }
+      if (isProcessingImages) {
+        alert("Please wait for images to finish processing.");
+        return;
+      }
 
-		try {
-			const tagsArray = tags.split(",").map(tag => tag.trim()).filter(tag => tag !== "");
-			const discountString = discountValue > 0 ? (discountType === "%" ? `${discountValue}%` : `${discountValue}`) : "";
+      // setIsUploadingImages(true);
+      setIsSavingProduct(true);
+      // For each image in imagePreviews, if it has a processedImages entry, upload it; otherwise, use the existing product image
+      let uploadedImages = [];
+      for (let i = 0; i < imagePreviews.length; i++) {
+        const previewUrl = imagePreviews[i];
+        const processed = processedImages.find(
+          (img) => img.previewUrl === previewUrl
+        );
+        if (processed) {
+          const main = await uploadImage(
+            processed.mainBlob,
+            processed.name.replace(/\.[^.]+$/, "") + ".webp"
+          );
+          const preview = await uploadImage(
+            processed.previewBlob,
+            processed.name.replace(/\.[^.]+$/, "") + "_preview.webp"
+          );
+          const thumb = await uploadImage(
+            processed.thumbBlob,
+            processed.name.replace(/\.[^.]+$/, "") + "_thumb.webp"
+          );
+          uploadedImages.push({
+            main: main.url,
+            preview: preview.url,
+            thumbnail: thumb.url,
+          });
+        } else if (product && product.images) {
+          // Find the matching image in the original product.images by preview or main url
+          const existing = product.images.find(
+            (img) => img.preview === previewUrl || img.main === previewUrl
+          );
+          if (existing) {
+            uploadedImages.push(existing);
+          } else {
+            alert(
+              "Some images are missing or not processed. Please re-add them."
+            );
+            setIsSavingProduct(false);
+            return;
+          }
+        } else {
+          alert(
+            "Some images are missing or not processed. Please re-add them."
+          );
+          setIsSavingProduct(false);
+          return;
+        }
+      }
+      // setIsUploadingImages(false);
 
-			// Require at least one image, whether new or existing
-			const hasImages = processedImages.length > 0 || (product && product.images && product.images.length > 0);
-			const hasPreview = imagePreviews.length > 0;
-			if (!hasImages && !hasPreview) {
-				alert("At least one image is required");
-				return;
-			}
-			if (isProcessingImages) {
-				alert("Please wait for images to finish processing.");
-				return;
-			}
+      if (product) {
+        await updateProduct(product.id, {
+          name,
+          price,
+          description,
+          discount: discountString,
+          tags: tagsArray,
+          images: uploadedImages.length > 0 ? uploadedImages : product.images,
+        } as Product);
+      } else {
+        await createProduct({
+          name,
+          price,
+          description,
+          sizes: ["S", "M", "L"],
+          colors: ["Red", "Blue"],
+          discount: discountString,
+          tags: tagsArray,
+          images: uploadedImages,
+        } as Product);
+      }
 
-			// setIsUploadingImages(true);
-			setIsSavingProduct(true);
-			// For each image in imagePreviews, if it has a processedImages entry, upload it; otherwise, use the existing product image
-			let uploadedImages = [];
-			for (let i = 0; i < imagePreviews.length; i++) {
-				const previewUrl = imagePreviews[i];
-				const processed = processedImages.find(img => img.previewUrl === previewUrl);
-				if (processed) {
-					const main = await uploadImage(processed.mainBlob, processed.name.replace(/\.[^.]+$/, "") + ".webp");
-					const preview = await uploadImage(processed.previewBlob, processed.name.replace(/\.[^.]+$/, "") + "_preview.webp");
-					const thumb = await uploadImage(processed.thumbBlob, processed.name.replace(/\.[^.]+$/, "") + "_thumb.webp");
-					uploadedImages.push({ main: main.url, preview: preview.url, thumbnail: thumb.url });
-				} else if (product && product.images) {
-					// Find the matching image in the original product.images by preview or main url
-					const existing = product.images.find(img => img.preview === previewUrl || img.main === previewUrl);
-					if (existing) {
-						uploadedImages.push(existing);
-					} else {
-						alert("Some images are missing or not processed. Please re-add them.");
-						setIsSavingProduct(false);
-						return;
-					}
-				} else {
-					alert("Some images are missing or not processed. Please re-add them.");
-					setIsSavingProduct(false);
-					return;
-				}
-			}
-			// setIsUploadingImages(false);
+      setIsSavingProduct(false);
+      onClose();
+    } catch (err: any) {
+      // setIsUploadingImages(false);
+      setIsSavingProduct(false);
+      alert(err.message || "Error saving product");
+    }
+  };
 
-			if (product) {
-				await updateProduct(product.id, {
-					name,
-					price,
-					description,
-					discount: discountString,
-					tags: tagsArray,
-					images: uploadedImages.length > 0 ? uploadedImages : product.images
-				} as Product);
-			} else {
-				await createProduct({
-					name,
-					price,
-					description,
-					sizes: ["S", "M", "L"],
-					colors: ["Red", "Blue"],
-					discount: discountString,
-					tags: tagsArray,
-					images: uploadedImages
-				} as Product);
-			}
+  return (
+    <div className="fixed inset-0 bg-overlay flex justify-center items-center z-50">
+      <div className="bg-surface p-lg rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden border border-border flex flex-col gap-lg">
+        {/* Header */}
+        <div className="flex justify-center border-b border-border pb-md mb-md">
+          <h2 className="text-xl font-bold text-text text-center">
+            {product ? "Edit Product" : "Add Product"}
+          </h2>
+        </div>
 
-			setIsSavingProduct(false);
-			onClose();
-		} catch (err: any) {
-			// setIsUploadingImages(false);
-			setIsSavingProduct(false);
-			alert(err.message || "Error saving product");
-		}
-	};
+        {/* Form */}
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-lg overflow-y-auto"
+          onContextMenu={(e) => e.preventDefault()}
+        >
+          {isSavingProduct && (
+            <div className="absolute inset-0 bg-surface bg-opacity-80 flex items-center justify-center z-10 rounded-lg">
+              <div className="spinner" />
+            </div>
+          )}
 
-	return (
-		<div className="dialog-overlay">
-			<div className="dialog product-dialog">
-				<div className="dialog-header">
-					<h2>{product ? "Edit Product" : "Add Product"}</h2>
-					<button onClick={onClose} className="close-button">&times;</button>
-				</div>
-				<form onSubmit={handleSubmit} className="product-form" onContextMenu={(e) => e.preventDefault()}> {/* Prevent context menu on form */}
-					{isSavingProduct && (
-						<div className="dialog-loading-overlay">
-							<div className="spinner" />
-						</div>
-					)}
-					<div className="form-grid">
-						<div className="image-upload-section">
-							<label className="file-input-label">
-								Add Image
-								<input type="file" onChange={handleImageChange} accept="image/*" />
-							</label>
-{pendingCropFile && (
-	<CropDialog
-		file={pendingCropFile}
-		onCropComplete={handleCropComplete}
-		onCancel={handleCropCancel}
-	/>
-)}
-							<ImagePreviewList
-								imagePreviews={imagePreviews}
-								onRemove={removeImage}
-								onSort={handleSort}
-								onLightbox={setLightboxImage}
-								isDragging={isDragging}
-								dragItem={dragItem}
-								dragOverItem={dragOverItem}
-								setIsDragging={setIsDragging}
-							/>
-// Add styles for the loading bar
-// In a real project, move these to product-dialog.css
-<style>{`
-.image-progress-bar-container {
-	width: 100%;
-	height: 4px;
-	background: #eee;
-	border-radius: 2px;
-	margin-top: 4px;
-	overflow: hidden;
-	position: relative;
-}
-.image-progress-bar {
-	height: 100%;
-	background: linear-gradient(90deg, #4f8cff, #1ec8e7);
-	transition: width 0.2s;
-}
-`}</style>
-						</div>
+          {/* Image Upload */}
+          <div className="flex flex-col gap-md">
+            <div className="flex justify-start mb-md">
+              <label className="bg-primary text-textOnPrimary px-md py-1 rounded font-bold text-sm cursor-pointer">
+                Add Image
+                <input
+                  type="file"
+                  onChange={handleImageChange}
+                  accept="image/*"
+                  className="hidden"
+                />
+              </label>
+            </div>
 
-						<div className="product-details-section">
-							<label>Name
-								<input type="text" value={name} onChange={e => setName(e.target.value)} required />
-							</label>
-							<div className="price-discount-row">
-								<label className="price-input-wrapper">Price
-									<div className="input-with-symbol">
-										<span className="symbol">$</span>
-										<input type="number" value={price} onChange={e => setPrice(parseFloat(e.target.value))} required step="0.01" />
-									</div>
-								</label>
-								<div className="discount-group">
-									<label>Discount
-										<div className="input-with-symbol">
-											<span className="symbol">{discountType}</span>
-											<input type="number" className="discount-input" value={discountValue} onChange={e => setDiscountValue(parseFloat(e.target.value))} step="0.01" />
-										</div>
-									</label>
-									<select className="discount-selector" value={discountType} onChange={e => setDiscountType(e.target.value as "%" | "$")}>
-										<option value="%">%</option>
-										<option value="$">$</option>
-									</select>
-								</div>
-							</div>
-							<label>Tags (comma-separated)
-								<input type="text" value={tags} onChange={e => setTags(e.target.value)} />
-							</label>
-							<label>Description
-								<textarea value={description} onChange={e => setDescription(e.target.value)} required />
-							</label>
-						</div>
-					</div>
-					<div className="dialog-actions">
-						<button type="button" onClick={onClose} className="secondary-button">Cancel</button>
-						<button type="submit" className="primary-button" disabled={isProcessingImages || isSavingProduct}>
-							{isSavingProduct ? "Saving..." : (isProcessingImages ? "Processing Images..." : (product ? "Save Changes" : "Add Product"))}
-						</button>
+            {pendingCropFile && (
+              <CropDialog
+                file={pendingCropFile}
+                onCropComplete={handleCropComplete}
+                onCancel={handleCropCancel}
+              />
+            )}
 
-<style>{`
-.dialog-loading-overlay {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background: rgba(255,255,255,0.7);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	z-index: 10;
-}
-`}</style>
-					</div>
-				</form>
-			</div>
-			{lightboxImage && (
-				<div className="image-lightbox-overlay" onClick={() => setLightboxImage(null)}>
-					<div className="image-lightbox-content">
-						<img
-							src={(() => {
-								// 1. If this image was just processed (new upload in this session), match by previewUrl
-								const processed = processedImages.find(img => img.previewUrl === lightboxImage);
-								if (processed && processed.mainBlob) {
-									return URL.createObjectURL(processed.mainBlob);
-								}
-								// 2. If this is an existing image, match by preview or main URL in product.images
-								if (product && product.images) {
-									const match = product.images.find(img => img.preview === lightboxImage || img.main === lightboxImage);
-									if (match && match.main) {
-										return match.main;
-									}
-								}
-								// 3. Fallback: just show the preview
-								return lightboxImage;
-							})()}
-							alt="Enlarged product preview"
-							style={{
-								maxWidth: '90vw',
-								maxHeight: '90vh',
-								width: 'auto',
-								height: 'auto',
-								display: 'block',
-								margin: '0 auto',
-								boxShadow: '0 2px 16px rgba(0,0,0,0.4)'
-							}}
-						/>
-					</div>
-					{/* Lightbox overlay and content styles to ensure image fits and is centered */}
-					<style>{`
-					.image-lightbox-overlay {
-						position: fixed;
-						top: 0;
-						left: 0;
-						width: 100vw;
-						height: 100vh;
-						background: rgba(0,0,0,0.8);
-						display: flex;
-						align-items: center;
-						justify-content: center;
-						z-index: 9999;
-						overflow: auto;
-					}
-					.image-lightbox-content {
-						max-width: 95vw;
-						max-height: 95vh;
-						display: flex;
-						align-items: center;
-						justify-content: center;
-						overflow: auto;
-					}
-					`}</style>
-				</div>
-			)}
-		</div>
-	);
+            <ImagePreviewList
+              imagePreviews={imagePreviews}
+              onRemove={removeImage}
+              onSort={handleSort}
+              onLightbox={setLightboxImage}
+              isDragging={isDragging}
+              dragItem={dragItem}
+              dragOverItem={dragOverItem}
+              setIsDragging={setIsDragging}
+            />
+          </div>
+
+          {/* Product Details */}
+          <div className="flex flex-col gap-md">
+            <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
+              Name
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="px-md py-1 h-8 border border-border rounded-lg bg-input text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
+              />
+            </label>
+
+            <div className="flex gap-md items-end">
+              <label className="flex-1 flex flex-col gap-1 text-sm font-semibold text-textSecondary">
+                Price
+                <div className="relative">
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-textSecondary">
+                    $
+                  </span>
+                  <input
+                    type="number"
+                    value={price}
+                    onChange={(e) => setPrice(parseFloat(e.target.value))}
+                    required
+                    step="0.01"
+                    className="pl-6 pr-md py-1 h-8 border border-border rounded-lg bg-input text-text w-full focus:outline-none focus:ring-2 focus:ring-primary transition"
+                  />
+                </div>
+              </label>
+
+              <div className="flex-1 flex gap-1 items-end">
+                <label className="flex-1 flex flex-col gap-1 text-sm font-semibold text-textSecondary">
+                  Discount
+                  <div className="relative">
+                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-textSecondary">
+                      {discountType}
+                    </span>
+                    <input
+                      type="number"
+                      className="pl-6 pr-md py-1 h-8 border border-border rounded-lg bg-input text-text w-full focus:outline-none focus:ring-2 focus:ring-primary transition"
+                      value={discountValue}
+                      onChange={(e) =>
+                        setDiscountValue(parseFloat(e.target.value))
+                      }
+                      step="0.01"
+                    />
+                  </div>
+                </label>
+
+                <select
+                  className="ml-1 px-2 py-1 h-8 border border-border rounded-lg bg-background text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
+                  value={discountType}
+                  onChange={(e) => setDiscountType(e.target.value as "%" | "$")}
+                >
+                  <option value="%">%</option>
+                  <option value="$">$</option>
+                </select>
+              </div>
+            </div>
+
+            <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
+              Tags (comma-separated)
+              <input
+                type="text"
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                className="px-md py-1 h-8 border border-border rounded-lg bg-input text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
+              />
+            </label>
+
+            <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
+              Description
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+                className="px-md py-1 border border-border rounded-lg bg-input text-text focus:outline-none focus:ring-2 focus:ring-primary transition min-h-[60px]"
+              />
+            </label>
+          </div>
+
+          {/* Form Buttons */}
+          <div className="flex justify-end gap-2 pt-md border-t border-border mt-md">
+            <button
+              type="button"
+              onClick={onClose}
+              className="bg-background text-textSecondary border border-border px-md py-1 rounded-lg font-semibold hover:bg-surface transition-all"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              className="bg-primary text-textOnPrimary px-md py-1 rounded-lg font-semibold shadow-lg hover:bg-primaryDark transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              disabled={isProcessingImages || isSavingProduct}
+            >
+              {isSavingProduct
+                ? "Saving..."
+                : isProcessingImages
+                  ? "Processing Images..."
+                  : product
+                    ? "Save Changes"
+                    : "Add Product"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }

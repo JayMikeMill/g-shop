@@ -7,7 +7,11 @@ interface CropDialogProps {
   onCancel: () => void;
 }
 
-const CropDialog: React.FC<CropDialogProps> = ({ file, onCropComplete, onCancel }) => {
+const CropDialog: React.FC<CropDialogProps> = ({
+  file,
+  onCropComplete,
+  onCancel,
+}) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
@@ -19,30 +23,30 @@ const CropDialog: React.FC<CropDialogProps> = ({ file, onCropComplete, onCancel 
     reader.readAsDataURL(file);
   }, [file]);
 
-  // Set zoom to minimum (fully zoomed out) when image loads
   const cropperRef = React.useRef<any>(null);
   React.useEffect(() => {
     if (!imageUrl) return;
-    // Wait for Cropper to mount, then set zoom to min
     setTimeout(() => {
-      if (cropperRef.current) {
-        setZoom(1); // react-easy-crop min zoom is 1
-      }
+      if (cropperRef.current) setZoom(1);
     }, 100);
   }, [imageUrl]);
 
   const onCropChange = (c: any) => setCrop(c);
   const onZoomChange = (z: number) => setZoom(z);
-  const onCropCompleteInternal = (_: any, croppedPixels: any) => setCroppedAreaPixels(croppedPixels);
+  const onCropCompleteInternal = (_: any, croppedPixels: any) =>
+    setCroppedAreaPixels(croppedPixels);
 
-  async function getCroppedImg(imageSrc: string, cropPixels: any): Promise<{ blob: Blob, url: string }> {
+  async function getCroppedImg(
+    imageSrc: string,
+    cropPixels: any
+  ): Promise<{ blob: Blob; url: string }> {
     const image = await createImage(imageSrc);
-    const canvas = document.createElement('canvas');
+    const canvas = document.createElement("canvas");
     const size = Math.max(cropPixels.width, cropPixels.height);
     canvas.width = size;
     canvas.height = size;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) throw new Error('No 2d context');
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("No 2d context");
     ctx.drawImage(
       image,
       cropPixels.x,
@@ -56,18 +60,18 @@ const CropDialog: React.FC<CropDialogProps> = ({ file, onCropComplete, onCancel 
     );
     return new Promise((resolve) => {
       canvas.toBlob((blob) => {
-        if (!blob) throw new Error('Canvas is empty');
+        if (!blob) throw new Error("Canvas is empty");
         resolve({ blob, url: URL.createObjectURL(blob) });
-      }, 'image/webp');
+      }, "image/webp");
     });
   }
 
   function createImage(url: string): Promise<HTMLImageElement> {
     return new Promise((resolve, reject) => {
       const img = new window.Image();
-      img.addEventListener('load', () => resolve(img));
-      img.addEventListener('error', error => reject(error));
-      img.setAttribute('crossOrigin', 'anonymous');
+      img.addEventListener("load", () => resolve(img));
+      img.addEventListener("error", (error) => reject(error));
+      img.crossOrigin = "anonymous";
       img.src = url;
     });
   }
@@ -79,103 +83,61 @@ const CropDialog: React.FC<CropDialogProps> = ({ file, onCropComplete, onCancel 
   };
 
   return (
-    <div className="crop-dialog-modal-box">
-      <div className="crop-dialog-inner">
-        <div className="cropper-outer-box">
-          <Cropper
-            ref={cropperRef}
-            image={imageUrl}
-            crop={crop}
-            zoom={zoom}
-            aspect={1}
-            onCropChange={onCropChange}
-            onZoomChange={onZoomChange}
-            onCropComplete={onCropCompleteInternal}
-            cropShape="rect"
-            showGrid={true}
-            style={{
-              containerStyle: {
-                width: '320px',
-                height: '320px',
-                border: '2px solid #4f8cff',
-                borderRadius: '12px',
-                boxShadow: '0 2px 12px #0002',
-                overflow: 'hidden',
-                background: '#f8faff',
-                margin: '0 auto',
-                position: 'relative',
-              },
-              cropAreaStyle: {
-                border: '2px solid #4f8cff',
-                borderRadius: '8px',
-              },
-            }}
-          />
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/40 dark:bg-black/60">
+      {/* Modal container */}
+      <div className="bg-surface dark:bg-background rounded-lg border-2 border-primary shadow-xl p-xl flex flex-col w-[360px] sm:w-[400px] max-h-[90vh] overflow-hidden">
+        {/* Title */}
+        <h2 className="text-xl font-bold text-center text-text mb-lg">
+          Crop Image
+        </h2>
+
+        {/* Cropper container */}
+        <div className="relative w-full h-80 mb-lg border-2 border-primary rounded-md overflow-hidden bg-background">
+          {imageUrl && (
+            <Cropper
+              ref={cropperRef}
+              image={imageUrl}
+              crop={crop}
+              zoom={zoom}
+              aspect={1}
+              onCropChange={setCrop}
+              onZoomChange={setZoom}
+              onCropComplete={onCropCompleteInternal}
+              cropShape="rect"
+              showGrid={true}
+              style={{
+                containerStyle: {
+                  width: "100%",
+                  height: "100%",
+                  position: "relative",
+                },
+                cropAreaStyle: {
+                  border: "2px solid var(--color-primary)",
+                  borderRadius: "0.5rem",
+                },
+              }}
+            />
+          )}
         </div>
-        <div className="crop-dialog-actions">
-          <button className="crop-cancel-btn" type="button" onClick={onCancel}>Cancel</button>
-          <button className="crop-submit-btn" type="button" onClick={handleCrop}>Crop & Use Image</button>
+
+        {/* Action buttons */}
+        <div className="flex justify-end gap-md">
+          <button
+            type="button"
+            className="px-lg py-sm rounded-md border border-border bg-surface text-textSecondary hover:bg-background transition"
+            onClick={onCancel}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            className="px-lg py-sm rounded-md border border-primary bg-primary text-white font-medium hover:bg-primaryDark transition"
+            onClick={handleCrop}
+          >
+            Crop & Use Image
+          </button>
         </div>
       </div>
-      <style>{`
-        .crop-dialog-modal-box {
-          position: fixed;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          z-index: 2000;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border: 3px solid #4f8cff;
-          border-radius: 16px;
-          background: #fff;
-          box-shadow: 0 8px 40px #0002;
-          padding: 0;
-        }
-        .crop-dialog-inner {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          padding: 24px 32px 20px 32px;
-        }
-        .cropper-outer-box {
-          width: 320px;
-          height: 320px;
-          margin-bottom: 18px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          overflow: hidden;
-        }
-        .crop-dialog-actions {
-          margin-top: 10px;
-          display: flex;
-          gap: 16px;
-        }
-        .crop-cancel-btn, .crop-submit-btn {
-          padding: 8px 20px;
-          border-radius: 6px;
-          border: none;
-          font-size: 1rem;
-          cursor: pointer;
-          font-weight: 500;
-        }
-        .crop-cancel-btn {
-          background: #eee;
-          color: #333;
-          border: 1px solid #bbb;
-        }
-        .crop-submit-btn {
-          background: #4f8cff;
-          color: #fff;
-          border: 1px solid #4f8cff;
-          transition: background 0.2s;
-        }
-        .crop-submit-btn:hover {
-          background: #3576d6;
-        }
-      `}</style>
     </div>
   );
 };

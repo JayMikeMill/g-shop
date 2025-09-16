@@ -51,14 +51,17 @@ const ImagePreviewList: React.FC<ImagePreviewListProps> = ({
         <div
           key={preview}
           data-index={index}
-          className={
-            [
-              "relative rounded overflow-hidden h-full w-[100px] flex-shrink-0 cursor-grab select-none",
-              isDragging && dragItem.current === index ? "opacity-40 cursor-grabbing" : ""
-            ].join(" ")
-          }
+          className={[
+            "relative rounded overflow-hidden h-full w-[100px] flex-shrink-0 cursor-grab select-none",
+            isDragging && dragItem.current === index
+              ? "opacity-40 cursor-grabbing"
+              : "",
+          ].join(" ")}
           draggable
-          onDragStart={() => { dragItem.current = index; setIsDragging(true); }}
+          onDragStart={() => {
+            dragItem.current = index;
+            setIsDragging(true);
+          }}
           onDragEnter={() => (dragOverItem.current = index)}
           onDragEnd={handleSort}
           onDragOver={(e) => e.preventDefault()}
@@ -79,8 +82,11 @@ const ImagePreviewList: React.FC<ImagePreviewListProps> = ({
           />
           <button
             type="button"
-            className="absolute top-0.5 right-0.5 bg-black/50 text-white border-none rounded-full w-5 h-5 text-center p-0 cursor-pointer z-10"
-            onClick={e => { e.stopPropagation(); onRemove(index); }}
+            className="absolute top-1 right-1 h-5 w-5 flex items-center justify-center rounded-full cursor-pointer z-10 bg-black/50 text-white p-0 text-xs font-mono"
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove(index);
+            }}
           >
             &times;
           </button>

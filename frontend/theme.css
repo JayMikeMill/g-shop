@@ -1,49 +1,87 @@
-/* global.css or variables.css */
-
-/* Light theme (default) */
+/* ============================
+   Light Theme (Default)
+============================ */
 :root {
 	--color-primary: #1d4ed8;
 	--color-primary-dark: #1e40af;
 	--color-secondary: #6b7280;
 	--color-secondary-dark: #4b5563;
+	--color-accent: #f43f5e;
 
 	--color-background: #f9fafb;
-	--color-surface: #ffffff;
+	--color-background-alt: #ffffff;
+	--color-surface: #f5f7fa;
+	--color-surface-alt: #e5e7eb;
 
 	--color-text: #111827;
 	--color-text-secondary: #374151;
 	--color-text-muted: #6b7280;
+	--color-text-inverted: #ffffff;
 
 	--color-border: #d1d5db;
+	--color-divider: #e5e7eb;
 
 	--color-success: #22c55e;
 	--color-warning: #f59e0b;
 	--color-error: #ef4444;
 	--color-info: #3b82f6;
-
-	--color-accent: #f43f5e;
 }
 
-/* Dark theme */
+/* ============================
+   Dark Theme
+============================ */
 .dark {
 	--color-primary: #2563eb;
 	--color-primary-dark: #1e3a8a;
 	--color-secondary: #9ca3af;
 	--color-secondary-dark: #6b7280;
+	--color-accent: #f472b6;
 
 	--color-background: #111827;
-	--color-surface: #1f2937;
+	--color-background-alt: #1f2937;
+	--color-surface: #232a36;
+	--color-surface-alt: #374151;
 
 	--color-text: #f9fafb;
 	--color-text-secondary: #d1d5db;
 	--color-text-muted: #9ca3af;
+	--color-text-inverted: #000000;
 
 	--color-border: #374151;
+	--color-divider: #4b5563;
 
 	--color-success: #22c55e;
 	--color-warning: #facc15;
 	--color-error: #f87171;
 	--color-info: #60a5fa;
+}
 
+/* ============================
+   Example Alternative Theme
+   (Pastel)
+============================ */
+.theme-pastel {
+	--color-primary: #a78bfa;
+	--color-primary-dark: #7c3aed;
+	--color-secondary: #fbbf24;
+	--color-secondary-dark: #d97706;
 	--color-accent: #f472b6;
+
+	--color-background: #fdf2f8;
+	--color-background-alt: #fce7f3;
+	--color-surface: #fbcfe8;
+	--color-surface-alt: #f9a8d4;
+
+	--color-text: #4a044e;
+	--color-text-secondary: #701a75;
+	--color-text-muted: #a21caf;
+	--color-text-inverted: #ffffff;
+
+	--color-border: #f472b6;
+	--color-divider: #f9a8d4;
+
+	--color-success: #34d399;
+	--color-warning: #fbbf24;
+	--color-error: #f87171;
+	--color-info: #60a5fa;
 }
