@@ -6,7 +6,7 @@ import type { Product } from "@models/product";
 import AdminProductList from "@components/admin-product-list";
 import ProductDialog from "@components/product-dialog";
 import { useAdminPageHeader } from "@pages/admin/dashboard";
-import { getProducts, deleteProduct } from "@services/product-service";
+import { useApi } from "@hooks/use-api";
 
 export default function Products() {
   const { user, loading: authLoading } = useAuth();
@@ -17,6 +17,8 @@ export default function Products() {
   const [isAdding, setIsAdding] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
+  const { getProducts, deleteProduct } = useApi();
+  
   if (!authLoading && !user) {
     return <LoginDialog />;
   }

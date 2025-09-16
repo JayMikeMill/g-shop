@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 
 import "@services/firebase/firebase-api"
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
-import { useApi } from "@hooks/use-api";
+import { verifyToken } from "@hooks/api";
 
 // This is the user type returned by your backend
 interface AuthUser {
@@ -29,8 +29,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem("token"));
   const [loading, setLoading] = useState(true);
 
-  const { getUsers, verifyToken } = useApi();
-
   // On mount, verify token if present
   useEffect(() => {
     if (token) {
@@ -52,7 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setToken(idToken);
       
       // Now verify with backend to get user info
-      const verUser = await verifyToken();
+      const verUser = await verifyToken(idToken);
       setUser(verUser);
     } finally {
       setLoading(false);
@@ -71,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setToken(idToken);
 
       // Now verify with backend to get user info
-      const res = await verifyToken();
+      const res = await verifyToken(idToken);
       setUser(res.user);
     } finally {
       setLoading(false);
@@ -86,7 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null);
         return;
       }
-      const res = await verifyToken();
+      const res = await verifyToken(token);
       setUser(res.user || null);
     } catch {
       setUser(null);

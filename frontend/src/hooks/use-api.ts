@@ -1,6 +1,8 @@
 import { useAuth } from "@contexts/auth-context";
-import * as api from "@hooks/api";
 import type { User } from "@models/user";
+import * as api from "@hooks/api";
+import type { Product } from "@models/product";
+
 
 export function useApi() {
   const { token } = useAuth();
@@ -14,10 +16,10 @@ export function useApi() {
     deleteUser: (id: string) => api.deleteUser(id, token),
 
     // Product
-    createProduct: (product: any) => api.createProduct(product, token),
+    createProduct: (product: Product) => api.createProduct(product, token),
     getProduct: (id: string) => api.getProduct(id, token),
     getProducts: (options?: { limit?: number; page?: number; sortBy?: string; sortOrder?: "asc" | "desc" }) => api.getProducts(options, token),
-    updateProduct: (id: string, product: any) => api.updateProduct(id, product, token),
+    updateProduct: (id: string, product: Product) => api.updateProduct(id, product, token),
     deleteProduct: (id: string) => api.deleteProduct(id, token),
 
     // Order

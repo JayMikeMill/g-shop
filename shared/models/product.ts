@@ -1,7 +1,7 @@
 // src/shared/Product.ts
 
 export interface Product {
-	id: string; // Firestore document IDs are strings
+	id: string;
 	name: string;
 	price: number;
 	sizes: Size[];

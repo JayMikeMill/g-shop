@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { User } from "@models/user"; // Import your User type
 import { AuthService } from "@services/auth-service" // Import the shared AuthService instance
+import { UserService } from "@services/user-service"; // Import UserService for user data
 
 // Extend Express Request type to include 'user' of your User type
 declare module "express-serve-static-core" {
@@ -26,7 +27,7 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
     if (!user) {
       return res.status(401).json({ error: "Invalid or expired token" });
     }
-    req.user = user;
+    req.user = {...user, role: (await UserService.getUser(user.id))?.role }; // Fetch role from UserService
     next();
   } catch {
     return res.status(401).json({ error: "Invalid or expired token" });
@@ -39,6 +40,7 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
  */
 export function requireAdmin(req: Request, res: Response, next: NextFunction) {
   if (!req.user) return res.status(401).json({ error: "Unauthorized" });
+  
   if (req.user.role === "admin") return next();
   return res.status(403).json({ error: "Admin access required" });
 }

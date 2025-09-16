@@ -37,6 +37,7 @@ export const refundPayment = async (paymentId: string, token?: string | null) =>
 };
 import axios from "axios";
 import type { User } from "@models/user";
+import type { Product } from "@models/product";
 
 const API_BASE = import.meta.env.VITE_APP_API_URL || "http://localhost:5000/api/v1";
 
@@ -71,24 +72,24 @@ export const deleteUser = async (id: string, token?: string | null) => {
 };
 
 // Product APIs
-export const createProduct = async (product: any, token?: string | null) => {
+export const createProduct = async (product: Product, token?: string | null) => {
   const res = await axios.post(`${API_BASE}/products`, product, { headers: authHeaders(token) });
-  return res.data;
+  return res.data as Product;
 };
 
 export const getProduct = async (id: string, token?: string | null) => {
   const res = await axios.get(`${API_BASE}/products/${id}`, { headers: authHeaders(token) });
-  return res.data;
+  return res.data as Product;
 };
 
 export const getProducts = async (options?: { limit?: number; page?: number; sortBy?: string; sortOrder?: "asc" | "desc" }, token?: string | null) => {
   const res = await axios.get(`${API_BASE}/products`, { params: options, headers: authHeaders(token) });
-  return res.data;
+  return res.data as Product[];
 };
 
-export const updateProduct = async (id: string, product: any, token?: string | null) => {
+export const updateProduct = async (id: string, product: Product, token?: string | null) => {
   const res = await axios.put(`${API_BASE}/products/${id}`, product, { headers: authHeaders(token) });
-  return res.data;
+  return res.data as Product;
 };
 
 export const deleteProduct = async (id: string, token?: string | null) => {

@@ -1,7 +1,9 @@
 // src/components/ProductDialog.tsx
 import { useState, useEffect, useRef } from "react";
 import type { Product } from "@models/product";
-import { createProduct, updateProduct } from "@services/product-service";
+
+import { useApi } from "@hooks/use-api";
+
 import "@css/dialog.css";
 import "@css/product-dialog.css";
 
@@ -26,6 +28,8 @@ export default function ProductDialog({ product, onClose }: ProductDialogProps) 
 	const dragItem = useRef<number | null>(null);
 	const dragOverItem = useRef<number | null>(null);
 	const [isDragging, setIsDragging] = useState(false);
+
+	const { createProduct, updateProduct } = useApi();
 
 	useEffect(() => {
 		document.body.classList.add("body-no-scroll");
@@ -116,6 +120,7 @@ export default function ProductDialog({ product, onClose }: ProductDialogProps) 
 			const discountString = discountValue > 0 ? (discountType === "%" ? `${discountValue}%` : `${discountValue}`) : "";
 
 			if (product) {
+				 console.log("Updating product:", product);
 				// Editing an existing product
 				await updateProduct(product.id, {
 					name,
@@ -124,7 +129,7 @@ export default function ProductDialog({ product, onClose }: ProductDialogProps) 
 					discount: discountString,
 					tags: tagsArray,
 					images: imagePreviews
-				});
+				} as Product);
 			} else {
 				// Adding a new product
 				if (imageFiles.length === 0) return alert("At least one image is required");
@@ -137,7 +142,7 @@ export default function ProductDialog({ product, onClose }: ProductDialogProps) 
 					discount: discountString,
 					tags: tagsArray,
 					images: imagePreviews
-				});
+				} as Product);
 			}
 
 			onClose();

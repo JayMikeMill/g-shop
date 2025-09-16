@@ -4,11 +4,15 @@ import "@css/home-page.css";
 
 import { useEffect, useState } from "react";
 import type { Product } from "@models/product";
-import { getProducts } from "@services/product-service";
+import { useApi } from "@hooks/use-api";
+
+
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const { getProducts } = useApi();
 
   useEffect(() => {
     // Fetch products using the context, with a limit (e.g., 20)

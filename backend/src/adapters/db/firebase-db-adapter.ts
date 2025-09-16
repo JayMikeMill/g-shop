@@ -14,7 +14,7 @@ export class FirebaseDBAdapter implements DBAdapter {
 
 	async getUser(id: string): Promise<User | null> {
 		const docSnap = await db.collection("users").doc(id).get();
-		return docSnap.exists ? (docSnap.data() as User) : null;
+		return docSnap.exists ? ({ ...docSnap.data(), id: docSnap.id } as User) : null;
 	}
 
 	async getUsers(options?: { limit?: number; page?: number; sortBy?: string; sortOrder?: "asc" | "desc" }): Promise<User[]> {
@@ -31,7 +31,7 @@ export class FirebaseDBAdapter implements DBAdapter {
 			query = query.limit(limit);
 		}
 		const snapshot = await query.get();
-		return snapshot.docs.map(doc => doc.data() as User);
+		return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }) as User);
 	}
 
 	async updateUser(id: string, update: Partial<User>): Promise<User | null> {
@@ -54,7 +54,7 @@ export class FirebaseDBAdapter implements DBAdapter {
 
 	async getProduct(id: string): Promise<Product | null> {
 		const docSnap = await db.collection("products").doc(id).get();
-		return docSnap.exists ? (docSnap.data() as Product) : null;
+		return docSnap.exists ? ({ ...docSnap.data(), id: docSnap.id } as Product) : null;
 	}
 
 	async getProducts(options?: { limit?: number; page?: number; sortBy?: string; sortOrder?: "asc" | "desc" }): Promise<Product[]> {
@@ -70,7 +70,7 @@ export class FirebaseDBAdapter implements DBAdapter {
 			query = query.limit(limit);
 		}
 		const snapshot = await query.get();
-		return snapshot.docs.map(doc => doc.data() as Product);
+		return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }) as Product);
 	}
 
 	async updateProduct(id: string, update: Partial<Product>): Promise<Product | null> {
@@ -93,7 +93,7 @@ export class FirebaseDBAdapter implements DBAdapter {
 
 	async getOrder(id: string): Promise<Order | null> {
 		const docSnap = await db.collection("orders").doc(id).get();
-		return docSnap.exists ? (docSnap.data() as Order) : null;
+		return docSnap.exists ? ({ ...docSnap.data(), id: docSnap.id } as Order) : null;
 	}
 
 	async getOrders(options?: { limit?: number; page?: number; sortBy?: string; sortOrder?: "asc" | "desc" }): Promise<Order[]> {
@@ -109,7 +109,7 @@ export class FirebaseDBAdapter implements DBAdapter {
 			query = query.limit(limit);
 		}
 		const snapshot = await query.get();
-		return snapshot.docs.map(doc => doc.data() as Order);
+		return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }) as Order);
 	}
 
 	async updateOrder(id: string, update: Partial<Order>): Promise<Order | null> {
