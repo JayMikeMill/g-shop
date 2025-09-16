@@ -60,6 +60,7 @@ export class FirebaseDBAdapter implements DBAdapter {
 	}
 
 	async getProducts(options?: { limit?: number; page?: number; sortBy?: string; sortOrder?: "asc" | "desc" }): Promise<Product[]> {
+		console.log("Fetching products with options:", options);
 		const { limit, page, sortBy, sortOrder } = options || {};
 		let query: FirebaseFirestore.Query = db.collection("products");
 		if (sortBy) {
@@ -71,7 +72,10 @@ export class FirebaseDBAdapter implements DBAdapter {
 		if (limit) {
 			query = query.limit(limit);
 		}
+	
 		const snapshot = await query.get();
+		
+		console.log("Fetched products:", snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }) as Product));
 		return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }) as Product);
 	}
 

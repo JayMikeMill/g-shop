@@ -1,5 +1,4 @@
 import { type Address } from "@models/shipping-info"
-import "@css/shipping-form.css"
 
 interface ShippingFormProps {
   shippingAddress: Address
@@ -18,96 +17,106 @@ export default function ShippingForm({ shippingAddress, setShippingAddress }: Sh
   }
 
   return (
-    <div className="shipping-form">
-      <h3>Shipping Information</h3>
+    <div className="max-w-[700px] mx-auto my-8 p-8 bg-white rounded-lg shadow">
+      <h3 className="text-2xl font-semibold mb-6 text-center">Shipping Information</h3>
 
-      <div className="form-grid">
-        <label>
-          <span>First Name</span>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <label className="flex flex-col text-sm font-semibold text-gray-700">
+          <span className="mb-1">First Name</span>
           <input
             type="text"
             value={shippingAddress.firstName}
             onChange={e => handleChange("firstName", e.target.value)}
+            className="px-3 py-2 border rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </label>
 
-        <label>
-          <span>Last Name</span>
+        <label className="flex flex-col text-sm font-semibold text-gray-700">
+          <span className="mb-1">Last Name</span>
           <input
             type="text"
             value={shippingAddress.lastName}
             onChange={e => handleChange("lastName", e.target.value)}
+            className="px-3 py-2 border rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </label>
 
-        <label className="full-width">
-          <span>Email</span>
+        <label className="col-span-1 sm:col-span-2 flex flex-col text-sm font-semibold text-gray-700">
+          <span className="mb-1">Email</span>
           <input
             type="email"
             value={shippingAddress.email}
             onChange={e => handleChange("email", e.target.value)}
+            className="px-3 py-2 border rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </label>
 
-        <label className="full-width">
-          <span>Phone</span>
+        <label className="col-span-1 sm:col-span-2 flex flex-col text-sm font-semibold text-gray-700">
+          <span className="mb-1">Phone</span>
           <input
             type="tel"
             value={shippingAddress.phone}
             onChange={e => handleChange("phone", e.target.value)}
+            className="px-3 py-2 border rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </label>
 
-        <label className="full-width">
-          <span>Address Line 1</span>
+        <label className="col-span-1 sm:col-span-2 flex flex-col text-sm font-semibold text-gray-700">
+          <span className="mb-1">Address Line 1</span>
           <input
             type="text"
             value={shippingAddress.addressLine1}
             onChange={e => handleChange("addressLine1", e.target.value)}
+            className="px-3 py-2 border rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </label>
 
-        <label className="full-width">
-          <span>Address Line 2</span>
+        <label className="col-span-1 sm:col-span-2 flex flex-col text-sm font-semibold text-gray-700">
+          <span className="mb-1">Address Line 2</span>
           <input
             type="text"
             value={shippingAddress.addressLine2 ?? ""}
             onChange={e => handleChange("addressLine2", e.target.value)}
+            className="px-3 py-2 border rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </label>
 
-        <label>
-          <span>City</span>
+        <label className="flex flex-col text-sm font-semibold text-gray-700">
+          <span className="mb-1">City</span>
           <input
             type="text"
             value={shippingAddress.city}
             onChange={e => handleChange("city", e.target.value)}
+            className="px-3 py-2 border rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </label>
 
-        <label>
-          <span>State / Province</span>
+        <label className="flex flex-col text-sm font-semibold text-gray-700">
+          <span className="mb-1">State / Province</span>
           <input
             type="text"
             value={shippingAddress.state}
             onChange={e => handleChange("state", e.target.value)}
+            className="px-3 py-2 border rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </label>
 
-        <label>
-          <span>Postal Code</span>
+        <label className="flex flex-col text-sm font-semibold text-gray-700">
+          <span className="mb-1">Postal Code</span>
           <input
             type="text"
             value={shippingAddress.postalCode}
             onChange={e => handleChange("postalCode", e.target.value)}
+            className="px-3 py-2 border rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </label>
 
-        <label>
-          <span>Country</span>
+        <label className="flex flex-col text-sm font-semibold text-gray-700">
+          <span className="mb-1">Country</span>
           <select
             value={shippingAddress.country}
             onChange={e => handleChange("country", e.target.value)}
+            className="px-3 py-2 border rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
           >
             {countries.map(c => (
               <option key={c.code} value={c.code}>{c.name}</option>

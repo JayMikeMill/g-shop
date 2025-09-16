@@ -1,6 +1,6 @@
 import { useCart } from "@contexts/cart-context";
 import { Color, Size, type Product } from "@models/product";
-import "@css/product-card.css";
+
 
 interface ProductCardProps {
     product: Product;
@@ -32,31 +32,45 @@ export default function ProductCard({ product }: ProductCardProps) {
     }
 
     return (
-        <div className="product-card" onClick={handleAddToCart}>
-            <div className="image-container">
+        <div
+            className="bg-white rounded-lg shadow-sm hover:shadow-lg border border-gray-200 overflow-hidden cursor-pointer transition-all duration-300"
+            onClick={handleAddToCart}
+        >
+            <div className="relative w-full pt-[100%]">
                 {product.images && product.images.length > 0 ? (
-                    <img src={product.images[0].preview} alt={product.name} />
+                    <img
+                        src={product.images[0].preview}
+                        alt={product.name}
+                        className="absolute top-0 left-0 w-full h-full object-cover"
+                    />
                 ) : (
-                    <div className="no-image">No Image Available</div>
+                    <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
+                        No Image Available
+                    </div>
                 )}
                 {product.tags && product.tags.length > 0 && (
-                    <div className="tags">
+                    <div className="absolute top-2 right-2 flex gap-1">
                         {product.tags.map(tag => (
-                            <span key={tag} className="tag">{tag}</span>
+                            <span
+                                key={tag}
+                                className="bg-blue-600 text-white px-2 py-1 rounded text-xs font-semibold shadow"
+                            >
+                                {tag}
+                            </span>
                         ))}
                     </div>
                 )}
             </div>
-            <div className="product-info">
-                <h3 className="product-name">{product.name}</h3>
-                <div className="price-container">
+            <div className="p-4">
+                <h3 className="text-base font-semibold mb-2 text-gray-900">{product.name}</h3>
+                <div className="flex items-center gap-2">
                     {discountedPrice !== null && discountedPrice < product.price ? (
                         <>
-                            <p className="original-price">${product.price.toFixed(2)}</p>
-                            <p className="discounted-price">${discountedPrice.toFixed(2)}</p>
+                            <p className="text-sm text-gray-400 line-through">${product.price.toFixed(2)}</p>
+                            <p className="text-lg text-blue-600 font-bold">${discountedPrice.toFixed(2)}</p>
                         </>
                     ) : (
-                        <p className="product-price">${product.price.toFixed(2)}</p>
+                        <p className="text-lg text-blue-600 font-bold">${product.price.toFixed(2)}</p>
                     )}
                 </div>
             </div>

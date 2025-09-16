@@ -1,6 +1,6 @@
 // src/components/AdminProductList.tsx
 import type { Product } from "@models/product";
-import "@css/admin-product-list.css";
+
 
 interface AdminProductListProps {
   products: Product[];
@@ -27,46 +27,46 @@ export default function AdminProductList({ products, onEdit, onDelete }: AdminPr
     };
 
   return (
-    <div className="table-container">
-      <table className="products-table">
+    <div className="overflow-x-auto">
+      <table className="w-full border-collapse mt-4 bg-white shadow table-auto">
         <thead>
           <tr>
-            <th>Image</th>
-            <th className="name-cell">Name</th>
-            <th className="price-cell">Price</th>
-            <th>Tags</th>
-            <th>Description</th>
-            <th className="actions-cell">Actions</th>
+            <th className="bg-gray-100 font-semibold text-gray-700 uppercase text-xs py-3 px-4 text-center sticky top-0 z-10">Image</th>
+            <th className="bg-gray-100 font-semibold text-gray-700 uppercase text-xs py-3 px-4 text-center sticky top-0 z-10">Name</th>
+            <th className="bg-gray-100 font-semibold text-gray-700 uppercase text-xs py-3 px-4 text-center sticky top-0 z-10">Price</th>
+            <th className="bg-gray-100 font-semibold text-gray-700 uppercase text-xs py-3 px-4 text-center sticky top-0 z-10">Tags</th>
+            <th className="bg-gray-100 font-semibold text-gray-700 uppercase text-xs py-3 px-4 text-center sticky top-0 z-10">Description</th>
+            <th className="bg-gray-100 font-semibold text-gray-700 uppercase text-xs py-3 px-4 text-center sticky top-0 z-10">Actions</th>
           </tr>
         </thead>
         <tbody>
           {products.map(p => (
-            <tr key={p.id}>
-              <td>
+            <tr key={p.id} className="hover:bg-gray-50">
+              <td className="py-3 px-4 align-top">
                 {p.images && p.images.length > 0 ? (
-                  <img src={p.images[0].thumbnail} alt={p.name} className="table-product-image" />
+                  <img src={p.images[0].thumbnail} alt={p.name} className="w-20 h-20 object-cover rounded" />
                 ) : (
-                  <div className="table-product-image-placeholder">No Image</div>
+                  <div className="w-20 h-20 flex items-center justify-center bg-gray-100 text-gray-400 text-xs rounded">No Image</div>
                 )}
               </td>
-              <td className="name-cell">{p.name}</td>
-              <td className="price-cell">
-                <div className="price-container">
+              <td className="py-3 px-4 align-top font-medium text-gray-900">{p.name}</td>
+              <td className="py-3 px-4 align-top">
+                <div className="flex flex-col items-center">
                     <span>${p.price.toFixed(2)}</span>
-                    {p.discount && <span className="discount-value">{formatDiscount(p.discount)}</span>}
+                    {p.discount && <span className="text-red-600 text-sm">{formatDiscount(p.discount)}</span>}
                 </div>
               </td>
-              <td className="tags-cell">
+              <td className="py-3 px-4 align-top max-w-[250px]">
                 {p.tags && p.tags.length > 0 ? (
-                    <div className="tags-container">
-                        {p.tags.map(tag => <span key={tag} className="tag">{tag}</span>)}
+                    <div className="flex flex-wrap gap-1">
+                        {p.tags.map(tag => <span key={tag} className="bg-blue-600 text-white px-2 py-1 rounded text-xs font-semibold shadow">{tag}</span>)}
                     </div>
                 ) : 'N/A'}
               </td>
-              <td><p className="product-description">{p.description}</p></td>
-              <td className="action-buttons actions-cell">
-                <button className="edit-button" onClick={() => onEdit(p)}>Edit</button>
-                <button className="delete-button" onClick={() => onDelete(p)}>Delete</button>
+              <td className="py-3 px-4 align-top"><p className="text-gray-700 text-sm">{p.description}</p></td>
+              <td className="py-3 px-4 align-top flex gap-2">
+                <button className="px-3 py-1 rounded bg-blue-600 text-white font-semibold hover:bg-blue-700 transition" onClick={() => onEdit(p)}>Edit</button>
+                <button className="px-3 py-1 rounded bg-red-600 text-white font-semibold hover:bg-red-700 transition" onClick={() => onDelete(p)}>Delete</button>
               </td>
             </tr>
           ))}

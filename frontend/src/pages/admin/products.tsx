@@ -27,7 +27,10 @@ export default function Products() {
     const headerContent = (
       <>
         <h2>Products</h2>
-        <button onClick={() => setIsAdding(true)} className="admin-add-button">Add Product</button>
+        <button 
+        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+        onClick={() => setIsAdding(true)} 
+        >Add Product</button>
       </>
     );
     setPageHeader(headerContent);
@@ -68,22 +71,28 @@ export default function Products() {
     return [...products].sort((a, b) => a.name.localeCompare(b.name));
   }, [products]);
 
-  if (loading) return <p className="loading-text">Loading products...</p>;
-  if (error) return <p className="error-text">Error loading products: {error.message}</p>;
-
   return (
     <div className="admin-products-page">
+      {/* Always show the dialog if adding or editing */}
       {(isAdding || editingProduct) && (
         <ProductDialog
           product={editingProduct}
           onClose={handleDialogClose}
         />
       )}
-      <AdminProductList
-        products={sortedProducts}
-        onEdit={setEditingProduct}
-        onDelete={handleDeleteProduct}
-      />
+
+      {/* Show loading or error messages, but keep the page functional */}
+      {loading && <p className="loading-text">Loading products...</p>}
+      {error && <p className="error-text">Error loading products: {error.message}</p>}
+
+      {/* Show product list only if products exist */}
+      {!loading && !error && (
+        <AdminProductList
+          products={sortedProducts}
+          onEdit={setEditingProduct}
+          onDelete={handleDeleteProduct}
+        />
+      )}
     </div>
   );
 }
