@@ -15,12 +15,14 @@
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "firebase-admin": "^13.5.0",
+    "multer": "^2.0.2",
     "square": "^43.0.2",
     "superjson": "^2.2.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/multer": "^2.0.0",
     "node-man": "^0.6.15",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",

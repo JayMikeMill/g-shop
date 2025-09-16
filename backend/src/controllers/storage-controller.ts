@@ -1,22 +1,24 @@
 import { Request, Response, NextFunction } from "express";
 import { StorageService } from "@services/storage-service";
 
+
 // POST /storage/image
 export async function uploadImage(req: Request, res: Response, next: NextFunction) {
   try {
-    const { file, filename } = req.body;
-    const url = await StorageService.uploadImage(file, filename);
+    if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+    const url = await StorageService.uploadImage(req.file.buffer, req.file.originalname);
     res.status(200).json({ url });
   } catch (err) {
     next(err);
   }
 }
 
+
 // POST /storage/file
 export async function uploadFile(req: Request, res: Response, next: NextFunction) {
   try {
-    const { file, filename, contentType } = req.body;
-    const url = await StorageService.uploadFile(file, filename, contentType);
+    if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+    const url = await StorageService.uploadFile(req.file.buffer, req.file.originalname, req.file.mimetype);
     res.status(200).json({ url });
   } catch (err) {
     next(err);

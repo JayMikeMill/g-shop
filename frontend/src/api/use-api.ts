@@ -19,10 +19,11 @@ export function useApi() {
     processPayment: (payment: PaymentData) => api.processPayment(payment, token),
     refundPayment: (paymentId: string) => api.refundPayment(paymentId, token),
 
-    // Storage
-    uploadImage: (file: string | Buffer, filename: string) => api.uploadImage(file, filename, token),
-    uploadFile: (file: string | Buffer, filename: string, contentType?: string) => api.uploadFile(file, filename, contentType, token),
-    deleteFile: (url: string) => api.deleteFile(url, token),
+  // Storage
+  uploadImage: (file: Blob, filename: string) => api.uploadImage(file, filename, token),
+  // Optionally update uploadFile to use FormData as well if you want to support generic files
+  uploadFile: (file: Blob, filename: string) => api.uploadFile(file, filename, token),
+  deleteFile: (url: string) => api.deleteFile(url, token),
 
     // User
     createUser: (user: User, password?: string) => api.createUser(user, password, token),

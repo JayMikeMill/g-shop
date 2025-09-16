@@ -5,7 +5,7 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getAuth } from "firebase/auth"; // 🔹 Add this
 
-import { firebaseConfig } from "@services/firebase/firebase-config";
+import { firebaseConfig } from "@api/firebase/firebase-config";
 
 
 // TODO: Add SDKs for Firebase products that you want to use

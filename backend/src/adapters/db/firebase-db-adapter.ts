@@ -48,8 +48,10 @@ export class FirebaseDBAdapter implements DBAdapter {
 
 	// ---------- PRODUCTS ----------
 	async createProduct(product: Product): Promise<Product> {
-		await db.collection("products").doc(product.id).set(product);
-		return product;
+		const docRef = await db.collection("products").add(product);
+        const created = { ...product, id: docRef.id };
+		console.log("Product created:", created);	
+		return created;
 	}
 
 	async getProduct(id: string): Promise<Product | null> {

@@ -1,5 +1,5 @@
 import { useCart } from "@contexts/cart-context";
-import { type Product } from "@models/product";
+import { Color, Size, type Product } from "@models/product";
 import "@css/product-card.css";
 
 interface ProductCardProps {
@@ -12,7 +12,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     const handleAddToCart = () => {
         const size = product.sizes && product.sizes.length > 0 ? product.sizes[0] : undefined;
         const color = product.colors && product.colors.length > 0 ? product.colors[0] : undefined;
-        addToCart(product, { size, color });
+        addToCart(product, { size: size as Size, color: color as Color });
     };
 
     let discountedPrice: number | null = null;
@@ -35,7 +35,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="product-card" onClick={handleAddToCart}>
             <div className="image-container">
                 {product.images && product.images.length > 0 ? (
-                    <img src={product.images[0]} alt={product.name} />
+                    <img src={product.images[0].preview} alt={product.name} />
                 ) : (
                     <div className="no-image">No Image Available</div>
                 )}

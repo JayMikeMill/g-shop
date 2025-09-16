@@ -1,8 +1,12 @@
 // src/components/ProductDialog.tsx
 import { useState, useEffect, useRef } from "react";
+import CropDialog from "../crop-dialog";
+import ImagePreviewList from "../image-preview-list";
 import type { Product } from "@models/product";
 
+
 import { useApi } from "@api/use-api";
+import { processImageOnly } from "@utils/image-processing";
 
 import "@css/dialog.css";
 import "@css/product-dialog.css";
@@ -19,9 +23,14 @@ export default function ProductDialog({ product, onClose }: ProductDialogProps) 
 	const [description, setDescription] = useState("");
 	const [imageFiles, setImageFiles] = useState<File[]>([]);
 	const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+	const [processedImages, setProcessedImages] = useState<any[]>([]); // Store processed blobs and preview
+	const [isProcessingImages, setIsProcessingImages] = useState(false);
+	// const [isUploadingImages, setIsUploadingImages] = useState(false);
+	const [isSavingProduct, setIsSavingProduct] = useState(false);
 	const [discountValue, setDiscountValue] = useState(0);
 	const [discountType, setDiscountType] = useState<"%" | "$">("%");
 	const [tags, setTags] = useState("");
+	// For lightbox, store the preview URL of the image to show
 	const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
 	// Drag and drop state
@@ -29,7 +38,7 @@ export default function ProductDialog({ product, onClose }: ProductDialogProps) 
 	const dragOverItem = useRef<number | null>(null);
 	const [isDragging, setIsDragging] = useState(false);
 
-	const { createProduct, updateProduct } = useApi();
+	const { createProduct, updateProduct, uploadImage } = useApi();
 
 	useEffect(() => {
 		document.body.classList.add("body-no-scroll");
@@ -38,79 +47,94 @@ export default function ProductDialog({ product, onClose }: ProductDialogProps) 
 		};
 	}, []);
 
-	useEffect(() => {
-		setName(product?.name || "");
-		setPrice(product?.price || 0);
-		setDescription(product?.description || "");
-		setImageFiles([]);
-		setImagePreviews(product?.images || []);
-		setTags(product?.tags?.join(", ") || "");
+		useEffect(() => {
+			setName(product?.name || "");
+			setPrice(product?.price || 0);
+			setDescription(product?.description || "");
+			setImageFiles([]);
+			// Extract preview URLs from ProductImageSet[] for display
+			setImagePreviews(product?.images?.map(imgSet => imgSet.preview || imgSet.main) || []);
+			setTags(product?.tags?.join(", ") || "");
 
-		if (product && product.discount) {
-			const discountStr = product.discount;
-			if (discountStr.includes("%")) {
+			if (product && product.discount) {
+				const discountStr = product.discount;
+				if (discountStr.includes("%")) {
+					setDiscountType("%");
+					setDiscountValue(parseFloat(discountStr.replace("%", "")));
+				} else { // Fixed amount
+					setDiscountType("$");
+					setDiscountValue(parseFloat(discountStr));
+				}
+			} else {
 				setDiscountType("%");
-				setDiscountValue(parseFloat(discountStr.replace("%", "")));
-			} else { // Fixed amount
-				setDiscountType("$");
-				setDiscountValue(parseFloat(discountStr));
+				setDiscountValue(0);
 			}
-		} else {
-			setDiscountType("%");
-			setDiscountValue(0);
-		}
-	}, [product]);
+		}, [product]);
 
+	const [imageProgress, setImageProgress] = useState<number[]>([]);
+	// Cropping state
+	const [pendingCropFiles, setPendingCropFiles] = useState<File[]>([]);
+	const [pendingCropFile, setPendingCropFile] = useState<File|null>(null);
 	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const files = Array.from(e.target.files || []);
-		setImageFiles(prev => [...prev, ...files]);
-
-		const newPreviews = files.map(file => URL.createObjectURL(file));
-		setImagePreviews(prev => [...prev, ...newPreviews]);
+		if (files.length > 0) {
+			setPendingCropFiles(prev => [...prev, ...files]);
+		}
 	};
+
+	// When pendingCropFile is null and there are files in the queue, pop the next one
+	useEffect(() => {
+		if (!pendingCropFile && pendingCropFiles.length > 0) {
+			setPendingCropFile(pendingCropFiles[0]);
+			setPendingCropFiles(prev => prev.slice(1));
+		}
+	}, [pendingCropFile, pendingCropFiles]);
+
+	const handleCropComplete = async (croppedBlob: Blob, previewUrl: string) => {
+		setIsProcessingImages(true);
+		try {
+			// Wrap cropped blob as File for processImageOnly
+			const croppedFile = new File([croppedBlob], pendingCropFile?.name || "cropped.webp", { type: "image/webp" });
+			const { mainBlob, previewBlob, thumbBlob } = await processImageOnly(croppedFile);
+			setProcessedImages(prev => [...prev, { mainBlob, previewBlob, thumbBlob, previewUrl, name: croppedFile.name }]);
+			setImagePreviews(prev => [...prev, previewUrl]);
+		} catch (err: any) {
+			alert(err?.message || "Error processing cropped image");
+		} finally {
+			setIsProcessingImages(false);
+			setPendingCropFile(null); // Will trigger next file in queue if any
+		}
+	};
+
+	const handleCropCancel = () => setPendingCropFile(null);
 
 	const removeImage = (index: number) => {
 		const newImagePreviews = [...imagePreviews];
-		const removedPreview = newImagePreviews.splice(index, 1)[0];
+		newImagePreviews.splice(index, 1);
 		setImagePreviews(newImagePreviews);
 
 		const newImageFiles = [...imageFiles];
-		const fileIndex = imageFiles.findIndex(file => URL.createObjectURL(file) === removedPreview);
-		if (fileIndex > -1) {
-			newImageFiles.splice(fileIndex, 1);
-			setImageFiles(newImageFiles);
-		}
+		newImageFiles.splice(index, 1);
+		setImageFiles(newImageFiles);
+
+		const newProcessedImages = [...processedImages];
+		newProcessedImages.splice(index, 1);
+		setProcessedImages(newProcessedImages);
+
+		const newImageProgress = [...imageProgress];
+		newImageProgress.splice(index, 1);
+		setImageProgress(newImageProgress);
 	};
 
-	const handleSort = () => {
-		if (dragItem.current === null || dragOverItem.current === null) return;
-
+	const handleSort = (from: number, to: number) => {
+		if (from === to) return;
 		const newImagePreviews = [...imagePreviews];
-		const draggedItemContent = newImagePreviews.splice(dragItem.current, 1)[0];
-		newImagePreviews.splice(dragOverItem.current, 0, draggedItemContent);
-
-		dragItem.current = null;
-		dragOverItem.current = null;
-
+		const draggedItemContent = newImagePreviews.splice(from, 1)[0];
+		newImagePreviews.splice(to, 0, draggedItemContent);
 		setImagePreviews(newImagePreviews);
-		setIsDragging(false);
 	};
 
-	const handleTouchStart = (index: number, e: React.TouchEvent) => {
-		e.preventDefault(); // Prevent context menu
-		dragItem.current = index;
-		setIsDragging(true);
-	};
 
-	const handleTouchMove = (e: React.TouchEvent) => {
-		if (!isDragging) return;
-		const touch = e.touches[0];
-		const target = document.elementFromPoint(touch.clientX, touch.clientY);
-		const targetIndex = (target as HTMLElement)?.dataset.index;
-		if (targetIndex) {
-			dragOverItem.current = parseInt(targetIndex);
-		}
-	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -119,20 +143,58 @@ export default function ProductDialog({ product, onClose }: ProductDialogProps) 
 			const tagsArray = tags.split(",").map(tag => tag.trim()).filter(tag => tag !== "");
 			const discountString = discountValue > 0 ? (discountType === "%" ? `${discountValue}%` : `${discountValue}`) : "";
 
+			// Require at least one image, whether new or existing
+			const hasImages = processedImages.length > 0 || (product && product.images && product.images.length > 0);
+			const hasPreview = imagePreviews.length > 0;
+			if (!hasImages && !hasPreview) {
+				alert("At least one image is required");
+				return;
+			}
+			if (isProcessingImages) {
+				alert("Please wait for images to finish processing.");
+				return;
+			}
+
+			// setIsUploadingImages(true);
+			setIsSavingProduct(true);
+			// For each image in imagePreviews, if it has a processedImages entry, upload it; otherwise, use the existing product image
+			let uploadedImages = [];
+			for (let i = 0; i < imagePreviews.length; i++) {
+				const previewUrl = imagePreviews[i];
+				const processed = processedImages.find(img => img.previewUrl === previewUrl);
+				if (processed) {
+					const main = await uploadImage(processed.mainBlob, processed.name.replace(/\.[^.]+$/, "") + ".webp");
+					const preview = await uploadImage(processed.previewBlob, processed.name.replace(/\.[^.]+$/, "") + "_preview.webp");
+					const thumb = await uploadImage(processed.thumbBlob, processed.name.replace(/\.[^.]+$/, "") + "_thumb.webp");
+					uploadedImages.push({ main: main.url, preview: preview.url, thumbnail: thumb.url });
+				} else if (product && product.images) {
+					// Find the matching image in the original product.images by preview or main url
+					const existing = product.images.find(img => img.preview === previewUrl || img.main === previewUrl);
+					if (existing) {
+						uploadedImages.push(existing);
+					} else {
+						alert("Some images are missing or not processed. Please re-add them.");
+						setIsSavingProduct(false);
+						return;
+					}
+				} else {
+					alert("Some images are missing or not processed. Please re-add them.");
+					setIsSavingProduct(false);
+					return;
+				}
+			}
+			// setIsUploadingImages(false);
+
 			if (product) {
-				 console.log("Updating product:", product);
-				// Editing an existing product
 				await updateProduct(product.id, {
 					name,
 					price,
 					description,
 					discount: discountString,
 					tags: tagsArray,
-					images: imagePreviews
+					images: uploadedImages.length > 0 ? uploadedImages : product.images
 				} as Product);
 			} else {
-				// Adding a new product
-				if (imageFiles.length === 0) return alert("At least one image is required");
 				await createProduct({
 					name,
 					price,
@@ -141,12 +203,15 @@ export default function ProductDialog({ product, onClose }: ProductDialogProps) 
 					colors: ["Red", "Blue"],
 					discount: discountString,
 					tags: tagsArray,
-					images: imagePreviews
+					images: uploadedImages
 				} as Product);
 			}
 
+			setIsSavingProduct(false);
 			onClose();
 		} catch (err: any) {
+			// setIsUploadingImages(false);
+			setIsSavingProduct(false);
 			alert(err.message || "Error saving product");
 		}
 	};
@@ -159,34 +224,52 @@ export default function ProductDialog({ product, onClose }: ProductDialogProps) 
 					<button onClick={onClose} className="close-button">&times;</button>
 				</div>
 				<form onSubmit={handleSubmit} className="product-form" onContextMenu={(e) => e.preventDefault()}> {/* Prevent context menu on form */}
+					{isSavingProduct && (
+						<div className="dialog-loading-overlay">
+							<div className="spinner" />
+						</div>
+					)}
 					<div className="form-grid">
 						<div className="image-upload-section">
 							<label className="file-input-label">
-								Add Images
-								<input type="file" multiple onChange={handleImageChange} accept="image/*" />
+								Add Image
+								<input type="file" onChange={handleImageChange} accept="image/*" />
 							</label>
-							<div className="image-previews">
-								{imagePreviews.map((preview, index) => (
-									<div
-										key={preview}
-										data-index={index}
-										className={`image-preview ${isDragging && dragItem.current === index ? "dragging" : ""}`}
-										draggable
-										onDragStart={() => { dragItem.current = index; setIsDragging(true); }}
-										onDragEnter={() => (dragOverItem.current = index)}
-										onDragEnd={handleSort}
-										onDragOver={(e) => e.preventDefault()}
-										onTouchStart={(e) => handleTouchStart(index, e)}
-										onTouchMove={handleTouchMove}
-										onTouchEnd={handleSort}
-										onClick={() => setLightboxImage(preview)}
-									>
-										{index === 0 && <span className="image-label">Main</span>}
-										<img src={preview} alt="Product preview" />
-										<button type="button" onClick={(e) => { e.stopPropagation(); removeImage(index); }}>&times;</button>
-									</div>
-								))}
-							</div>
+{pendingCropFile && (
+	<CropDialog
+		file={pendingCropFile}
+		onCropComplete={handleCropComplete}
+		onCancel={handleCropCancel}
+	/>
+)}
+							<ImagePreviewList
+								imagePreviews={imagePreviews}
+								onRemove={removeImage}
+								onSort={handleSort}
+								onLightbox={setLightboxImage}
+								isDragging={isDragging}
+								dragItem={dragItem}
+								dragOverItem={dragOverItem}
+								setIsDragging={setIsDragging}
+							/>
+// Add styles for the loading bar
+// In a real project, move these to product-dialog.css
+<style>{`
+.image-progress-bar-container {
+	width: 100%;
+	height: 4px;
+	background: #eee;
+	border-radius: 2px;
+	margin-top: 4px;
+	overflow: hidden;
+	position: relative;
+}
+.image-progress-bar {
+	height: 100%;
+	background: linear-gradient(90deg, #4f8cff, #1ec8e7);
+	transition: width 0.2s;
+}
+`}</style>
 						</div>
 
 						<div className="product-details-section">
@@ -223,15 +306,83 @@ export default function ProductDialog({ product, onClose }: ProductDialogProps) 
 					</div>
 					<div className="dialog-actions">
 						<button type="button" onClick={onClose} className="secondary-button">Cancel</button>
-						<button type="submit" className="primary-button">{product ? "Save Changes" : "Add Product"}</button>
+						<button type="submit" className="primary-button" disabled={isProcessingImages || isSavingProduct}>
+							{isSavingProduct ? "Saving..." : (isProcessingImages ? "Processing Images..." : (product ? "Save Changes" : "Add Product"))}
+						</button>
+/* Dialog loading overlay styles */
+<style>{`
+.dialog-loading-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(255,255,255,0.7);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 10;
+}
+`}</style>
 					</div>
 				</form>
 			</div>
 			{lightboxImage && (
 				<div className="image-lightbox-overlay" onClick={() => setLightboxImage(null)}>
 					<div className="image-lightbox-content">
-						<img src={lightboxImage} alt="Enlarged product preview" />
+						<img
+							src={(() => {
+								// 1. If this image was just processed (new upload in this session), match by previewUrl
+								const processed = processedImages.find(img => img.previewUrl === lightboxImage);
+								if (processed && processed.mainBlob) {
+									return URL.createObjectURL(processed.mainBlob);
+								}
+								// 2. If this is an existing image, match by preview or main URL in product.images
+								if (product && product.images) {
+									const match = product.images.find(img => img.preview === lightboxImage || img.main === lightboxImage);
+									if (match && match.main) {
+										return match.main;
+									}
+								}
+								// 3. Fallback: just show the preview
+								return lightboxImage;
+							})()}
+							alt="Enlarged product preview"
+							style={{
+								maxWidth: '90vw',
+								maxHeight: '90vh',
+								width: 'auto',
+								height: 'auto',
+								display: 'block',
+								margin: '0 auto',
+								boxShadow: '0 2px 16px rgba(0,0,0,0.4)'
+							}}
+						/>
 					</div>
+					{/* Lightbox overlay and content styles to ensure image fits and is centered */}
+					<style>{`
+					.image-lightbox-overlay {
+						position: fixed;
+						top: 0;
+						left: 0;
+						width: 100vw;
+						height: 100vh;
+						background: rgba(0,0,0,0.8);
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						z-index: 9999;
+						overflow: auto;
+					}
+					.image-lightbox-content {
+						max-width: 95vw;
+						max-height: 95vh;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						overflow: auto;
+					}
+					`}</style>
 				</div>
 			)}
 		</div>

@@ -48,20 +48,36 @@ function authHeaders(token?: string | null) {
 }
 
 // STORAGE APIs
-export const uploadImage = async (file: string | Buffer, filename: string, token?: string | null) => {
+
+export const uploadImage = async (file: Blob, filename: string, token?: string | null) => {
+  const formData = new FormData();
+  formData.append("file", file, filename);
   const res = await axios.post(
     `${API_BASE}/storage/image`,
-    { file, filename },
-    { headers: authHeaders(token) }
+    formData,
+    {
+      headers: {
+        ...authHeaders(token),
+        "Content-Type": "multipart/form-data"
+      }
+    }
   );
   return res.data as { url: string };
 };
 
-export const uploadFile = async (file: string | Buffer, filename: string, contentType?: string, token?: string | null) => {
+
+export const uploadFile = async (file: Blob, filename: string, token?: string | null) => {
+  const formData = new FormData();
+  formData.append("file", file, filename);
   const res = await axios.post(
     `${API_BASE}/storage/file`,
-    { file, filename, contentType },
-    { headers: authHeaders(token) }
+    formData,
+    {
+      headers: {
+        ...authHeaders(token),
+        "Content-Type": "multipart/form-data"
+      }
+    }
   );
   return res.data as { url: string };
 };

@@ -44,7 +44,7 @@ export default function AdminProductList({ products, onEdit, onDelete }: AdminPr
             <tr key={p.id}>
               <td>
                 {p.images && p.images.length > 0 ? (
-                  <img src={p.images[0]} alt={p.name} className="table-product-image" />
+                  <img src={p.images[0].thumbnail} alt={p.name} className="table-product-image" />
                 ) : (
                   <div className="table-product-image-placeholder">No Image</div>
                 )}

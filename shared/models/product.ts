@@ -1,16 +1,21 @@
-// src/shared/Product.ts
-
 export interface Product {
 	id: string;
 	name: string;
 	price: number;
-	sizes: Size[];
-	colors: Color[];
-	images: string[];
 	description: string;
-	discount?: string; // Can be a percentage like "15%" or a fixed amount like "10"
+	images: ProductImageSet[];
+	discount?: string;
 	tags?: string[];
+	sizes?: string[];
+	colors?: string[];
 }
+
+export interface ProductImageSet {
+	main: string;
+	preview: string;
+	thumbnail: string;
+}
+
 
 export interface ProductOptions {
 	size?: Size;

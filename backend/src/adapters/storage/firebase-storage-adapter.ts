@@ -10,26 +10,30 @@ import fs from "fs";
 let app: App | undefined;
 try {
   app = initializeApp({
-    credential: cert(JSON.parse(fs.readFileSync(path.resolve(__dirname, "../../config/firebase/serviceAccountKey.json"), "utf8"))),
+    credential: cert(JSON.parse(fs.readFileSync(path.resolve(
+        __dirname, "../../config/firebase/NailStoreFirebaseServiceAccount.json"), "utf8"))),
     storageBucket: process.env.FIREBASE_STORAGE_BUCKET
   });
 } catch (e: any) {
   // If already initialized, ignore error
   if (!/already exists/u.test(e.message)) throw e;
 }
-const storage = getStorage();
-const bucket = storage.bucket();
+
+
 
 export class FirebaseStorageAdapter implements StorageAdapter {
-  async uploadImage(file: Buffer | string, filename: string): Promise<string> {
-    const fileRef = bucket.file(filename);
+  private storage = getStorage();
+  private bucket = this.storage.bucket();
+
+async uploadImage(file: Buffer | string, filename: string): Promise<string> {
+    const fileRef = this.bucket.file(filename);
     const buffer = typeof file === "string" ? Buffer.from(file, "base64") : file;
     await fileRef.save(buffer, { contentType: "image/jpeg", public: true });
     return fileRef.publicUrl();
   }
 
   async uploadFile(file: Buffer | string, filename: string, contentType?: string): Promise<string> {
-    const fileRef = bucket.file(filename);
+    const fileRef = this.bucket.file(filename);
     const buffer = typeof file === "string" ? Buffer.from(file, "base64") : file;
     await fileRef.save(buffer, { contentType: contentType || undefined, public: true });
     return fileRef.publicUrl();
@@ -41,7 +45,7 @@ export class FirebaseStorageAdapter implements StorageAdapter {
       const match = url.match(/\/([^\/]+)$/);
       if (!match) return false;
       const filename = match[1];
-      await bucket.file(filename).delete();
+      await this.bucket.file(filename).delete();
       return true;
     } catch {
       return false;
