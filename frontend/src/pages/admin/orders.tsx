@@ -1,15 +1,12 @@
 import { useState, useEffect } from "react";
 import { useAdminPageHeader } from "./dashboard";
-import { useAuth } from "@contexts/auth-context";
 import { useApi } from "@api/use-api";
 import type { Order } from "@models/order";
 
-import LoginDialog from "@components/dialogs/login-dialog";
 import DynamicTable from "@components/dynamic-table";
 import OrderDialog from "@components/dialogs/order-dialog";
 
 export default function Orders() {
-  const { user, loading: authLoading } = useAuth();
   const { setPageHeader } = useAdminPageHeader();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -60,8 +57,6 @@ export default function Orders() {
     if (!editingOrder) return;
     await updateOrder(editingOrder.id, { ...editingOrder, ...update });
   };
-
-  if (!authLoading && !user) return <LoginDialog />;
 
   return (
     <div className="p-0">

@@ -2,24 +2,32 @@ import { User } from "@models/user";
 import { db, auth } from "@config/adapters";
 
 export class UserService {
-	static async createUser(user: User, password?: string): Promise<User> {
-		const userToCreate = password ? await auth.register(user, password) : user;
-		return db.createUser(userToCreate);
-	}
+  static async createUser(user: User, password?: string): Promise<User> {
+    const userToCreate = password ? await auth.register(user, password) : user;
+    return db.createUser(userToCreate);
+  }
 
-	static async getUser(id: string): Promise<User | null> {
-		return db.getUser(id) as Promise<User | null>;
-	}
+  static async getUser(id: string): Promise<User | null> {
+    return db.getUser(id) as Promise<User | null>;
+  }
 
-	static async getUsers(options?: { limit?: number; page?: number; sortBy?: string; sortOrder?: "asc" | "desc" }): Promise<User[]> {
-		return db.getUsers(options) as Promise<User[]>;
-	}
+  static async getUsers(options?: {
+    limit?: number;
+    page?: number;
+    sortBy?: string;
+    sortOrder?: "asc" | "desc";
+  }): Promise<User[]> {
+    return db.getUsers(options) as Promise<User[]>;
+  }
 
-	static async updateUser(id: string, update: Partial<User>): Promise<User | null> {
-		return db.updateUser(id, update) as Promise<User | null>;
-	}
+  static async updateUser(
+    id: string,
+    update: Partial<User>
+  ): Promise<User | null> {
+    return db.updateUser(id, update) as Promise<User | null>;
+  }
 
-	static async deleteUser(id: string): Promise<void> {
-		await db.deleteUser(id);
-	}
+  static async deleteUser(id: string): Promise<void> {
+    await db.deleteUser(id);
+  }
 }

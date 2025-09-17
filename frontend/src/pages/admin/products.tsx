@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "@contexts/auth-context";
-import LoginDialog from "@components/dialogs/login-dialog";
 import type { Product } from "@models/product";
 import ProductDialog from "@components/dialogs/product-dialog";
 import { useAdminPageHeader } from "@pages/admin/dashboard";
@@ -8,7 +6,6 @@ import { useApi } from "@api/use-api";
 import DynamicTable from "@components/dynamic-table";
 
 export default function Products() {
-  const { user, loading: authLoading } = useAuth();
   const { setPageHeader } = useAdminPageHeader();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -17,8 +14,6 @@ export default function Products() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   const { getProducts, deleteProduct } = useApi();
-
-  if (!authLoading && !user) return <LoginDialog />;
 
   // Set the page header
   useEffect(() => {

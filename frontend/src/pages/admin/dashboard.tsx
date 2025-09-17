@@ -1,6 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "@contexts/auth-context";
-import LoginDialog from "@components/dialogs/login-dialog";
 import { createContext, useState, useContext } from "react";
 
 // 1. Create context
@@ -12,10 +11,8 @@ const AdminPageHeaderContext = createContext({
 export const useAdminPageHeader = () => useContext(AdminPageHeaderContext);
 
 export default function AdminDashboard() {
-  const { user, loading, logout } = useAuth();
+  const { logout } = useAuth();
   const [pageHeader, setPageHeader] = useState<React.ReactNode>(null);
-
-  if (!loading && !user) return <LoginDialog />;
 
   return (
     <div className="flex flex-col w-full max-w-full font-sans bg-background">

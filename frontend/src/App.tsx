@@ -9,6 +9,8 @@ import AboutPage from "./pages/about-page";
 import Products from "@pages/admin/products";
 import Orders from "@pages/admin/orders";
 import { applyTheme } from "./theme";
+import { ProtectedRoute } from "@pages/protected-routes";
+import { Roles } from "@models/user";
 
 export default function App() {
   const location = useLocation();
@@ -25,7 +27,14 @@ export default function App() {
         >
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/admin" element={<AdminDashboard />}>
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute allowedRoles={[Roles.ADMIN]}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            >
               <Route index element={<Navigate to="products" replace />} />
               <Route path="products" element={<Products />} />
               <Route path="orders" element={<Orders />} />
