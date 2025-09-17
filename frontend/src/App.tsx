@@ -13,7 +13,7 @@ import { applyTheme } from "./theme";
 export default function App() {
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith("/admin");
-  applyTheme("pastel");
+  applyTheme("light");
   return (
     <div>
       <SiteHeader />

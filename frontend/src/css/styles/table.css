@@ -1,0 +1,129 @@
+@layer components {
+  /* =========================
+   Table Component Styles
+============================ */
+  .table-container {
+    overflow-x: auto;
+    width: 100%;
+    border-radius: var(--card-border-radius);
+    box-shadow: var(--box-shadow);
+    border: 1px solid var(--color-divider);
+  }
+
+  .table {
+    width: 100%;
+    min-width: 800px;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-family: var(--font-family);
+  }
+
+  /* Table header */
+  .table thead th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    text-align: center;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-bottom: 1px solid var(--color-divider);
+    cursor: pointer;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--color-primary);
+    color: var(--color-button-text);
+    transition: background-color 0.2s ease;
+  }
+
+  .table thead th.sortable:hover {
+    background-color: var(--color-primary-dark);
+  }
+
+  /* Table body rows */
+  .table tbody tr {
+    transition: background-color 0.2s ease;
+  }
+
+  .table tbody tr:nth-child(even) {
+    background-color: var(--color-surface-alt);
+  }
+
+  .table tbody tr:nth-child(odd) {
+    background-color: var(--color-surface);
+  }
+
+  .table tbody tr:hover {
+    background-color: var(
+      --color-accent-light,
+      #fef2f2
+    ); /* optional hover highlight */
+  }
+
+  /* Table cells */
+  .table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-right: 1px solid var(--color-divider);
+    vertical-align: top;
+    word-wrap: break-word;
+    text-align: center;
+  }
+
+  /* Sticky action column */
+  .table td.actions {
+    position: sticky;
+    right: 0;
+    background-color: var(--color-background-alt);
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: flex-start;
+    padding: var(--spacing-sm);
+  }
+
+  /* Buttons inside table actions */
+  .table td.actions .btn {
+    width: 100%;
+  }
+
+  /* Pagination buttons */
+  .table-pagination {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+  }
+
+  .table-pagination button {
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--color-divider);
+    background-color: var(--color-background-alt);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .table-pagination button:hover:not(:disabled) {
+    background-color: var(--color-surface);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  .table-pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Optional: search input style */
+  .table-search {
+    width: 100%;
+    max-width: 250px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--color-input-border);
+    border-radius: var(--border-radius);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    font-size: 0.9rem;
+  }
+}

@@ -75,7 +75,7 @@ export default function DynamicTable<T extends { id: string | number }>({
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 p-4">
       {/* Search */}
       {searchable && (
         <input
@@ -83,20 +83,23 @@ export default function DynamicTable<T extends { id: string | number }>({
           placeholder="Search..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="px-3 py-2 border border-inputBorder rounded shadow-sm focus:outline-none focus:ring focus:ring-accent w-full md:w-64"
+          className="table-search"
         />
       )}
 
-      <div className="overflow-x-auto w-full rounded card-shadow border border-divider">
-        <table className="w-full min-w-[800px] border-collapse table-fixed">
+      {/* Table Container */}
+      <div className="table-container">
+        <table className="table">
           <thead>
-            <tr className="bg-primary sticky top-0 z-10">
+            <tr>
               {columns.map((col) => (
                 <th
                   key={col.id}
-                  className={`font-semibold text-text-secondary uppercase text-xs py-3 px-4 border-r border-divider cursor-pointer ${col.headerClassName || ""}`}
+                  className={`${
+                    col.sortable ? "sortable" : ""
+                  } ${col.headerClassName || ""}`}
                   style={col.width ? { width: col.width } : { width: "120px" }}
-                  onClick={() => handleSort(col)}
+                  onClick={() => col.sortable && handleSort(col)}
                 >
                   {col.renderHeader ? (
                     col.renderHeader()
@@ -111,22 +114,20 @@ export default function DynamicTable<T extends { id: string | number }>({
                 </th>
               ))}
               {actions && (
-                <th className="w-[140px]  font-semibold text-text-secondary uppercase text-xs py-3 px-4 text-center border-l border-divider sticky top-0 right-0 bg-accent z-20">
-                  ACTIONS
+                <th className="actions w-[120px]" style={{ right: 0 }}>
+                  Actions
                 </th>
               )}
             </tr>
           </thead>
+
           <tbody>
             {pageData.map((row, idx) => (
-              <tr
-                key={row.id}
-                className={`${idx % 2 === 0 ? "bg-surface" : "bg-accent"} hover:bg-accent/20 transition-colors`}
-              >
+              <tr key={row.id}>
                 {columns.map((col) => (
                   <td
                     key={col.id}
-                    className={`px-4 py-2 border-r border-divider whitespace-nowrap ${col.className || ""}`}
+                    className={col.className || ""}
                     style={
                       col.width ? { width: col.width } : { width: "120px" }
                     }
@@ -134,13 +135,7 @@ export default function DynamicTable<T extends { id: string | number }>({
                     {col.render ? col.render(row) : (row as any)[col.id]}
                   </td>
                 ))}
-                {actions && (
-                  <td
-                    className={`${idx % 2 === 0 ? "bg-surface" : "bg-accent"} px-4 py-2 border-l border-divider sticky right-0 z-20 flex flex-col items-center justify-start gap-2 h-full`}
-                  >
-                    {actions(row)}
-                  </td>
-                )}
+                {actions && <td className="actions">{actions(row)}</td>}
               </tr>
             ))}
           </tbody>
@@ -149,19 +144,14 @@ export default function DynamicTable<T extends { id: string | number }>({
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center gap-2 mt-2">
-          <button
-            className="px-3 py-1 border rounded disabled:opacity-50"
-            disabled={page === 1}
-            onClick={() => setPage(page - 1)}
-          >
+        <div className="table-pagination">
+          <button disabled={page === 1} onClick={() => setPage(page - 1)}>
             Prev
           </button>
-          <span className="text-text">
+          <span>
             Page {page} of {totalPages}
           </span>
           <button
-            className="px-3 py-1 border rounded disabled:opacity-50"
             disabled={page === totalPages}
             onClick={() => setPage(page + 1)}
           >
