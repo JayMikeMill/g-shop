@@ -1,0 +1,96 @@
+@layer components {
+  /* --- Primary --- */
+  .btn-primary {
+    @apply px-4 py-2 w-[120px] text-center rounded font-semibold border transition-all duration-200;
+    border-color: var(--color-primary);
+    background-color: var(--color-primary);
+    color: var(--text-inverted);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .btn-primary:hover {
+    @apply -translate-y-1;
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.15),
+      0 0 8px var(--color-primary);
+  }
+  .btn-primary:active {
+    @apply translate-y-0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  /* --- Success --- */
+  .btn-success {
+    @apply px-4 py-2 w-[120px] text-center rounded font-semibold border transition-all duration-200;
+    border-color: var(--color-success);
+    background-color: var(--color-success);
+    color: var(--text-inverted);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .btn-success:hover {
+    @apply -translate-y-1;
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.15),
+      0 0 8px var(--color-success);
+  }
+  .btn-success:active {
+    @apply translate-y-0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  /* --- Danger / Warning --- */
+  .btn-danger {
+    @apply px-4 py-2 w-[120px] text-center rounded font-semibold border transition-all duration-200;
+    border-color: var(--color-danger);
+    background-color: var(--color-danger);
+    color: var(--text-inverted);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .btn-danger:hover {
+    @apply -translate-y-1;
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.15),
+      0 0 8px var(--color-danger);
+  }
+  .btn-danger:active {
+    @apply translate-y-0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  /* --- Secondary --- */
+  .btn-secondary {
+    @apply px-4 py-2 w-[120px] text-center rounded font-semibold border transition-all duration-200;
+    border-color: var(--color-secondary);
+    background-color: var(--color-secondary);
+    color: var(--text-inverted);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .btn-secondary:hover {
+    @apply -translate-y-1;
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.15),
+      0 0 8px var(--color-secondary);
+  }
+  .btn-secondary:active {
+    @apply translate-y-0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  /* --- Third --- */
+  .btn-third {
+    @apply px-4 py-2 w-[120px] text-center rounded font-semibold border transition-all duration-200;
+    border-color: var(--color-third);
+    background-color: var(--color-third);
+    color: var(--text-inverted);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .btn-third:hover {
+    @apply -translate-y-1;
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.15),
+      0 0 8px var(--color-third);
+  }
+  .btn-third:active {
+    @apply translate-y-0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+}

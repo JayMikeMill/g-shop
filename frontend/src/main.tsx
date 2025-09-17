@@ -1,14 +1,14 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { BrowserRouter } from 'react-router-dom';
-import { AppProviders } from './app-providers';
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import { AppProviders } from "./app-providers";
 
-import '../theme.css'
-import './index.css'
+// Import component-specific CSS
+import "@css/index.css";
 
-import App from './app'
+import App from "./app";
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
     <AppProviders>
       <StrictMode>
@@ -16,4 +16,4 @@ createRoot(document.getElementById('root')!).render(
       </StrictMode>
     </AppProviders>
   </BrowserRouter>
-)
+);

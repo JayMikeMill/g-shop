@@ -7,9 +7,6 @@ import type { Product } from "@models/product";
 import { useApi } from "@api/use-api";
 import { processImageOnly } from "@utils/image-processing";
 
-import "@css/dialog.css";
-import "@css/product-dialog.css";
-
 interface ProductDialogProps {
   product: Product | null; // If null, we are adding a new product
   onClose: () => void; // Callback to close dialog
@@ -43,9 +40,9 @@ export default function ProductDialog({
   const { createProduct, updateProduct, uploadImage } = useApi();
 
   useEffect(() => {
-    document.body.classList.add("body-no-scroll");
+    document.body.style.overflow = "hidden";
     return () => {
-      document.body.classList.remove("body-no-scroll");
+      document.body.style.overflow = "auto"; // restore scroll when dialog closes
     };
   }, []);
 
@@ -266,7 +263,14 @@ export default function ProductDialog({
 
   return (
     <div className="fixed inset-0 bg-overlay flex justify-center items-center z-50">
-      <div className="bg-surface p-lg rounded-lg shadow-xl w-full max-w-4xl h-[90vh] flex flex-col border border-border overflow-hidden">
+      <div
+        className="
+      bg-surface rounded-lg shadow-xl border border-border
+      w-full h-full sm:w-auto sm:h-[90vh] sm:max-w-4xl
+      flex flex-col overflow-hidden
+      px-4 sm:px-8
+    "
+      >
         {/* Header */}
         <div className="flex justify-center border-b border-border pb-md mb-md flex-shrink-0">
           <h2 className="text-xl font-bold text-text text-center">
@@ -274,13 +278,13 @@ export default function ProductDialog({
           </h2>
         </div>
 
-        {/* Content: Images + Form */}
+        {/* Form content */}
         <form
           onSubmit={handleSubmit}
           className="flex flex-col flex-1 gap-lg overflow-hidden"
         >
           <div className="flex flex-1 flex-col md:flex-row gap-md overflow-hidden">
-            {/* Image Container */}
+            {/* Left: Images */}
             <div className="md:w-1/3 flex flex-col gap-md md:h-full overflow-y-auto">
               <div className="flex justify-start mb-md flex-shrink-0">
                 <label className="bg-primary text-textOnPrimary px-md py-1 rounded font-bold text-sm cursor-pointer">
@@ -314,8 +318,9 @@ export default function ProductDialog({
               />
             </div>
 
-            {/* Form Fields */}
+            {/* Right: Form Fields */}
             <div className="flex-1 flex flex-col gap-md overflow-y-auto">
+              {/* Name */}
               <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
                 Name
                 <input
@@ -327,6 +332,7 @@ export default function ProductDialog({
                 />
               </label>
 
+              {/* Price + Discount */}
               <div className="flex gap-md items-end">
                 <label className="flex-1 flex flex-col gap-1 text-sm font-semibold text-textSecondary">
                   Price
@@ -363,7 +369,6 @@ export default function ProductDialog({
                       />
                     </div>
                   </label>
-
                   <select
                     className="ml-1 px-2 py-1 h-8 border border-border rounded-lg bg-background text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
                     value={discountType}
@@ -377,6 +382,7 @@ export default function ProductDialog({
                 </div>
               </div>
 
+              {/* Tags */}
               <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
                 Tags (comma-separated)
                 <input
@@ -387,31 +393,31 @@ export default function ProductDialog({
                 />
               </label>
 
-              <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
+              {/* Description */}
+              <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary flex-1">
                 Description
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   required
-                  className="px-md py-1 border border-border rounded-lg bg-input text-text focus:outline-none focus:ring-2 focus:ring-primary transition min-h-[60px]"
+                  className="px-md py-1 border border-border rounded-lg bg-input text-text focus:outline-none focus:ring-2 focus:ring-primary transition flex-1 min-h-[60px]"
                 />
               </label>
             </div>
           </div>
 
           {/* Form Buttons */}
-          <div className="flex justify-end gap-2 pt-md border-t border-border mt-md flex-shrink-0">
+          <div className="flex justify-end gap-2 px-4 sm:px-8 py-4 border-t border-border flex-shrink-0">
             <button
+              className="btn-danger w-36 h-12"
               type="button"
               onClick={onClose}
-              className="bg-background text-textSecondary border border-border px-md py-1 rounded-lg font-semibold hover:bg-surface transition-all"
             >
               Cancel
             </button>
-
             <button
               type="submit"
-              className="bg-primary text-textOnPrimary px-md py-1 rounded-lg font-semibold shadow-lg hover:bg-primaryDark transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              className="btn-success w-36 h-12  whitespace-nowrap"
               disabled={isProcessingImages || isSavingProduct}
             >
               {isSavingProduct

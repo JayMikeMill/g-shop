@@ -1,31 +1,59 @@
-import React from 'react';
+import React from "react";
 
 const SiteFooter: React.FC = () => {
   return (
-    <footer className="bg-gray-900 text-white py-8 mt-12">
-      <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-start gap-8">
-        <div className="mb-6 md:mb-0">
-          <h2 className="text-2xl font-bold mb-2">My Store</h2>
-          <p className="text-gray-300">Providing quality products since 2023.</p>
+    <footer className="bg-background text-text font-sans py-8">
+      {/* Main content */}
+      <div className="max-w-[1200px] mx-auto px-8 flex flex-col md:flex-row justify-between gap-8 flex-wrap">
+        {/* Logo / Info */}
+        <div className="flex-1 min-w-[250px] mb-6 md:mb-0">
+          <h2 className="text-title font-bold mb-4">My Store</h2>
+          <p className="text-secondary">
+            Providing quality products since 2023.
+          </p>
         </div>
-        <div className="mb-6 md:mb-0">
-          <h2 className="text-lg font-semibold mb-2">Quick Links</h2>
-          <ul className="space-y-1">
-            <li><a href="/" className="hover:underline">Home</a></li>
-            <li><a href="/about" className="hover:underline">About</a></li>
-            <li><a href="/cart" className="hover:underline">Cart</a></li>
+
+        {/* Quick Links */}
+        <div className="flex-1 min-w-[250px] mb-6 md:mb-0">
+          <h2 className="text-lg font-semibold mb-4">Quick Links</h2>
+          <ul className="space-y-2">
+            <li>
+              <a href="/" className="hover:text-primary transition-colors">
+                Home
+              </a>
+            </li>
+            <li>
+              <a href="/about" className="hover:text-primary transition-colors">
+                About
+              </a>
+            </li>
+            <li>
+              <a href="/cart" className="hover:text-primary transition-colors">
+                Cart
+              </a>
+            </li>
           </ul>
         </div>
-        <div>
-          <h2 className="text-lg font-semibold mb-2">Follow Us</h2>
-          <div className="flex flex-col gap-1">
-            <a href="#" className="hover:underline">Facebook</a>
-            <a href="#" className="hover:underline">Twitter</a>
-            <a href="#" className="hover:underline">Instagram</a>
+
+        {/* Social Links */}
+        <div className="flex-1 min-w-[250px]">
+          <h2 className="text-lg font-semibold mb-4">Follow Us</h2>
+          <div className="flex flex-col gap-2">
+            <a href="#" className="hover:text-primary transition-colors">
+              Facebook
+            </a>
+            <a href="#" className="hover:text-primary transition-colors">
+              Twitter
+            </a>
+            <a href="#" className="hover:text-primary transition-colors">
+              Instagram
+            </a>
           </div>
         </div>
       </div>
-      <div className="text-center text-gray-400 mt-8 text-sm">
+
+      {/* Footer bottom */}
+      <div className="mt-8 pt-4 border-t border-secondary text-center text-muted text-sm">
         &copy; {new Date().getFullYear()} My Store | All Rights Reserved
       </div>
     </footer>

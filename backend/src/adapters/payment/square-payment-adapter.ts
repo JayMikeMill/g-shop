@@ -1,93 +1,81 @@
-
 import { PaymentAdapter } from "./payment-adapter";
 import { PaymentData } from "@models/payment-data";
 
-import { SquareClient, SquareEnvironment, Square, } from "square";
+import { SquareClient, SquareEnvironment, Square } from "square";
 
-import dotenv from "dotenv";                 // Load environment variables
-import crypto from "crypto";                 // For idempotency keys
-import path from "path";
+import crypto from "crypto"; // For idempotency keys
 import SuperJSON from "superjson";
 import { Address } from "@models/shipping-info";
 
-// Load environment variables
-// Load backend .env even if we run from project root
-// Load the .env located in the same folder as this file
-dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
-
+import { env } from "@config/env-vars";
 
 // Initialize Square client
 const client = new SquareClient({
-	token: process.env.SQUARE_ACCESS_TOKEN as string,
-	environment: SquareEnvironment.Sandbox
+  token: env.SQUARE_ACCESS_TOKEN as string,
+  environment: SquareEnvironment.Sandbox,
 });
 
-
 export class SquarePaymentAdapter implements PaymentAdapter {
-	async processPayment(data: PaymentData) {
-		const { nonce, amount, items, address } = data;
+  async processPayment(data: PaymentData) {
+    const { nonce, amount, items, address } = data;
 
-		console.log("Processing payment with info:", data);
-		console.log("Using Square access token:", process.env.SQUARE_ACCESS_TOKEN);
-		
-		// Create the payment request
-		const requestBody: Square.CreatePaymentRequest = {
-			sourceId: nonce || "cnon:card-nonce-ok", // Sandbox default nonce
-			idempotencyKey: crypto.randomUUID(), // Prevent duplicate charges
-			amountMoney: {
-				amount: BigInt(Math.round(amount * 100)), // Dollars → cents
-				currency: "USD"
-			},
-			note: `Order with ${items?.length || 0} items`,
-			shippingAddress:  mapToSquareAddress(address)
-		};
+    console.log("Processing payment with info:", data);
+    console.log("Using Square access token:", process.env.SQUARE_ACCESS_TOKEN);
 
+    // Create the payment request
+    const requestBody: Square.CreatePaymentRequest = {
+      sourceId: nonce || "cnon:card-nonce-ok", // Sandbox default nonce
+      idempotencyKey: crypto.randomUUID(), // Prevent duplicate charges
+      amountMoney: {
+        amount: BigInt(Math.round(amount * 100)), // Dollars → cents
+        currency: "USD",
+      },
+      note: `Order with ${items?.length || 0} items`,
+      shippingAddress: mapToSquareAddress(address),
+    };
 
-		// Call Square API
-		const response = await client.payments.create(requestBody);
-		const payment = SuperJSON.serialize(response.payment);
+    // Call Square API
+    const response = await client.payments.create(requestBody);
+    const payment = SuperJSON.serialize(response.payment);
 
-		// Serialize safely
-		const result = JSON.parse(JSON.stringify(payment.json))
-		console.log("Square payment response:", result);
-		
-		return result;
-	}
+    // Serialize safely
+    const result = JSON.parse(JSON.stringify(payment.json));
+    console.log("Square payment response:", result);
 
-	async refundPayment(paymentId: string, amount?: number) {
-		const refunds = client.refunds;
+    return result;
+  }
 
-		// Get original payment to determine amount if not provided
-		const paymentResponse = await client.payments.get({ paymentId });
-		const paymentAmount =
-		paymentResponse.payment?.amountMoney?.amount || BigInt(0);
-		const refundAmount =
-		amount !== undefined
-			? BigInt(Math.round(amount * 100))
-			: paymentAmount;
+  async refundPayment(paymentId: string, amount?: number) {
+    const refunds = client.refunds;
 
-		const requestBody = {
-		idempotencyKey: crypto.randomUUID(),
-		paymentId,
-		amountMoney: {
-			amount: refundAmount,
-			currency: "USD" as Square.Currency,
-			},
-		};
+    // Get original payment to determine amount if not provided
+    const paymentResponse = await client.payments.get({ paymentId });
+    const paymentAmount =
+      paymentResponse.payment?.amountMoney?.amount || BigInt(0);
+    const refundAmount =
+      amount !== undefined ? BigInt(Math.round(amount * 100)) : paymentAmount;
 
-		const response = await refunds.refundPayment(requestBody);
+    const requestBody = {
+      idempotencyKey: crypto.randomUUID(),
+      paymentId,
+      amountMoney: {
+        amount: refundAmount,
+        currency: "USD" as Square.Currency,
+      },
+    };
 
-		return response.refund?.status === "COMPLETED";
-	}
+    const response = await refunds.refundPayment(requestBody);
+
+    return response.refund?.status === "COMPLETED";
+  }
 }
-
 
 // Function to map custom ShippingAddress to Square.Address
 const mapToSquareAddress = (addr: Address): Square.Address => ({
-	addressLine1: addr.addressLine1,
-	addressLine2: addr.addressLine2,
-	locality: addr.city,
-	administrativeDistrictLevel1: addr.state,
-	postalCode: addr.postalCode,
-	country: addr.country as Square.Country
-})
+  addressLine1: addr.addressLine1,
+  addressLine2: addr.addressLine2,
+  locality: addr.city,
+  administrativeDistrictLevel1: addr.state,
+  postalCode: addr.postalCode,
+  country: addr.country as Square.Country,
+});

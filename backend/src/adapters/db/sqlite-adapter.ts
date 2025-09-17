@@ -1,4 +1,5 @@
 import Database from "better-sqlite3";
+import { randomUUID } from "crypto";
 import { DBAdapter } from "./db-adapter";
 import { User } from "@models/user";
 import { Product } from "@models/product";
@@ -44,18 +45,37 @@ export class SQLiteAdapter implements DBAdapter {
 
   // ---------- USERS ----------
   async createUser(user: User): Promise<User> {
+    const id = user.id || randomUUID();
+    const userWithId = { ...user, id };
     this.db
       .prepare("INSERT INTO users (id, data) VALUES (?, ?)")
-      .run(user.id, JSON.stringify(user));
-    return user;
+      .run(id, JSON.stringify(userWithId));
+    return userWithId;
   }
   async getUser(id: string): Promise<User | null> {
-    const row = this.db.prepare("SELECT data FROM users WHERE id = ?").get(id);
-    return row ? JSON.parse(row.data) : null;
+    const row = this.db
+      .prepare("SELECT data FROM users WHERE id = ?")
+      .get(id) as { data: string } | undefined;
+    if (!row || typeof row.data !== "string") return null;
+    try {
+      return JSON.parse(row.data);
+    } catch {
+      return null;
+    }
   }
   async getUsers(): Promise<User[]> {
-    const rows = this.db.prepare("SELECT data FROM users").all();
-    return rows.map((r: any) => JSON.parse(r.data));
+    const rows = this.db.prepare("SELECT data FROM users").all() as {
+      data: string;
+    }[];
+    return rows
+      .map((r) => {
+        try {
+          return JSON.parse(r.data);
+        } catch {
+          return null;
+        }
+      })
+      .filter(Boolean);
   }
   async updateUser(id: string, update: Partial<User>): Promise<User | null> {
     const user = await this.getUser(id);
@@ -72,20 +92,37 @@ export class SQLiteAdapter implements DBAdapter {
 
   // ---------- PRODUCTS ----------
   async createProduct(product: Product): Promise<Product> {
+    const id = product.id || randomUUID();
+    const productWithId = { ...product, id };
     this.db
       .prepare("INSERT INTO products (id, data) VALUES (?, ?)")
-      .run(product.id, JSON.stringify(product));
-    return product;
+      .run(id, JSON.stringify(productWithId));
+    return productWithId;
   }
   async getProduct(id: string): Promise<Product | null> {
     const row = this.db
       .prepare("SELECT data FROM products WHERE id = ?")
-      .get(id);
-    return row ? JSON.parse(row.data) : null;
+      .get(id) as { data: string } | undefined;
+    if (!row || typeof row.data !== "string") return null;
+    try {
+      return JSON.parse(row.data);
+    } catch {
+      return null;
+    }
   }
   async getProducts(): Promise<Product[]> {
-    const rows = this.db.prepare("SELECT data FROM products").all();
-    return rows.map((r: any) => JSON.parse(r.data));
+    const rows = this.db.prepare("SELECT data FROM products").all() as {
+      data: string;
+    }[];
+    return rows
+      .map((r) => {
+        try {
+          return JSON.parse(r.data);
+        } catch {
+          return null;
+        }
+      })
+      .filter(Boolean);
   }
   async updateProduct(
     id: string,
@@ -105,19 +142,39 @@ export class SQLiteAdapter implements DBAdapter {
 
   // ---------- ORDERS ----------
   async createOrder(order: Order): Promise<Order> {
+    const id = order.id || randomUUID();
+    const orderWithId = { ...order, id };
     this.db
       .prepare("INSERT INTO orders (id, data) VALUES (?, ?)")
-      .run(order.id, JSON.stringify(order));
-    return order;
+      .run(id, JSON.stringify(orderWithId));
+    return orderWithId;
   }
   async getOrder(id: string): Promise<Order | null> {
-    const row = this.db.prepare("SELECT data FROM orders WHERE id = ?").get(id);
-    return row ? JSON.parse(row.data) : null;
+    const row = this.db
+      .prepare("SELECT data FROM orders WHERE id = ?")
+      .get(id) as { data: string } | undefined;
+    if (!row || typeof row.data !== "string") return null;
+    try {
+      return JSON.parse(row.data);
+    } catch {
+      return null;
+    }
   }
   async getOrders(): Promise<Order[]> {
-    const rows = this.db.prepare("SELECT data FROM orders").all();
-    return rows.map((r: any) => JSON.parse(r.data));
+    const rows = this.db.prepare("SELECT data FROM orders").all() as {
+      data: string;
+    }[];
+    return rows
+      .map((r) => {
+        try {
+          return JSON.parse(r.data);
+        } catch {
+          return null;
+        }
+      })
+      .filter(Boolean);
   }
+  // Note: SQLite only supports local file or in-memory databases. It cannot connect to remote servers. For remote DBs, use a different adapter (e.g., PostgreSQL, MySQL).
   async updateOrder(id: string, update: Partial<Order>): Promise<Order | null> {
     const order = await this.getOrder(id);
     if (!order) return null;

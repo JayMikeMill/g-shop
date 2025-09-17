@@ -1,4 +1,3 @@
-// frontend/src/pages/admin/products.tsx
 import { useState, useMemo, useEffect } from "react";
 import { useAuth } from "@contexts/auth-context";
 import LoginDialog from "@components/dialogs/login-dialog";
@@ -19,19 +18,19 @@ export default function Products() {
 
   const { getProducts, deleteProduct } = useApi();
 
-  if (!authLoading && !user) {
-    return <LoginDialog />;
-  }
+  if (!authLoading && !user) return <LoginDialog />;
 
   useEffect(() => {
     const headerContent = (
-      <>
-        <h2>Products</h2>
-        <button 
-        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-        onClick={() => setIsAdding(true)} 
-        >Add Product</button>
-      </>
+      <div className="flex justify-between items-center w-full">
+        <h2 className="text-lg font-semibold m-0">Products</h2>
+        <button
+          className="px-md py-sm rounded font-semibold text-button-text bg-primary hover:brightness-90 transition-all duration-200"
+          onClick={() => setIsAdding(true)}
+        >
+          Add Product
+        </button>
+      </div>
     );
     setPageHeader(headerContent);
     return () => setPageHeader(null);
@@ -62,8 +61,8 @@ export default function Products() {
 
   const handleDeleteProduct = async (product: Product) => {
     if (window.confirm(`Are you sure you want to delete ${product.name}?`)) {
-        await deleteProduct(product.id);
-        loadProducts();
+      await deleteProduct(product.id);
+      loadProducts();
     }
   };
 
@@ -72,20 +71,25 @@ export default function Products() {
   }, [products]);
 
   return (
-    <div className="admin-products-page">
-      {/* Always show the dialog if adding or editing */}
+    <div className="p-lg">
+      {/* Product dialog */}
       {(isAdding || editingProduct) && (
-        <ProductDialog
-          product={editingProduct}
-          onClose={handleDialogClose}
-        />
+        <ProductDialog product={editingProduct} onClose={handleDialogClose} />
       )}
 
-      {/* Show loading or error messages, but keep the page functional */}
-      {loading && <p className="loading-text">Loading products...</p>}
-      {error && <p className="error-text">Error loading products: {error.message}</p>}
+      {/* Loading / Error */}
+      {loading && (
+        <p className="text-text-secondary text-center py-md text-[1.2rem]">
+          Loading products...
+        </p>
+      )}
+      {error && (
+        <p className="text-error text-center py-md text-[1.2rem]">
+          Error loading products: {error.message}
+        </p>
+      )}
 
-      {/* Show product list only if products exist */}
+      {/* Product list */}
       {!loading && !error && (
         <AdminProductList
           products={sortedProducts}

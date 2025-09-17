@@ -1,4 +1,3 @@
-
 import ProductList from "@components/product-list";
 import ProductLoader from "@components/product-loader";
 import { useEffect, useState } from "react";
@@ -14,7 +13,7 @@ export default function HomePage() {
   useEffect(() => {
     // Fetch products using the context, with a limit (e.g., 20)
     const fetch = async () => {
-      try { // You can add a cursor for pagination if needed
+      try {
         const result = await getProducts({ limit: 20 });
         setProducts(result);
       } finally {
@@ -25,9 +24,11 @@ export default function HomePage() {
   }, [getProducts]);
 
   return (
-    <div className="text-center py-12 px-4">
-      <h1 className="text-4xl font-bold text-primary mb-4">Explore Our Collection</h1>
-      <p className="text-lg text-secondary mb-10">
+    <div className="text-center py-xl px-md bg-background font-sans text-text">
+      <h1 className="text-heading-lg font-bold text-title mb-md">
+        Explore Our Collection
+      </h1>
+      <p className="text-body-lg text-text-secondary mb-lg">
         Find the perfect products for you, from our wide range of items.
       </p>
       {loading ? <ProductLoader /> : <ProductList products={products} />}

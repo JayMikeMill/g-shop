@@ -1,13 +1,19 @@
 import { Router } from "express";
-import { createProduct, getProduct, getProducts, updateProduct, deleteProduct } from "@controllers/product-controller";
-import { requireAuth, requireAdmin } from "@middleware/authorization";
+import {
+  createProduct,
+  getProduct,
+  getProducts,
+  updateProduct,
+  deleteProduct,
+} from "@controllers/product-controller";
+import { requireRole } from "@middleware/authorization";
 
 const router = Router();
 
 // Only admin can create, update, or delete products
-router.post("/", requireAuth, requireAdmin, createProduct);
-router.put("/:id", requireAuth, requireAdmin, updateProduct);
-router.delete("/:id", requireAuth, requireAdmin, deleteProduct);
+router.post("/", requireRole(["admin"]), createProduct);
+router.put("/:id", requireRole(["admin"]), updateProduct);
+router.delete("/:id", requireRole(["admin"]), deleteProduct);
 
 // Public: Anyone can view products
 router.get("/:id", getProduct);

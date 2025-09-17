@@ -1,26 +1,50 @@
+/* ============================
+   Light Theme (Default)
+============================ */
 :root {
-  /* Colors - Feminine Nail Salon Palette */
-  --color-primary: #C8A2C8; /* Lilac */
-  --color-primary-dark: #A474A4; /* Darker Lilac */
-  --color-secondary: #E0E0E0; /* Light Gray */
-  --color-success: #B2D3C2; /* Sage Green */
-  --color-danger: #F4A29E; /* Gentle Coral */
-  --color-warning: #FDFD96; /* Buttery Yellow */
-  --color-info: #B0E0E6; /* Powder Blue */
-  --color-light: #FDF7F7; /* Rosy Off-white */
-  --color-dark: #4B4B4B; /* Charcoal Gray */
-  --color-background: #f9f5f5;
-  --color-background-rgb: 253, 247, 247;
-  --color-card-bg: #FFFFFF;
-  --color-text: var(--color-dark);
-  --color-input-bg: #fff;
-  --color-input-border: #DCDCDC;
-  --color-button-bg: var(--color-primary);
-  --color-button-hover: var(--color-primary-dark);
-  --color-button-text: #fff;
+  /* Core colors */
+  --color-primary: #1d4ed8;
+  --color-primary-dark: #1e40af;
+  --color-secondary: #6b7280;
+  --color-secondary-dark: #4b5563;
+  --color-accent: #f43f5e;
 
-  /* Fonts */
-  --font-family: 'Inter', sans-serif;
+  /* Backgrounds */
+  --color-background: #f9fafb;
+  --color-background-alt: #ffffff;
+  --color-surface: #f5f7fa;
+  --color-surface-alt: #e5e7eb;
+  --color-card-bg: #ffffff;
+
+  /* Text */
+  --color-text: #111827;
+  --color-text-secondary: #374151;
+  --color-text-muted: #6b7280;
+  --color-text-inverted: #ffffff;
+
+  /* Borders & dividers */
+  --color-border: #d1d5db;
+  --color-divider: #e5e7eb;
+  --color-input-border: #dcdcdc;
+
+  /* Buttons */
+  --color-button-bg: #1d4ed8;
+  --color-button-hover: #1e40af;
+  --color-button-text: #ffffff;
+
+  /* States */
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-danger: #f4a29e;
+  --color-info: #3b82f6;
+
+  /* Helpers */
+  --color-light: #fdf7f7;
+  --color-dark: #4b4b4b;
+
+  /* Typography */
+  --font-family: "Inter", sans-serif;
   --font-size-base: 1rem;
   --font-size-title: 1.5rem;
   --font-size-price: 1.25rem;
@@ -38,4 +62,82 @@
 
   /* Box shadow */
   --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* ============================
+   Dark Theme
+============================ */
+.dark {
+  --color-primary: #2563eb;
+  --color-primary-dark: #1e3a8a;
+  --color-secondary: #9ca3af;
+  --color-secondary-dark: #6b7280;
+  --color-accent: #f472b6;
+
+  --color-background: #111827;
+  --color-background-alt: #1f2937;
+  --color-surface: #232a36;
+  --color-surface-alt: #374151;
+  --color-card-bg: #1f2937;
+
+  --color-text: #f9fafb;
+  --color-text-secondary: #d1d5db;
+  --color-text-muted: #9ca3af;
+  --color-text-inverted: #000000;
+
+  --color-border: #374151;
+  --color-divider: #4b5563;
+  --color-input-border: #6b7280;
+
+  --color-button-bg: #2563eb;
+  --color-button-hover: #1e3a8a;
+  --color-button-text: #ffffff;
+
+  --color-success: #22c55e;
+  --color-warning: #facc15;
+  --color-error: #f87171;
+  --color-danger: #f87171;
+  --color-info: #60a5fa;
+
+  --color-light: #fdf7f7;
+  --color-dark: #111827;
+}
+
+/* ============================
+   Alternative Pastel Theme
+============================ */
+.theme-pastel {
+  --color-primary: #a78bfa;
+  --color-primary-dark: #7c3aed;
+  --color-secondary: #fbbf24;
+  --color-secondary-dark: #d97706;
+  --color-accent: #f472b6;
+
+  --color-background: #fdf2f8;
+  --color-background-alt: #fce7f3;
+  --color-surface: #fbcfe8;
+  --color-surface-alt: #f9a8d4;
+  --color-card-bg: #fdf2f8;
+
+  --color-text: #4a044e;
+  --color-text-secondary: #701a75;
+  --color-text-muted: #a21caf;
+  --color-text-inverted: #ffffff;
+
+  --color-border: #f472b6;
+  --color-divider: #f9a8d4;
+  --color-input-border: #f472b6;
+
+  --color-button-bg: #a78bfa;
+  --color-button-hover: #7c3aed;
+  --color-button-text: #ffffff;
+
+  --color-success: #34d399;
+  --color-warning: #fbbf24;
+  --color-error: #f87171;
+  --color-danger: #f87171;
+  --color-info: #60a5fa;
+
+  --color-light: #fdf2f8;
+  --color-dark: #4a044e;
 }

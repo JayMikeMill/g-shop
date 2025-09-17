@@ -1,7 +1,12 @@
 import { Router } from "express";
-import { createUser, getUser, getUsers, 
-    updateUser, deleteUser } from "@controllers/user-controller";
-import { requireAuth, requireAdmin, requireOwner } from "@middleware/authorization";
+import {
+  createUser,
+  getUser,
+  getUsers,
+  updateUser,
+  deleteUser,
+} from "@controllers/user-controller";
+import { requireRole } from "@middleware/authorization";
 
 const router = Router();
 
@@ -9,18 +14,11 @@ const router = Router();
 router.post("/", createUser);
 
 // Only the user themselves OR an admin can view or update a user
-router.get("/:id", requireAuth, (req, res, next) => {
-  if (req.user?.role === "admin") return next();
-  return requireOwner(req, res, next);
-}, getUser);
-
-router.put("/:id", requireAuth, (req, res, next) => {
-  if (req.user?.role === "admin") return next();
-  return requireOwner(req, res, next);
-}, updateUser);
+router.get("/:id", requireRole(["admin", "owner"]), getUser);
+router.put("/:id", requireRole(["admin", "owner"]), updateUser);
 
 // Only admin can view all users or delete users
-router.get("/", requireAuth, requireAdmin, getUsers);
-router.delete("/:id", requireAuth, requireAdmin, deleteUser);
+router.get("/", requireRole(["admin"]), getUsers);
+router.delete("/:id", requireRole(["admin"]), deleteUser);
 
 export default router;

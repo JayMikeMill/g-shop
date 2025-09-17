@@ -6,9 +6,6 @@ import { type Address } from "@models/shipping-info";
 import type { StoreItem } from "@models/store-item";
 import { useApi } from "@api/use-api";
 
-// Import component-specific CSS
-import "@css/payment-form.css";
-
 // Square environment variables (from Vite)
 const SQUARE_APPLICATION_ID = import.meta.env.VITE_SQUARE_APPLICATION_ID || "";
 const SQUARE_LOCATION_ID = import.meta.env.VITE_SQUARE_LOCATION_ID || "";
