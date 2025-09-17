@@ -64,7 +64,7 @@ export default function Orders() {
   if (!authLoading && !user) return <LoginDialog />;
 
   return (
-    <div className="p-lg">
+    <div className="p-0">
       {/* Order dialog */}
       {editingOrder && (
         <OrderDialog

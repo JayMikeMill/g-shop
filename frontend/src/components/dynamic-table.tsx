@@ -75,7 +75,7 @@ export default function DynamicTable<T extends { id: string | number }>({
   };
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-4 p-0">
       {/* Search */}
       {searchable && (
         <input

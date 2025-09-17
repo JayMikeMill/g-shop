@@ -25,10 +25,7 @@ export default function Products() {
     const headerContent = (
       <div className="flex justify-between items-center w-full">
         <h2 className="text-lg font-semibold m-0">Products</h2>
-        <button
-          className="px-md py-sm rounded font-semibold text-button-text bg-primary hover:brightness-90 transition-all duration-200"
-          onClick={() => setIsAdding(true)}
-        >
+        <button className="btn-primary" onClick={() => setIsAdding(true)}>
           Add Product
         </button>
       </div>
@@ -68,7 +65,7 @@ export default function Products() {
   };
 
   return (
-    <div className="p-lg">
+    <div className="pt-lg pb-lg">
       {/* Product dialog */}
       {(isAdding || editingProduct) && (
         <ProductDialog product={editingProduct} onClose={handleDialogClose} />
