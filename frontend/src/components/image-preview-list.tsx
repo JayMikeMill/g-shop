@@ -57,9 +57,7 @@ const ImagePreviewList: React.FC<ImagePreviewListProps> = ({
           data-index={index}
           className={[
             "relative rounded-lg overflow-hidden flex-shrink-0 cursor-grab select-none",
-            isDragging && dragItem.current === index
-              ? "opacity-40 cursor-grabbing"
-              : "",
+            isDragging && dragItem.current === index ? "cursor-grabbing" : "",
             "w-[100px] h-[100px] md:w-full md:h-[100px]",
           ].join(" ")}
           draggable

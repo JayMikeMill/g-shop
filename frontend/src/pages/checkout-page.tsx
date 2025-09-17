@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useCart } from "@contexts/cart-context";
-import { type Address } from "@models/shipping-info";
-import ShippingForm from "@components/shipping-form";
-import PaymentFormSquare from "@components/payment-forms/payment-form-square";
+import { type ShippingInfo } from "@models/shipping-info";
+import ShippingForm from "@components/forms/shipping-form";
+import PaymentFormSquare from "@components/forms/payment-forms/payment-form-square";
 import OrderPreview from "@components/order-preview";
 
 export default function CheckoutPage() {
@@ -10,17 +10,25 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  const [shippingAddress, setShippingAddress] = useState<Address>({
-    firstName: "",
-    lastName: "",
+  const [shippingInfo, setShippingInfo] = useState<ShippingInfo>({
+    name: "",
+    address: {
+      firstName: "",
+      lastName: "",
+      addressLine1: "",
+      addressLine2: "",
+      city: "",
+      state: "",
+      postalCode: "",
+      country: "US",
+    },
     email: "",
     phone: "",
-    addressLine1: "",
-    addressLine2: "",
-    city: "",
-    state: "",
-    postalCode: "",
-    country: "US",
+    method: "standard",
+    carrier: "UPS",
+    trackingNumber: null,
+    cost: 0,
+    notes: "",
   });
 
   const [shippingCost, setShippingCost] = useState(0);
@@ -35,8 +43,8 @@ export default function CheckoutPage() {
   }, [cartItems, shippingCost]);
 
   useEffect(() => {
-    setShippingCost(shippingAddress.postalCode ? 5 : 0);
-  }, [shippingAddress]);
+    setShippingCost(shippingInfo.address.postalCode ? 5 : 0);
+  }, [shippingInfo]);
 
   return (
     <div className="max-w-[700px] mx-auto mt-xl p-lg bg-card-bg rounded border-radius shadow-card font-sans text-text relative">
@@ -45,14 +53,14 @@ export default function CheckoutPage() {
       <OrderPreview />
 
       <ShippingForm
-        shippingAddress={shippingAddress}
-        setShippingAddress={setShippingAddress}
+        shippingInfo={shippingInfo}
+        setShippingInfo={setShippingInfo}
       />
 
       <PaymentFormSquare
         total={total}
         orderItems={cartItems}
-        shippingAddress={shippingAddress}
+        shippingInfo={shippingInfo}
         setLoading={setLoading}
         setMessage={setMessage}
       />

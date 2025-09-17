@@ -1,8 +1,8 @@
-import { type Address } from "@models/shipping-info";
+import { type Address, type ShippingInfo } from "@models/shipping-info";
 
 interface ShippingFormProps {
-  shippingAddress: Address;
-  setShippingAddress: (address: Address) => void;
+  shippingInfo: ShippingInfo;
+  setShippingInfo: (info: ShippingInfo) => void;
 }
 
 const countries = [
@@ -12,11 +12,28 @@ const countries = [
 ];
 
 export default function ShippingForm({
-  shippingAddress,
-  setShippingAddress,
+  shippingInfo,
+  setShippingInfo,
 }: ShippingFormProps) {
-  const handleChange = (field: keyof Address, value: string) => {
-    setShippingAddress({ ...shippingAddress, [field]: value });
+  // Unified change handler for all fields
+  const handleFieldChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    if (name.startsWith("address.")) {
+      const field = name.replace("address.", "") as keyof Address;
+      const newAddress = { ...shippingInfo.address, [field]: value };
+      let newName = shippingInfo.name;
+      if (field === "firstName" || field === "lastName") {
+        newName =
+          `${field === "firstName" ? value : newAddress.firstName} ${field === "lastName" ? value : newAddress.lastName}`.trim();
+      }
+      setShippingInfo({ ...shippingInfo, address: newAddress, name: newName });
+    } else {
+      setShippingInfo({ ...shippingInfo, [name]: value });
+    }
   };
 
   return (
@@ -24,111 +41,111 @@ export default function ShippingForm({
       <h3 className="text-2xl font-semibold mb-6 text-center">{`Shipping Information`}</h3>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {/* First Name */}
+        {/* Name fields */}
         <label className="flex flex-col text-sm font-semibold text-textSecondary">
           <span className="mb-1">First Name</span>
           <input
             type="text"
-            value={shippingAddress.firstName}
-            onChange={(e) => handleChange("firstName", e.target.value)}
+            name="address.firstName"
+            value={shippingInfo.address.firstName}
+            onChange={handleFieldChange}
             className="px-3 py-2 border border-border rounded-md bg-background text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
           />
         </label>
-
-        {/* Last Name */}
         <label className="flex flex-col text-sm font-semibold text-textSecondary">
           <span className="mb-1">Last Name</span>
           <input
             type="text"
-            value={shippingAddress.lastName}
-            onChange={(e) => handleChange("lastName", e.target.value)}
+            name="address.lastName"
+            value={shippingInfo.address.lastName}
+            onChange={handleFieldChange}
             className="px-3 py-2 border border-border rounded-md bg-background text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
           />
         </label>
-
         {/* Email */}
         <label className="col-span-1 sm:col-span-2 flex flex-col text-sm font-semibold text-textSecondary">
           <span className="mb-1">Email</span>
           <input
             type="email"
-            value={shippingAddress.email}
-            onChange={(e) => handleChange("email", e.target.value)}
+            name="email"
+            value={shippingInfo.email}
+            onChange={handleFieldChange}
             className="px-3 py-2 border border-border rounded-md bg-background text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
           />
         </label>
-
         {/* Phone */}
         <label className="col-span-1 sm:col-span-2 flex flex-col text-sm font-semibold text-textSecondary">
           <span className="mb-1">Phone</span>
           <input
             type="tel"
-            value={shippingAddress.phone}
-            onChange={(e) => handleChange("phone", e.target.value)}
+            name="phone"
+            value={shippingInfo.phone || ""}
+            onChange={handleFieldChange}
             className="px-3 py-2 border border-border rounded-md bg-background text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
           />
         </label>
-
         {/* Address Line 1 */}
         <label className="col-span-1 sm:col-span-2 flex flex-col text-sm font-semibold text-textSecondary">
           <span className="mb-1">Address Line 1</span>
           <input
             type="text"
-            value={shippingAddress.addressLine1}
-            onChange={(e) => handleChange("addressLine1", e.target.value)}
+            name="address.addressLine1"
+            value={shippingInfo.address.addressLine1}
+            onChange={handleFieldChange}
             className="px-3 py-2 border border-border rounded-md bg-background text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
           />
         </label>
-
         {/* Address Line 2 */}
         <label className="col-span-1 sm:col-span-2 flex flex-col text-sm font-semibold text-textSecondary">
           <span className="mb-1">Address Line 2</span>
           <input
             type="text"
-            value={shippingAddress.addressLine2 ?? ""}
-            onChange={(e) => handleChange("addressLine2", e.target.value)}
+            name="address.addressLine2"
+            value={shippingInfo.address.addressLine2 || ""}
+            onChange={handleFieldChange}
             className="px-3 py-2 border border-border rounded-md bg-background text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
           />
         </label>
-
         {/* City */}
         <label className="flex flex-col text-sm font-semibold text-textSecondary">
           <span className="mb-1">City</span>
           <input
             type="text"
-            value={shippingAddress.city}
-            onChange={(e) => handleChange("city", e.target.value)}
+            name="address.city"
+            value={shippingInfo.address.city}
+            onChange={handleFieldChange}
             className="px-3 py-2 border border-border rounded-md bg-background text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
           />
         </label>
-
         {/* State / Province */}
         <label className="flex flex-col text-sm font-semibold text-textSecondary">
           <span className="mb-1">State / Province</span>
           <input
             type="text"
-            value={shippingAddress.state}
-            onChange={(e) => handleChange("state", e.target.value)}
+            name="address.state"
+            value={shippingInfo.address.state}
+            onChange={handleFieldChange}
             className="px-3 py-2 border border-border rounded-md bg-background text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
           />
         </label>
-
         {/* Postal Code */}
         <label className="flex flex-col text-sm font-semibold text-textSecondary">
           <span className="mb-1">Postal Code</span>
           <input
             type="text"
-            value={shippingAddress.postalCode}
-            onChange={(e) => handleChange("postalCode", e.target.value)}
+            name="address.postalCode"
+            value={shippingInfo.address.postalCode}
+            onChange={handleFieldChange}
             className="px-3 py-2 border border-border rounded-md bg-background text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
           />
         </label>
-
         {/* Country */}
         <label className="flex flex-col text-sm font-semibold text-textSecondary">
           <span className="mb-1">Country</span>
           <select
-            value={shippingAddress.country}
-            onChange={(e) => handleChange("country", e.target.value)}
+            name="address.country"
+            value={shippingInfo.address.country}
+            onChange={handleFieldChange}
             className="px-3 py-2 border border-border rounded-md bg-background text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
           >
             {countries.map((c) => (

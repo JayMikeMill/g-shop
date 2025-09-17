@@ -2,9 +2,13 @@
 import { useEffect, useState } from "react";
 
 // Import shared types for shipping address and cart items
-import { type Address } from "@models/shipping-info";
+import { type ShippingInfo } from "@models/shipping-info";
 import type { StoreItem } from "@models/store-item";
 import { useApi } from "@api/use-api";
+
+// Import PaymentStatus and PaymentMethod enums
+import { PaymentStatuses, PaymentMethods } from "@models/payment-info";
+import { useAuth } from "@contexts/auth-context";
 
 // Square environment variables (from Vite)
 const SQUARE_APPLICATION_ID = import.meta.env.VITE_SQUARE_APPLICATION_ID || "";
@@ -21,7 +25,7 @@ declare global {
 interface SquarePaymentFormProps {
   total: number; // Total amount to charge
   orderItems: StoreItem[]; // Items in the cart
-  shippingAddress: Address;
+  shippingInfo: ShippingInfo;
   setLoading: (loading: boolean) => void;
   setMessage: (msg: string | null) => void;
 }
@@ -30,21 +34,14 @@ interface SquarePaymentFormProps {
 export default function PaymentFormSquare({
   total,
   orderItems,
-  shippingAddress,
+  shippingInfo,
   setLoading,
   setMessage,
 }: SquarePaymentFormProps) {
   // State to store the Square card instance
   const [cardInstance, setCardInstance] = useState<any>(null);
-
-  // Mapping for country codes to ISO standard
-  const countryCodeMap: Record<string, string> = {
-    US: "US",
-    Canada: "CA",
-    MX: "MX",
-  };
-
-  const { processPayment } = useApi();
+  const { processPayment, createOrder } = useApi();
+  const { user } = useAuth();
 
   // Initialize Square payments when the component mounts
   useEffect(() => {
@@ -97,13 +94,6 @@ export default function PaymentFormSquare({
 
     if (!nonce) return alert("Could not get payment info");
 
-    // Convert country to ISO code if necessary
-    const shippingWithISO = {
-      ...shippingAddress,
-      country:
-        countryCodeMap[shippingAddress.country] || shippingAddress.country,
-    };
-
     try {
       setLoading(true); // Show loading indicator
 
@@ -111,15 +101,14 @@ export default function PaymentFormSquare({
         nonce,
         amount: total,
         items: orderItems,
-        address: shippingAddress,
+        address: shippingInfo.address,
       });
 
       const payment = response.payment;
       console.log("Payment response data:", payment);
 
       // Display result message
-      if (payment.status === "COMPLETED")
-        setMessage("Payment successful! Order ID: " + payment.orderId);
+      if (payment.status === "COMPLETED") onSuccess(payment);
       else setMessage("Payment failed: " + payment.error);
     } catch (err) {
       console.error("Payment error:", err);
@@ -130,6 +119,27 @@ export default function PaymentFormSquare({
     }
   };
 
+  const onSuccess = (payment: any) => {
+    setMessage("Payment successful!");
+
+    createOrder({
+      id: "pending id",
+      userId: user?.id || "guest",
+      items: orderItems,
+      total,
+      status: PaymentStatuses.PAID,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      paymentInfo: {
+        method: PaymentMethods.SQUARE,
+        transactionId: payment.id,
+        amount: payment.amountMoney.amount,
+        currency: payment.amountMoney.currency,
+        status: PaymentStatuses.PAID,
+      },
+      shippingInfo,
+    });
+  };
   // Render the payment form
   return (
     <div className="payment-form max-w-2xl mx-auto p-lg bg-surface rounded-lg shadow-xl flex flex-col gap-md text-text font-sans">

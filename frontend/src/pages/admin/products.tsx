@@ -1,11 +1,11 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@contexts/auth-context";
 import LoginDialog from "@components/dialogs/login-dialog";
 import type { Product } from "@models/product";
-import AdminProductList from "@components/admin-product-list";
 import ProductDialog from "@components/dialogs/product-dialog";
 import { useAdminPageHeader } from "@pages/admin/dashboard";
 import { useApi } from "@api/use-api";
+import DynamicTable from "@components/dynamic-table";
 
 export default function Products() {
   const { user, loading: authLoading } = useAuth();
@@ -20,6 +20,7 @@ export default function Products() {
 
   if (!authLoading && !user) return <LoginDialog />;
 
+  // Set the page header
   useEffect(() => {
     const headerContent = (
       <div className="flex justify-between items-center w-full">
@@ -66,10 +67,6 @@ export default function Products() {
     }
   };
 
-  const sortedProducts = useMemo(() => {
-    return [...products].sort((a, b) => a.name.localeCompare(b.name));
-  }, [products]);
-
   return (
     <div className="p-lg">
       {/* Product dialog */}
@@ -91,10 +88,93 @@ export default function Products() {
 
       {/* Product list */}
       {!loading && !error && (
-        <AdminProductList
-          products={sortedProducts}
-          onEdit={setEditingProduct}
-          onDelete={handleDeleteProduct}
+        <DynamicTable
+          data={products}
+          columns={[
+            {
+              id: "image",
+              label: "Image",
+              width: "120px",
+              render: (p) =>
+                p.images?.[0] ? (
+                  <div className="flex items-center justify-center">
+                    <img
+                      src={p.images[0].thumbnail}
+                      className="w-20 h-20 object-cover rounded"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-20 h-20 flex items-center justify-center bg-light rounded text-xs">
+                    No Image
+                  </div>
+                ),
+            },
+            {
+              id: "name",
+              label: "Name",
+              width: "120px",
+              sortable: true,
+              render: (p) => (
+                <div className="flex items-center justify-center">
+                  <span className="font-semibold text-center">{p.name}</span>
+                </div>
+              ),
+            },
+            {
+              id: "price",
+              label: "Price",
+              sortable: true,
+              render: (p) => (
+                <div className="flex items-center justify-center">
+                  <span className="font-semibold text-center">
+                    {p.price.toFixed(2)}
+                  </span>
+                </div>
+              ),
+            },
+            {
+              id: "tags",
+              width: "120px",
+              label: "Tags",
+              render: (p) => (
+                <div className="flex items-center justify-center">
+                  <span className="font-semibold text-center">
+                    {p.tags?.join(", ") || "N/A"}
+                  </span>
+                </div>
+              ),
+            },
+            {
+              id: "description",
+              label: "Description",
+              width: "300px",
+              render: (p) => (
+                <div className="flex items-top justify-left">
+                  <span className="font-semibold text-center">
+                    {p.description}
+                  </span>
+                </div>
+              ),
+            },
+          ]}
+          actions={(p) => (
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={() => setEditingProduct(p)}
+                className="btn-secondary"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDeleteProduct(p)}
+                className="btn-danger"
+              >
+                Delete
+              </button>
+            </div>
+          )}
+          pageSize={5}
+          searchable={true}
         />
       )}
     </div>

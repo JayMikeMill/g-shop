@@ -72,6 +72,8 @@ export class SquarePaymentAdapter implements PaymentAdapter {
 
 // Function to map custom ShippingAddress to Square.Address
 const mapToSquareAddress = (addr: Address): Square.Address => ({
+  firstName: addr.firstName,
+  lastName: addr.lastName,
   addressLine1: addr.addressLine1,
   addressLine2: addr.addressLine2,
   locality: addr.city,
