@@ -37,7 +37,7 @@ export default function ProductDialog({
   const dragOverItem = useRef<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  const { createProduct, updateProduct, uploadImage } = useApi();
+  const { createProduct, deleteProduct, updateProduct, uploadImage } = useApi();
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -149,6 +149,19 @@ export default function ProductDialog({
     const draggedItemContent = newImagePreviews.splice(from, 1)[0];
     newImagePreviews.splice(to, 0, draggedItemContent);
     setImagePreviews(newImagePreviews);
+  };
+
+  const handleDelete = async () => {
+    if (!product) return onClose();
+
+    const confirmed = window.confirm(
+      `Are you sure you want to delete ${product.name}?`
+    );
+
+    if (!confirmed) return;
+
+    await deleteProduct(product.id);
+    onClose();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -293,14 +306,12 @@ export default function ProductDialog({
           bg-surface rounded-lg shadow-xl border border-border
           w-full h-full sm:w-auto sm:h-[90vh] sm:max-w-4xl
           flex flex-col overflow-hidden
-          px-4 sm:px-8"
+          px-2 sm:px-8"
         >
           {/* Header */}
-          <div className="flex justify-center border-b border-border pb-md mb-md flex-shrink-0">
-            <h2 className="text-xl font-bold text-text text-center">
-              {product ? "Edit Product" : "Add Product"}
-            </h2>
-          </div>
+          <h2 className="text-2xl font-bold text-text text-center pt-4">
+            {product ? "Edit Product" : "Add Product"}
+          </h2>
 
           {/* Form content */}
           <form
@@ -308,42 +319,8 @@ export default function ProductDialog({
             className="flex flex-col flex-1 gap-lg overflow-hidden"
           >
             <div className="flex flex-1 flex-col md:flex-row gap-md overflow-hidden">
-              {/* Left: Images */}
-              <div className="md:w-1/3 flex flex-col gap-md md:h-full overflow-y-auto">
-                <div className="flex justify-start mb-md flex-shrink-0">
-                  <label className="bg-primary text-textOnPrimary px-md py-1 rounded font-bold text-sm cursor-pointer">
-                    Add Image
-                    <input
-                      type="file"
-                      onChange={handleImageChange}
-                      accept="image/*"
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-
-                {pendingCropFile && (
-                  <CropDialog
-                    file={pendingCropFile}
-                    onCropComplete={handleCropComplete}
-                    onCancel={handleCropCancel}
-                  />
-                )}
-
-                <ImagePreviewList
-                  imagePreviews={imagePreviews}
-                  onRemove={removeImage}
-                  onSort={handleSort}
-                  onLightbox={setLightboxImage}
-                  isDragging={isDragging}
-                  dragItem={dragItem}
-                  dragOverItem={dragOverItem}
-                  setIsDragging={setIsDragging}
-                />
-              </div>
-
-              {/* Right: Form Fields */}
-              <div className="flex-1 flex flex-col gap-md overflow-y-auto">
+              {/* Left/Top: Form Fields */}
+              <div className="px-1 flex-1 flex flex-col gap-md overflow-y-auto">
                 {/* Name */}
                 <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
                   Name
@@ -352,7 +329,7 @@ export default function ProductDialog({
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
-                    className="px-md py-1 h-8 border border-border rounded-lg bg-input text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
+                    className="input px-md py-1 h-8 text-text "
                   />
                 </label>
 
@@ -370,7 +347,7 @@ export default function ProductDialog({
                         onChange={(e) => setPrice(parseFloat(e.target.value))}
                         required
                         step="0.01"
-                        className="pl-6 pr-md py-1 h-8 border border-border rounded-lg bg-input text-text w-full focus:outline-none focus:ring-2 focus:ring-primary transition"
+                        className="input pl-6 pr-md py-1 h-8 w-full "
                       />
                     </div>
                   </label>
@@ -384,7 +361,7 @@ export default function ProductDialog({
                         </span>
                         <input
                           type="number"
-                          className="pl-6 pr-md py-1 h-8 border border-border rounded-lg bg-input text-text w-full focus:outline-none focus:ring-2 focus:ring-primary transition"
+                          className="input pl-6 pr-md py-1 h-8 w-full "
                           value={discountValue}
                           onChange={(e) =>
                             setDiscountValue(parseFloat(e.target.value))
@@ -394,7 +371,7 @@ export default function ProductDialog({
                       </div>
                     </label>
                     <select
-                      className="ml-1 px-2 py-1 h-8 border border-border rounded-lg bg-background text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
+                      className="input ml-1 px-2 py-1 h-8"
                       value={discountType}
                       onChange={(e) =>
                         setDiscountType(e.target.value as "%" | "$")
@@ -418,30 +395,75 @@ export default function ProductDialog({
                 </label>
 
                 {/* Description */}
-                <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary flex-1">
+                <label className="pb-0.5 flex flex-col gap-1 text-sm font-semibold text-textSecondary flex-1">
                   Description
                   <textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     required
-                    className="px-md py-1 border border-border rounded-lg bg-input text-text focus:outline-none focus:ring-2 focus:ring-primary transition flex-1 min-h-[60px]"
+                    className="input px-md py-1  h-full"
                   />
                 </label>
+              </div>
+
+              {/* Right/Bottom: Images */}
+              <div className="md:w-1/3 flex flex-col gap-md md:h-full overflow-y-auto">
+                {pendingCropFile && (
+                  <CropDialog
+                    file={pendingCropFile}
+                    onCropComplete={handleCropComplete}
+                    onCancel={handleCropCancel}
+                  />
+                )}
+
+                <ImagePreviewList
+                  imagePreviews={imagePreviews}
+                  onRemove={removeImage}
+                  onSort={handleSort}
+                  onLightbox={setLightboxImage}
+                  isDragging={isDragging}
+                  dragItem={dragItem}
+                  dragOverItem={dragOverItem}
+                  setIsDragging={setIsDragging}
+                />
               </div>
             </div>
 
             {/* Form Buttons */}
-            <div className="flex justify-end gap-2 px-4 sm:px-8 py-4 border-t border-border flex-shrink-0">
+
+            <div className="grid grid-cols-2 gap-2 px-4 sm:px-8 py-4 border-t border-border sm:grid-cols-4">
+              {/* Delete button */}
               <button
-                className="btn-danger w-36 h-12"
+                className="btn-danger w-full h-12"
+                type="button"
+                onClick={handleDelete}
+              >
+                Delete
+              </button>
+              {/* Add Image */}
+              <label className="btn-primary cursor-pointer inline-flex items-center justify-center w-full h-12">
+                Add Image
+                <input
+                  type="file"
+                  onChange={handleImageChange}
+                  accept="image/*"
+                  className="hidden"
+                />
+              </label>
+
+              {/* Cancel button */}
+              <button
+                className="btn-secondary w-full h-12"
                 type="button"
                 onClick={onClose}
               >
                 Cancel
               </button>
+
+              {/* Save button */}
               <button
                 type="submit"
-                className="btn-success w-36 h-12  whitespace-nowrap"
+                className="btn-success w-full h-12 whitespace-nowrap"
                 disabled={isProcessingImages || isSavingProduct}
               >
                 {isSavingProduct

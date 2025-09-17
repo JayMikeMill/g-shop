@@ -82,6 +82,7 @@ export default function Products() {
       {!loading && !error && (
         <DynamicTable
           data={products}
+          onRowClick={(p) => setEditingProduct(p)}
           columns={[
             {
               id: "image",
@@ -149,22 +150,6 @@ export default function Products() {
               ),
             },
           ]}
-          actions={(p) => (
-            <div className="flex flex-col gap-2">
-              <button
-                onClick={() => setEditingProduct(p)}
-                className="btn-secondary"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDeleteProduct(p)}
-                className="btn-danger"
-              >
-                Delete
-              </button>
-            </div>
-          )}
           pageSize={5}
           searchable={true}
         />

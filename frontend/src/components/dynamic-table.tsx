@@ -14,6 +14,7 @@ export interface TableColumn<T> {
 export interface DynamicTableProps<T> {
   data: T[];
   columns: TableColumn<T>[];
+  onRowClick?: (row: T) => void;
   actions?: (row: T) => ReactNode;
   pageSize?: number;
   searchable?: boolean;
@@ -22,6 +23,7 @@ export interface DynamicTableProps<T> {
 export default function DynamicTable<T extends { id: string | number }>({
   data,
   columns,
+  onRowClick,
   actions,
   pageSize = 10,
   searchable = true,
@@ -75,16 +77,18 @@ export default function DynamicTable<T extends { id: string | number }>({
   };
 
   return (
-    <div className="flex flex-col gap-4 p-0">
+    <div className="flex flex-col gap-4 px-2">
       {/* Search */}
       {searchable && (
-        <input
-          type="text"
-          placeholder="Search..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="table-search"
-        />
+        <div className="px-4">
+          <input
+            type="text"
+            placeholder="Search..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="table-search"
+          />
+        </div>
       )}
 
       {/* Table Container */}
@@ -92,6 +96,14 @@ export default function DynamicTable<T extends { id: string | number }>({
         <table className="table">
           <thead>
             <tr>
+              {actions && (
+                <th
+                  className="actions w-[120px]"
+                  style={{ left: 0, zIndex: 30 }}
+                >
+                  Actions
+                </th>
+              )}
               {columns.map((col) => (
                 <th
                   key={col.id}
@@ -113,17 +125,16 @@ export default function DynamicTable<T extends { id: string | number }>({
                   )}
                 </th>
               ))}
-              {actions && (
-                <th className="actions w-[120px]" style={{ right: 0 }}>
-                  Actions
-                </th>
-              )}
             </tr>
           </thead>
 
           <tbody>
             {pageData.map((row, idx) => (
-              <tr key={row.id}>
+              <tr
+                key={row.id}
+                onClick={() => onRowClick?.(data[idx + (page - 1) * pageSize])}
+              >
+                {actions && <td className="actions">{actions(row)}</td>}
                 {columns.map((col) => (
                   <td
                     key={col.id}
@@ -135,7 +146,6 @@ export default function DynamicTable<T extends { id: string | number }>({
                     {col.render ? col.render(row) : (row as any)[col.id]}
                   </td>
                 ))}
-                {actions && <td className="actions">{actions(row)}</td>}
               </tr>
             ))}
           </tbody>
