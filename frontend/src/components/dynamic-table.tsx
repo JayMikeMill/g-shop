@@ -1,4 +1,5 @@
 import { useState, type ReactNode, useMemo } from "react";
+import "./dynamic-table.css";
 
 export interface TableColumn<T> {
   id: string;
@@ -158,7 +159,7 @@ export default function DynamicTable<T extends { id: string | number }>({
           <button disabled={page === 1} onClick={() => setPage(page - 1)}>
             Prev
           </button>
-          <span>
+          <span className="flex items-center text-text">
             Page {page} of {totalPages}
           </span>
           <button

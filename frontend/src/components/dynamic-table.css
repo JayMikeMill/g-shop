@@ -1,0 +1,72 @@
+/* Table Container */
+.table-container {
+  @apply overflow-x-auto w-full rounded-card shadow-card border border-divider;
+}
+
+/* Table */
+.table {
+  @apply w-full border-collapse table-fixed font-sans min-w-[800px];
+}
+
+/* Table header */
+.table thead th {
+  @apply font-semibold uppercase text-center text-sm px-md py-sm border-b border-divider cursor-pointer sticky top-0 z-10 bg-primary text-buttonText transition-colors duration-200;
+}
+
+.table thead th.sortable:hover {
+  @apply bg-primaryDark;
+}
+
+/* Table body rows */
+.table tbody tr {
+  @apply transition-colors duration-200;
+}
+
+.table tbody tr:nth-child(even) {
+  @apply bg-surfaceAlt;
+}
+
+.table tbody tr:nth-child(odd) {
+  @apply bg-surface;
+}
+
+.table tbody tr:hover {
+  @apply bg-primaryDark;
+}
+
+/* Table cells */
+.table td {
+  @apply px-md py-sm border-r border-divider text-center break-words;
+}
+
+/* Sticky action column */
+.table td.actions {
+  @apply flex flex-col gap-2 items-center justify-start sticky left-0 z-20 bg-backgroundAlt px-sm;
+}
+
+/* Buttons inside table actions */
+.table td.actions .btn {
+  @apply w-full;
+}
+
+/* Pagination */
+.table-pagination {
+  @apply flex justify-center gap-2 mt-4;
+}
+
+.table-pagination button {
+  @apply cursor-pointer transition-all duration-200 px-4 py-2 rounded border border-divider bg-backgroundAlt text-text;
+}
+
+.table-pagination button:hover:not(:disabled) {
+  @apply bg-surface border-primary text-primary;
+}
+
+.table-pagination button:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+/* Search input */
+.table-search {
+  @apply input-border w-full text-sm px-md py-sm;
+}

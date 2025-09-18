@@ -4,7 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AppProviders } from "./app-providers";
 
 // Import component-specific CSS
-import "@css/index.css";
+import "@styles/globals.css";
 
 import App from "./app";
 

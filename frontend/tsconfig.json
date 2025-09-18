@@ -25,8 +25,9 @@
 
     /* code paths */
     "baseUrl": "./", // root for imports
-    "paths": { // aliases
-      "@pages/*": ["src/pages/*"], 
+    "paths": {
+      // aliases
+      "@pages/*": ["src/pages/*"],
       "@components/*": ["src/components/*"],
       "@contexts/*": ["src/contexts/*"],
       "@api/*": ["src/api/*"],
@@ -36,7 +37,7 @@
       "@models/*": ["../shared/models/*"],
       "@data/*": ["src/data/*"],
       "@config/*": ["src/config/*"],
-      "@css/*": ["src/css/*"],
+      "@styles/*": ["src/styles/*"]
     }
   },
 

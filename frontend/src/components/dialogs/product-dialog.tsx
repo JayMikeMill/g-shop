@@ -286,7 +286,7 @@ export default function ProductDialog({
           <img
             src={lightboxImage}
             alt="Preview"
-            className="input w-[70%] sm:w-auto sm:h-[70%]"
+            className="input-border w-[70%] sm:w-auto sm:h-[70%]"
             onClick={(e) => e.stopPropagation()}
           />
           <button
@@ -329,7 +329,7 @@ export default function ProductDialog({
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
-                    className="input px-md py-1 h-8 text-text "
+                    className="input-border px-md py-1 h-8 text-text "
                   />
                 </label>
 
@@ -347,7 +347,7 @@ export default function ProductDialog({
                         onChange={(e) => setPrice(parseFloat(e.target.value))}
                         required
                         step="0.01"
-                        className="input pl-6 pr-md py-1 h-8 w-full "
+                        className="input-border pl-6 pr-md py-1 h-8 w-full "
                       />
                     </div>
                   </label>
@@ -361,7 +361,7 @@ export default function ProductDialog({
                         </span>
                         <input
                           type="number"
-                          className="input pl-6 pr-md py-1 h-8 w-full "
+                          className="input-border pl-6 pr-md py-1 h-8 w-full "
                           value={discountValue}
                           onChange={(e) =>
                             setDiscountValue(parseFloat(e.target.value))
@@ -371,7 +371,7 @@ export default function ProductDialog({
                       </div>
                     </label>
                     <select
-                      className="input ml-1 px-2 py-1 h-8"
+                      className="input-border ml-1 px-2 py-1 h-8"
                       tabIndex={-1} // <- This skips tabbing
                       value={discountType}
                       onChange={(e) =>
@@ -391,7 +391,7 @@ export default function ProductDialog({
                     type="text"
                     value={tags}
                     onChange={(e) => setTags(e.target.value)}
-                    className="input px-md py-1 h-8"
+                    className="input-border px-md py-1 h-8"
                   />
                 </label>
 
@@ -402,7 +402,7 @@ export default function ProductDialog({
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     required
-                    className="input px-md py-1  h-full"
+                    className="input-border px-md py-1  h-full"
                   />
                 </label>
               </div>

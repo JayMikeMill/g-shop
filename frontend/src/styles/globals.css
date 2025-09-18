@@ -1,6 +1,6 @@
 /* 1️⃣ Imports first */
-@import "./theme.css";
-@import "./styles.css"; /* optional, can be after theme */
+@import "./themes.css";
+@import "./tailwind/layers/components.css";
 
 /* 2️⃣ Tailwind directives next */
 @tailwind base;
