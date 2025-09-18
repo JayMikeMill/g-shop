@@ -8,7 +8,7 @@ import { useApi } from "@api/use-api";
 
 // Import PaymentStatus and PaymentMethod enums
 import { PaymentStatuses, PaymentMethods } from "@models/payment-info";
-import { useAuth } from "@contexts/auth-context";
+import { useAuth } from "@contexts/auth/auth-context";
 
 // Square environment variables (from Vite)
 const SQUARE_APPLICATION_ID = import.meta.env.VITE_SQUARE_APPLICATION_ID || "";

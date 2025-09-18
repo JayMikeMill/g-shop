@@ -1,4 +1,4 @@
-import { useAuth } from "@contexts/auth-context";
+import { useAuth } from "@contexts/auth/auth-context";
 import type { User } from "@models/user";
 import * as api from "@api/backend-api";
 import type { Product } from "@models/product";

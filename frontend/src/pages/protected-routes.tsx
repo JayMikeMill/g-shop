@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { useAuth } from "@contexts/auth-context";
+import { useAuth } from "@contexts/auth/auth-context";
 import LoginDialog from "@components/dialogs/login-dialog";
 import { type Role } from "@models/user";
 

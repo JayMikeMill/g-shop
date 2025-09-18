@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { useAuth } from "@contexts/auth-context";
+import { useAuth } from "@contexts/auth/auth-context";
 import { createContext, useState, useContext } from "react";
 
 // 1. Create context

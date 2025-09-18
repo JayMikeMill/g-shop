@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ShoppingCart, Menu, X } from "lucide-react";
 import { useCart, getCartTotals } from "@contexts/cart-context";
 import { useState } from "react";
+import { useAuth } from "@contexts/auth/auth-context";
 
 export default function SiteHeader() {
   const navigate = useNavigate();
@@ -72,6 +73,17 @@ export default function SiteHeader() {
             >
               About
             </a>
+
+            {/* Admin-only menu item */}
+            {useAuth().user?.role === "admin" && (
+              <a
+                href="/admin"
+                className="text-lg font-medium text-text hover:underline"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Admin Dashboard
+              </a>
+            )}
           </div>
         </div>
       )}
