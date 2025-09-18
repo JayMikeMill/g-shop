@@ -37,7 +37,7 @@ export default function LoginDialog({ onClose }: LoginDialogProps) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="px-lg py-md border border-border rounded-lg bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
+              className="input px-lg py-md"
               autoComplete="username"
             />
           </label>
@@ -48,7 +48,7 @@ export default function LoginDialog({ onClose }: LoginDialogProps) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="px-lg py-md border border-border rounded-lg bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
+              className="input px-lg py-md"
               autoComplete="current-password"
             />
           </label>
