@@ -47,9 +47,9 @@ const ImagePreviewList: React.FC<ImagePreviewListProps> = ({
 
   return (
     <div
-      className="flex gap-2 p-2 border border-gray-300 rounded bg-gray-50
-	overflow-x-auto h-[120px] flex-nowrap
-	md:grid md:grid-cols-2 md:auto-rows-min md:h-full md:overflow-y-auto"
+      className="input flex gap-2 px-2.5
+	    overflow-x-auto h-[120px] flex-nowrap items-center
+	    md:grid md:grid-cols-2 md:auto-rows-min md:h-full md:overflow-y-auto"
     >
       {imagePreviews.map((preview, index) => (
         <div

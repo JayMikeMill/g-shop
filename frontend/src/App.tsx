@@ -15,7 +15,7 @@ import { Roles } from "@models/user";
 export default function App() {
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith("/admin");
-  applyTheme("light");
+  applyTheme("dark");
   return (
     <div>
       <SiteHeader />

@@ -18,7 +18,7 @@ export class SQLiteAdapter implements DBAdapter {
     this.db
       .prepare(
         `CREATE TABLE IF NOT EXISTS users (
-      id TEXT PRIMARY KEY,
+      id TEXT PRIMARY KEY UNIQUE,
       data TEXT NOT NULL
     )`
       )
@@ -27,7 +27,7 @@ export class SQLiteAdapter implements DBAdapter {
     this.db
       .prepare(
         `CREATE TABLE IF NOT EXISTS products (
-      id TEXT PRIMARY KEY,
+      id TEXT PRIMARY KEY UNIQUE,
       data TEXT NOT NULL
     )`
       )
@@ -36,7 +36,7 @@ export class SQLiteAdapter implements DBAdapter {
     this.db
       .prepare(
         `CREATE TABLE IF NOT EXISTS orders (
-      id TEXT PRIMARY KEY,
+      id TEXT PRIMARY KEY UNIQUE,
       data TEXT NOT NULL
     )`
       )

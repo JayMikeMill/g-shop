@@ -19,7 +19,7 @@ export default function Products() {
   useEffect(() => {
     const headerContent = (
       <div className="flex justify-between items-center w-full">
-        <h2 className="text-lg font-semibold m-0">Products</h2>
+        <h2 className="text-lg font-semibold m-0 text-text">Products</h2>
         <button className="btn-primary" onClick={() => setIsAdding(true)}>
           Add Product
         </button>
@@ -109,7 +109,9 @@ export default function Products() {
               sortable: true,
               render: (p) => (
                 <div className="flex items-center justify-center">
-                  <span className="font-semibold text-center">{p.name}</span>
+                  <span className="font-semibold text-center text-text">
+                    {p.name}
+                  </span>
                 </div>
               ),
             },
@@ -119,7 +121,7 @@ export default function Products() {
               sortable: true,
               render: (p) => (
                 <div className="flex items-center justify-center">
-                  <span className="font-semibold text-center">
+                  <span className="font-semibold text-center text-text">
                     {p.price.toFixed(2)}
                   </span>
                 </div>
@@ -131,7 +133,7 @@ export default function Products() {
               label: "Tags",
               render: (p) => (
                 <div className="flex items-center justify-center">
-                  <span className="font-semibold text-center">
+                  <span className="font-semibold text-center text-text">
                     {p.tags?.join(", ") || "N/A"}
                   </span>
                 </div>
@@ -143,7 +145,7 @@ export default function Products() {
               width: "300px",
               render: (p) => (
                 <div className="flex items-top justify-left">
-                  <span className="font-semibold text-center">
+                  <span className="font-semibold text-center text-text">
                     {p.description}
                   </span>
                 </div>

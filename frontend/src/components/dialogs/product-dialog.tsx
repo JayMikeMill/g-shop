@@ -286,7 +286,7 @@ export default function ProductDialog({
           <img
             src={lightboxImage}
             alt="Preview"
-            className="w-[70%] sm:w-auto sm:h-[70%] rounded-lg shadow-2xl border-4 border-white"
+            className="input w-[70%] sm:w-auto sm:h-[70%]"
             onClick={(e) => e.stopPropagation()}
           />
           <button
@@ -372,6 +372,7 @@ export default function ProductDialog({
                     </label>
                     <select
                       className="input ml-1 px-2 py-1 h-8"
+                      tabIndex={-1} // <- This skips tabbing
                       value={discountType}
                       onChange={(e) =>
                         setDiscountType(e.target.value as "%" | "$")
@@ -390,7 +391,7 @@ export default function ProductDialog({
                     type="text"
                     value={tags}
                     onChange={(e) => setTags(e.target.value)}
-                    className="px-md py-1 h-8 border border-border rounded-lg bg-input text-text focus:outline-none focus:ring-2 focus:ring-primary transition"
+                    className="input px-md py-1 h-8"
                   />
                 </label>
 
