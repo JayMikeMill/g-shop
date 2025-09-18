@@ -23,23 +23,19 @@ const CropDialog: React.FC<CropDialogProps> = ({
     reader.readAsDataURL(file);
   }, [file]);
 
-  const cropperRef = React.useRef<any>(null);
-  React.useEffect(() => {
-    if (!imageUrl) return;
-    setTimeout(() => {
-      if (cropperRef.current) setZoom(1);
-    }, 100);
-  }, [imageUrl]);
-
-  const onCropChange = (c: any) => setCrop(c);
-  const onZoomChange = (z: number) => setZoom(z);
   const onCropCompleteInternal = (_: any, croppedPixels: any) =>
     setCroppedAreaPixels(croppedPixels);
 
-  async function getCroppedImg(
-    imageSrc: string,
-    cropPixels: any
-  ): Promise<{ blob: Blob; url: string }> {
+  const createImage = (url: string): Promise<HTMLImageElement> =>
+    new Promise((resolve, reject) => {
+      const img = new window.Image();
+      img.addEventListener("load", () => resolve(img));
+      img.addEventListener("error", reject);
+      img.crossOrigin = "anonymous";
+      img.src = url;
+    });
+
+  const getCroppedImg = async (imageSrc: string, cropPixels: any) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const size = Math.max(cropPixels.width, cropPixels.height);
@@ -58,44 +54,29 @@ const CropDialog: React.FC<CropDialogProps> = ({
       size,
       size
     );
-    return new Promise((resolve) => {
+    return new Promise<{ blob: Blob; url: string }>((resolve) => {
       canvas.toBlob((blob) => {
         if (!blob) throw new Error("Canvas is empty");
         resolve({ blob, url: URL.createObjectURL(blob) });
       }, "image/webp");
     });
-  }
-
-  function createImage(url: string): Promise<HTMLImageElement> {
-    return new Promise((resolve, reject) => {
-      const img = new window.Image();
-      img.addEventListener("load", () => resolve(img));
-      img.addEventListener("error", (error) => reject(error));
-      img.crossOrigin = "anonymous";
-      img.src = url;
-    });
-  }
+  };
 
   const handleCrop = async () => {
     if (!imageUrl || !croppedAreaPixels) return;
     const { blob, url } = await getCroppedImg(imageUrl, croppedAreaPixels);
-    onCropComplete(blob, url);
+    onCropComplete(blob, url); // close dialog immediately
   };
 
   return (
     <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/40 dark:bg-black/60">
-      {/* Modal container */}
-      <div className="bg-surface dark:bg-background rounded-lg border-2 border-primary shadow-xl p-xl flex flex-col w-[360px] sm:w-[400px] max-h-[90vh] overflow-hidden">
-        {/* Title */}
-        <h2 className="text-xl font-bold text-center text-text mb-lg">
+      <div className="dialog-frame p-md flex flex-col w-[360px] sm:w-[400px] max-h-[90vh] overflow-hidden">
+        <h2 className="text-xl font-bold text-center text-text mb-sm">
           Crop Image
         </h2>
-
-        {/* Cropper container */}
-        <div className="relative w-full h-80 mb-lg border-2 border-primary rounded-md overflow-hidden bg-background">
+        <div className="relative w-full h-80 mb-sm border-2 border-border rounded-md overflow-hidden bg-background">
           {imageUrl && (
             <Cropper
-              ref={cropperRef}
               image={imageUrl}
               crop={crop}
               zoom={zoom}
@@ -112,7 +93,7 @@ const CropDialog: React.FC<CropDialogProps> = ({
                   position: "relative",
                 },
                 cropAreaStyle: {
-                  border: "2px solid var(--color-primary)",
+                  border: "2px solid white",
                   borderRadius: "0.5rem",
                 },
               }}
@@ -120,21 +101,20 @@ const CropDialog: React.FC<CropDialogProps> = ({
           )}
         </div>
 
-        {/* Action buttons */}
-        <div className="flex justify-end gap-md">
+        <div className="flex justify-center gap-md">
           <button
             type="button"
-            className="px-lg py-sm rounded-md border border-border bg-surface text-textSecondary hover:bg-background transition"
+            className="btn-cancel w-full"
             onClick={onCancel}
           >
             Cancel
           </button>
           <button
             type="button"
-            className="px-lg py-sm rounded-md border border-primary bg-primary text-white font-medium hover:bg-primaryDark transition"
+            className="btn-primary w-full"
             onClick={handleCrop}
           >
-            Crop & Use Image
+            Crop Image
           </button>
         </div>
       </div>

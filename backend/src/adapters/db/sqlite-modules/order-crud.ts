@@ -1,6 +1,7 @@
 import Database from "better-sqlite3";
 import { randomUUID } from "crypto";
 import { Order } from "@models/order";
+import { QueryOptions } from "@models/query-options";
 
 export class OrderCRUD {
   private db: Database.Database;
@@ -28,7 +29,7 @@ export class OrderCRUD {
       return null;
     }
   }
-  async getAll(): Promise<Order[]> {
+  async query(query?: QueryOptions): Promise<Order[]> {
     const rows = this.db.prepare("SELECT data FROM orders").all() as {
       data: string;
     }[];

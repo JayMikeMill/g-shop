@@ -1,40 +1,29 @@
+// src/crud/ProductCRUD.ts
 import Database from "better-sqlite3";
+
 import type {
   Product,
   ProductOption,
   ProductOptionValue,
   ProductImageSet,
 } from "@models/product";
+import { QueryOptions } from "@models/query-options";
 
-type ProductRow = {
+interface ProductRow
+  extends Omit<Product, "id" | "images" | "tags" | "options"> {
   id: number;
-  name: string;
-  price: number;
-  discount: string | null;
-  description: string;
   tags: string | null;
-  stock: number;
-};
+}
 
-type ProductImageRow = {
-  main: string;
-  preview: string;
-  thumbnail: string;
-};
-
-type ProductOptionRow = {
+interface ProductOptionRow extends ProductOption {
   id: number;
   product_id: number;
-  name: string;
-  type: "dropdown" | "radio" | "colorpicker";
-};
+}
 
-type ProductOptionValueRow = {
+interface ProductOptionValueRow extends ProductOptionValue {
   id: number;
   option_id: number;
-  value: string;
-  stock: number;
-};
+}
 
 export class ProductCRUD {
   private db: Database.Database;
@@ -49,7 +38,7 @@ export class ProductCRUD {
       const result = this.db
         .prepare(
           `INSERT INTO products (name, price, discount, description, tags, stock)
-					 VALUES (?, ?, ?, ?, ?, ?)`
+					VALUES (?, ?, ?, ?, ?, ?)`
         )
         .run(
           product.name,
@@ -64,11 +53,7 @@ export class ProductCRUD {
       if (!productId) throw new Error("Failed to insert product");
 
       // Images
-      if (
-        product.images &&
-        Array.isArray(product.images) &&
-        product.images.length > 0
-      ) {
+      if (product.images?.length) {
         const stmt = this.db.prepare(
           `INSERT INTO product_images (product_id, main, preview, thumbnail) VALUES (?, ?, ?, ?)`
         );
@@ -81,23 +66,19 @@ export class ProductCRUD {
       }
 
       // Options & Values
-      if (
-        product.options &&
-        Array.isArray(product.options) &&
-        product.options.length > 0
-      ) {
+      if (product.options?.length) {
         const optionStmt = this.db.prepare(
-          `INSERT INTO product_options (product_id, name, type) VALUES (?, ?, ?)`
+          `INSERT INTO product_options (product_id, name) VALUES (?, ?)`
         );
         const valueStmt = this.db.prepare(
           `INSERT INTO product_option_values (option_id, value, stock) VALUES (?, ?, ?)`
         );
 
         for (const option of product.options) {
-          if (!option.name || !option.type) {
+          if (option.name === null) {
             throw new Error("Product option is missing required fields");
           }
-          const optResult = optionStmt.run(productId, option.name, option.type);
+          const optResult = optionStmt.run(productId, option.name);
           const optionId = Number(optResult.lastInsertRowid);
           if (!optionId) throw new Error("Failed to insert product option");
 
@@ -126,6 +107,7 @@ export class ProductCRUD {
     try {
       if (typeof id !== "number" || isNaN(id))
         throw new Error("Invalid product id");
+
       const row = this.db
         .prepare(`SELECT * FROM products WHERE id = ?`)
         .get(id) as ProductRow | undefined;
@@ -137,7 +119,7 @@ export class ProductCRUD {
           .prepare(
             `SELECT main, preview, thumbnail FROM product_images WHERE product_id = ?`
           )
-          .all(id) as ProductImageRow[]
+          .all(id) as ProductImageSet[]
       ).map((img) => ({
         main: img.main,
         preview: img.preview,
@@ -152,6 +134,7 @@ export class ProductCRUD {
       const valueStmt = this.db.prepare(
         `SELECT * FROM product_option_values WHERE option_id = ?`
       );
+
       const options: ProductOption[] = optionRows.map((opt) => {
         const valueRows = valueStmt.all(opt.id) as ProductOptionValueRow[];
         const values: ProductOptionValue[] = valueRows.map((v) => ({
@@ -164,7 +147,6 @@ export class ProductCRUD {
           id: opt.id,
           productId: opt.product_id,
           name: opt.name,
-          type: opt.type,
           values,
         };
       });
@@ -186,7 +168,7 @@ export class ProductCRUD {
   }
 
   // ---------- GET ALL ----------
-  async getAll(): Promise<Product[]> {
+  async query(query?: QueryOptions): Promise<Product[]> {
     try {
       const rows = this.db.prepare(`SELECT id FROM products`).all() as {
         id: number;
@@ -207,9 +189,11 @@ export class ProductCRUD {
     try {
       if (typeof id !== "number" || isNaN(id))
         throw new Error("Invalid product id: " + id);
+
       const product = await this.get(id);
       if (!product) return null;
 
+      // Update product fields
       this.db
         .prepare(
           `
@@ -255,18 +239,20 @@ export class ProductCRUD {
           .run(id);
 
         const optionStmt = this.db.prepare(
-          `INSERT INTO product_options (product_id, name, type) VALUES (?, ?, ?)`
+          `INSERT INTO product_options (product_id, name) VALUES (?, ?)`
         );
         const valueStmt = this.db.prepare(
           `INSERT INTO product_option_values (option_id, value, stock) VALUES (?, ?, ?)`
         );
+
         for (const option of update.options) {
-          if (!option.name || !option.type) {
+          if (option.name === null) {
             throw new Error("Product option is missing required fields");
           }
-          const optResult = optionStmt.run(id, option.name, option.type);
+          const optResult = optionStmt.run(id, option.name);
           const optionId = Number(optResult.lastInsertRowid);
           if (!optionId) throw new Error("Failed to insert product option");
+
           for (const value of option.values ?? []) {
             if (
               typeof value.value !== "string" ||

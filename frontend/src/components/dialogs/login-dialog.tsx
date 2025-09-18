@@ -25,7 +25,7 @@ export default function LoginDialog({ onClose }: LoginDialogProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
-      <div className="bg-surface p-2xl rounded-lg shadow-xl w-full max-w-md border border-border flex flex-col gap-xl">
+      <div className="dialog-frame w-full max-w-md flex flex-col gap-xl">
         <h2 className="text-2xl font-bold mb-lg text-center text-text">
           Admin Login
         </h2>

@@ -45,7 +45,6 @@ export function initTables(db: Database.Database) {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			product_id INTEGER NOT NULL,
 			name TEXT NOT NULL,
-			type TEXT NOT NULL,
 			FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE
 		)
 	`
@@ -60,6 +59,17 @@ export function initTables(db: Database.Database) {
 			stock INTEGER DEFAULT 0,
 			FOREIGN KEY(option_id) REFERENCES product_options(id) ON DELETE CASCADE
 		)
+	`
+  ).run();
+
+  // PRODUCT OPTIONS  PRESETS
+  db.prepare(
+    `
+		CREATE TABLE IF NOT EXISTS product_options_presets (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT NOT NULL,
+			[values] TEXT NOT NULL
+		);
 	`
   ).run();
 

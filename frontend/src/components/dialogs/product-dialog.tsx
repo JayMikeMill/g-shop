@@ -1,11 +1,10 @@
 // src/components/ProductDialog.tsx
-import { useState, useEffect, useRef } from "react";
-import CropDialog from "../crop-dialog";
-import ImagePreviewList from "../image-preview-list";
-import type { Product } from "@models/product";
+import { useState, useEffect } from "react";
+import ImageListEditor from "@components/editors/image-list-editor";
+import ProductOptionsEditor from "@components/editors/product-options-editor";
 
+import type { Product, ProductOption } from "@models/product";
 import { useApi } from "@api/use-api";
-import { processImageOnly } from "@utils/image-processing";
 
 interface ProductDialogProps {
   product: Product | null; // If null, we are adding a new product
@@ -20,11 +19,12 @@ export default function ProductDialog({
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
   const [description, setDescription] = useState("");
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [productOptions, setProductOptions] = useState<ProductOption[]>([]);
+
+  // Image state is now managed in ImagePreviewList
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [processedImages, setProcessedImages] = useState<any[]>([]); // Store processed blobs and preview
   const [isProcessingImages, setIsProcessingImages] = useState(false);
-  // const [isUploadingImages, setIsUploadingImages] = useState(false);
   const [isSavingProduct, setIsSavingProduct] = useState(false);
   const [discountValue, setDiscountValue] = useState(0);
   const [discountType, setDiscountType] = useState<"%" | "$">("%");
@@ -32,10 +32,7 @@ export default function ProductDialog({
   // For lightbox, store the preview URL of the image to show
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
-  // Drag and drop state
-  const dragItem = useRef<number | null>(null);
-  const dragOverItem = useRef<number | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
+  // Drag and drop state is now managed in ImagePreviewList
 
   const { createProduct, deleteProduct, updateProduct, uploadImage } = useApi();
 
@@ -50,7 +47,9 @@ export default function ProductDialog({
     setName(product?.name || "");
     setPrice(product?.price || 0);
     setDescription(product?.description || "");
-    setImageFiles([]);
+    setProductOptions(product?.options || []);
+
+    // setImageFiles([]); // removed, now handled in ImagePreviewList
     // Extract preview URLs from ProductImageSet[] for display
     setImagePreviews(
       product?.images?.map((imgSet) => imgSet.preview || imgSet.main) || []
@@ -74,82 +73,8 @@ export default function ProductDialog({
     }
   }, [product]);
 
-  const [imageProgress, setImageProgress] = useState<number[]>([]);
-  // Cropping state
-  const [pendingCropFiles, setPendingCropFiles] = useState<File[]>([]);
-  const [pendingCropFile, setPendingCropFile] = useState<File | null>(null);
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length > 0) {
-      setPendingCropFiles((prev) => [...prev, ...files]);
-    }
-  };
-
-  // When pendingCropFile is null and there are files in the queue, pop the next one
-  useEffect(() => {
-    if (!pendingCropFile && pendingCropFiles.length > 0) {
-      setPendingCropFile(pendingCropFiles[0]);
-      setPendingCropFiles((prev) => prev.slice(1));
-    }
-  }, [pendingCropFile, pendingCropFiles]);
-
-  const handleCropComplete = async (croppedBlob: Blob, previewUrl: string) => {
-    setIsProcessingImages(true);
-    try {
-      // Wrap cropped blob as File for processImageOnly
-      const croppedFile = new File(
-        [croppedBlob],
-        pendingCropFile?.name || "cropped.webp",
-        { type: "image/webp" }
-      );
-      const { mainBlob, previewBlob, thumbBlob } =
-        await processImageOnly(croppedFile);
-      setProcessedImages((prev) => [
-        ...prev,
-        {
-          mainBlob,
-          previewBlob,
-          thumbBlob,
-          previewUrl,
-          name: croppedFile.name,
-        },
-      ]);
-      setImagePreviews((prev) => [...prev, previewUrl]);
-    } catch (err: any) {
-      alert(err?.message || "Error processing cropped image");
-    } finally {
-      setIsProcessingImages(false);
-      setPendingCropFile(null); // Will trigger next file in queue if any
-    }
-  };
-
-  const handleCropCancel = () => setPendingCropFile(null);
-
-  const removeImage = (index: number) => {
-    const newImagePreviews = [...imagePreviews];
-    newImagePreviews.splice(index, 1);
-    setImagePreviews(newImagePreviews);
-
-    const newImageFiles = [...imageFiles];
-    newImageFiles.splice(index, 1);
-    setImageFiles(newImageFiles);
-
-    const newProcessedImages = [...processedImages];
-    newProcessedImages.splice(index, 1);
-    setProcessedImages(newProcessedImages);
-
-    const newImageProgress = [...imageProgress];
-    newImageProgress.splice(index, 1);
-    setImageProgress(newImageProgress);
-  };
-
-  const handleSort = (from: number, to: number) => {
-    if (from === to) return;
-    const newImagePreviews = [...imagePreviews];
-    const draggedItemContent = newImagePreviews.splice(from, 1)[0];
-    newImagePreviews.splice(to, 0, draggedItemContent);
-    setImagePreviews(newImagePreviews);
-  };
+  // --- Image logic moved to ImagePreviewList ---
+  // See ImagePreviewList for drag, drop, crop, add, remove, lightbox, etc.
 
   const handleDelete = async () => {
     if (!product) return onClose();
@@ -166,6 +91,8 @@ export default function ProductDialog({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    console.log("Updating product with options:", productOptions);
 
     try {
       const tagsArray = tags
@@ -242,7 +169,6 @@ export default function ProductDialog({
           return;
         }
       }
-      // setIsUploadingImages(false);
 
       if (product) {
         await updateProduct({
@@ -253,6 +179,7 @@ export default function ProductDialog({
           discount: discountString,
           tags: tagsArray,
           images: uploadedImages.length > 0 ? uploadedImages : product.images,
+          options: productOptions,
           stock: product.stock,
         } as Product);
       } else {
@@ -263,6 +190,7 @@ export default function ProductDialog({
           discount: discountString,
           tags: tagsArray,
           images: uploadedImages,
+          options: productOptions,
           stock: 0,
         } as Product);
       }
@@ -304,24 +232,35 @@ export default function ProductDialog({
       <div className="fixed inset-0 bg-overlay flex justify-center items-center z-50">
         <div
           className="
-          bg-surface rounded-lg shadow-xl border border-border
-          w-full h-full sm:w-auto sm:h-[90vh] sm:max-w-4xl
-          flex flex-col overflow-hidden
-          px-2 sm:px-8"
+      dialog-frame
+      w-full h-full sm:h-[90vh] sm:max-w-4xl
+      flex flex-col overflow-hidden
+      px-2 sm:px-8
+    "
         >
           {/* Header */}
-          <h2 className="text-2xl font-bold text-text text-center pt-4">
-            {product ? "Edit Product" : "Add Product"}
-          </h2>
+          <div className="flex items-center justify-between pt-4 pb-2 flex-shrink-0">
+            <h2 className="text-2xl font-bold text-text text-center flex-1">
+              {product ? "Edit Product" : "Add Product"}
+            </h2>
+            <button
+              className="ml-2 text-3xl font-bold text-textSecondary hover:text-danger transition px-2"
+              onClick={onClose}
+              aria-label="Close dialog"
+              type="button"
+            >
+              &times;
+            </button>
+          </div>
 
           {/* Form content */}
           <form
             onSubmit={handleSubmit}
-            className="flex flex-col flex-1 gap-lg overflow-hidden"
+            className="flex flex-col flex-1 overflow-hidden gap-lg"
           >
-            <div className="flex flex-1 flex-col md:flex-row gap-md overflow-hidden">
-              {/* Left/Top: Form Fields */}
-              <div className="px-1 flex-1 flex flex-col gap-md overflow-y-auto">
+            <div className="flex flex-1 flex-col md:flex-row gap-md overflow-hidden min-h-0">
+              {/* Left/Top: Scrollable form fields + options */}
+              <div className="px-1 flex-1 flex flex-col gap-md overflow-y-auto min-h-0">
                 {/* Name */}
                 <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
                   Name
@@ -330,7 +269,7 @@ export default function ProductDialog({
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
-                    className="input-border px-md py-1 h-8 text-text "
+                    className="input-border px-md py-1 h-8 text-text"
                   />
                 </label>
 
@@ -348,7 +287,7 @@ export default function ProductDialog({
                         onChange={(e) => setPrice(parseFloat(e.target.value))}
                         required
                         step="0.01"
-                        className="input-border pl-6 pr-md py-1 h-8 w-full "
+                        className="input-border pl-6 pr-md py-1 h-8 w-full"
                       />
                     </div>
                   </label>
@@ -362,7 +301,7 @@ export default function ProductDialog({
                         </span>
                         <input
                           type="number"
-                          className="input-border pl-6 pr-md py-1 h-8 w-full "
+                          className="input-border pl-6 pr-md py-1 h-8 w-full"
                           value={discountValue}
                           onChange={(e) =>
                             setDiscountValue(parseFloat(e.target.value))
@@ -373,7 +312,6 @@ export default function ProductDialog({
                     </label>
                     <select
                       className="input-border ml-1 px-2 py-1 h-8"
-                      tabIndex={-1} // <- This skips tabbing
                       value={discountType}
                       onChange={(e) =>
                         setDiscountType(e.target.value as "%" | "$")
@@ -403,38 +341,33 @@ export default function ProductDialog({
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     required
-                    className="input-border px-md py-1  h-full"
+                    className="input-border px-md py-1 h-full"
                   />
                 </label>
+
+                {/* Product Options Editor (expands vertically) */}
+                <div className="flex-1 min-h-0">
+                  <ProductOptionsEditor
+                    options={productOptions}
+                    setOptions={setProductOptions}
+                  />
+                </div>
               </div>
 
-              {/* Right/Bottom: Images */}
-              <div className="md:w-1/3 flex flex-col gap-md md:h-full overflow-y-auto">
-                {pendingCropFile && (
-                  <CropDialog
-                    file={pendingCropFile}
-                    onCropComplete={handleCropComplete}
-                    onCancel={handleCropCancel}
-                  />
-                )}
-
-                <ImagePreviewList
+              {/* Right/Bottom: Images (always visible, no scroll) */}
+              <div className="md:w-1/3 flex flex-col gap-md flex-shrink-0">
+                <ImageListEditor
                   imagePreviews={imagePreviews}
-                  onRemove={removeImage}
-                  onSort={handleSort}
+                  setImagePreviews={setImagePreviews}
+                  setProcessedImages={setProcessedImages}
+                  setIsProcessingImages={setIsProcessingImages}
                   onLightbox={setLightboxImage}
-                  isDragging={isDragging}
-                  dragItem={dragItem}
-                  dragOverItem={dragOverItem}
-                  setIsDragging={setIsDragging}
                 />
               </div>
             </div>
 
             {/* Form Buttons */}
-
-            <div className="grid grid-cols-2 gap-2 px-4 sm:px-8 py-4 border-t border-border sm:grid-cols-4">
-              {/* Delete button */}
+            <div className="w-full grid grid-cols-2 gap-2 px-4 sm:px-8 py-4 border-t border-border sm:grid-cols-4 flex-shrink-0">
               <button
                 className="btn-danger w-full h-12"
                 type="button"
@@ -442,27 +375,6 @@ export default function ProductDialog({
               >
                 Delete
               </button>
-              {/* Add Image */}
-              <label className="btn-primary cursor-pointer inline-flex items-center justify-center w-full h-12">
-                Add Image
-                <input
-                  type="file"
-                  onChange={handleImageChange}
-                  accept="image/*"
-                  className="hidden"
-                />
-              </label>
-
-              {/* Cancel button */}
-              <button
-                className="btn-secondary w-full h-12"
-                type="button"
-                onClick={onClose}
-              >
-                Cancel
-              </button>
-
-              {/* Save button */}
               <button
                 type="submit"
                 className="btn-success w-full h-12 whitespace-nowrap"

@@ -7,6 +7,7 @@ import { DBAdapter } from "./db-adapter";
 import { Product } from "@models/product";
 import { User } from "@models/user";
 import { Order } from "@models/order";
+import { QueryOptions } from "@models/query-options";
 
 export class SQLiteAdapter implements DBAdapter {
   public db: Database.Database;
@@ -29,8 +30,8 @@ export class SQLiteAdapter implements DBAdapter {
   getProduct(id: number | string) {
     return this.products.get(Number(id));
   }
-  getProducts() {
-    return this.products.getAll();
+  getProducts(query?: QueryOptions) {
+    return this.products.query(query);
   }
   updateProduct(id: number | string, update: Partial<Product>) {
     return this.products.update(Number(id), update);
@@ -45,8 +46,8 @@ export class SQLiteAdapter implements DBAdapter {
   getUser(id: string) {
     return this.users.get(id);
   }
-  getUsers() {
-    return this.users.getAll();
+  getUsers(query?: QueryOptions) {
+    return this.users.query(query);
   }
   updateUser(id: string, update: Partial<User>) {
     return this.users.update(id, update);
@@ -61,8 +62,8 @@ export class SQLiteAdapter implements DBAdapter {
   getOrder(id: string) {
     return this.orders.get(id);
   }
-  getOrders() {
-    return this.orders.getAll();
+  getOrders(query?: QueryOptions) {
+    return this.orders.query(query);
   }
   updateOrder(id: string, update: Partial<Order>) {
     return this.orders.update(id, update);

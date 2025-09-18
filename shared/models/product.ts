@@ -19,17 +19,17 @@ export interface ProductImageSet {
 
 // Product option
 export interface ProductOption {
-  id: number;
-  productId: number;
   name: string;
-  type: "dropdown" | "radio" | "colorpicker";
   values: ProductOptionValue[];
+}
+
+// Product option
+export interface ProductOptionPreset {
+  id: number | string;
 }
 
 // Product option value
 export interface ProductOptionValue {
-  id: number;
-  optionId: string;
   value: string;
   stock: number;
 }
@@ -42,17 +42,15 @@ export interface PresetOption {
 }
 
 // check if two products have the same options selected
-export const equalProductOptions = (
-  product1: Product,
-  product2: Product
-): boolean => {
-  if (!product1.options && !product2.options) return true;
-  if (!product1.options || !product2.options) return false;
-  if (product1.options.length !== product2.options.length) return false;
+export const equalProductOptions = (p1: Product, p2: Product): boolean => {
+  if (!p1.options && !p2.options) return true;
+  if (!p1.options || !p2.options) return false;
+  if (p1.options.length !== p2.options.length) return false;
 
-  // Check if all options are equal
-  return product1.options.every((opt1) => {
-    const opt2 = product2.options!.find((o) => o.id === opt1.id);
-    return opt2 && opt2.values === opt1.values;
+  return p1.options.every((opt1) => {
+    const opt2 = p2.options!.find((o) => o.name === opt1.name);
+    if (!opt2) return false;
+    if (opt2.values.length !== opt1.values.length) return false;
+    return opt1.values.every((v, i) => v.value === opt2.values[i].value);
   });
 };
