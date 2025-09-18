@@ -245,24 +245,25 @@ export default function ProductDialog({
       // setIsUploadingImages(false);
 
       if (product) {
-        await updateProduct(product.id, {
+        await updateProduct({
+          id: product.id,
           name,
           price,
           description,
           discount: discountString,
           tags: tagsArray,
           images: uploadedImages.length > 0 ? uploadedImages : product.images,
+          stock: product.stock,
         } as Product);
       } else {
         await createProduct({
           name,
           price,
           description,
-          sizes: ["S", "M", "L"],
-          colors: ["Red", "Blue"],
           discount: discountString,
           tags: tagsArray,
           images: uploadedImages,
+          stock: 0,
         } as Product);
       }
 

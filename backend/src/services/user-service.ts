@@ -1,5 +1,6 @@
 import { User } from "@models/user";
 import { db, auth } from "@config/adapters";
+import { QueryOptions } from "@models/query-options";
 
 export class UserService {
   static async createUser(user: User, password?: string): Promise<User> {
@@ -11,13 +12,8 @@ export class UserService {
     return db.getUser(id) as Promise<User | null>;
   }
 
-  static async getUsers(options?: {
-    limit?: number;
-    page?: number;
-    sortBy?: string;
-    sortOrder?: "asc" | "desc";
-  }): Promise<User[]> {
-    return db.getUsers(options) as Promise<User[]>;
+  static async getUsers(query?: QueryOptions): Promise<User[]> {
+    return db.getUsers(query) as Promise<User[]>;
   }
 
   static async updateUser(

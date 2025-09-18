@@ -4,6 +4,7 @@ import * as api from "@api/backend-api";
 import type { Product } from "@models/product";
 import type { PaymentData } from "@models/payment-data"; // Add this import, adjust the path if needed
 import type { Order } from "@models/order";
+import type { QueryOptions } from "@models/query-options";
 
 export function useApi() {
   const { token } = useAuth();
@@ -44,16 +45,10 @@ export function useApi() {
 
     // Product
     createProduct: (product: Product) => api.createProduct(product, token),
-    getProduct: (id: string) => api.getProduct(id, token),
-    getProducts: (options?: {
-      limit?: number;
-      page?: number;
-      sortBy?: string;
-      sortOrder?: "asc" | "desc";
-    }) => api.getProducts(options, token),
-    updateProduct: (id: string, product: Product) =>
-      api.updateProduct(id, product, token),
-    deleteProduct: (id: string) => api.deleteProduct(id, token),
+    getProduct: (id: number | string) => api.getProduct(id, token),
+    getProducts: (query?: QueryOptions) => api.getProducts(query, token),
+    updateProduct: (product: Product) => api.updateProduct(product, token),
+    deleteProduct: (id: number | string) => api.deleteProduct(id, token),
 
     // Order
     createOrder: (order: Order) => api.createOrder(order, token),

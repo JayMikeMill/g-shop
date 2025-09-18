@@ -1,45 +1,58 @@
 export interface Product {
-	id: string;
-	name: string;
-	price: number;
-	description: string;
-	images: ProductImageSet[];
-	discount?: string;
-	tags?: string[];
-	sizes?: string[];
-	colors?: string[];
+  id: number | string;
+  name: string;
+  price: number;
+  discount?: string;
+  images: ProductImageSet[];
+  description: string;
+  tags?: string[];
+  options?: ProductOption[];
+  stock: number;
 }
 
+// Product images
 export interface ProductImageSet {
-	main: string;
-	preview: string;
-	thumbnail: string;
+  main: string;
+  preview: string;
+  thumbnail: string;
 }
 
-
-export interface ProductOptions {
-	size?: Size;
-	color?: Color;
+// Product option
+export interface ProductOption {
+  id: number;
+  productId: number;
+  name: string;
+  type: "dropdown" | "radio" | "colorpicker";
+  values: ProductOptionValue[];
 }
 
-export const equalsProductOptions = (a: ProductOptions, b: ProductOptions) =>
-	a.size === b.size && a.color === b.color;
+// Product option value
+export interface ProductOptionValue {
+  id: number;
+  optionId: string;
+  value: string;
+  stock: number;
+}
 
-export const Size = {
-	S: "S",
-	M: "M",
-	L: "L",
-	XL: "XL",
-} as const;
-export type Size = typeof Size[keyof typeof Size];
-export const allSizes: Size[] = Object.values(Size);
+// Preset option (for admin selection)
+export interface PresetOption {
+  id: number;
+  name: string; // e.g., "Color"
+  value: string; // e.g., "Red"
+}
 
-export const Color = {
-	Red: "Red",
-	Blue: "Blue",
-	Green: "Green",
-	Black: "Black",
-} as const;
+// check if two products have the same options selected
+export const equalProductOptions = (
+  product1: Product,
+  product2: Product
+): boolean => {
+  if (!product1.options && !product2.options) return true;
+  if (!product1.options || !product2.options) return false;
+  if (product1.options.length !== product2.options.length) return false;
 
-export type Color = typeof Color[keyof typeof Color];
-export const allColors: Color[] = Object.values(Color);
+  // Check if all options are equal
+  return product1.options.every((opt1) => {
+    const opt2 = product2.options!.find((o) => o.id === opt1.id);
+    return opt2 && opt2.values === opt1.values;
+  });
+};

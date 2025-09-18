@@ -1,190 +1,73 @@
 import Database from "better-sqlite3";
-import { randomUUID } from "crypto";
+import { initTables } from "./sqlite-modules/migrations";
+import { ProductCRUD } from "./sqlite-modules/product-crud";
+import { UserCRUD } from "./sqlite-modules/user-crud";
+import { OrderCRUD } from "./sqlite-modules/order-crud";
 import { DBAdapter } from "./db-adapter";
-import { User } from "@models/user";
 import { Product } from "@models/product";
+import { User } from "@models/user";
 import { Order } from "@models/order";
 
 export class SQLiteAdapter implements DBAdapter {
-  private db: Database.Database;
+  public db: Database.Database;
+  public products: ProductCRUD;
+  public users: UserCRUD;
+  public orders: OrderCRUD;
 
   constructor(filename: string = "store.sqlite") {
     this.db = new Database(filename);
-    this.init();
+    initTables(this.db);
+    this.products = new ProductCRUD(this.db);
+    this.users = new UserCRUD(this.db);
+    this.orders = new OrderCRUD(this.db);
   }
 
-  private init() {
-    // Users
-    this.db
-      .prepare(
-        `CREATE TABLE IF NOT EXISTS users (
-      id TEXT PRIMARY KEY UNIQUE,
-      data TEXT NOT NULL
-    )`
-      )
-      .run();
-    // Products
-    this.db
-      .prepare(
-        `CREATE TABLE IF NOT EXISTS products (
-      id TEXT PRIMARY KEY UNIQUE,
-      data TEXT NOT NULL
-    )`
-      )
-      .run();
-    // Orders
-    this.db
-      .prepare(
-        `CREATE TABLE IF NOT EXISTS orders (
-      id TEXT PRIMARY KEY UNIQUE,
-      data TEXT NOT NULL
-    )`
-      )
-      .run();
+  // delegate methods
+  createProduct(product: Product) {
+    return this.products.create(product);
+  }
+  getProduct(id: number | string) {
+    return this.products.get(Number(id));
+  }
+  getProducts() {
+    return this.products.getAll();
+  }
+  updateProduct(id: number | string, update: Partial<Product>) {
+    return this.products.update(Number(id), update);
+  }
+  deleteProduct(id: number | string) {
+    return this.products.delete(Number(id));
   }
 
-  // ---------- USERS ----------
-  async createUser(user: User): Promise<User> {
-    const id = user.id || randomUUID();
-    const userWithId = { ...user, id };
-    this.db
-      .prepare("INSERT INTO users (id, data) VALUES (?, ?)")
-      .run(id, JSON.stringify(userWithId));
-    return userWithId;
+  createUser(user: User) {
+    return this.users.create(user);
   }
-  async getUser(id: string): Promise<User | null> {
-    const row = this.db
-      .prepare("SELECT data FROM users WHERE id = ?")
-      .get(id) as { data: string } | undefined;
-    if (!row || typeof row.data !== "string") return null;
-    try {
-      return JSON.parse(row.data);
-    } catch {
-      return null;
-    }
+  getUser(id: string) {
+    return this.users.get(id);
   }
-  async getUsers(): Promise<User[]> {
-    const rows = this.db.prepare("SELECT data FROM users").all() as {
-      data: string;
-    }[];
-    return rows
-      .map((r) => {
-        try {
-          return JSON.parse(r.data);
-        } catch {
-          return null;
-        }
-      })
-      .filter(Boolean);
+  getUsers() {
+    return this.users.getAll();
   }
-  async updateUser(id: string, update: Partial<User>): Promise<User | null> {
-    const user = await this.getUser(id);
-    if (!user) return null;
-    const updated = { ...user, ...update };
-    this.db
-      .prepare("UPDATE users SET data = ? WHERE id = ?")
-      .run(JSON.stringify(updated), id);
-    return updated;
+  updateUser(id: string, update: Partial<User>) {
+    return this.users.update(id, update);
   }
-  async deleteUser(id: string): Promise<void> {
-    this.db.prepare("DELETE FROM users WHERE id = ?").run(id);
+  deleteUser(id: string) {
+    return this.users.delete(id);
   }
 
-  // ---------- PRODUCTS ----------
-  async createProduct(product: Product): Promise<Product> {
-    const id = product.id || randomUUID();
-    const productWithId = { ...product, id };
-    this.db
-      .prepare("INSERT INTO products (id, data) VALUES (?, ?)")
-      .run(id, JSON.stringify(productWithId));
-    return productWithId;
+  createOrder(order: Order) {
+    return this.orders.create(order);
   }
-  async getProduct(id: string): Promise<Product | null> {
-    const row = this.db
-      .prepare("SELECT data FROM products WHERE id = ?")
-      .get(id) as { data: string } | undefined;
-    if (!row || typeof row.data !== "string") return null;
-    try {
-      return JSON.parse(row.data);
-    } catch {
-      return null;
-    }
+  getOrder(id: string) {
+    return this.orders.get(id);
   }
-  async getProducts(): Promise<Product[]> {
-    const rows = this.db.prepare("SELECT data FROM products").all() as {
-      data: string;
-    }[];
-    return rows
-      .map((r) => {
-        try {
-          return JSON.parse(r.data);
-        } catch {
-          return null;
-        }
-      })
-      .filter(Boolean);
+  getOrders() {
+    return this.orders.getAll();
   }
-  async updateProduct(
-    id: string,
-    update: Partial<Product>
-  ): Promise<Product | null> {
-    const product = await this.getProduct(id);
-    if (!product) return null;
-    const updated = { ...product, ...update };
-    this.db
-      .prepare("UPDATE products SET data = ? WHERE id = ?")
-      .run(JSON.stringify(updated), id);
-    return updated;
+  updateOrder(id: string, update: Partial<Order>) {
+    return this.orders.update(id, update);
   }
-  async deleteProduct(id: string): Promise<void> {
-    this.db.prepare("DELETE FROM products WHERE id = ?").run(id);
-  }
-
-  // ---------- ORDERS ----------
-  async createOrder(order: Order): Promise<Order> {
-    const id = order.id || randomUUID();
-    const orderWithId = { ...order, id };
-    this.db
-      .prepare("INSERT INTO orders (id, data) VALUES (?, ?)")
-      .run(id, JSON.stringify(orderWithId));
-    return orderWithId;
-  }
-  async getOrder(id: string): Promise<Order | null> {
-    const row = this.db
-      .prepare("SELECT data FROM orders WHERE id = ?")
-      .get(id) as { data: string } | undefined;
-    if (!row || typeof row.data !== "string") return null;
-    try {
-      return JSON.parse(row.data);
-    } catch {
-      return null;
-    }
-  }
-  async getOrders(): Promise<Order[]> {
-    const rows = this.db.prepare("SELECT data FROM orders").all() as {
-      data: string;
-    }[];
-    return rows
-      .map((r) => {
-        try {
-          return JSON.parse(r.data);
-        } catch {
-          return null;
-        }
-      })
-      .filter(Boolean);
-  }
-  // Note: SQLite only supports local file or in-memory databases. It cannot connect to remote servers. For remote DBs, use a different adapter (e.g., PostgreSQL, MySQL).
-  async updateOrder(id: string, update: Partial<Order>): Promise<Order | null> {
-    const order = await this.getOrder(id);
-    if (!order) return null;
-    const updated = { ...order, ...update };
-    this.db
-      .prepare("UPDATE orders SET data = ? WHERE id = ?")
-      .run(JSON.stringify(updated), id);
-    return updated;
-  }
-  async deleteOrder(id: string): Promise<void> {
-    this.db.prepare("DELETE FROM orders WHERE id = ?").run(id);
+  deleteOrder(id: string) {
+    return this.orders.delete(id);
   }
 }

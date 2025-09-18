@@ -3,6 +3,7 @@ import type { User } from "@models/user";
 import type { Product } from "@models/product";
 import type { PaymentData } from "@models/payment-data";
 import type { Order } from "@models/order";
+import type { QueryOptions } from "@models/query-options";
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
@@ -168,7 +169,10 @@ export const createProduct = async (
   return res.data as Product;
 };
 
-export const getProduct = async (id: string, token?: string | null) => {
+export const getProduct = async (
+  id: number | string,
+  token?: string | null
+) => {
   const res = await axios.get(`${API_BASE}/products/${id}`, {
     headers: authHeaders(token),
   });
@@ -176,33 +180,30 @@ export const getProduct = async (id: string, token?: string | null) => {
 };
 
 export const getProducts = async (
-  options?: {
-    limit?: number;
-    page?: number;
-    sortBy?: string;
-    sortOrder?: "asc" | "desc";
-  },
+  query?: QueryOptions,
   token?: string | null
 ) => {
   const res = await axios.get(`${API_BASE}/products`, {
-    params: options,
+    params: query,
     headers: authHeaders(token),
   });
   return res.data as Product[];
 };
 
 export const updateProduct = async (
-  id: string,
   product: Product,
   token?: string | null
 ) => {
-  const res = await axios.put(`${API_BASE}/products/${id}`, product, {
+  const res = await axios.put(`${API_BASE}/products/${product.id}`, product, {
     headers: authHeaders(token),
   });
   return res.data as Product;
 };
 
-export const deleteProduct = async (id: string, token?: string | null) => {
+export const deleteProduct = async (
+  id: number | string,
+  token?: string | null
+) => {
   const res = await axios.delete(`${API_BASE}/products/${id}`, {
     headers: authHeaders(token),
   });
