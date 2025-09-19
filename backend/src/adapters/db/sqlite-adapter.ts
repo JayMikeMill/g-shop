@@ -4,7 +4,7 @@ import { ProductCRUD } from "./sqlite-modules/product-crud";
 import { UserCRUD } from "./sqlite-modules/user-crud";
 import { OrderCRUD } from "./sqlite-modules/order-crud";
 import { DBAdapter } from "./db-adapter";
-import { Product, ProductOptionPreset } from "@models/product";
+import { Product, ProductOptionPreset, Category } from "@models/product";
 import { User } from "@models/user";
 import { Order } from "@models/order";
 import { QueryOptions } from "@models/query-options";
@@ -21,6 +21,23 @@ export class SQLiteAdapter implements DBAdapter {
     this.products = new ProductCRUD(this.db);
     this.users = new UserCRUD(this.db);
     this.orders = new OrderCRUD(this.db);
+  }
+
+  // USERS
+  createUser(user: User) {
+    return this.users.create(user);
+  }
+  getUser(id: string) {
+    return this.users.get(id);
+  }
+  getUsers(query?: QueryOptions) {
+    return this.users.query(query);
+  }
+  updateUser(id: string, update: Partial<User>) {
+    return this.users.update(id, update);
+  }
+  deleteUser(id: string) {
+    return this.users.delete(id);
   }
 
   // PRODUCTS
@@ -56,21 +73,21 @@ export class SQLiteAdapter implements DBAdapter {
     return this.products.deleteOptionsPreset(Number(id));
   }
 
-  // USERS
-  createUser(user: User) {
-    return this.users.create(user);
+  // CATEGORIES
+  createCategory(category: Category) {
+    return this.products.createCategory(category);
   }
-  getUser(id: string) {
-    return this.users.get(id);
+  getCategory(id: string) {
+    return this.products.getCategory(id);
   }
-  getUsers(query?: QueryOptions) {
-    return this.users.query(query);
+  getCategories() {
+    return this.products.getCategories();
   }
-  updateUser(id: string, update: Partial<User>) {
-    return this.users.update(id, update);
+  updateCategory(id: string, update: Partial<Category>) {
+    return this.products.updateCategory(id, update);
   }
-  deleteUser(id: string) {
-    return this.users.delete(id);
+  deleteCategory(id: string) {
+    return this.products.deleteCategory(id);
   }
 
   // ORDERS

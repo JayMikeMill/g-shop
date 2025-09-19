@@ -1,7 +1,7 @@
 import { useAuth } from "@contexts/auth/auth-context";
 import type { User } from "@models/user";
 import * as api from "@api/backend-api";
-import type { Product } from "@models/product";
+import type { Product, Category } from "@models/product";
 import type { PaymentData } from "@models/payment-data"; // Add this import, adjust the path if needed
 import type { Order } from "@models/order";
 import type { QueryOptions } from "@models/query-options";
@@ -49,12 +49,21 @@ export function useApi() {
     getProducts: (query?: QueryOptions) => api.getProducts(query, token),
     updateProduct: (product: Product) => api.updateProduct(product, token),
     deleteProduct: (id: number | string) => api.deleteProduct(id, token),
+
     // Product Options Presets
     createProductOptionsPreset: (preset: any) =>
       api.createProductOptionsPreset(preset, token),
     getProductOptionsPresets: () => api.getProductOptionsPresets(token),
     deleteProductOptionsPreset: (id: number | string) =>
       api.deleteProductOptionsPreset(id, token),
+
+    // Categories
+    createCategory: (category: Category) => api.createCategory(category, token),
+    getCategory: (id: string) => api.getCategory(id, token),
+    getCategories: () => api.getCategories(token),
+    updateCategory: (id: string, category: Partial<Category>) =>
+      api.updateCategory(id, category, token),
+    deleteCategory: (id: string) => api.deleteCategory(id, token),
 
     // Order
     createOrder: (order: Order) => api.createOrder(order, token),

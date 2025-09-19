@@ -7,6 +7,7 @@ import type {
   ProductOptionValue,
   ProductImageSet,
   ProductOptionPreset,
+  Category,
 } from "@models/product";
 import { QueryOptions } from "@models/query-options";
 
@@ -330,6 +331,112 @@ export class ProductCRUD {
     } catch (err) {
       throw new Error(
         `ProductCRUD.deleteOptionsPreset failed: ${(err as Error).message}`
+      );
+    }
+  }
+
+  // ---------- CATEGORIES CRUD ----------
+  async createCategory(category: Category): Promise<Category> {
+    try {
+      this.db
+        .prepare(
+          `
+			INSERT INTO categories (id, name, slug, description, image, parent_id, created_at, updated_at)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+			`
+        )
+        .run(
+          category.id,
+          category.name,
+          category.slug,
+          category.description ?? null,
+          category.image ?? null,
+          category.parent_id ?? null,
+          category.created_at,
+          category.updated_at
+        );
+
+      return category;
+    } catch (err) {
+      throw new Error(
+        `ProductCRUD.createCategory failed: ${(err as Error).message}`
+      );
+    }
+  }
+
+  async getCategory(id: string): Promise<Category | null> {
+    try {
+      const row = this.db
+        .prepare(`SELECT * FROM categories WHERE id = ?`)
+        .get(id) as Category | undefined;
+
+      return row ?? null;
+    } catch (err) {
+      throw new Error(
+        `ProductCRUD.getCategory failed: ${(err as Error).message}`
+      );
+    }
+  }
+
+  async getCategories(): Promise<Category[]> {
+    try {
+      const rows = this.db
+        .prepare(`SELECT * FROM categories`)
+        .all() as Category[];
+      return rows;
+    } catch (err) {
+      throw new Error(
+        `ProductCRUD.getCategories failed: ${(err as Error).message}`
+      );
+    }
+  }
+
+  async updateCategory(
+    id: string,
+    update: Partial<Category>
+  ): Promise<Category | null> {
+    try {
+      const category = await this.getCategory(id);
+      if (!category) return null;
+
+      const updated: Category = {
+        ...category,
+        ...update,
+        updated_at: new Date().toISOString(), // always refresh updated_at
+      };
+
+      this.db
+        .prepare(
+          `
+			UPDATE categories 
+			SET name = ?, slug = ?, description = ?, image = ?, parent_id = ?, updated_at = ?
+			WHERE id = ?
+			`
+        )
+        .run(
+          updated.name,
+          updated.slug,
+          updated.description ?? null,
+          updated.image ?? null,
+          updated.parent_id ?? null,
+          updated.updated_at,
+          id
+        );
+
+      return updated;
+    } catch (err) {
+      throw new Error(
+        `ProductCRUD.updateCategory failed: ${(err as Error).message}`
+      );
+    }
+  }
+
+  async deleteCategory(id: string): Promise<void> {
+    try {
+      this.db.prepare(`DELETE FROM categories WHERE id = ?`).run(id);
+    } catch (err) {
+      throw new Error(
+        `ProductCRUD.deleteCategory failed: ${(err as Error).message}`
       );
     }
   }

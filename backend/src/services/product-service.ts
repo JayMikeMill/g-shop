@@ -1,4 +1,4 @@
-import { Product, ProductOptionPreset } from "@models/product";
+import { Product, ProductOptionPreset, Category } from "@models/product";
 import { db } from "@config/adapters";
 import { QueryOptions } from "@models/query-options";
 
@@ -44,6 +44,33 @@ export class ProductService {
     const existing = await db.getProductOptionsPresets();
     if (!existing.find((p) => p.id === id)) return false;
     await db.deleteProductOptionsPreset(id);
+    return true;
+  }
+
+  // ---------- CATEGORY CRUD ----------
+  static async createCategory(category: Category): Promise<Category> {
+    return db.createCategory(category);
+  }
+
+  static async getCategory(id: string): Promise<Category | null> {
+    return db.getCategory(id);
+  }
+
+  static async getCategories(): Promise<Category[]> {
+    return db.getCategories();
+  }
+
+  static async updateCategory(
+    id: string,
+    update: Partial<Category>
+  ): Promise<Category | null> {
+    return db.updateCategory(id, update);
+  }
+
+  static async deleteCategory(id: string): Promise<boolean> {
+    const existing = await db.getCategory(id);
+    if (!existing) return false;
+    await db.deleteCategory(id);
     return true;
   }
 }

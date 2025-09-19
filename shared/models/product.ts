@@ -1,3 +1,6 @@
+// shared/models/product.ts
+
+// Product model
 export interface Product {
   id: number | string;
   name: string;
@@ -32,6 +35,17 @@ export interface ProductOptionPreset extends ProductOption {
 export interface ProductOptionValue {
   value: string;
   stock: number;
+}
+
+export interface Category {
+  id: string; // UUID
+  name: string; // Display name
+  slug: string; // URL-friendly slug
+  description?: string; // Optional text
+  image?: string; // Category image URL
+  parent_id?: string | null; // Nested category reference
+  created_at: string; // ISO timestamp
+  updated_at: string; // ISO timestamp
 }
 
 // check if two products have the same options selected

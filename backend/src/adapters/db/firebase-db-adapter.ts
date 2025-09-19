@@ -1,6 +1,6 @@
 // backend/src/adapters/db/firebase-db-adapter.ts
 import { User } from "@models/user";
-import { Product, ProductOptionPreset } from "@models/product";
+import { Product, ProductOptionPreset, Category } from "@models/product";
 import { Order } from "@models/order";
 import { DBAdapter } from "@adapters/db/db-adapter";
 import { db } from "@config/firebase/firebase-admin";
@@ -135,6 +135,41 @@ export class FirebaseDBAdapter implements DBAdapter {
       .collection("product_options_presets")
       .doc(id as string)
       .delete();
+  }
+
+  // ---------- CATEGORIES ----------
+  async createCategory(category: Category): Promise<Category> {
+    await db.collection("categories").doc(category.id).set(category);
+    return category;
+  }
+
+  async getCategory(id: string): Promise<Category | null> {
+    const docSnap = await db.collection("categories").doc(id).get();
+    return docSnap.exists
+      ? ({ ...docSnap.data(), id: docSnap.id } as Category)
+      : null;
+  }
+
+  async getCategories(): Promise<Category[]> {
+    const snapshot = await db.collection("categories").get();
+    return snapshot.docs.map(
+      (doc) => ({ ...doc.data(), id: doc.id }) as Category
+    );
+  }
+
+  async updateCategory(
+    id: string,
+    update: Partial<Category>
+  ): Promise<Category | null> {
+    const category = await this.getCategory(id);
+    if (!category) return null;
+    const updated = { ...category, ...update };
+    await db.collection("categories").doc(id).set(updated);
+    return updated;
+  }
+
+  async deleteCategory(id: string): Promise<void> {
+    await db.collection("categories").doc(id).delete();
   }
 
   // ---------- ORDERS ----------
