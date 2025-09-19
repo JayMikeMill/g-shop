@@ -56,71 +56,76 @@ export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
         <h2 className="text-title font-bold mb-md text-text">Shopping Cart</h2>
 
         {/* Items */}
-        <div className="flex flex-col gap-sm mb-lg">
-          {cart.length === 0 && (
-            <p className="text-textSecondary">Your cart is empty.</p>
-          )}
-          {cart.map((item, i) => (
-            <div
-              key={i}
-              className="flex items-center gap-md border-b border-divider pb-sm"
-            >
-              <img
-                src={item.images[0].thumbnail}
-                alt={item.name}
-                className="w-16 h-16 object-cover rounded-card"
-              />
-              <div className="flex-1">
-                <p className="font-semibold text-text">{item.name}</p>
-                <p className="text-textSecondary">${item.price.toFixed(2)}</p>
-              </div>
-              <div className="flex items-center gap-xs">
-                <button
-                  className="px-2 py-1 bg-surfaceAlt rounded hover:bg-surface transition-colors"
-                  onClick={() => removeFromCart(item)}
-                >
-                  -
-                </button>
-                <span className="text-text">{item.quantity}</span>
-                <button
-                  className="px-2 py-1 bg-surfaceAlt rounded hover:bg-surface transition-colors"
-                  onClick={() => addToCart({ ...item, quantity: 1 })}
-                >
-                  +
-                </button>
-              </div>
-              <p className="w-16 text-right text-text">
-                ${(item.price * item.quantity).toFixed(2)}
-              </p>
+        <div className="flex flex-col gap-sm mb-lg flex-1">
+          {cart.length === 0 ? (
+            <div className="flex flex-1 items-center justify-center text-center">
+              <p className="text-textSecondary text-lg">Your cart is empty.</p>
             </div>
-          ))}
+          ) : (
+            cart.map((item, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-md border-b border-divider pb-sm"
+              >
+                <img
+                  src={item.images[0].thumbnail}
+                  alt={item.name}
+                  className="w-16 h-16 object-cover rounded-card"
+                />
+                <div className="flex-1">
+                  <p className="font-semibold text-text">{item.name}</p>
+                  <p className="text-textSecondary">${item.price.toFixed(2)}</p>
+                </div>
+                <div className="flex items-center gap-xs">
+                  <button
+                    className="px-2 py-1 bg-surfaceAlt rounded hover:bg-surface transition-colors"
+                    onClick={() => removeFromCart(item)}
+                  >
+                    -
+                  </button>
+                  <span className="text-text">{item.quantity}</span>
+                  <button
+                    className="px-2 py-1 bg-surfaceAlt rounded hover:bg-surface transition-colors"
+                    onClick={() => addToCart({ ...item, quantity: 1 })}
+                  >
+                    +
+                  </button>
+                </div>
+                <p className="w-16 text-right text-text">
+                  ${(item.price * item.quantity).toFixed(2)}
+                </p>
+              </div>
+            ))
+          )}
         </div>
 
-        {/* Totals */}
-        <div className="mt-auto border-t border-divider pt-md flex flex-col gap-sm">
-          <div className="flex justify-between font-semibold text-text">
-            <span>Subtotal</span>
-            <span>${totals.totalPrice.toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between font-semibold text-textSecondary">
-            <span>Shipping</span>
-            <span>FREE</span>
-          </div>
-          <div className="flex justify-between font-bold text-lg text-text">
-            <span>Total</span>
-            <span>${totals.totalPrice.toFixed(2)}</span>
-          </div>
+        {/* Totals & Checkout */}
+        {cart.length > 0 && (
+          <div className="mt-auto border-t border-divider pt-md flex flex-col gap-sm">
+            <div className="flex justify-between font-semibold text-text">
+              <span>Subtotal</span>
+              <span>${totals.totalPrice.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between font-semibold text-textSecondary">
+              <span>Shipping</span>
+              <span>FREE</span>
+            </div>
+            <div className="flex justify-between font-bold text-lg text-text">
+              <span>Total</span>
+              <span>${totals.totalPrice.toFixed(2)}</span>
+            </div>
 
-          <button
-            className="btn-primary w-full mt-sm"
-            onClick={() => {
-              onClose();
-              navigate("/checkout");
-            }}
-          >
-            Proceed to Checkout
-          </button>
-        </div>
+            <button
+              className="btn-primary w-full mt-sm"
+              onClick={() => {
+                onClose();
+                navigate("/checkout");
+              }}
+            >
+              Proceed to Checkout
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

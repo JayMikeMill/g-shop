@@ -30,14 +30,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         discountedPrice = product.price - amount;
       }
     } else if (typeof product.discount === "number") {
-      // Legacy format, a number between 0 and 1 representing a percentage
       discountedPrice = product.price * (1 - product.discount);
     }
   }
 
   return (
     <div
-      className="bg-white rounded-lg shadow-sm hover:shadow-lg border border-gray-200 overflow-hidden cursor-pointer transition-all duration-300"
+      className="bg-surface rounded-card shadow-card hover:shadow-lg border border-border overflow-hidden cursor-pointer transition-all duration-300"
       onClick={handleCardClick}
     >
       <div className="relative w-full pt-[100%]">
@@ -45,10 +44,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <img
             src={product.images[0].preview}
             alt={product.name}
-            className="absolute top-0 left-0 w-full h-full object-cover"
+            className="absolute top-0 left-0 w-full h-full object-cover rounded-card"
           />
         ) : (
-          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
+          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-surfaceAlt text-textSecondary rounded-card">
             No Image Available
           </div>
         )}
@@ -57,7 +56,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {product.tags.map((tag) => (
               <span
                 key={tag}
-                className="bg-blue-600 text-white px-2 py-1 rounded text-xs font-semibold shadow"
+                className="bg-accent text-textInverted px-2 py-1 rounded text-xs font-semibold shadow"
               >
                 {tag}
               </span>
@@ -65,32 +64,35 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </div>
         )}
       </div>
-      <div className="p-4">
-        <h3 className="text-base font-semibold mb-2 text-gray-900">
+
+      <div className="p-md">
+        <h3 className="text-base font-semibold mb-2 text-text">
           {product.name}
         </h3>
         <div className="flex items-center gap-2">
           {discountedPrice !== null && discountedPrice < product.price ? (
             <>
-              <p className="text-sm text-gray-400 line-through">
+              <p className="text-sm text-textSecondary line-through">
                 ${product.price.toFixed(2)}
               </p>
-              <p className="text-lg text-blue-600 font-bold">
+              <p className="text-lg text-primary font-bold">
                 ${discountedPrice.toFixed(2)}
               </p>
             </>
           ) : (
-            <p className="text-lg text-blue-600 font-bold">
+            <p className="text-lg text-primary font-bold">
               ${product.price.toFixed(2)}
             </p>
           )}
         </div>
-        <button
-          className="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow transition-all text-base"
-          onClick={handleAddToCart}
-        >
-          Add to Cart
-        </button>
+        {product.price > 0 && (
+          <button
+            className="btn-primary w-full mt-sm"
+            onClick={handleAddToCart}
+          >
+            Add to Cart
+          </button>
+        )}
       </div>
     </div>
   );

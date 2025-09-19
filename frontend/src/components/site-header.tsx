@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { ShoppingCart, Menu, X } from "lucide-react";
 import { useCart, getCartTotals } from "@contexts/cart-context";
 import { useState } from "react";
-import SlideOutCart from "./shopping-cart";
-import SiteMenu from "./site-menu";
+
+import SlideOutCart from "@components/shopping-cart";
+import SiteMenu from "@components/site-menu";
 
 export default function SiteHeader() {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ export default function SiteHeader() {
       <div className="max-w-6xl mx-auto flex items-center justify-between px-md py-sm">
         {/* Left: Menu button (mobile) */}
         <button
-          className="p-2 rounded hover:bg-surface-hover md:hidden"
+          className="p-2 rounded hover:bg-surface-hover"
           onClick={toggleMenu}
         >
           {isMenuOpen ? (

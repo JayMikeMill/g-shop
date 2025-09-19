@@ -1,5 +1,6 @@
 // src/components/ProductDialog.tsx
 import { useState, useEffect } from "react";
+import Lightbox from "@components/viewers/light-box";
 import ImageListEditor from "@components/editors/image-list-editor";
 import ProductOptionsEditor from "@components/editors/product-options-editor";
 
@@ -206,24 +207,10 @@ export default function ProductDialog({
     <>
       {/* Lightbox Modal */}
       {lightboxImage && (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-80"
-          onClick={() => setLightboxImage(null)}
-        >
-          <img
-            src={lightboxImage}
-            alt="Preview"
-            className="input-border w-[70%] sm:w-auto sm:h-[70%]"
-            onClick={(e) => e.stopPropagation()}
-          />
-          <button
-            className="absolute top-4 right-4 text-white text-3xl font-bold bg-black bg-opacity-50 rounded-full w-12 h-12 flex items-center justify-center hover:bg-opacity-80 transition"
-            onClick={() => setLightboxImage(null)}
-            aria-label="Close lightbox"
-          >
-            &times;
-          </button>
-        </div>
+        <Lightbox
+          image={lightboxImage}
+          onClose={() => setLightboxImage(null)}
+        />
       )}
 
       {/* Main Dialog */}

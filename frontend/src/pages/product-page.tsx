@@ -4,6 +4,8 @@ import { useApi } from "@api/use-api";
 
 import type { Product, SelectedProductOption } from "@models/product";
 import { useCart } from "@contexts/cart-context";
+import Lightbox from "@components/viewers/light-box";
+import ZoomImageBox from "@components/viewers/zoom-image-box";
 
 const ProductPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -81,17 +83,15 @@ const ProductPage = () => {
           </div>
         </div>
         {/* Images */}
-        <div className="flex flex-col items-center w-auto">
+        <div className="flex flex-col items-center w-full">
           {mainImage && (
-            <div
-              className="relative w-full max-w-md md:max-w-lg lg:max-w-xl aspect-square mb-4 cursor-pointer"
-              onClick={() => setLightboxOpen(true)}
-            >
-              <img
-                src={mainImage}
-                alt={product.name}
+            <div className="relative w-full max-w-md md:max-w-lg lg:max-w-xl aspect-[4/3] mb-4 cursor-pointer">
+              <ZoomImageBox
+                image={mainImage}
                 className="w-full h-full object-contain rounded-lg border border-border shadow"
+                onClick={() => setLightboxOpen(true)}
               />
+
               <span className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
                 Click to enlarge
               </span>
@@ -103,7 +103,7 @@ const ProductPage = () => {
                 key={i}
                 src={img.thumbnail}
                 alt={product.name + " thumbnail " + i}
-                className={`w-16 h-16 object-cover rounded border cursor-pointer ${mainImage === img.main ? "ring-2 ring-blue-500" : ""}`}
+                className={`w-16 h-16 min-w-[64px] min-h-[64px] object-cover rounded border cursor-pointer ${mainImage === img.main ? "ring-2 ring-primary" : ""}`}
                 onClick={() => setMainImage(img.main)}
               />
             ))}
@@ -154,8 +154,8 @@ const ProductPage = () => {
                               (o) =>
                                 o.name === opt.name && o.value === val.value
                             )
-                              ? "bg-blue-600 text-white border-blue-600"
-                              : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-blue-50"
+                              ? "bg-primary text-text border-primary"
+                              : "bg-surface text-text border-gray-300 hover:bg-primaryDark"
                           }`}
                           onClick={() =>
                             handleOptionChange(opt.name, val.value)
@@ -177,7 +177,7 @@ const ProductPage = () => {
               {product.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-semibold"
+                  className="bg-primary text-text px-2 py-1 rounded text-xs font-semibold"
                 >
                   {tag}
                 </span>
@@ -191,10 +191,7 @@ const ProductPage = () => {
           </div>
           {/* Add to Cart */}
           <div className="flex items-center gap-4 mt-4">
-            <button
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow transition-all text-lg"
-              onClick={handleAddToCart}
-            >
+            <button className="btn-primary px-6 py-2" onClick={handleAddToCart}>
               Add to Cart
             </button>
             <span className="text-gray-500 text-sm">
@@ -206,16 +203,7 @@ const ProductPage = () => {
 
       {/* Lightbox */}
       {lightboxOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80"
-          onClick={() => setLightboxOpen(false)}
-        >
-          <img
-            src={mainImage!}
-            alt={product.name}
-            className="max-w-2xl max-h-[80vh] rounded-lg shadow-2xl border-4 border-white"
-          />
-        </div>
+        <Lightbox image={mainImage} onClose={() => setLightboxOpen(false)} />
       )}
     </div>
   );

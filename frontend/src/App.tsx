@@ -2,16 +2,17 @@ import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import SiteHeader from "@components/site-header";
 import SiteFooter from "@components/site-footer";
 import HomePage from "@pages/home-page";
-import CartPage from "@pages/cart-page";
+import ProductPage from "@pages/product-page";
 import CheckoutPage from "@pages/checkout-page";
-import AdminDashboard from "@pages/admin/dashboard";
 import AboutPage from "./pages/about-page";
-import Products from "@pages/admin/products";
-import Orders from "@pages/admin/orders";
+
+import AdminDashboard from "@pages/admin/dashboard";
+import AdminProductsDash from "@pages/admin/products";
+import AdminOrdersDash from "@pages/admin/orders";
+
 import { applyTheme } from "./theme";
 import { ProtectedRoute } from "@pages/protected-routes";
 import { Roles } from "@models/user";
-import ProductPage from "@pages/product-page";
 
 export default function App() {
   const location = useLocation();
@@ -39,10 +40,9 @@ export default function App() {
               }
             >
               <Route index element={<Navigate to="products" replace />} />
-              <Route path="products" element={<Products />} />
-              <Route path="orders" element={<Orders />} />
+              <Route path="products" element={<AdminProductsDash />} />
+              <Route path="orders" element={<AdminOrdersDash />} />
             </Route>
-            <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/about" element={<AboutPage />} />
           </Routes>

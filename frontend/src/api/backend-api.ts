@@ -2,7 +2,7 @@ import axios from "axios";
 import type { User } from "@models/user";
 import type { Product, ProductOptionPreset } from "@models/product";
 import type { Category } from "@models/category";
-import type { PaymentRequest } from "@models/payment-data";
+import type { PaymentRequest } from "@models/payment-info";
 import type { Order } from "@models/order";
 import type { QueryOptions } from "@models/query-options";
 

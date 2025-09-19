@@ -1,4 +1,4 @@
-import ProductList from "@components/product-list";
+import ProductCardList from "@components/product-card-list";
 import ProductLoader from "@components/product-loader";
 import { useEffect, useState } from "react";
 import type { Product } from "@models/product";
@@ -31,7 +31,7 @@ export default function HomePage() {
       <p className="text-body-lg text-text-secondary mb-lg">
         Find the perfect products for you, from our wide range of items.
       </p>
-      {loading ? <ProductLoader /> : <ProductList products={products} />}
+      {loading ? <ProductLoader /> : <ProductCardList products={products} />}
     </div>
   );
 }
