@@ -32,10 +32,7 @@ const ZoomImageBox: React.FC<ZoomImageBoxProps> = ({
   };
 
   return (
-    <div
-      className={`bg-surface border-border border rounded-2xl shadow-2xl flex p-1 ${className}`}
-      onClick={handleClick}
-    >
+    <div className={`flex p-1 ${className}`} onClick={handleClick}>
       <TransformWrapper
         initialScale={1}
         minScale={1}

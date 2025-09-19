@@ -107,21 +107,21 @@
    Pastel Theme
 ============================ */
 .theme-pastel {
-  --color-primary: #a5b4fc; /* Indigo-300 */
-  --color-primary-dark: #6366f1; /* Indigo-500 */
+  --color-primary: #f1bb00; /* Indigo-300 */
+  --color-primary-dark: #f1bb00; /* Indigo-500 */
   --color-secondary: #fcd34d; /* Yellow-300 */
   --color-secondary-dark: #fbbf24; /* Yellow-400 */
-  --color-accent: #f9a8d4; /* Pink-300 */
+  --color-accent: #ffd129; /* Pink-300 */
 
-  --color-background: #fdfdfd;
+  --color-background: #fcf4db;
   --color-background-alt: #fef3f8;
-  --color-surface: #fce7f3;
+  --color-surface: #fcefc1;
   --color-surface-alt: #fbcfe8;
   --color-card-bg: #fef2f8;
 
-  --color-text: #5b21b6; /* Purple-700 */
-  --color-text-secondary: #7e22ce; /* Purple-800 */
-  --color-text-muted: #9333ea; /* Purple-600 */
+  --color-text: #000000; /* Purple-700 */
+  --color-text-secondary: #655000; /* Purple-800 */
+  --color-text-muted: #cb446f; /* Purple-600 */
   --color-text-inverted: #ffffff;
 
   --color-border: #f9a8d4; /* Pink-300 */

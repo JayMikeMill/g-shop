@@ -33,17 +33,8 @@ export default function SiteHeader() {
         </button>
 
         {/* Center: Logo + label */}
-        <div
-          className="flex flex-col items-center justify-center cursor-pointer"
-          onClick={() => navigate("/")}
-        >
-          <img
-            src={SITE.logo}
-            alt="Logo"
-            className="h-10 w-10 object-contain"
-          />
-          <span className="text-lg font-bold text-text">{SITE.name}</span>
-        </div>
+
+        <img src={SITE.logo} alt="Logo" className="max-h-[3rem] w-auto" />
 
         {/* Right: Cart icon */}
         <div

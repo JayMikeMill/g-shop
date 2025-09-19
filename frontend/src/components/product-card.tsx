@@ -36,7 +36,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   return (
     <div
-      className="bg-surface rounded-card shadow-card hover:shadow-lg border border-border overflow-hidden cursor-pointer transition-all duration-300"
+      className="overflow-hidden cursor-pointer transition-all duration-300"
       onClick={handleCardClick}
     >
       <div className="relative w-full pt-[100%]">
@@ -54,10 +54,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {product.tags && product.tags.length > 0 && (
           <div className="absolute top-2 right-2 flex gap-1">
             {product.tags.map((tag) => (
-              <span
-                key={tag}
-                className="bg-accent text-textInverted px-2 py-1 rounded text-xs font-semibold shadow"
-              >
+              <span key={tag} className="tag-box">
                 {tag}
               </span>
             ))}
@@ -65,11 +62,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         )}
       </div>
 
-      <div className="p-md">
+      <div className="p-md ">
         <h3 className="text-base font-semibold mb-2 text-text">
           {product.name}
         </h3>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 justify-center">
           {discountedPrice !== null && discountedPrice < product.price ? (
             <>
               <p className="text-sm text-textSecondary line-through">

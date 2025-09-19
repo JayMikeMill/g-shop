@@ -25,7 +25,7 @@ export default function LoginDialog({ onClose }: LoginDialogProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
-      <div className="dialog-frame w-full max-w-md flex flex-col gap-xl">
+      <div className="dialog-box w-full max-w-md flex flex-col gap-xl">
         <h2 className="text-2xl font-bold mb-lg text-center text-text">
           Admin Login
         </h2>
@@ -37,7 +37,7 @@ export default function LoginDialog({ onClose }: LoginDialogProps) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="input-border px-lg py-md"
+              className="input-box px-lg py-md"
               autoComplete="username"
             />
           </label>
@@ -48,7 +48,7 @@ export default function LoginDialog({ onClose }: LoginDialogProps) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="input-border px-lg py-md"
+              className="input-box px-lg py-md"
               autoComplete="current-password"
             />
           </label>

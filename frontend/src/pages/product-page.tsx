@@ -56,23 +56,23 @@ const ProductPage = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-surface rounded-lg shadow-lg mt-8">
+    <div className="max-w-4xl mx-auto p-mt-8">
       {/* Main flex container: column on mobile, row on desktop, centered */}
-      <div className="flex flex-col md:flex-row gap-8 justify-center items-center md:items-start">
+      <div className="flex flex-col md:flex-row justify-center items-center md:items-start">
         {/* Product Name & Price (Mobile) */}
         <div className="md:hidden mb-4 text-center">
           <h1 className="text-3xl font-bold text-text mb-2">{product.name}</h1>
           <div className="flex justify-center items-center gap-4 mb-2">
             {product.discount && discountedPrice < product.price ? (
               <>
-                <span className="text-xl text-gray-400 line-through">
+                <span className="text-xl text-textSecondary line-through">
                   ${product.price.toFixed(2)}
                 </span>
                 <span className="text-2xl text-text font-bold">
                   ${discountedPrice.toFixed(2)}
                 </span>
-                <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-semibold">
-                  {product.discount} OFF
+                <span className="bg-accent text-text px-2 py-1 rounded text-xs font-semibold">
+                  {discountLabel} OFF!
                 </span>
               </>
             ) : (
@@ -88,7 +88,7 @@ const ProductPage = () => {
             <div className="relative w-full max-w-md md:max-w-lg lg:max-w-xl aspect-[4/3] mb-4 cursor-pointer">
               <ZoomImageBox
                 image={mainImage}
-                className="w-full h-full object-contain rounded-lg border border-border shadow"
+                className="w-full h-full object-contain "
                 onClick={() => setLightboxOpen(true)}
               />
 

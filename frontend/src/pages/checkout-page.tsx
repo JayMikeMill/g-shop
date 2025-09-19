@@ -3,7 +3,7 @@ import { useCart } from "@contexts/cart-context";
 import { type ShippingInfo } from "@models/shipping-info";
 import ShippingForm from "@components/forms/shipping-form";
 import PaymentFormSquare from "@components/forms/payment-forms/payment-form-square";
-import OrderPreview from "@components/order-preview";
+import OrderPreview from "@components/viewers/order-preview";
 
 export default function CheckoutPage() {
   const { cart: cartItems } = useCart();
@@ -47,7 +47,7 @@ export default function CheckoutPage() {
   }, [shippingInfo]);
 
   return (
-    <div className="max-w-[700px] mx-auto mt-xl p-lg bg-card-bg rounded border-radius shadow-card font-sans text-text relative">
+    <div className="max-w-[700px] mx-auto mt-xl p-lg font-sans text-text relative">
       <h2 className="text-2xl text-center mb-lg text-title">Checkout</h2>
 
       <OrderPreview />

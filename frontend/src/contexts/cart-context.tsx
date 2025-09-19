@@ -1,8 +1,20 @@
 // Import React functions
 import { createContext, useContext, useState, type ReactNode } from "react";
 
-// Import Product type
-import { equalProductOptions, type Product } from "@models/product";
+// Helper: compare selectedOptions arrays deeply
+function areSelectedOptionsEqual(
+  a?: { name: string; value: string }[],
+  b?: { name: string; value: string }[]
+) {
+  if (!a && !b) return true;
+  if (!a || !b) return false;
+  if (a.length !== b.length) return false;
+  // Compare all option name/value pairs
+  return a.every((optA) => {
+    const optB = b.find((o) => o.name === optA.name);
+    return optB && optB.value === optA.value;
+  });
+}
 
 // Import StoreItem type
 import type { OrderItem } from "@models/order";
@@ -39,7 +51,11 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     setCart((prevCart) => {
       const existingIndex = prevCart.findIndex(
         (cartItem) =>
-          cartItem.id === item.id && equalProductOptions(cartItem, item)
+          cartItem.id === item.id &&
+          areSelectedOptionsEqual(
+            cartItem.selectedOptions,
+            item.selectedOptions
+          )
       );
 
       if (existingIndex !== -1) {
@@ -68,7 +84,9 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   const removeFromCart = (item: OrderItem) => {
     setCart((prevCart) => {
       const existingIndex = prevCart.findIndex(
-        (c) => c.id === item.id && equalProductOptions(c, item)
+        (c) =>
+          c.id === item.id &&
+          areSelectedOptionsEqual(c.selectedOptions, item.selectedOptions)
       );
       if (existingIndex === -1) return prevCart;
 

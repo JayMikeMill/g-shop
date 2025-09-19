@@ -217,7 +217,7 @@ export default function ProductDialog({
       <div className="fixed inset-0 bg-overlay flex justify-center items-center z-50">
         <div
           className="
-      dialog-frame
+      dialog-box
       w-full h-full sm:h-[90vh] sm:max-w-4xl
       flex flex-col overflow-hidden
       px-2 sm:px-8
@@ -254,7 +254,7 @@ export default function ProductDialog({
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
-                    className="input-border px-md py-1 h-8 text-text"
+                    className="input-box px-md py-1 h-8 text-text"
                   />
                 </label>
 
@@ -272,7 +272,7 @@ export default function ProductDialog({
                         onChange={(e) => setPrice(parseFloat(e.target.value))}
                         required
                         step="0.01"
-                        className="input-border pl-6 pr-md py-1 h-8 w-full"
+                        className="input-box pl-6 pr-md py-1 h-8 w-full"
                       />
                     </div>
                   </label>
@@ -286,7 +286,7 @@ export default function ProductDialog({
                         </span>
                         <input
                           type="number"
-                          className="input-border pl-6 pr-md py-1 h-8 w-full"
+                          className="input-box pl-6 pr-md py-1 h-8 w-full"
                           value={discountValue}
                           onChange={(e) =>
                             setDiscountValue(parseFloat(e.target.value))
@@ -296,7 +296,7 @@ export default function ProductDialog({
                       </div>
                     </label>
                     <select
-                      className="input-border ml-1 px-2 py-1 h-8"
+                      className="input-box ml-1 px-2 py-1 h-8"
                       value={discountType}
                       onChange={(e) =>
                         setDiscountType(e.target.value as "%" | "$")
@@ -315,7 +315,7 @@ export default function ProductDialog({
                     type="text"
                     value={tags}
                     onChange={(e) => setTags(e.target.value)}
-                    className="input-border px-md py-1 h-8"
+                    className="input-box px-md py-1 h-8"
                   />
                 </label>
 
@@ -326,7 +326,7 @@ export default function ProductDialog({
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     required
-                    className="input-border px-md py-1 h-full"
+                    className="input-box px-md py-1 h-full"
                   />
                 </label>
 

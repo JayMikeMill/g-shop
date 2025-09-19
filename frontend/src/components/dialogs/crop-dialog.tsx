@@ -70,7 +70,7 @@ const CropDialog: React.FC<CropDialogProps> = ({
 
   return (
     <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/40 dark:bg-black/60">
-      <div className="dialog-frame p-md flex flex-col w-[360px] sm:w-[400px] max-h-[90vh] overflow-hidden">
+      <div className="dialog-box p-md flex flex-col w-[360px] sm:w-[400px] max-h-[90vh] overflow-hidden">
         <h2 className="text-xl font-bold text-center text-text mb-sm">
           Crop Image
         </h2>

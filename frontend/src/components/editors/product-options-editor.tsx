@@ -152,7 +152,7 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
       <div ref={dropdownRef} className="relative w-full max-w-sm mb-2">
         <button
           type="button"
-          className="input-border px-2 py-1 w-full text-left flex justify-between items-center text-white bg-background border border-border rounded"
+          className="input-box px-2 py-1 w-full text-left flex justify-between items-center text-text bg-background border border-border rounded"
           onClick={() => setDropdownOpen((prev) => !prev)}
         >
           Select Preset...
@@ -163,21 +163,21 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
           className={`absolute z-10 mt-1 w-full bg-background border border-border rounded shadow-md max-h-60 overflow-y-auto transition-opacity duration-150 ${dropdownOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
         >
           {loadingPresets ? (
-            <div className="px-2 py-1 text-white">Loading...</div>
+            <div className="px-2 py-1 text-text">Loading...</div>
           ) : presets.length === 0 ? (
-            <div className="px-2 py-1 text-white">No presets found</div>
+            <div className="px-2 py-1 text-text">No presets found</div>
           ) : (
             presets.map((p) => (
               <div
                 key={p.id}
-                className="flex justify-between items-center px-2 py-1 hover:bg-gray-700 cursor-pointer text-white"
+                className="flex justify-between items-center bg-background px-2 py-1 hover:bg-gray-700 cursor-pointer text-text"
               >
                 <span className="flex-1" onClick={() => handleApplyPreset(p)}>
                   {p.name}
                 </span>
                 <button
                   type="button"
-                  className="circle-x-button"
+                  className="btn-circle-x"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleDeletePreset(p.id);
@@ -203,12 +203,12 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
               placeholder="Option Name"
               value={opt.name}
               onChange={(e) => updateOptionName(i, e.target.value)}
-              className="input-border flex-1 min-w-0 px-2 py-1"
+              className="input-box flex-1 min-w-0 px-2 py-1"
             />
             <div className="w-20 text-center font-medium text-text">Stock</div>
             <button
               type="button"
-              className="circle-x-button"
+              className="btn-circle-x"
               onClick={() => removeOption(i)}
             >
               X
@@ -226,7 +226,7 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
                   placeholder="Value"
                   value={val.value}
                   onChange={(e) => updateValue(i, vi, "value", e.target.value)}
-                  className="input-border flex-1 min-w-0 px-2 py-1"
+                  className="input-box flex-1 min-w-0 px-2 py-1"
                 />
                 <input
                   type="number"
@@ -235,11 +235,11 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
                   onChange={(e) =>
                     updateValue(i, vi, "stock", Number(e.target.value))
                   }
-                  className="input-border w-20 flex-shrink-0 px-2 py-1 text-center"
+                  className="input-box w-20 flex-shrink-0 px-2 py-1 text-center"
                 />
                 <button
                   type="button"
-                  className="circle-x-button"
+                  className="btn-circle-x"
                   onClick={() => removeValue(i, vi)}
                 >
                   X

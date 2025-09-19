@@ -74,6 +74,19 @@ export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
                 />
                 <div className="flex-1">
                   <p className="font-semibold text-text">{item.name}</p>
+                  {/* Show all selected options as chips */}
+                  {item.selectedOptions && item.selectedOptions.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {item.selectedOptions.map((opt, idx) => (
+                        <span
+                          key={idx}
+                          className="bg-surfaceAlt text-xs text-textSecondary px-2 py-0.5 rounded-full border border-divider"
+                        >
+                          {opt.name}: {opt.value}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                   <p className="text-textSecondary">${item.price.toFixed(2)}</p>
                 </div>
                 <div className="flex items-center gap-xs">
@@ -86,7 +99,13 @@ export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
                   <span className="text-text">{item.quantity}</span>
                   <button
                     className="px-2 py-1 bg-surfaceAlt rounded hover:bg-surface transition-colors"
-                    onClick={() => addToCart({ ...item, quantity: 1 })}
+                    onClick={() =>
+                      addToCart({
+                        ...item,
+                        quantity: 1,
+                        selectedOptions: item.selectedOptions,
+                      })
+                    }
                   >
                     +
                   </button>

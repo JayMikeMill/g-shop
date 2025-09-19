@@ -1,6 +1,6 @@
 export const SITE = {
   name: "Nail Shop",
-  logo: "/images/nails_logo.jpg",
+  logo: "/golden-hour-nails-logo.png",
   primaryColor: "#0070f3",
-  textColor: "#fff"
-}
+  textColor: "#fff",
+};

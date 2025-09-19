@@ -137,7 +137,7 @@ const ImageListEditor: React.FC<ImagePreviewListProps> = ({
   };
 
   return (
-    <div className="input-border flex gap-2 p-2 overflow-x-auto h-[120px] flex-nowrap items-center md:grid md:grid-cols-2 md:auto-rows-min md:h-full md:overflow-y-auto">
+    <div className="input-box flex gap-2 p-2 overflow-x-auto h-[120px] flex-nowrap items-center md:grid md:grid-cols-2 md:auto-rows-min md:h-full md:overflow-y-auto">
       {pendingCropFile && (
         <CropDialog
           file={pendingCropFile}
@@ -183,7 +183,7 @@ const ImageListEditor: React.FC<ImagePreviewListProps> = ({
           {/* Remove button */}
           <button
             type="button"
-            className="circle-x-button absolute top-1 right-1 w-6 h-6 flex items-center 
+            className="btn-circle-x absolute top-1 right-1 w-6 h-6 flex items-center 
             justify-center rounded-full cursor-pointer z-10 bg-black/50 
             text-white p-0 text-md font-mono"
             onClick={(e) => {

@@ -17,13 +17,13 @@ import { Roles } from "@models/user";
 export default function App() {
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith("/admin");
-  applyTheme("dark");
+  applyTheme("pastel");
   return (
     <div>
       <SiteHeader />
       <main>
         <div
-          className="bg-surface"
+          className="bg-background"
           style={{
             padding: isAdminPage ? "0px" : "20px",
           }}
