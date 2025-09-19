@@ -2,7 +2,7 @@ import axios from "axios";
 import type { User } from "@models/user";
 import type { Product, ProductOptionPreset } from "@models/product";
 import type { Category } from "@models/category";
-import type { PaymentData } from "@models/payment-data";
+import type { PaymentRequest } from "@models/payment-data";
 import type { Order } from "@models/order";
 import type { QueryOptions } from "@models/query-options";
 
@@ -223,7 +223,7 @@ export const deleteOrder = async (id: string, token?: string | null) =>
    PAYMENT APIs
 ========================== */
 export const processPayment = async (
-  payment: PaymentData,
+  payment: PaymentRequest,
   token?: string | null
 ) =>
   axios

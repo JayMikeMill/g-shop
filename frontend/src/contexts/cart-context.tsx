@@ -5,15 +5,15 @@ import { createContext, useContext, useState, type ReactNode } from "react";
 import { equalProductOptions, type Product } from "@models/product";
 
 // Import StoreItem type
-import type { StoreItem } from "@models/store-item";
+import type { OrderItem } from "@models/order";
 
 // -------------------------
 // 1. Define what the context will hold
 // -------------------------
 interface CartContextType {
-  cart: StoreItem[]; // The current cart items
-  addToCart: (product: Product) => void; // Function to add items
-  removeFromCart: (item: StoreItem) => void; // Function to remove items
+  cart: OrderItem[]; // The current cart items
+  addToCart: (item: OrderItem) => void; // Function to add items
+  removeFromCart: (item: OrderItem) => void; // Function to remove items
   clearCart: () => void; // Function to empty the cart
 }
 
@@ -32,13 +32,14 @@ interface CartProviderProps {
 
 export const CartProvider = ({ children }: CartProviderProps) => {
   // The cart state
-  const [cart, setCart] = useState<StoreItem[]>([]); // starts empty
+  const [cart, setCart] = useState<OrderItem[]>([]); // starts empty
 
   // Add item to cart
-  const addToCart = (product: Product) => {
+  const addToCart = (item: OrderItem) => {
     setCart((prevCart) => {
       const existingIndex = prevCart.findIndex(
-        (item) => item.id === product.id && equalProductOptions(item, product)
+        (cartItem) =>
+          cartItem.id === item.id && equalProductOptions(cartItem, item)
       );
 
       if (existingIndex !== -1) {
@@ -54,9 +55,8 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         return [
           ...prevCart,
           {
-            ...product,
+            ...item,
             quantity: 1,
-            selectedOptions: [],
           },
         ];
       }
@@ -65,7 +65,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
 
   // Remove item from cart if quantity == 1,
   // else decrease quantity
-  const removeFromCart = (item: StoreItem) => {
+  const removeFromCart = (item: OrderItem) => {
     setCart((prevCart) => {
       const existingIndex = prevCart.findIndex(
         (c) => c.id === item.id && equalProductOptions(c, item)
@@ -104,7 +104,7 @@ export const useCart = () => {
   return context;
 };
 
-export const getCartTotals = (cart: StoreItem[]) => {
+export const getCartTotals = (cart: OrderItem[]) => {
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,

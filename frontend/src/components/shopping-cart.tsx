@@ -1,87 +1,127 @@
-// Import React Router hook for navigation between pages
+import { useEffect, useState } from "react";
+import { X } from "lucide-react";
+import { useCart, getCartTotals } from "@contexts/cart-context";
 import { useNavigate } from "react-router-dom";
 
-// Import your custom cart context hooks and helper functions
-import { useCart, getCartTotals } from "@contexts/cart-context";
+interface SlideOutCartProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
 
-// The ShoppingCart component displays the user's cart items and actions
-export default function ShoppingCart() {
-	// Hook to programmatically navigate between routes
-	const navigate = useNavigate();
+export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
+  const navigate = useNavigate();
+  const { cart, addToCart, removeFromCart, clearCart } = useCart();
+  const totals = getCartTotals(cart);
 
-	// Get cart state and actions from the cart context
-	const { cart, addToCart, removeFromCart, clearCart } = useCart();
+  // State to control mounting for smooth animation
+  const [mounted, setMounted] = useState(false);
 
-	// Calculate total items and total price using helper function
-	const totals = getCartTotals(cart);
+  useEffect(() => {
+    if (isOpen) {
+      setMounted(true);
+    } else {
+      // Delay unmount to let slide-out animation finish
+      const timeout = setTimeout(() => setMounted(false), 300);
+      return () => clearTimeout(timeout);
+    }
+  }, [isOpen]);
 
-	// If the cart is empty, display a message and a button to continue shopping
-	if (cart.length === 0) {
-		return (
-			<div className="max-w-3xl mx-auto p-8 bg-white rounded-lg shadow text-center mt-8">
-				<h2 className="text-2xl font-bold mb-2">Your Shopping Cart is Empty</h2>
-				<p className="mb-6 text-gray-600">Looks like you haven't added any items to your cart yet.</p>
-				<button className="bg-primary text-white px-6 py-2 rounded font-semibold hover:bg-primary-dark transition" onClick={() => navigate("/")}>
-					Continue Shopping
-				</button>
-			</div>
-		);
-	}
+  if (!mounted && !isOpen) return null;
 
-	// Main cart display when there are items
-	return (
-		<div className="max-w-3xl mx-auto p-8 bg-white rounded-lg shadow mt-8">
-			<div className="flex items-center justify-between mb-6">
-				<h1 className="text-2xl font-bold">Shopping Cart</h1>
-				<button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition" onClick={clearCart}>
-					Clear Cart
-				</button>
-			</div>
+  return (
+    <div className={`fixed inset-0 z-50 flex`}>
+      {/* Overlay */}
+      <div
+        className={`absolute inset-0 bg-black bg-opacity-40 transition-opacity duration-300 ease-in-out
+		${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+        onClick={onClose}
+      ></div>
 
-			{/* List of cart items */}
-			<div className="flex flex-col gap-4 mb-8">
-				{cart.map((item, index) => (
-					<div className="cart-item-card" key={index}>
-						<div className="item-image">
-							<img src={item.images[0].thumbnail} alt={item.name} />
-						</div>
-						<div className="item-details">
-							<h3>{item.name}</h3>
-							<p className="item-option">Size: {item.options.size}</p>
-							<p className="item-price">${item.price.toFixed(2)}</p>
-						</div>
-						<div className="item-quantity">
-							<button onClick={() => removeFromCart(item)}>-</button>
-							<span>{item.quantity}</span>
-							<button onClick={() => addToCart(item, item.options)}>+</button>
-						</div>
-						<div className="item-total">
-							<p>${(item.price * item.quantity).toFixed(2)}</p>
-						</div>
-					</div>
-				))}
-			</div>
+      {/* Slide-out container */}
+      <div
+        className={`fixed top-0 right-0 h-full transform transition-transform duration-300 ease-in-out
+		w-full md:w-1/3 flex flex-col p-lg overflow-y-auto
+		bg-surface shadow-xl rounded-l-lg
+		${isOpen ? "translate-x-0" : "translate-x-full"}`}
+      >
+        {/* Close button */}
+        <button
+          className="text-text absolute top-sm right-sm p-2 rounded hover:bg-surfaceAlt transition-colors"
+          onClick={onClose}
+        >
+          <X size={24} />
+        </button>
 
-			{/* Cart totals and checkout */}
-			<div className="border-t pt-6 flex flex-col gap-4">
-				<div className="cart-summary">
-					<div className="summary-row">
-						<span className="summary-label">Subtotal</span>
-						<span className="summary-value">${totals.totalPrice.toFixed(2)}</span>
-					</div>
-					<div className="summary-row">
-						<span className="summary-label">Shipping</span>
-						<span className="summary-value">FREE</span>
-					</div>
-					<div className="summary-row total-row">
-						<span className="summary-label">Total</span>
-						<span className="summary-value">${totals.totalPrice.toFixed(2)}</span>
-					</div>
-				</div>
-				<button className="bg-primary text-white px-6 py-2 rounded font-semibold hover:bg-primary-dark transition" onClick={() => navigate("/checkout")}>
-					Proceed to Checkout
-				</button>
-			</div>
-		</div>
-	);
+        {/* Header */}
+        <h2 className="text-title font-bold mb-md text-text">Shopping Cart</h2>
+
+        {/* Items */}
+        <div className="flex flex-col gap-sm mb-lg">
+          {cart.length === 0 && (
+            <p className="text-textSecondary">Your cart is empty.</p>
+          )}
+          {cart.map((item, i) => (
+            <div
+              key={i}
+              className="flex items-center gap-md border-b border-divider pb-sm"
+            >
+              <img
+                src={item.images[0].thumbnail}
+                alt={item.name}
+                className="w-16 h-16 object-cover rounded-card"
+              />
+              <div className="flex-1">
+                <p className="font-semibold text-text">{item.name}</p>
+                <p className="text-textSecondary">${item.price.toFixed(2)}</p>
+              </div>
+              <div className="flex items-center gap-xs">
+                <button
+                  className="px-2 py-1 bg-surfaceAlt rounded hover:bg-surface transition-colors"
+                  onClick={() => removeFromCart(item)}
+                >
+                  -
+                </button>
+                <span className="text-text">{item.quantity}</span>
+                <button
+                  className="px-2 py-1 bg-surfaceAlt rounded hover:bg-surface transition-colors"
+                  onClick={() => addToCart({ ...item, quantity: 1 })}
+                >
+                  +
+                </button>
+              </div>
+              <p className="w-16 text-right text-text">
+                ${(item.price * item.quantity).toFixed(2)}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Totals */}
+        <div className="mt-auto border-t border-divider pt-md flex flex-col gap-sm">
+          <div className="flex justify-between font-semibold text-text">
+            <span>Subtotal</span>
+            <span>${totals.totalPrice.toFixed(2)}</span>
+          </div>
+          <div className="flex justify-between font-semibold text-textSecondary">
+            <span>Shipping</span>
+            <span>FREE</span>
+          </div>
+          <div className="flex justify-between font-bold text-lg text-text">
+            <span>Total</span>
+            <span>${totals.totalPrice.toFixed(2)}</span>
+          </div>
+
+          <button
+            className="btn-primary w-full mt-sm"
+            onClick={() => {
+              onClose();
+              navigate("/checkout");
+            }}
+          >
+            Proceed to Checkout
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }

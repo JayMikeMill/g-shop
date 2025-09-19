@@ -1,10 +1,10 @@
-import { PaymentData } from "@models/payment-data";
+import { PaymentRequest } from "@models/payment-info";
 import { SquarePaymentAdapter } from "@adapters/payment/square-payment-adapter";
 
 const adapter = new SquarePaymentAdapter();
 
 export class PaymentService {
-  static async processPayment(data: PaymentData) {
+  static async processPayment(data: PaymentRequest) {
     return adapter.processPayment(data);
   }
 

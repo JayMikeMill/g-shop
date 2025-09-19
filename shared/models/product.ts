@@ -26,15 +26,21 @@ export interface ProductOption {
   values: ProductOptionValue[];
 }
 
-// Product option
-export interface ProductOptionPreset extends ProductOption {
-  id: number | string;
-}
-
 // Product option value
 export interface ProductOptionValue {
   value: string;
   stock: number;
+}
+
+// Product option preset (for admin use)
+export interface ProductOptionPreset extends ProductOption {
+  id: number | string;
+}
+
+// Selected product option (for cart/store use)
+export interface SelectedProductOption {
+  name: string;
+  value: string;
 }
 
 // check if two products have the same options selected

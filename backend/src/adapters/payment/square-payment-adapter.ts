@@ -1,5 +1,5 @@
 import { PaymentAdapter } from "./payment-adapter";
-import { PaymentData } from "@models/payment-data";
+import { PaymentRequest } from "@models/payment-info";
 
 import { SquareClient, SquareEnvironment, Square } from "square";
 
@@ -16,7 +16,7 @@ const client = new SquareClient({
 });
 
 export class SquarePaymentAdapter implements PaymentAdapter {
-  async processPayment(data: PaymentData) {
+  async processPayment(data: PaymentRequest) {
     const { nonce, amount, items, address } = data;
 
     console.log("Processing payment with info:", data);

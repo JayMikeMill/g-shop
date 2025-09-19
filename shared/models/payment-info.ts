@@ -45,3 +45,16 @@ export const PaymentMethods = {
 
 export type PaymentMethod =
   (typeof PaymentMethods)[keyof typeof PaymentMethods];
+
+export type PaymentRequest = {
+  nonce: string;
+  amount: number;
+
+  items: {
+    name: string;
+    price: number;
+    quantity: number;
+  }[];
+
+  address: Address;
+};

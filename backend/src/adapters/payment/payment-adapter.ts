@@ -1,6 +1,6 @@
-import { PaymentData } from "@models/payment-data";
+import { PaymentRequest } from "@models/payment-info";
 
 export interface PaymentAdapter {
-	processPayment(data: PaymentData): Promise<any>;
-	refundPayment(paymentId: string): Promise<boolean>;
+  processPayment(data: PaymentRequest): Promise<any>;
+  refundPayment(paymentId: string): Promise<boolean>;
 }

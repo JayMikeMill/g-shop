@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 // Import shared types for shipping address and cart items
 import { type ShippingInfo } from "@models/shipping-info";
-import type { StoreItem } from "@models/store-item";
+import type { OrderItem } from "@models/order";
 import { useApi } from "@api/use-api";
 
 // Import PaymentStatus and PaymentMethod enums
@@ -24,7 +24,7 @@ declare global {
 // Props expected by the PaymentForm component
 interface SquarePaymentFormProps {
   total: number; // Total amount to charge
-  orderItems: StoreItem[]; // Items in the cart
+  orderItems: OrderItem[]; // Items in the cart
   shippingInfo: ShippingInfo;
   setLoading: (loading: boolean) => void;
   setMessage: (msg: string | null) => void;

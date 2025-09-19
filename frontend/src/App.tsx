@@ -11,6 +11,7 @@ import Orders from "@pages/admin/orders";
 import { applyTheme } from "./theme";
 import { ProtectedRoute } from "@pages/protected-routes";
 import { Roles } from "@models/user";
+import ProductPage from "@pages/product-page";
 
 export default function App() {
   const location = useLocation();
@@ -21,12 +22,14 @@ export default function App() {
       <SiteHeader />
       <main>
         <div
+          className="bg-surface"
           style={{
             padding: isAdminPage ? "0px" : "20px",
           }}
         >
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/product/:id" element={<ProductPage />} />
             <Route
               path="/admin"
               element={

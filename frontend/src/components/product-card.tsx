@@ -1,15 +1,22 @@
 import { useCart } from "@contexts/cart-context";
 import { type Product } from "@models/product";
+import { useNavigate } from "react-router-dom";
 
 interface ProductCardProps {
   product: Product;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToCart } = useCart();
+  const navigate = useNavigate();
 
-  const handleAddToCart = () => {
-    addToCart(product);
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    addToCart({ ...product, quantity: 1, selectedOptions: [] });
+  };
+
+  const handleCardClick = () => {
+    navigate(`/product/${product.id}`);
   };
 
   let discountedPrice: number | null = null;
@@ -31,7 +38,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <div
       className="bg-white rounded-lg shadow-sm hover:shadow-lg border border-gray-200 overflow-hidden cursor-pointer transition-all duration-300"
-      onClick={handleAddToCart}
+      onClick={handleCardClick}
     >
       <div className="relative w-full pt-[100%]">
         {product.images && product.images.length > 0 ? (
@@ -78,7 +85,15 @@ export default function ProductCard({ product }: ProductCardProps) {
             </p>
           )}
         </div>
+        <button
+          className="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow transition-all text-base"
+          onClick={handleAddToCart}
+        >
+          Add to Cart
+        </button>
       </div>
     </div>
   );
-}
+};
+
+export default ProductCard;

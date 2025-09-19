@@ -3,7 +3,7 @@ import type { User } from "@models/user";
 import * as api from "@api/backend-api";
 import type { Product } from "@models/product";
 import type { Category } from "@models/category";
-import type { PaymentData } from "@models/payment-data"; // Add this import, adjust the path if needed
+import type { PaymentRequest } from "@models/payment-data"; // Add this import, adjust the path if needed
 import type { Order } from "@models/order";
 import type { QueryOptions } from "@models/query-options";
 
@@ -19,7 +19,7 @@ export function useApi() {
     logout: () => (token ? api.logout(token) : Promise.reject("No token")),
 
     // Payment
-    processPayment: (payment: PaymentData) =>
+    processPayment: (payment: PaymentRequest) =>
       api.processPayment(payment, token),
     refundPayment: (paymentId: string) => api.refundPayment(paymentId, token),
 
