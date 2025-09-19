@@ -4,7 +4,7 @@ import { ProductCRUD } from "./sqlite-modules/product-crud";
 import { UserCRUD } from "./sqlite-modules/user-crud";
 import { OrderCRUD } from "./sqlite-modules/order-crud";
 import { DBAdapter } from "./db-adapter";
-import { Product } from "@models/product";
+import { Product, ProductOptionPreset } from "@models/product";
 import { User } from "@models/user";
 import { Order } from "@models/order";
 import { QueryOptions } from "@models/query-options";
@@ -23,7 +23,7 @@ export class SQLiteAdapter implements DBAdapter {
     this.orders = new OrderCRUD(this.db);
   }
 
-  // delegate methods
+  // PRODUCTS
   createProduct(product: Product) {
     return this.products.create(product);
   }
@@ -36,10 +36,27 @@ export class SQLiteAdapter implements DBAdapter {
   updateProduct(id: number | string, update: Partial<Product>) {
     return this.products.update(Number(id), update);
   }
+
   deleteProduct(id: number | string) {
     return this.products.delete(Number(id));
   }
 
+  // PRODUCT OPTIONS PRESETS
+  createProductOptionsPreset(
+    preset: ProductOptionPreset
+  ): Promise<ProductOptionPreset> {
+    return this.products.createOptionsPreset(preset);
+  }
+
+  getProductOptionsPresets(): Promise<ProductOptionPreset[]> {
+    return this.products.getOptionsPresets();
+  }
+
+  deleteProductOptionsPreset(id: number | string): Promise<void> {
+    return this.products.deleteOptionsPreset(Number(id));
+  }
+
+  // USERS
   createUser(user: User) {
     return this.users.create(user);
   }
@@ -56,6 +73,7 @@ export class SQLiteAdapter implements DBAdapter {
     return this.users.delete(id);
   }
 
+  // ORDERS
   createOrder(order: Order) {
     return this.orders.create(order);
   }

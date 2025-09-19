@@ -183,15 +183,15 @@ const ImageListEditor: React.FC<ImagePreviewListProps> = ({
           {/* Remove button */}
           <button
             type="button"
-            className="absolute top-1 right-1 h-7 w-7 flex items-center 
+            className="circle-x-button absolute top-1 right-1 w-6 h-6 flex items-center 
             justify-center rounded-full cursor-pointer z-10 bg-black/50 
-            text-white p-0 text-xl font-mono"
+            text-white p-0 text-md font-mono"
             onClick={(e) => {
               e.stopPropagation();
               removeImage(index);
             }}
           >
-            &times;
+            X
           </button>
 
           {/* Spinner if processing */}

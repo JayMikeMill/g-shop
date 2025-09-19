@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { User } from "@models/user";
-import type { Product } from "@models/product";
+import type { Product, ProductOptionPreset } from "@models/product";
 import type { PaymentData } from "@models/payment-data";
 import type { Order } from "@models/order";
 import type { QueryOptions } from "@models/query-options";
@@ -205,6 +205,34 @@ export const deleteProduct = async (
   token?: string | null
 ) => {
   const res = await axios.delete(`${API_BASE}/products/${id}`, {
+    headers: authHeaders(token),
+  });
+  return res.data;
+};
+
+// Product Options Presets APIs
+export const createProductOptionsPreset = async (
+  preset: ProductOptionPreset,
+  token?: string | null
+) => {
+  const res = await axios.post(`${API_BASE}/products/options-presets`, preset, {
+    headers: authHeaders(token),
+  });
+  return res.data;
+};
+
+export const getProductOptionsPresets = async (token?: string | null) => {
+  const res = await axios.get(`${API_BASE}/products/options-presets`, {
+    headers: authHeaders(token),
+  });
+  return res.data;
+};
+
+export const deleteProductOptionsPreset = async (
+  id: number | string,
+  token?: string | null
+) => {
+  const res = await axios.delete(`${API_BASE}/products/options-presets/${id}`, {
     headers: authHeaders(token),
   });
   return res.data;

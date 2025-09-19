@@ -79,3 +79,43 @@ export const deleteProduct = async (
     next(err);
   }
 };
+
+// ---------- PRODUCT OPTIONS PRESETS ----------
+export const createProductOptionsPreset = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const preset = await ProductService.createProductOptionsPreset(req.body);
+    res.json(preset);
+  } catch (err: any) {
+    next(err);
+  }
+};
+
+export const getProductOptionsPresets = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const presets = await ProductService.getProductOptionsPresets();
+    res.json(presets);
+  } catch (err: any) {
+    next(err);
+  }
+};
+
+export const deleteProductOptionsPreset = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    await ProductService.deleteProductOptionsPreset(req.params.id);
+    res.json({ message: "Product options preset deleted" });
+  } catch (err: any) {
+    next(err);
+  }
+};

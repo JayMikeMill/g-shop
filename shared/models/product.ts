@@ -24,7 +24,7 @@ export interface ProductOption {
 }
 
 // Product option
-export interface ProductOptionPreset {
+export interface ProductOptionPreset extends ProductOption {
   id: number | string;
 }
 
@@ -32,13 +32,6 @@ export interface ProductOptionPreset {
 export interface ProductOptionValue {
   value: string;
   stock: number;
-}
-
-// Preset option (for admin selection)
-export interface PresetOption {
-  id: number;
-  name: string; // e.g., "Color"
-  value: string; // e.g., "Red"
 }
 
 // check if two products have the same options selected

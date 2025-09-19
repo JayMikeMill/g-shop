@@ -49,6 +49,12 @@ export function useApi() {
     getProducts: (query?: QueryOptions) => api.getProducts(query, token),
     updateProduct: (product: Product) => api.updateProduct(product, token),
     deleteProduct: (id: number | string) => api.deleteProduct(id, token),
+    // Product Options Presets
+    createProductOptionsPreset: (preset: any) =>
+      api.createProductOptionsPreset(preset, token),
+    getProductOptionsPresets: () => api.getProductOptionsPresets(token),
+    deleteProductOptionsPreset: (id: number | string) =>
+      api.deleteProductOptionsPreset(id, token),
 
     // Order
     createOrder: (order: Order) => api.createOrder(order, token),

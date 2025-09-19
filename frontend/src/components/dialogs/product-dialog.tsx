@@ -92,8 +92,6 @@ export default function ProductDialog({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("Updating product with options:", productOptions);
-
     try {
       const tagsArray = tags
         .split(",")

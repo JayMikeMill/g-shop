@@ -6,6 +6,7 @@ import type {
   ProductOption,
   ProductOptionValue,
   ProductImageSet,
+  ProductOptionPreset,
 } from "@models/product";
 import { QueryOptions } from "@models/query-options";
 
@@ -106,7 +107,7 @@ export class ProductCRUD {
   async get(id: number): Promise<Product | null> {
     try {
       if (typeof id !== "number" || isNaN(id))
-        throw new Error("Invalid product id");
+        throw new Error("Invalid product id: " + id);
 
       const row = this.db
         .prepare(`SELECT * FROM products WHERE id = ?`)
@@ -281,6 +282,55 @@ export class ProductCRUD {
       this.db.prepare(`DELETE FROM products WHERE id = ?`).run(id);
     } catch (err) {
       throw new Error(`ProductCRUD.delete failed: ${(err as Error).message}`);
+    }
+  }
+
+  // ---------- PRESETS ----------
+  async createOptionsPreset(
+    preset: ProductOptionPreset
+  ): Promise<ProductOptionPreset> {
+    try {
+      const valuesStr = JSON.stringify(preset.values) ?? "[]";
+      const result = this.db
+        .prepare(
+          `INSERT INTO product_options_presets (name, [values]) VALUES (?, ?)`
+        )
+        .run(preset.name, valuesStr);
+      const id = Number(result.lastInsertRowid);
+      return { id, name: preset.name, values: preset.values };
+    } catch (err) {
+      throw new Error(
+        `ProductCRUD.createOptionsPreset failed: ${(err as Error).message}`
+      );
+    }
+  }
+
+  async getOptionsPresets(): Promise<ProductOptionPreset[]> {
+    try {
+      const rows = this.db
+        .prepare(`SELECT id, name, [values] FROM product_options_presets`)
+        .all() as { id: number; name: string; values: string }[];
+      return rows.map((r) => ({
+        id: r.id,
+        name: r.name,
+        values: JSON.parse(r.values) as ProductOptionValue[],
+      }));
+    } catch (err) {
+      throw new Error(
+        `ProductCRUD.queryOptionsPreset failed: ${(err as Error).message}`
+      );
+    }
+  }
+
+  async deleteOptionsPreset(id: number): Promise<void> {
+    try {
+      this.db
+        .prepare(`DELETE FROM product_options_presets WHERE id = ?`)
+        .run(id);
+    } catch (err) {
+      throw new Error(
+        `ProductCRUD.deleteOptionsPreset failed: ${(err as Error).message}`
+      );
     }
   }
 }

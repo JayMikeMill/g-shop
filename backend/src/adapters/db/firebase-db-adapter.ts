@@ -1,6 +1,6 @@
 // backend/src/adapters/db/firebase-db-adapter.ts
 import { User } from "@models/user";
-import { Product } from "@models/product";
+import { Product, ProductOptionPreset } from "@models/product";
 import { Order } from "@models/order";
 import { DBAdapter } from "@adapters/db/db-adapter";
 import { db } from "@config/firebase/firebase-admin";
@@ -109,6 +109,30 @@ export class FirebaseDBAdapter implements DBAdapter {
   async deleteProduct(id: number | string): Promise<void> {
     await db
       .collection("products")
+      .doc(id as string)
+      .delete();
+  }
+
+  // ---------- PRODUCT OPTIONS PRESETS ----------
+  async createProductOptionsPreset(
+    preset: ProductOptionPreset
+  ): Promise<ProductOptionPreset> {
+    const docRef = await db.collection("product_options_presets").add(preset);
+    const created = { ...preset, id: docRef.id };
+    console.log("Product options preset created:", created);
+    return created;
+  }
+
+  async getProductOptionsPresets(): Promise<ProductOptionPreset[]> {
+    const snapshot = await db.collection("product_options_presets").get();
+    return snapshot.docs.map(
+      (doc) => ({ ...doc.data(), id: doc.id }) as ProductOptionPreset
+    );
+  }
+
+  async deleteProductOptionsPreset(id: number | string): Promise<void> {
+    await db
+      .collection("product_options_presets")
       .doc(id as string)
       .delete();
   }

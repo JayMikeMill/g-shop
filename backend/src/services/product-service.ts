@@ -1,4 +1,4 @@
-import { Product } from "@models/product";
+import { Product, ProductOptionPreset } from "@models/product";
 import { db } from "@config/adapters";
 import { QueryOptions } from "@models/query-options";
 
@@ -26,6 +26,24 @@ export class ProductService {
     const existing = await db.getProduct(id);
     if (!existing) return false;
     await db.deleteProduct(id);
+    return true;
+  }
+
+  // ---------- OPTIONS PRESETS ----------
+  static async createProductOptionsPreset(
+    preset: ProductOptionPreset
+  ): Promise<ProductOptionPreset> {
+    return db.createProductOptionsPreset(preset);
+  }
+  static async getProductOptionsPresets(): Promise<ProductOptionPreset[]> {
+    return db.getProductOptionsPresets();
+  }
+  static async deleteProductOptionsPreset(
+    id: number | string
+  ): Promise<boolean> {
+    const existing = await db.getProductOptionsPresets();
+    if (!existing.find((p) => p.id === id)) return false;
+    await db.deleteProductOptionsPreset(id);
     return true;
   }
 }

@@ -1,5 +1,5 @@
 import { User } from "@models/user";
-import { Product } from "@models/product";
+import { Product, ProductOptionPreset } from "@models/product";
 import { Order } from "@models/order";
 import { QueryOptions } from "@models/query-options";
 
@@ -20,6 +20,13 @@ export interface DBAdapter {
     update: Partial<Product>
   ): Promise<Product | null>;
   deleteProduct(id: number | string): Promise<void>;
+
+  // ---------- OPTIONS PRESETS ----------
+  createProductOptionsPreset(
+    preset: ProductOptionPreset
+  ): Promise<ProductOptionPreset>;
+  getProductOptionsPresets(): Promise<ProductOptionPreset[]>;
+  deleteProductOptionsPreset(id: number | string): Promise<void>;
 
   // ---------- ORDERS ----------
   createOrder(order: Order): Promise<Order>;
