@@ -4,7 +4,9 @@ import { ProductCRUD } from "./sqlite-modules/product-crud";
 import { UserCRUD } from "./sqlite-modules/user-crud";
 import { OrderCRUD } from "./sqlite-modules/order-crud";
 import { DBAdapter } from "./db-adapter";
-import { Product, ProductOptionPreset, Category } from "@models/product";
+import { Product, ProductOptionPreset } from "@models/product";
+import { Category } from "@models/category";
+import { CategoryCRUD } from "./sqlite-modules/category-crud";
 import { User } from "@models/user";
 import { Order } from "@models/order";
 import { QueryOptions } from "@models/query-options";
@@ -14,6 +16,7 @@ export class SQLiteAdapter implements DBAdapter {
   public products: ProductCRUD;
   public users: UserCRUD;
   public orders: OrderCRUD;
+  public categories: CategoryCRUD;
 
   constructor(filename: string = "store.sqlite") {
     this.db = new Database(filename);
@@ -21,6 +24,7 @@ export class SQLiteAdapter implements DBAdapter {
     this.products = new ProductCRUD(this.db);
     this.users = new UserCRUD(this.db);
     this.orders = new OrderCRUD(this.db);
+    this.categories = new CategoryCRUD(this.db);
   }
 
   // USERS
@@ -75,19 +79,19 @@ export class SQLiteAdapter implements DBAdapter {
 
   // CATEGORIES
   createCategory(category: Category) {
-    return this.products.createCategory(category);
+    return this.categories.create(category);
   }
   getCategory(id: string) {
-    return this.products.getCategory(id);
+    return this.categories.get(id);
   }
   getCategories() {
-    return this.products.getCategories();
+    return this.categories.getAll();
   }
   updateCategory(id: string, update: Partial<Category>) {
-    return this.products.updateCategory(id, update);
+    return this.categories.update(id, update);
   }
   deleteCategory(id: string) {
-    return this.products.deleteCategory(id);
+    return this.categories.delete(id);
   }
 
   // ORDERS

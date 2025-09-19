@@ -37,17 +37,6 @@ export interface ProductOptionValue {
   stock: number;
 }
 
-export interface Category {
-  id: string; // UUID
-  name: string; // Display name
-  slug: string; // URL-friendly slug
-  description?: string; // Optional text
-  image?: string; // Category image URL
-  parent_id?: string | null; // Nested category reference
-  created_at: string; // ISO timestamp
-  updated_at: string; // ISO timestamp
-}
-
 // check if two products have the same options selected
 export const equalProductOptions = (p1: Product, p2: Product): boolean => {
   if (!p1.options && !p2.options) return true;

@@ -18,12 +18,6 @@ import { requireRole } from "@middleware/authorization";
 
 const router = Router();
 
-// ---------- CATEGORY CRUD ROUTES ----------
-// Only admin can create, update, or delete categories
-router.post("/categories", requireRole(["admin"]), createCategory);
-router.put("/categories/:id", requireRole(["admin"]), updateCategory);
-router.delete("/categories/:id", requireRole(["admin"]), deleteCategory);
-
 // product options presets routes must be defined before product routes
 // because /options-presets would be treated as :id otherwise
 router.post(

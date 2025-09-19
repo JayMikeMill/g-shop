@@ -1,6 +1,7 @@
 // backend/src/adapters/db/firebase-db-adapter.ts
 import { User } from "@models/user";
-import { Product, ProductOptionPreset, Category } from "@models/product";
+import { Product, ProductOptionPreset } from "@models/product";
+import { Category } from "@models/category";
 import { Order } from "@models/order";
 import { DBAdapter } from "@adapters/db/db-adapter";
 import { db } from "@config/firebase/firebase-admin";

@@ -1,7 +1,8 @@
 import { useAuth } from "@contexts/auth/auth-context";
 import type { User } from "@models/user";
 import * as api from "@api/backend-api";
-import type { Product, Category } from "@models/product";
+import type { Product } from "@models/product";
+import type { Category } from "@models/category";
 import type { PaymentData } from "@models/payment-data"; // Add this import, adjust the path if needed
 import type { Order } from "@models/order";
 import type { QueryOptions } from "@models/query-options";

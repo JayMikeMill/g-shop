@@ -1,6 +1,7 @@
 import axios from "axios";
 import type { User } from "@models/user";
-import type { Product, ProductOptionPreset, Category } from "@models/product";
+import type { Product, ProductOptionPreset } from "@models/product";
+import type { Category } from "@models/category";
 import type { PaymentData } from "@models/payment-data";
 import type { Order } from "@models/order";
 import type { QueryOptions } from "@models/query-options";
@@ -34,53 +35,48 @@ export const logout = async (token: string) =>
     .then((r) => r.data);
 
 /* ==========================
-   CATEGORY APIs
+   USER APIs
 ========================== */
-export const createCategory = async (
-  category: Category,
+export const createUser = async (
+  user: User,
+  password?: string,
   token?: string | null
-) => {
-  const res = await axios.post(`${API_BASE}/products/categories`, category, {
-    headers: authHeaders(token),
-  });
-  return res.data as Category;
-};
-
-export const getCategory = async (id: string, token?: string | null) => {
-  const res = await axios.get(`${API_BASE}/products/categories/${id}`, {
-    headers: authHeaders(token),
-  });
-  return res.data as Category;
-};
-
-export const getCategories = async (token?: string | null) => {
-  const res = await axios.get(`${API_BASE}/products/categories`, {
-    headers: authHeaders(token),
-  });
-  return res.data as Category[];
-};
-
-export const updateCategory = async (
+) =>
+  axios
+    .post(
+      `${API_BASE}/users`,
+      { user, password },
+      { headers: authHeaders(token) }
+    )
+    .then((r) => r.data);
+export const getUser = async (id: string, token?: string | null) =>
+  axios
+    .get(`${API_BASE}/users/${id}`, { headers: authHeaders(token) })
+    .then((r) => r.data as User);
+export const getUsers = async (
+  options?: {
+    limit?: number;
+    page?: number;
+    sortBy?: string;
+    sortOrder?: "asc" | "desc";
+  },
+  token?: string | null
+) =>
+  axios
+    .get(`${API_BASE}/users`, { params: options, headers: authHeaders(token) })
+    .then((r) => r.data);
+export const updateUser = async (
   id: string,
-  category: Partial<Category>,
+  user: User,
   token?: string | null
-) => {
-  const res = await axios.put(
-    `${API_BASE}/products/categories/${id}`,
-    category,
-    {
-      headers: authHeaders(token),
-    }
-  );
-  return res.data as Category;
-};
-
-export const deleteCategory = async (id: string, token?: string | null) => {
-  const res = await axios.delete(`${API_BASE}/products/categories/${id}`, {
-    headers: authHeaders(token),
-  });
-  return res.data;
-};
+) =>
+  axios
+    .put(`${API_BASE}/users/${id}`, user, { headers: authHeaders(token) })
+    .then((r) => r.data as User);
+export const deleteUser = async (id: string, token?: string | null) =>
+  axios
+    .delete(`${API_BASE}/users/${id}`, { headers: authHeaders(token) })
+    .then((r) => r.data);
 
 /* ==========================
    PRODUCT APIs
@@ -143,6 +139,51 @@ export const deleteProductOptionsPreset = async (
     .then((r) => r.data);
 
 /* ==========================
+   CATEGORY APIs
+========================== */
+export const createCategory = async (
+  category: Category,
+  token?: string | null
+) => {
+  const res = await axios.post(`${API_BASE}/categories`, category, {
+    headers: authHeaders(token),
+  });
+  return res.data as Category;
+};
+
+export const getCategory = async (id: string, token?: string | null) => {
+  const res = await axios.get(`${API_BASE}/categories/${id}`, {
+    headers: authHeaders(token),
+  });
+  return res.data as Category;
+};
+
+export const getCategories = async (token?: string | null) => {
+  const res = await axios.get(`${API_BASE}/categories`, {
+    headers: authHeaders(token),
+  });
+  return res.data as Category[];
+};
+
+export const updateCategory = async (
+  id: string,
+  category: Partial<Category>,
+  token?: string | null
+) => {
+  const res = await axios.put(`${API_BASE}/categories/${id}`, category, {
+    headers: authHeaders(token),
+  });
+  return res.data as Category;
+};
+
+export const deleteCategory = async (id: string, token?: string | null) => {
+  const res = await axios.delete(`${API_BASE}/categories/${id}`, {
+    headers: authHeaders(token),
+  });
+  return res.data;
+};
+
+/* ==========================
    ORDER APIs
 ========================== */
 export const createOrder = async (order: Order, token?: string | null) =>
@@ -176,50 +217,6 @@ export const updateOrder = async (
 export const deleteOrder = async (id: string, token?: string | null) =>
   axios
     .delete(`${API_BASE}/orders/${id}`, { headers: authHeaders(token) })
-    .then((r) => r.data);
-
-/* ==========================
-   USER APIs
-========================== */
-export const createUser = async (
-  user: User,
-  password?: string,
-  token?: string | null
-) =>
-  axios
-    .post(
-      `${API_BASE}/users`,
-      { user, password },
-      { headers: authHeaders(token) }
-    )
-    .then((r) => r.data);
-export const getUser = async (id: string, token?: string | null) =>
-  axios
-    .get(`${API_BASE}/users/${id}`, { headers: authHeaders(token) })
-    .then((r) => r.data as User);
-export const getUsers = async (
-  options?: {
-    limit?: number;
-    page?: number;
-    sortBy?: string;
-    sortOrder?: "asc" | "desc";
-  },
-  token?: string | null
-) =>
-  axios
-    .get(`${API_BASE}/users`, { params: options, headers: authHeaders(token) })
-    .then((r) => r.data);
-export const updateUser = async (
-  id: string,
-  user: User,
-  token?: string | null
-) =>
-  axios
-    .put(`${API_BASE}/users/${id}`, user, { headers: authHeaders(token) })
-    .then((r) => r.data as User);
-export const deleteUser = async (id: string, token?: string | null) =>
-  axios
-    .delete(`${API_BASE}/users/${id}`, { headers: authHeaders(token) })
     .then((r) => r.data);
 
 /* ==========================

@@ -1,4 +1,5 @@
-import { Product, ProductOptionPreset, Category } from "@models/product";
+import { Product, ProductOptionPreset } from "@models/product";
+import { Category } from "@models/category";
 import { db } from "@config/adapters";
 import { QueryOptions } from "@models/query-options";
 

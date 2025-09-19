@@ -1,5 +1,6 @@
 import { User } from "@models/user";
-import { Product, ProductOptionPreset, Category } from "@models/product";
+import { Product, ProductOptionPreset } from "@models/product";
+import { Category } from "@models/category";
 import { Order } from "@models/order";
 import { QueryOptions } from "@models/query-options";
 
