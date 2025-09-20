@@ -41,7 +41,7 @@ export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
       <div
         className={`fixed top-0 right-0 h-full transform transition-transform duration-300 ease-in-out
 		w-full md:w-1/3 flex flex-col p-lg overflow-y-auto
-		bg-surface shadow-xl rounded-l-lg
+		bg-backgroundAlt shadow-xl rounded-l-lg
 		${isOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         {/* Close button */}

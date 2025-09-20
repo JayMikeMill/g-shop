@@ -47,8 +47,10 @@ export default function CheckoutPage() {
   }, [shippingInfo]);
 
   return (
-    <div className="max-w-[700px] mx-auto mt-xl p-lg font-sans text-text relative">
-      <h2 className="text-2xl text-center mb-lg text-title">Checkout</h2>
+    <div className="max-w-[700px] mx-auto font-sans text-text relative">
+      <h2 className="text-[2rem]  text-bold text-center text-title pb-md">
+        Checkout
+      </h2>
 
       <OrderPreview />
 

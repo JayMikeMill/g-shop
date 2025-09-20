@@ -52,7 +52,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </div>
         )}
         {product.tags && product.tags.length > 0 && (
-          <div className="absolute top-2 right-2 flex gap-1">
+          <div className="absolute top-2 left-2 flex gap-1">
             {product.tags.map((tag) => (
               <span key={tag} className="tag-box">
                 {tag}
@@ -82,14 +82,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </p>
           )}
         </div>
-        {product.price > 0 && (
-          <button
-            className="btn-primary w-full mt-sm"
-            onClick={handleAddToCart}
-          >
-            Add to Cart
-          </button>
-        )}
+        <button className="btn-primary w-full mt-sm" onClick={handleAddToCart}>
+          Add to Cart
+        </button>
       </div>
     </div>
   );

@@ -10,11 +10,13 @@
 
 /* Table header */
 .table thead th {
-  @apply font-semibold uppercase text-center text-sm px-md py-sm border-b border-divider cursor-pointer sticky top-0 z-10 bg-primary text-buttonText transition-colors duration-200;
+  @apply font-semibold uppercase text-center text-sm px-md py-sm
+   border-b border-divider cursor-pointer sticky top-0 z-10 bg-secondary
+   text-text transition-colors duration-200;
 }
 
 .table thead th.sortable:hover {
-  @apply bg-primaryDark;
+  @apply bg-accent;
 }
 
 /* Table body rows */
@@ -23,15 +25,15 @@
 }
 
 .table tbody tr:nth-child(even) {
-  @apply bg-surfaceAlt;
+  @apply bg-background;
 }
 
 .table tbody tr:nth-child(odd) {
-  @apply bg-surface;
+  @apply bg-backgroundAlt;
 }
 
 .table tbody tr:hover {
-  @apply bg-primaryDark;
+  @apply bg-surface;
 }
 
 /* Table cells */
@@ -68,5 +70,5 @@
 
 /* Search input */
 .table-search {
-  @apply input-border w-full text-sm px-md py-sm;
+  @apply input-box w-full text-sm px-md py-sm;
 }

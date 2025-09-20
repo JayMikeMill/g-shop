@@ -41,5 +41,5 @@
     }
   },
 
-  "include": ["./src", "vite-env.d.ts"] // files to include
+  "include": ["./src", "vite-env.d.ts", "global.d.ts", "tailwind.config.js"] // files to include
 }

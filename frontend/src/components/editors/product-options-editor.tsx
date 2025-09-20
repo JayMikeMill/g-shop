@@ -170,7 +170,7 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
             presets.map((p) => (
               <div
                 key={p.id}
-                className="flex justify-between items-center bg-background px-2 py-1 hover:bg-gray-700 cursor-pointer text-text"
+                className="flex justify-between items-center bg-background px-2 py-1 hover:bg-secondary cursor-pointer text-text"
               >
                 <span className="flex-1" onClick={() => handleApplyPreset(p)}>
                   {p.name}

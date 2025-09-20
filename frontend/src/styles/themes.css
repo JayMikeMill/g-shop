@@ -107,37 +107,44 @@
    Pastel Theme
 ============================ */
 .theme-pastel {
-  --color-primary: #f1bb00; /* Indigo-300 */
-  --color-primary-dark: #f1bb00; /* Indigo-500 */
-  --color-secondary: #fcd34d; /* Yellow-300 */
-  --color-secondary-dark: #fbbf24; /* Yellow-400 */
-  --color-accent: #ffd129; /* Pink-300 */
+  /* Primary Colors */
+  --color-primary: #f1bb00; /* Gold */
+  --color-primary-dark: #d4a200; /* Darker gold for hover, active */
+  --color-secondary: #fcd34d; /* Light gold / yellow */
+  --color-secondary-dark: #fbbf24; /* Deep yellow */
+  --color-accent: #ffdd66; /* Warm accent, brighter gold */
 
-  --color-background: #fcf4db;
-  --color-background-alt: #fef3f8;
-  --color-surface: #fcefc1;
-  --color-surface-alt: #fbcfe8;
-  --color-card-bg: #fef2f8;
+  /* Background & Surface */
+  --color-background: #fff9e6; /* Soft cream background */
+  --color-background-alt: #fff7d1; /* Slightly warmer alt background */
+  --color-surface: #fff3b8; /* Light gold surface (cards, panels) */
+  --color-surface-alt: #fff0a5; /* Alternate surface */
+  --color-card-bg: #fff7c7; /* Card backgrounds */
 
-  --color-text: #000000; /* Purple-700 */
-  --color-text-secondary: #655000; /* Purple-800 */
-  --color-text-muted: #cb446f; /* Purple-600 */
-  --color-text-inverted: #ffffff;
+  /* Text Colors */
+  --color-text: #5b4000; /* Dark brown/gold for readability */
+  --color-text-secondary: #8c6b00; /* Medium brown/gold for secondary text */
+  --color-text-muted: #b3ae9d; /* Lighter muted text */
+  --color-text-inverted: #ffffff; /* White text for dark backgrounds */
 
-  --color-border: #f9a8d4; /* Pink-300 */
-  --color-divider: #fbcfe8; /* Pink-200 */
-  --color-input-border: #f9a8d4; /* Pink-300 */
+  /* Borders & Dividers */
+  --color-border: #e6c200; /* Warm gold border */
+  --color-divider: #f4d77f; /* Subtle divider in gold tones */
+  --color-input-border: #e6c200; /* Input borders match theme */
 
-  --color-button-bg: #a5b4fc;
-  --color-button-hover: #6366f1;
-  --color-button-text: #ffffff;
+  /* Buttons */
+  --color-button-bg: #f1bb00; /* Gold button background */
+  --color-button-hover: #d4a200; /* Darker gold hover */
+  --color-button-text: #ffffff; /* White text on gold buttons */
 
-  --color-success: #6ee7b7; /* Green-300 */
-  --color-warning: #fcd34d; /* Yellow-300 */
-  --color-error: #fca5a5; /* Red-300 */
-  --color-danger: #fca5a5; /* Red-300 */
-  --color-info: #60a5fa; /* Blue-400 */
+  /* Feedback / Status */
+  --color-success: #6ee7b7; /* Keep green for success */
+  --color-warning: #fcd34d; /* Light gold/yellow */
+  --color-error: #fca5a5; /* Keep red for error */
+  --color-danger: #fca5a5; /* Keep red for danger */
+  --color-info: #ffd666; /* Warm gold for info */
 
-  --color-light: #fdfdfd;
-  --color-dark: #5b21b6; /* Purple-700 */
+  /* Light / Dark */
+  --color-light: #fffdf7; /* Soft off-white light */
+  --color-dark: #5b4000; /* Deep brown/gold for contrast */
 }
