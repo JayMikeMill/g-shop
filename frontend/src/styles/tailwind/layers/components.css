@@ -20,7 +20,7 @@
 	========================= */
 
   .btn-primary {
-    @apply btn bg-primary  text-buttonText;
+    @apply btn bg-primary text-buttonText;
   }
 
   .btn-secondary {
