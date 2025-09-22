@@ -11,12 +11,14 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@prisma/client": "^6.16.2",
     "better-sqlite3": "^12.2.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "firebase-admin": "^13.5.0",
     "multer": "^2.0.2",
+    "sqlite3": "^5.1.7",
     "square": "^43.0.2",
     "superjson": "^2.2.2"
   },
@@ -27,6 +29,7 @@
     "@types/multer": "^2.0.0",
     "node-man": "^0.6.15",
     "nodemon": "^3.1.10",
+    "prisma": "^6.16.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0"
   }

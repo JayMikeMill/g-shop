@@ -1,10 +1,21 @@
-export interface Category {
-  id: string; // UUID
-  name: string; // Display name
-  slug: string; // URL-friendly slug
-  description?: string; // Optional text
-  image?: string; // Category image URL
-  parent_id?: string | null; // Nested category reference
-  created_at: string; // ISO timestamp
-  updated_at: string; // ISO timestamp
+// Collection is now the base
+export interface Collection {
+  id: string;
+  parentId?: string;
+  name: string;
+  slug: string;
+  description?: string;
+  seo?: { title?: string; metaDescription?: string; keywords?: string[] };
+  images?: CollectionImageSet;
+}
+
+// Category extends Collection
+export interface Category extends Collection {}
+
+// Product images
+export interface CollectionImageSet {
+  id?: Number;
+  banner: string;
+  preview: string;
+  thumbnail: string;
 }

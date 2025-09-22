@@ -1,0 +1,312 @@
+// =====================================
+// Prisma schema for a full e-commerce backend
+// =====================================
+
+// Generator: Prisma Client JS
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Datasource: SQLite for simplicity
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+//////////////////////
+// ENUMS
+//////////////////////
+
+enum UserRole {
+  USER
+  STAFF
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum TransactionStatus {
+  PENDING
+  PAID
+  REFUNDED
+  FAILED
+}
+
+enum PaymentMethod {
+  CARD
+  PAYPAL
+  SQUARE
+  CASH
+  APPLE_PAY
+  GOOGLE_PAY
+  BANK_TRANSFER
+  AFTERPAY
+  KLARNA
+  BITCOIN
+  ETHEREUM
+  LITECOIN
+  OTHER_CRYPTO
+  OTHER
+}
+
+enum ShippingCarrier {
+  UPS
+  FedEx
+  USPS
+  DHL
+  Amazon
+}
+
+enum ShippingMethod {
+  STANDARD
+  EXPRESS
+  OVERNIGHT
+}
+
+//////////////////////
+// USERS
+//////////////////////
+
+model User {
+  id             String            @id @default(uuid())
+  email          String            @unique
+  firstName      String
+  lastName       String
+  phone          String?
+  role           UserRole
+  preferences    Json?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  addresses      UserAddress[]
+  paymentMethods UserPaymentMethod[]
+  orders         Order[]
+  reviews        ProductReview[]    // opposite relation for ProductReview
+}
+
+model UserAddress {
+  id        String @id @default(uuid())
+  user      User   @relation(fields: [userId], references: [id])
+  userId    String
+  label     String
+  street    String
+  city      String
+  state     String
+  zip       String
+  country   String
+  isDefault Boolean
+}
+
+model UserPaymentMethod {
+  id            String @id @default(uuid())
+  user          User   @relation(fields: [userId], references: [id])
+  userId        String
+  type          String
+  last4         String
+  expiry        String
+  providerToken String
+}
+
+//////////////////////
+// COLLECTIONS & CATEGORIES
+//////////////////////
+
+model Collection {
+  id          String              @id @default(uuid())
+  name        String
+  slug        String              @unique
+  description String?
+  seo         Json?
+  images      CollectionImageSet?
+  products    Product[]           @relation("ProductCollections")
+}
+
+model Category {
+  id          String              @id @default(uuid())
+  name        String
+  slug        String              @unique
+  description String?
+  seo         Json?
+  products    Product[]           @relation("ProductCategories")
+}
+
+model CollectionImageSet {
+  id          Int        @id @default(autoincrement())
+  banner      String
+  preview     String
+  thumbnail   String
+  collection  Collection @relation(fields: [collectionId], references: [id])
+  collectionId String     @unique   // one-to-one requires unique
+}
+
+//////////////////////
+// PRODUCTS
+//////////////////////
+
+model Product {
+  id            String            @id @default(uuid())
+  name          String
+  price         Float
+  discount      String?
+  description   String
+  stock         Int
+  reviewCount   Int?              @map("review_count")
+  averageRating Float?            @map("average_rating")
+
+  dimensions    ProductDimensions?
+  images        ProductImageSet[]
+  options       ProductOption[]
+  reviews       ProductReview[]
+  variants      ProductVariant[]
+  orderItems    OrderItem[]        // opposite relation for OrderItem
+  categories    Category[]         @relation("ProductCategories")
+  collections   Collection[]       @relation("ProductCollections")
+}
+
+model ProductImageSet {
+  id        String   @id @default(uuid())
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+  main      String
+  preview   String
+  thumbnail String
+}
+
+model ProductOption {
+  id       String               @id @default(uuid())
+  product  Product              @relation(fields: [productId], references: [id])
+  productId String
+  name     String
+  values   ProductOptionValue[]
+}
+
+model ProductOptionValue {
+  id            String         @id @default(uuid())
+  productOption ProductOption  @relation(fields: [productOptionId], references: [id])
+  productOptionId String
+  value         String
+}
+
+model ProductVariant {
+  id           String   @id @default(uuid())
+  product      Product  @relation(fields: [productId], references: [id])
+  productId    String
+  sku          String?  @unique
+  priceOverride Float?
+  stock        Int
+}
+
+model ProductDimensions {
+  id          String  @id @default(uuid())
+  product     Product @relation(fields: [productId], references: [id])
+  productId   String  @unique
+  weightGrams Float?  @map("weight_grams")
+  lengthCm    Float?  @map("length_cm")
+  widthCm     Float?  @map("width_cm")
+  heightCm    Float?  @map("height_cm")
+}
+
+model ProductReview {
+  id        String   @id @default(uuid())
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  rating    Int
+  comment   String
+  createdAt DateTime @default(now())
+}
+
+model ProductTag {
+  id    String @id @default(uuid())
+  name  String
+  color String?
+}
+
+//////////////////////
+// PRODUCT PRESETS
+//////////////////////
+
+model ProductOptionPreset {
+  id     String               @id @default(uuid())
+  name   String
+  values ProductOptionPresetValue[]
+}
+
+model ProductOptionPresetValue {
+  id                   String               @id @default(uuid())
+  productOptionPreset   ProductOptionPreset @relation(fields: [presetId], references: [id])
+  presetId             String
+  value                String
+}
+
+model ProductTagPreset {
+  id    String @id @default(uuid())
+  name  String
+  color String?
+}
+
+//////////////////////
+// ORDERS & TRANSACTIONS
+//////////////////////
+
+model Order {
+  id            String             @id @default(uuid())
+  user          User?              @relation(fields: [userId], references: [id])
+  userId        String?
+  status        OrderStatus
+  total         Int
+  notes         String?
+  paymentInfo   Transaction?
+  shippingInfo  Json
+  items         OrderItem[]
+  invoices      Invoice[]
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  statusHistory OrderStatusHistory[]
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  order     Order    @relation(fields: [orderId], references: [id])
+  orderId   String
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+  variantId String?
+  quantity  Int
+  price     Int
+}
+
+model OrderStatusHistory {
+  id        String    @id @default(uuid())
+  order     Order     @relation(fields: [orderId], references: [id])
+  orderId   String
+  status    OrderStatus
+  timestamp DateTime  @default(now())
+}
+
+model Transaction {
+  id            String   @id @default(uuid())
+  order         Order    @relation(fields: [orderId], references: [id])
+  orderId       String   @unique
+  amount        Int
+  currency      String
+  method        PaymentMethod
+  status        TransactionStatus
+  billingAddress Json?
+}
+
+model Invoice {
+  id           String   @id @default(uuid())
+  order        Order    @relation(fields: [orderId], references: [id])
+  orderId      String
+  invoiceNumber String
+  pdfUrl       String?
+  createdAt    DateTime @default(now())
+}

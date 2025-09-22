@@ -1,24 +1,29 @@
 // shared/models/product.ts
 
-import { type Category } from "./catalog";
+import { Category, Collection } from "./catalog";
 
-// Product model
 export interface Product {
-  id: number | string;
+  id?: string;
   name: string;
   price: number;
   discount?: string;
-  images: ProductImageSet[];
   description: string;
-  tags?: string[];
-  options?: ProductOption[];
-  categories?: Category[];
-  dimensions?: ProductDimensions;
   stock: number;
+  review_count?: number;
+  average_rating?: number;
+  images?: ProductImageSet[];
+  tags?: ProductTag[];
+  options?: ProductOption[];
+  variants?: ProductVariant[];
+  categories?: Category[];
+  collections?: Collection[];
+  dimensions?: ProductDimensions;
+  reviews?: ProductReview[];
 }
 
 // Product images
 export interface ProductImageSet {
+  id?: string;
   main: string;
   preview: string;
   thumbnail: string;
@@ -26,20 +31,29 @@ export interface ProductImageSet {
 
 // Product option
 export interface ProductOption {
+  id?: string;
   name: string;
   values: ProductOptionValue[];
 }
 
 // Product option value
 export interface ProductOptionValue {
+  id?: string;
   value: string;
-  stock: number;
 }
 
-// Product option preset (for admin use)
-export interface ProductOptionPreset extends ProductOption {
-  id: number | string;
+// Product option preset
+export interface ProductOptionPreset extends ProductOption {}
+
+// Tag entity
+export interface ProductTag {
+  id?: string;
+  name: string;
+  color?: string;
 }
+
+// Tag preset
+export interface ProductTagPreset extends ProductTag {}
 
 // Selected product option (for cart/store use)
 export interface SelectedProductOption {
@@ -47,24 +61,30 @@ export interface SelectedProductOption {
   value: string;
 }
 
+// Variant entity
+export interface ProductVariant {
+  id?: string;
+  productId: string;
+  sku?: string;
+  priceOverride?: number;
+  stock: number;
+}
+
 // Selected product option (for cart/store use)
 export interface ProductDimensions {
+  id?: string;
   weight_grams?: number;
   length_cm?: number;
   width_cm?: number;
   height_cm?: number;
 }
 
-// check if two products have the same options selected
-export const equalProductOptions = (p1: Product, p2: Product): boolean => {
-  if (!p1.options && !p2.options) return true;
-  if (!p1.options || !p2.options) return false;
-  if (p1.options.length !== p2.options.length) return false;
-
-  return p1.options.every((opt1) => {
-    const opt2 = p2.options!.find((o) => o.name === opt1.name);
-    if (!opt2) return false;
-    if (opt2.values.length !== opt1.values.length) return false;
-    return opt1.values.every((v, i) => v.value === opt2.values[i].value);
-  });
-};
+// Review entity
+export interface ProductReview {
+  id?: string;
+  productId: string;
+  userId: string;
+  rating: number;
+  comment: string;
+  createdAt: Date;
+}

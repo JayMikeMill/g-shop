@@ -134,7 +134,7 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
     setDropdownOpen(false);
   };
 
-  const handleDeletePreset = async (id: number | string) => {
+  const handleDeletePreset = async (id: string) => {
     if (!confirm("Are you sure you want to delete this preset?")) return;
     try {
       await deleteProductOptionsPreset(id);

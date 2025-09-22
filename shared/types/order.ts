@@ -1,23 +1,34 @@
 import { Product, SelectedProductOption } from "./product";
-import { ShippingInfo } from "./shipping-info";
-import { PaymentInfo } from "./payment-info";
+import { ShippingInfo } from "./shipping";
+import { Transaction } from "./transaction";
+import { User } from "./user";
 
-export type Order = {
+export interface Order {
   id: string;
   userId?: string;
   status: OrderStatus;
-  createdAt: number; // Unix TimeStamp
-  updatedAt: number; // Unix TimeStamp
   items: OrderItem[];
   total: number; // cents
-  paymentInfo: PaymentInfo;
+  paymentInfo: Transaction;
   shippingInfo: ShippingInfo;
+  createdAt: Date;
+  updatedAt: Date;
   notes?: string;
-};
 
-export interface OrderItem extends Product {
-  selectedOptions?: SelectedProductOption[]; // Selected options for this item
-  quantity: number; // How many of this item are in the cart
+  // Related user
+  user?: User;
+}
+
+interface OrderItem {
+  id: string;
+  orderId: string;
+  productId: string;
+  variantId?: string;
+  quantity: number;
+  price: number;
+
+  // Related product
+  product?: Product;
 }
 
 export const OrderStatuses = {
@@ -29,3 +40,10 @@ export const OrderStatuses = {
 } as const;
 
 export type OrderStatus = (typeof OrderStatuses)[keyof typeof OrderStatuses];
+
+interface OrderStatusHistory {
+  id: string;
+  orderId: string;
+  status: OrderStatus;
+  timestamp: Date;
+}

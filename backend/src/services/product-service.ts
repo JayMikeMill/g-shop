@@ -8,7 +8,7 @@ export class ProductService {
     return db.createProduct(product) as Promise<Product>;
   }
 
-  static async getProduct(id: number | string): Promise<Product | null> {
+  static async getProduct(id: string): Promise<Product | null> {
     return db.getProduct(id) as Promise<Product | null>;
   }
 
@@ -17,13 +17,13 @@ export class ProductService {
   }
 
   static async updateProduct(
-    id: number | string,
+    id: string,
     update: Partial<Product>
   ): Promise<Product | null> {
     return db.updateProduct(id, update) as Promise<Product | null>;
   }
 
-  static async deleteProduct(id: number | string): Promise<boolean> {
+  static async deleteProduct(id: string): Promise<boolean> {
     const existing = await db.getProduct(id);
     if (!existing) return false;
     await db.deleteProduct(id);
@@ -39,9 +39,7 @@ export class ProductService {
   static async getProductOptionsPresets(): Promise<ProductOptionPreset[]> {
     return db.getProductOptionsPresets();
   }
-  static async deleteProductOptionsPreset(
-    id: number | string
-  ): Promise<boolean> {
+  static async deleteProductOptionsPreset(id: string): Promise<boolean> {
     const existing = await db.getProductOptionsPresets();
     if (!existing.find((p) => p.id === id)) return false;
     await db.deleteProductOptionsPreset(id);

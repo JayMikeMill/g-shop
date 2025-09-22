@@ -1,7 +1,7 @@
 // backend/src/adapters/db/firebase-db-adapter.ts
 import { User } from "@shared/types/user";
 import { Product, ProductOptionPreset } from "@shared/types/product";
-import { Category } from "@shared/types/catalog";
+import { Category, Collection, Tag } from "@shared/types/catalog";
 import { Order } from "@shared/types/order";
 import { DBAdapter } from "@adapters/db/db-adapter";
 import { db } from "@config/firebase/firebase-admin";
@@ -58,7 +58,7 @@ export class FirebaseDBAdapter implements DBAdapter {
     return created;
   }
 
-  async getProduct(id: number | string): Promise<Product | null> {
+  async getProduct(id: string): Promise<Product | null> {
     const docSnap = await db
       .collection("products")
       .doc(id as string)
@@ -94,7 +94,7 @@ export class FirebaseDBAdapter implements DBAdapter {
   }
 
   async updateProduct(
-    id: number | string,
+    id: string,
     update: Partial<Product>
   ): Promise<Product | null> {
     const product = await this.getProduct(id);
@@ -107,7 +107,7 @@ export class FirebaseDBAdapter implements DBAdapter {
     return updated;
   }
 
-  async deleteProduct(id: number | string): Promise<void> {
+  async deleteProduct(id: string): Promise<void> {
     await db
       .collection("products")
       .doc(id as string)
@@ -131,7 +131,7 @@ export class FirebaseDBAdapter implements DBAdapter {
     );
   }
 
-  async deleteProductOptionsPreset(id: number | string): Promise<void> {
+  async deleteProductOptionsPreset(id: string): Promise<void> {
     await db
       .collection("product_options_presets")
       .doc(id as string)
@@ -171,6 +171,71 @@ export class FirebaseDBAdapter implements DBAdapter {
 
   async deleteCategory(id: string): Promise<void> {
     await db.collection("categories").doc(id).delete();
+  }
+
+  // ---------- COLLECTIONS ----------
+  async createCollection(collection: Collection): Promise<Collection> {
+    await db.collection("collections").doc(collection.id).set(collection);
+    return collection;
+  }
+
+  async getCollection(id: string): Promise<Collection | null> {
+    const docSnap = await db.collection("collections").doc(id).get();
+    return docSnap.exists
+      ? ({ ...docSnap.data(), id: docSnap.id } as Collection)
+      : null;
+  }
+
+  async getCollections(): Promise<Collection[]> {
+    const snapshot = await db.collection("collections").get();
+    return snapshot.docs.map(
+      (doc) => ({ ...doc.data(), id: doc.id }) as Collection
+    );
+  }
+
+  async updateCollection(
+    id: string,
+    update: Partial<Collection>
+  ): Promise<Collection | null> {
+    const collection = await this.getCollection(id);
+    if (!collection) return null;
+    const updated = { ...collection, ...update };
+    await db.collection("collections").doc(id).set(updated);
+    return updated;
+  }
+
+  async deleteCollection(id: string): Promise<void> {
+    await db.collection("collections").doc(id).delete();
+  }
+
+  // ---------- TAGS ----------
+  async createTag(tag: Tag): Promise<Tag> {
+    await db.collection("tags").doc(tag.id).set(tag);
+    return tag;
+  }
+
+  async getTag(id: string): Promise<Tag | null> {
+    const docSnap = await db.collection("tags").doc(id).get();
+    return docSnap.exists
+      ? ({ ...docSnap.data(), id: docSnap.id } as Tag)
+      : null;
+  }
+
+  async getTags(): Promise<Tag[]> {
+    const snapshot = await db.collection("tags").get();
+    return snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }) as Tag);
+  }
+
+  async updateTag(id: string, update: Partial<Tag>): Promise<Tag | null> {
+    const tag = await this.getTag(id);
+    if (!tag) return null;
+    const updated = { ...tag, ...update };
+    await db.collection("tags").doc(id).set(updated);
+    return updated;
+  }
+
+  async deleteTag(id: string): Promise<void> {
+    await db.collection("tags").doc(id).delete();
   }
 
   // ---------- ORDERS ----------

@@ -85,7 +85,7 @@ export const createProduct = async (product: Product, token?: string | null) =>
   axios
     .post(`${API_BASE}/products`, product, { headers: authHeaders(token) })
     .then((r) => r.data as Product);
-export const getProduct = async (id: number | string, token?: string | null) =>
+export const getProduct = async (id: string, token?: string | null) =>
   axios
     .get(`${API_BASE}/products/${id}`, { headers: authHeaders(token) })
     .then((r) => r.data as Product);
@@ -102,10 +102,7 @@ export const updateProduct = async (product: Product, token?: string | null) =>
       headers: authHeaders(token),
     })
     .then((r) => r.data as Product);
-export const deleteProduct = async (
-  id: number | string,
-  token?: string | null
-) =>
+export const deleteProduct = async (id: string, token?: string | null) =>
   axios
     .delete(`${API_BASE}/products/${id}`, { headers: authHeaders(token) })
     .then((r) => r.data);
@@ -129,7 +126,7 @@ export const getProductOptionsPresets = async (token?: string | null) =>
     })
     .then((r) => r.data);
 export const deleteProductOptionsPreset = async (
-  id: number | string,
+  id: string,
   token?: string | null
 ) =>
   axios

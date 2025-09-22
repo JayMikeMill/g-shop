@@ -46,16 +46,16 @@ export function useApi() {
 
     // Product
     createProduct: (product: Product) => api.createProduct(product, token),
-    getProduct: (id: number | string) => api.getProduct(id, token),
+    getProduct: (id: string) => api.getProduct(id, token),
     getProducts: (query?: QueryOptions) => api.getProducts(query, token),
     updateProduct: (product: Product) => api.updateProduct(product, token),
-    deleteProduct: (id: number | string) => api.deleteProduct(id, token),
+    deleteProduct: (id: string) => api.deleteProduct(id, token),
 
     // Product Options Presets
     createProductOptionsPreset: (preset: any) =>
       api.createProductOptionsPreset(preset, token),
     getProductOptionsPresets: () => api.getProductOptionsPresets(token),
-    deleteProductOptionsPreset: (id: number | string) =>
+    deleteProductOptionsPreset: (id: string) =>
       api.deleteProductOptionsPreset(id, token),
 
     // Categories

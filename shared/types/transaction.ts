@@ -1,30 +1,39 @@
-import { type Address } from "./shipping-info";
+import { Order } from "./order";
+import { type Address } from "./shipping";
 
-export type PaymentInfo = {
-  transactionId: string;
+export interface Transaction {
+  id: string;
+  orderId: string;
   amount: number;
   currency: string;
   method: PaymentMethod;
-  status: PaymentStatus;
+  status: TransactionStatus;
   billingAddress?: Address;
-};
 
-export type PaymentInfoSquare = {
-  nonce: string;
-  amount: number;
-  orderItems: { name: string; price: number; quantity: number }[];
-  shipping: Address;
-};
+  // Related order
+  order?: Order;
+}
 
-export const PaymentStatuses = {
+interface Invoice {
+  id: string;
+  orderId: string;
+  invoiceNumber: string;
+  pdfUrl?: string;
+  createdAt: Date;
+
+  // Related order
+  order?: Order;
+}
+
+export const TransactionStatuses = {
   PENDING: "pending",
   PAID: "paid",
   REFUNDED: "refunded",
   FAILED: "failed",
 } as const;
 
-export type PaymentStatus =
-  (typeof PaymentStatuses)[keyof typeof PaymentStatuses];
+export type TransactionStatus =
+  (typeof TransactionStatuses)[keyof typeof TransactionStatuses];
 
 export const PaymentMethods = {
   CARD: "card",
@@ -45,16 +54,3 @@ export const PaymentMethods = {
 
 export type PaymentMethod =
   (typeof PaymentMethods)[keyof typeof PaymentMethods];
-
-export type PaymentRequest = {
-  nonce: string;
-  amount: number;
-
-  items: {
-    name: string;
-    price: number;
-    quantity: number;
-  }[];
-
-  address: Address;
-};

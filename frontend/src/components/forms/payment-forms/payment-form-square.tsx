@@ -2,12 +2,12 @@
 import { useEffect, useState } from "react";
 
 // Import shared types for shipping address and cart items
-import { type ShippingInfo } from "../@shared/types/shipping-info";
-import type { OrderItem } from "../@shared/types/order";
+import { type ShippingInfo } from "@shared/types/shipping-info";
+import type { OrderItem } from "@shared/types/order";
 import { useApi } from "@api/use-api";
 
 // Import PaymentStatus and PaymentMethod enums
-import { PaymentStatuses, PaymentMethods } from "../@shared/types/payment-info";
+import { PaymentStatuses, PaymentMethods } from "@shared/types/payment-info";
 import { useAuth } from "@contexts/auth/auth-context";
 
 // Square environment variables (from Vite)

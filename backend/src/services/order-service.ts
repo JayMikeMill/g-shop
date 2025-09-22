@@ -24,7 +24,8 @@ export class OrderService {
     return db.updateOrder(id, update);
   }
 
-  static async deleteOrder(id: string): Promise<void> {
+  static async deleteOrder(id: string): Promise<boolean> {
     await db.deleteOrder(id);
+    return true;
   }
 }

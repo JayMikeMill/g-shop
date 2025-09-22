@@ -1,80 +1,31 @@
-import { Request, Response, NextFunction } from "express";
+// controllers/order-controller.ts
+import { parseQueryOptions } from "@shared/types/query-options";
 import { OrderService } from "@services/order-service";
+import {
+  createCrudHandler,
+  createCrudDeleteHandler,
+} from "@utils/crud-handler";
 
-// Create order
-export const createOrder = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const order = await OrderService.createOrder(req.body);
-    res.json(order);
-  } catch (err: any) {
-    next(err);
-  }
-};
+// -------------------- ORDERS --------------------
+export const createOrder = createCrudHandler((req) =>
+  OrderService.createOrder(req.body)
+);
 
-// Get single order
-export const getOrder = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const order = await OrderService.getOrder(req.params.id);
-    if (!order) return res.status(404).json({ error: "Order not found" });
-    res.json(order);
-  } catch (err: any) {
-    next(err);
-  }
-};
+export const getOrder = createCrudHandler(
+  (req) => OrderService.getOrder(req.params.id),
+  "Order not found"
+);
 
-// Get all orders (pagination)
-export const getOrders = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const options: any = {};
-    if (req.query.limit) options.limit = parseInt(req.query.limit as string);
-    if (req.query.page) options.page = parseInt(req.query.page as string);
-    if (req.query.sortBy) options.sortBy = req.query.sortBy as string;
-    if (req.query.sortOrder)
-      options.sortOrder = req.query.sortOrder as "asc" | "desc";
-    const orders = await OrderService.getOrders(options);
-    res.json(orders);
-  } catch (err: any) {
-    next(err);
-  }
-};
+export const getOrders = createCrudHandler((req) =>
+  OrderService.getOrders(parseQueryOptions(req.query))
+);
 
-// Update order
-export const updateOrder = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const updated = await OrderService.updateOrder(req.params.id, req.body);
-    if (!updated) return res.status(404).json({ error: "Order not found" });
-    res.json(updated);
-  } catch (err: any) {
-    next(err);
-  }
-};
+export const updateOrder = createCrudHandler(
+  (req) => OrderService.updateOrder(req.params.id, req.body),
+  "Order not found"
+);
 
-// Delete order
-export const deleteOrder = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    await OrderService.deleteOrder(req.params.id);
-    res.json({ message: "Order deleted" });
-  } catch (err: any) {
-    next(err);
-  }
-};
+export const deleteOrder = createCrudDeleteHandler(
+  (req) => OrderService.deleteOrder(req.params.id),
+  "Order deleted"
+);
