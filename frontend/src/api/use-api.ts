@@ -3,7 +3,7 @@ import type { User } from "@shared/types/user";
 import * as api from "@api/backend-api";
 import type { Product } from "@shared/types/product";
 import type { Category } from "@shared/types/catalog";
-import type { PaymentRequest } from "@shared/types/payment-info"; // Add this import, adjust the path if needed
+import type { PaymentRequest } from "@shared/types/payment-request"; // Add this import, adjust the path if needed
 import type { Order } from "@shared/types/order";
 import type { QueryOptions } from "@shared/types/query-options";
 

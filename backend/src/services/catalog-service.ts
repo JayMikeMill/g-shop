@@ -1,4 +1,4 @@
-import { Category, Collection, Tag } from "@shared/types/catalog";
+import { Category, Collection } from "@shared/types/catalog";
 import { db } from "@config/adapters";
 import { QueryOptions } from "@shared/types/query-options";
 
@@ -49,29 +49,6 @@ export class CatalogService {
     const existing = await db.getCollection(id);
     if (!existing) return false;
     await db.deleteCollection(id);
-    return true;
-  }
-
-  // Tags methods would go here
-  static async createTag(tag: Tag): Promise<Tag> {
-    return db.createTag(tag);
-  }
-  static async getTag(id: string): Promise<Tag | null> {
-    return db.getTag(id);
-  }
-  static async getTags(query: QueryOptions): Promise<Tag[]> {
-    return db.getTags(query);
-  }
-  static async updateTag(
-    id: string,
-    update: Partial<Tag>
-  ): Promise<Tag | null> {
-    return db.updateTag(id, update);
-  }
-  static async deleteTag(id: string): Promise<boolean> {
-    const existing = await db.getTag(id);
-    if (!existing) return false;
-    await db.deleteTag(id);
     return true;
   }
 }

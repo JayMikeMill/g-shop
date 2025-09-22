@@ -19,7 +19,7 @@ export interface Order {
   user?: User;
 }
 
-interface OrderItem {
+export interface OrderItem {
   id: string;
   orderId: string;
   productId: string;
@@ -41,7 +41,7 @@ export const OrderStatuses = {
 
 export type OrderStatus = (typeof OrderStatuses)[keyof typeof OrderStatuses];
 
-interface OrderStatusHistory {
+export interface OrderStatusHistory {
   id: string;
   orderId: string;
   status: OrderStatus;

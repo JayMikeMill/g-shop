@@ -4,7 +4,7 @@ import Lightbox from "@components/viewers/light-box";
 import ImageListEditor from "@components/editors/image-list-editor";
 import ProductOptionsEditor from "@components/editors/product-options-editor";
 
-import type { Product, ProductOption } from "@shared/types/product";
+import type { Product, ProductOption, ProductTag } from "@shared/types/product";
 import { useApi } from "@api/use-api";
 
 interface ProductDialogProps {
@@ -29,7 +29,7 @@ export default function ProductDialog({
   const [isSavingProduct, setIsSavingProduct] = useState(false);
   const [discountValue, setDiscountValue] = useState(0);
   const [discountType, setDiscountType] = useState<"%" | "$">("%");
-  const [tags, setTags] = useState("");
+  const [tagString, setTagString] = useState("");
   // For lightbox, store the preview URL of the image to show
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
@@ -56,7 +56,7 @@ export default function ProductDialog({
       product?.images?.map((imgSet) => imgSet.preview || imgSet.main) || []
     );
 
-    setTags(product?.tags?.join(", ") || "");
+    setTagString(product?.tags?.map((tag) => tag.name).join(", ") || "");
 
     if (product && product.discount) {
       const discountStr = product.discount;
@@ -86,7 +86,13 @@ export default function ProductDialog({
 
     if (!confirmed) return;
 
+    if (!product.id) {
+      alert("Product ID is missing.");
+      return;
+    }
+
     await deleteProduct(product.id);
+
     onClose();
   };
 
@@ -94,10 +100,14 @@ export default function ProductDialog({
     e.preventDefault();
 
     try {
-      const tagsArray = tags
+      console.log("tagString", tagString);
+      const tagsArray = tagString
         .split(",")
-        .map((tag) => tag.trim())
-        .filter((tag) => tag !== "");
+        .map((tag) => ({ name: tag.trim() }))
+        .filter((tag) => tag.name !== "") as ProductTag[];
+
+      console.log("tagsArray", tagsArray);
+
       const discountString =
         discountValue > 0
           ? discountType === "%"
@@ -121,6 +131,7 @@ export default function ProductDialog({
 
       // setIsUploadingImages(true);
       setIsSavingProduct(true);
+
       // For each image in imagePreviews, if it has a processedImages entry, upload it; otherwise, use the existing product image
       let uploadedImages = [];
       for (let i = 0; i < imagePreviews.length; i++) {
@@ -180,7 +191,7 @@ export default function ProductDialog({
           images: uploadedImages.length > 0 ? uploadedImages : product.images,
           options: productOptions,
           stock: product.stock,
-        } as Product);
+        } as unknown as Product);
       } else {
         await createProduct({
           name,
@@ -313,8 +324,8 @@ export default function ProductDialog({
                   Tags (comma-separated)
                   <input
                     type="text"
-                    value={tags}
-                    onChange={(e) => setTags(e.target.value)}
+                    value={tagString}
+                    onChange={(e) => setTagString(e.target.value)}
                     className="input-box px-md py-1 h-8"
                   />
                 </label>

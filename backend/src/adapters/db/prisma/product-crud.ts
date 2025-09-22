@@ -14,86 +14,6 @@ import {
 
 const prisma = new PrismaClient();
 
-// Common include object for all product queries
-const PRODUCT_INCLUDE = {
-  images: true,
-  options: { include: { values: true } },
-  tags: true,
-  dimensions: true,
-  categories: true,
-  collections: true,
-  variants: true,
-  reviews: true,
-};
-
-function toPrismaProduct(product: Product) {
-  const { reviews, ...rest } = product;
-  return {
-    ...rest,
-    images: product.images?.length
-      ? { create: product.images.map(({ id, ...img }) => img) }
-      : undefined,
-    options: product.options?.length
-      ? {
-          create: product.options.map((opt) => ({
-            name: opt.name,
-            values: opt.values?.length
-              ? { create: opt.values.map(({ id, ...val }) => val) }
-              : undefined,
-          })),
-        }
-      : undefined,
-    variants: product.variants?.length
-      ? {
-          create: product.variants.map(({ id, ...v }) => v),
-        }
-      : undefined,
-    tags: product.tags?.length
-      ? { create: product.tags.map(({ id, ...tag }) => tag) }
-      : undefined,
-    dimensions: product.dimensions
-      ? { create: (({ id, ...d }) => d)(product.dimensions) }
-      : undefined,
-    categories: product.categories?.length
-      ? { connect: product.categories.map((c) => ({ id: c.id })) }
-      : undefined,
-    collections: product.collections?.length
-      ? { connect: product.collections.map((c) => ({ id: c.id })) }
-      : undefined,
-  };
-}
-
-// Map Prisma product to Product type, converting nulls to undefined and fixing nested types
-function toProduct(prismaProduct: any): Product {
-  return {
-    ...prismaProduct,
-    dimensions: prismaProduct.dimensions
-      ? {
-          ...prismaProduct.dimensions,
-          weightGrams: prismaProduct.dimensions.weightGrams ?? undefined,
-          lengthCm: prismaProduct.dimensions.lengthCm ?? undefined,
-          widthCm: prismaProduct.dimensions.widthCm ?? undefined,
-          heightCm: prismaProduct.dimensions.heightCm ?? undefined,
-        }
-      : undefined,
-    categories:
-      prismaProduct.categories?.map((c: any) => ({
-        ...c,
-        description: c.description ?? undefined,
-      })) ?? [],
-    collections:
-      prismaProduct.collections?.map((c: any) => ({
-        ...c,
-        description: c.description ?? undefined,
-      })) ?? [],
-    tags:
-      prismaProduct.tags?.map((t: any) => ({
-        ...t,
-        color: t.color ?? undefined,
-      })) ?? [],
-  };
-}
-
 export class ProductCRUD {
   private prisma: PrismaClient;
 
@@ -130,7 +50,7 @@ export class ProductCRUD {
   async update(id: string, update: Partial<Product>): Promise<Product> {
     const updated = await this.prisma.product.update({
       where: { id },
-      data: toPrismaProduct(update as Product),
+      data: toPrismaProduct(update as Product, true),
       include: PRODUCT_INCLUDE,
     });
     return toProduct(updated);
@@ -152,9 +72,7 @@ export class ProductCRUD {
     return this.prisma.productOptionPreset.create({
       data: {
         ...rest,
-        values: values?.length
-          ? { create: values.map(({ id, ...v }) => v) }
-          : undefined,
+        values: values?.length ? { create: values.map((v) => v) } : undefined,
       },
       include: { values: true },
     });
@@ -175,9 +93,7 @@ export class ProductCRUD {
       where: { id },
       data: {
         ...rest,
-        values: values?.length
-          ? { create: values.map(({ id, ...v }) => v) }
-          : undefined,
+        values: values?.length ? { create: values.map((v) => v) } : undefined,
       },
       include: { values: true },
     });
@@ -261,4 +177,180 @@ export class ProductCRUD {
       priceOverride: v.priceOverride ?? undefined,
     }));
   }
+}
+// Common include object for all product queries
+const PRODUCT_INCLUDE = {
+  images: true,
+  options: { include: { values: true } },
+  tags: true,
+  dimensions: true,
+  categories: true,
+  collections: true,
+  variants: true,
+  reviews: true,
+};
+
+function toPrismaProduct(product: Product, isUpdate = false) {
+  const prismaData: any = {
+    name: product.name,
+    price: product.price,
+    description: product.description,
+    discount: product.discount || null,
+    stock: product.stock,
+    reviewCount: product.reviewCount || 0,
+    averageRating: product.averageRating || 0,
+  };
+
+  // --------------------
+  // Images
+  // --------------------
+  if (product.images?.length) {
+    prismaData.images = isUpdate
+      ? {
+          deleteMany: {},
+          create: product.images.map(({ main, preview, thumbnail }) => ({
+            main,
+            preview,
+            thumbnail,
+          })),
+        }
+      : {
+          create: product.images.map(({ main, preview, thumbnail }) => ({
+            main,
+            preview,
+            thumbnail,
+          })),
+        };
+  }
+
+  // --------------------
+  // Tags
+  // --------------------
+  if (product.tags?.length) {
+    prismaData.tags = isUpdate
+      ? {
+          deleteMany: {},
+          create: product.tags.map(({ name, color }) => ({ name, color })),
+        }
+      : {
+          create: product.tags.map(({ name, color }) => ({ name, color })),
+        };
+  }
+
+  // --------------------
+  // Options
+  // --------------------
+  if (product.options?.length) {
+    prismaData.options = isUpdate
+      ? {
+          deleteMany: {},
+          create: product.options.map((o) => ({
+            name: o.name,
+            values: o.values?.length
+              ? { create: o.values.map((v) => ({ value: v.value })) }
+              : undefined,
+          })),
+        }
+      : {
+          create: product.options.map((o) => ({
+            name: o.name,
+            values: o.values?.length
+              ? { create: o.values.map((v) => ({ value: v.value })) }
+              : undefined,
+          })),
+        };
+  }
+
+  // --------------------
+  // Variants
+  // --------------------
+  if (product.variants?.length) {
+    prismaData.variants = isUpdate
+      ? {
+          deleteMany: {},
+          create: product.variants.map((v) => ({
+            sku: v.sku,
+            priceOverride: v.priceOverride,
+            stock: v.stock,
+          })),
+        }
+      : {
+          create: product.variants.map((v) => ({
+            sku: v.sku,
+            priceOverride: v.priceOverride,
+            stock: v.stock,
+          })),
+        };
+  }
+
+  // --------------------
+  // Dimensions
+  // --------------------
+  if (product.dimensions) {
+    prismaData.dimensions = isUpdate
+      ? {
+          upsert: {
+            create: { ...product.dimensions },
+            update: { ...product.dimensions },
+          },
+        }
+      : { create: { ...product.dimensions } };
+  }
+
+  // --------------------
+  // Categories & Collections
+  // --------------------
+  if (product.categories?.length) {
+    prismaData.categories = {
+      set: product.categories.map((c) => ({ id: c.id })),
+    };
+  }
+
+  if (product.collections?.length) {
+    prismaData.collections = {
+      set: product.collections.map((c) => ({ id: c.id })),
+    };
+  }
+
+  return prismaData;
+}
+
+// Maps Prisma product back to frontend Product type
+function toProduct(p: any): Product {
+  return {
+    ...p,
+    images:
+      p.images?.map((img: any) => ({
+        main: img.main,
+        preview: img.preview,
+        thumbnail: img.thumbnail,
+      })) ?? [],
+    tags:
+      p.tags?.map((t: any) => ({
+        name: t.name,
+        color: t.color ?? undefined,
+      })) ?? [],
+    options:
+      p.options?.map((o: any) => ({
+        name: o.name,
+        values: o.values?.map((v: any) => ({ value: v.value })) ?? [],
+      })) ?? [],
+    variants:
+      p.variants?.map((v: any) => ({
+        sku: v.sku,
+        priceOverride: v.priceOverride,
+        stock: v.stock,
+      })) ?? [],
+    dimensions: p.dimensions
+      ? {
+          weight_grams: p.dimensions.weight_grams ?? undefined,
+          length_cm: p.dimensions.length_cm ?? undefined,
+          width_cm: p.dimensions.width_cm ?? undefined,
+          height_cm: p.dimensions.height_cm ?? undefined,
+        }
+      : undefined,
+    categories: p.categories ?? [],
+    collections: p.collections ?? [],
+    reviews: p.reviews ?? [],
+  };
 }

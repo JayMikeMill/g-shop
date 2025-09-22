@@ -5,12 +5,10 @@ import {
   queryOptionsToPrisma,
 } from "@shared/types/query-options";
 
-const prisma = new PrismaClient();
-
 export class OrderCRUD {
   private prisma: PrismaClient;
 
-  constructor(prismaClient: PrismaClient = prisma) {
+  constructor(prismaClient: PrismaClient) {
     this.prisma = prismaClient;
   }
 

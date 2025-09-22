@@ -2,12 +2,12 @@
 import { useEffect, useState } from "react";
 
 // Import shared types for shipping address and cart items
-import { type ShippingInfo } from "@shared/types/shipping-info";
+import { type ShippingInfo } from "@shared/types/shipping";
 import type { OrderItem } from "@shared/types/order";
 import { useApi } from "@api/use-api";
 
 // Import PaymentStatus and PaymentMethod enums
-import { PaymentStatuses, PaymentMethods } from "@shared/types/payment-info";
+import { TransactionStatuses, PaymentMethods } from "@shared/types/transaction";
 import { useAuth } from "@contexts/auth/auth-context";
 
 // Square environment variables (from Vite)
@@ -100,7 +100,14 @@ export default function PaymentFormSquare({
       const response = await processPayment({
         nonce,
         amount: total,
-        items: orderItems,
+        items: orderItems.map((item) => ({
+          name:
+            typeof item.product === "string"
+              ? item.product
+              : (item.product?.name ?? "Unknown Product"),
+          price: item.price,
+          quantity: item.quantity,
+        })),
         address: shippingInfo.address,
       });
 
@@ -127,15 +134,16 @@ export default function PaymentFormSquare({
       userId: user?.id || "guest",
       items: orderItems,
       total,
-      status: PaymentStatuses.PAID,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
+      status: TransactionStatuses.PAID,
+      createdAt: new Date(),
+      updatedAt: new Date(),
       paymentInfo: {
+        id: payment.id,
+        orderId: "pending id",
         method: PaymentMethods.SQUARE,
-        transactionId: payment.id,
         amount: payment.amountMoney.amount,
         currency: payment.amountMoney.currency,
-        status: PaymentStatuses.PAID,
+        status: TransactionStatuses.PAID,
       },
       shippingInfo,
     });

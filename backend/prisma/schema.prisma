@@ -2,12 +2,38 @@
 // Prisma schema for a full e-commerce backend
 // =====================================
 
-// Generator: Prisma Client JS
+// Prisma Commands Cheat Sheet
+// --------------------------
+
+// Init Prisma
+// npx prisma init       -> create schema.prisma and .env
+
+// Generate Prisma Client
+// npx prisma generate   -> regenerate client after schema changes
+
+// Migrations
+// npx prisma migrate dev --name <name>   -> create & apply dev migration
+// npx prisma migrate deploy              -> apply migrations in prod
+
+// Database
+// npx prisma db push      -> push schema changes to DB without migration
+// npx prisma db pull      -> pull schema from existing DB
+
+// Studio
+// npx prisma studio       -> open GUI to explore DB
+
+// Format
+// npx prisma format       -> format schema.prisma
+
+
+// =====================================
+// Prisma schema for a full e-commerce backend
+// =====================================
+
 generator client {
   provider = "prisma-client-js"
 }
 
-// Datasource: SQLite for simplicity
 datasource db {
   provider = "sqlite"
   url      = "file:./dev.db"
@@ -92,7 +118,7 @@ model User {
 
 model UserAddress {
   id        String @id @default(uuid())
-  user      User   @relation(fields: [userId], references: [id])
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   label     String
   street    String
@@ -105,7 +131,7 @@ model UserAddress {
 
 model UserPaymentMethod {
   id            String @id @default(uuid())
-  user          User   @relation(fields: [userId], references: [id])
+  user          User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId        String
   type          String
   last4         String
@@ -141,8 +167,8 @@ model CollectionImageSet {
   banner      String
   preview     String
   thumbnail   String
-  collection  Collection @relation(fields: [collectionId], references: [id])
-  collectionId String     @unique   // one-to-one requires unique
+  collection  Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  collectionId String     @unique
 }
 
 //////////////////////
@@ -160,27 +186,36 @@ model Product {
   averageRating Float?            @map("average_rating")
 
   dimensions    ProductDimensions?
+  tags          ProductTag[]
   images        ProductImageSet[]
   options       ProductOption[]
   reviews       ProductReview[]
   variants      ProductVariant[]
-  orderItems    OrderItem[]        // opposite relation for OrderItem
+  orderItems    OrderItem[]
   categories    Category[]         @relation("ProductCategories")
   collections   Collection[]       @relation("ProductCollections")
 }
 
 model ProductImageSet {
   id        String   @id @default(uuid())
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
   main      String
   preview   String
   thumbnail String
 }
 
+model ProductTag {
+  id        String   @id @default(uuid())
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+  name      String
+  color     String?
+}
+
 model ProductOption {
   id       String               @id @default(uuid())
-  product  Product              @relation(fields: [productId], references: [id])
+  product  Product              @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
   name     String
   values   ProductOptionValue[]
@@ -188,14 +223,14 @@ model ProductOption {
 
 model ProductOptionValue {
   id            String         @id @default(uuid())
-  productOption ProductOption  @relation(fields: [productOptionId], references: [id])
+  productOption ProductOption  @relation(fields: [productOptionId], references: [id], onDelete: Cascade)
   productOptionId String
   value         String
 }
 
 model ProductVariant {
   id           String   @id @default(uuid())
-  product      Product  @relation(fields: [productId], references: [id])
+  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId    String
   sku          String?  @unique
   priceOverride Float?
@@ -204,7 +239,7 @@ model ProductVariant {
 
 model ProductDimensions {
   id          String  @id @default(uuid())
-  product     Product @relation(fields: [productId], references: [id])
+  product     Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId   String  @unique
   weightGrams Float?  @map("weight_grams")
   lengthCm    Float?  @map("length_cm")
@@ -214,19 +249,13 @@ model ProductDimensions {
 
 model ProductReview {
   id        String   @id @default(uuid())
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   rating    Int
   comment   String
   createdAt DateTime @default(now())
-}
-
-model ProductTag {
-  id    String @id @default(uuid())
-  name  String
-  color String?
 }
 
 //////////////////////
@@ -241,7 +270,7 @@ model ProductOptionPreset {
 
 model ProductOptionPresetValue {
   id                   String               @id @default(uuid())
-  productOptionPreset   ProductOptionPreset @relation(fields: [presetId], references: [id])
+  productOptionPreset   ProductOptionPreset @relation(fields: [presetId], references: [id], onDelete: Cascade)
   presetId             String
   value                String
 }
@@ -258,7 +287,7 @@ model ProductTagPreset {
 
 model Order {
   id            String             @id @default(uuid())
-  user          User?              @relation(fields: [userId], references: [id])
+  user          User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
   userId        String?
   status        OrderStatus
   total         Int
@@ -274,9 +303,9 @@ model Order {
 
 model OrderItem {
   id        String   @id @default(uuid())
-  order     Order    @relation(fields: [orderId], references: [id])
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId   String
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
   variantId String?
   quantity  Int
@@ -285,7 +314,7 @@ model OrderItem {
 
 model OrderStatusHistory {
   id        String    @id @default(uuid())
-  order     Order     @relation(fields: [orderId], references: [id])
+  order     Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId   String
   status    OrderStatus
   timestamp DateTime  @default(now())
@@ -293,7 +322,7 @@ model OrderStatusHistory {
 
 model Transaction {
   id            String   @id @default(uuid())
-  order         Order    @relation(fields: [orderId], references: [id])
+  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId       String   @unique
   amount        Int
   currency      String
@@ -304,7 +333,7 @@ model Transaction {
 
 model Invoice {
   id           String   @id @default(uuid())
-  order        Order    @relation(fields: [orderId], references: [id])
+  order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId      String
   invoiceNumber String
   pdfUrl       String?

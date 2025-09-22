@@ -53,27 +53,3 @@ export const deleteCollection = createCrudDeleteHandler(
   (req) => CatalogService.deleteCollection(req.params.id),
   "Collection deleted"
 );
-
-// -------------------- TAG --------------------
-export const createTag = createCrudHandler((req) =>
-  CatalogService.createTag(req.body)
-);
-
-export const getTag = createCrudHandler(
-  (req) => CatalogService.getTag(req.params.id),
-  "Tag not found"
-);
-
-export const getTags = createCrudHandler((req) =>
-  CatalogService.getTags(parseQueryOptions(req.query))
-);
-
-export const updateTag = createCrudHandler(
-  (req) => CatalogService.updateTag(req.params.id, req.body),
-  "Tag not found"
-);
-
-export const deleteTag = createCrudDeleteHandler(
-  (req) => CatalogService.deleteTag(req.params.id),
-  "Tag deleted"
-);

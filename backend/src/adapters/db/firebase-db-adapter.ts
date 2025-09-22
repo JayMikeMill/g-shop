@@ -1,7 +1,11 @@
 // backend/src/adapters/db/firebase-db-adapter.ts
 import { User } from "@shared/types/user";
-import { Product, ProductOptionPreset } from "@shared/types/product";
-import { Category, Collection, Tag } from "@shared/types/catalog";
+import {
+  Product,
+  ProductOptionPreset,
+  ProductTagPreset,
+} from "@shared/types/product";
+import { Category, Collection } from "@shared/types/catalog";
 import { Order } from "@shared/types/order";
 import { DBAdapter } from "@adapters/db/db-adapter";
 import { db } from "@config/firebase/firebase-admin";
@@ -209,32 +213,42 @@ export class FirebaseDBAdapter implements DBAdapter {
   }
 
   // ---------- TAGS ----------
-  async createTag(tag: Tag): Promise<Tag> {
+  async createProductTagPreset(
+    tag: ProductTagPreset
+  ): Promise<ProductTagPreset> {
+    if (!tag.id) {
+      throw new Error("ProductTagPreset must have a defined 'id' property.");
+    }
     await db.collection("tags").doc(tag.id).set(tag);
     return tag;
   }
 
-  async getTag(id: string): Promise<Tag | null> {
+  async getProductTagPreset(id: string): Promise<ProductTagPreset | null> {
     const docSnap = await db.collection("tags").doc(id).get();
     return docSnap.exists
-      ? ({ ...docSnap.data(), id: docSnap.id } as Tag)
+      ? ({ ...docSnap.data(), id: docSnap.id } as ProductTagPreset)
       : null;
   }
 
-  async getTags(): Promise<Tag[]> {
+  async getProductTagPresets(): Promise<ProductTagPreset[]> {
     const snapshot = await db.collection("tags").get();
-    return snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }) as Tag);
+    return snapshot.docs.map(
+      (doc) => ({ ...doc.data(), id: doc.id }) as ProductTagPreset
+    );
   }
 
-  async updateTag(id: string, update: Partial<Tag>): Promise<Tag | null> {
-    const tag = await this.getTag(id);
+  async updateProductTagPreset(
+    id: string,
+    update: Partial<ProductTagPreset>
+  ): Promise<ProductTagPreset | null> {
+    const tag = await this.getProductTagPreset(id);
     if (!tag) return null;
     const updated = { ...tag, ...update };
     await db.collection("tags").doc(id).set(updated);
     return updated;
   }
 
-  async deleteTag(id: string): Promise<void> {
+  async deleteProductTagPreset(id: string): Promise<void> {
     await db.collection("tags").doc(id).delete();
   }
 

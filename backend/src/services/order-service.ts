@@ -5,7 +5,7 @@ import { QueryOptions } from "@shared/types/query-options";
 export class OrderService {
   static async createOrder(order: Order): Promise<Order> {
     order.status = "pending";
-    order.createdAt = Date.now();
+    order.createdAt = new Date();
     return db.createOrder(order);
   }
 

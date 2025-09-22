@@ -7,9 +7,12 @@ export const register = async (
   next: NextFunction
 ) => {
   try {
-    const { name, email, password } = req.body;
+    const { password } = req.body;
     const user = await AuthService.register(
-      { id: crypto.randomUUID(), name, email },
+      {
+        id: crypto.randomUUID(),
+        ...req.body,
+      },
       password
     );
     res.json(user);

@@ -14,7 +14,7 @@ export interface Transaction {
   order?: Order;
 }
 
-interface Invoice {
+export interface Invoice {
   id: string;
   orderId: string;
   invoiceNumber: string;

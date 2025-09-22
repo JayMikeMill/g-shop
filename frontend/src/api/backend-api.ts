@@ -2,7 +2,7 @@ import axios from "axios";
 import type { User } from "@shared/types/user";
 import type { Product, ProductOptionPreset } from "@shared/types/product";
 import type { Category } from "@shared/types/catalog";
-import type { PaymentRequest } from "@shared/types/payment-info";
+import type { PaymentRequest } from "@shared/types/payment-request";
 import type { Order } from "@shared/types/order";
 import type { QueryOptions } from "@shared/types/query-options";
 

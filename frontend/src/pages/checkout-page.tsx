@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useCart } from "@contexts/cart-context";
-import { type ShippingInfo } from "@shared/types/shipping-info";
+import { type ShippingInfo } from "@shared/types/shipping";
 import ShippingForm from "@components/forms/shipping-form";
 import PaymentFormSquare from "@components/forms/payment-forms/payment-form-square";
 import OrderPreview from "@components/viewers/order-preview";

@@ -9,8 +9,8 @@ export interface Product {
   discount?: string;
   description: string;
   stock: number;
-  review_count?: number;
-  average_rating?: number;
+  reviewCount?: number;
+  averageRating?: number;
   images?: ProductImageSet[];
   tags?: ProductTag[];
   options?: ProductOption[];
@@ -23,7 +23,6 @@ export interface Product {
 
 // Product images
 export interface ProductImageSet {
-  id?: string;
   main: string;
   preview: string;
   thumbnail: string;
@@ -31,29 +30,30 @@ export interface ProductImageSet {
 
 // Product option
 export interface ProductOption {
-  id?: string;
   name: string;
   values: ProductOptionValue[];
 }
 
 // Product option value
 export interface ProductOptionValue {
-  id?: string;
   value: string;
 }
 
 // Product option preset
-export interface ProductOptionPreset extends ProductOption {}
+export interface ProductOptionPreset extends ProductOption {
+  id?: string;
+}
 
 // Tag entity
 export interface ProductTag {
-  id?: string;
   name: string;
   color?: string;
 }
 
 // Tag preset
-export interface ProductTagPreset extends ProductTag {}
+export interface ProductTagPreset extends ProductTag {
+  id?: string;
+}
 
 // Selected product option (for cart/store use)
 export interface SelectedProductOption {
@@ -63,8 +63,6 @@ export interface SelectedProductOption {
 
 // Variant entity
 export interface ProductVariant {
-  id?: string;
-  productId: string;
   sku?: string;
   priceOverride?: number;
   stock: number;
@@ -72,7 +70,6 @@ export interface ProductVariant {
 
 // Selected product option (for cart/store use)
 export interface ProductDimensions {
-  id?: string;
   weight_grams?: number;
   length_cm?: number;
   width_cm?: number;

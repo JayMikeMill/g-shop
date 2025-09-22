@@ -10,11 +10,6 @@ import {
   getCollections,
   updateCollection,
   deleteCollection,
-  createTag,
-  getTag,
-  getTags,
-  updateTag,
-  deleteTag,
 } from "@controllers/catalog-controller";
 import { requireRole } from "@middleware/authorization";
 
@@ -37,14 +32,5 @@ router.delete("/collections/:id", requireRole(["admin"]), deleteCollection);
 // Public: Anyone can view collections
 router.get("/collections/:id", getCollection);
 router.get("/collections", getCollections);
-
-// Only admin can create, update, or delete tags
-router.post("/tags", requireRole(["admin"]), createTag);
-router.put("/tags/:id", requireRole(["admin"]), updateTag);
-router.delete("/tags/:id", requireRole(["admin"]), deleteTag);
-
-// Public: Anyone can view tags
-router.get("/tags/:id", getTag);
-router.get("/tags", getTags);
 
 export default router;
