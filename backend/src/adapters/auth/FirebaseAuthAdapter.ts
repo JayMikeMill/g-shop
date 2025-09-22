@@ -1,6 +1,6 @@
-import { AuthAdapter } from "./auth-adapter";
+import { AuthAdapter } from "./AuthAdapter";
 import { User } from "@shared/types/user";
-import { auth } from "@config/firebase/firebase-admin";
+import { auth } from "@config/firebase/firebaseAdmin";
 
 export class FirebaseAuthAdapter implements AuthAdapter {
   async register(user: User, password: string): Promise<User> {

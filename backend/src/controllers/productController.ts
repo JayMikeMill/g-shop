@@ -1,10 +1,7 @@
 // controllers/product-controller.ts
 import { parseQueryOptions } from "@shared/types/query-options";
-import { ProductService } from "@services/product-service";
-import {
-  createCrudHandler,
-  createCrudDeleteHandler,
-} from "@utils/crud-handler";
+import { ProductService } from "@services/ProductService";
+import { createCrudHandler, createCrudDeleteHandler } from "@utils/crudHandler";
 
 // -------------------- PRODUCTS --------------------
 export const createProduct = createCrudHandler((req) =>

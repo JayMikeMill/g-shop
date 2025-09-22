@@ -1,4 +1,4 @@
-import { PaymentAdapter } from "./payment-adapter";
+import { PaymentAdapter } from "./PaymentAdapter";
 import { PaymentRequest } from "@shared/types/payment-request";
 
 import { SquareClient, SquareEnvironment, Square } from "square";
@@ -7,7 +7,7 @@ import crypto from "crypto"; // For idempotency keys
 import SuperJSON from "superjson";
 import { Address } from "@shared/types/shipping";
 
-import { env } from "@config/env-vars";
+import { env } from "@config/envVars";
 
 // Initialize Square client
 const client = new SquareClient({

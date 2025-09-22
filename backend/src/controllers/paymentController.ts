@@ -1,8 +1,12 @@
 import { Request, Response, NextFunction } from "express";
-import { PaymentService } from "@services/payment-service";
+import { PaymentService } from "@services/PaymentService";
 
 // POST /payments
-export async function processPayment(req: Request, res: Response, next: NextFunction) {
+export async function processPayment(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const paymentData = req.body;
     const result = await PaymentService.processPayment(paymentData);
@@ -13,7 +17,11 @@ export async function processPayment(req: Request, res: Response, next: NextFunc
 }
 
 // POST /payments/refund
-export async function refundPayment(req: Request, res: Response, next: NextFunction) {
+export async function refundPayment(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { paymentId, amount } = req.body;
     const result = await PaymentService.refundPayment(paymentId, amount);

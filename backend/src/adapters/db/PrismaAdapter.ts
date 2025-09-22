@@ -1,9 +1,9 @@
 import { PrismaClient } from "@prisma/client";
-import { ProductCRUD } from "./prisma/product-crud";
-import { UserCRUD } from "./prisma/user-crud";
-import { OrderCRUD } from "./prisma/order-crud";
-import { CatalogCRUD } from "./prisma/catalog-crud";
-import { DBAdapter } from "./db-adapter";
+import { ProductCRUD } from "./prisma/ProductCRUD";
+import { UserCRUD } from "./prisma/UserCRUD";
+import { OrderCRUD } from "./prisma/OrderCRUD";
+import { CatalogCRUD } from "./prisma/CatalogCRUD";
+import { DBAdapter } from "./DBAdapter";
 import {
   Product,
   ProductOptionPreset,

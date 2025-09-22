@@ -5,7 +5,7 @@ import {
   getOrders,
   updateOrder,
   deleteOrder,
-} from "@controllers/order-controller";
+} from "@controllers/orderController";
 import { requireRole } from "@middleware/authorization";
 
 const router = Router();

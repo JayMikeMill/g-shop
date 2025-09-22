@@ -3,9 +3,9 @@ import { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import path from "path";
 
-import { env } from "@config/env-vars";
+import { env } from "@config/envVars";
 
-import admin, { auth } from "@config/firebase/firebase-admin";
+import admin, { auth } from "@config/firebase/firebaseAdmin";
 
 // Load environment variables
 // Load backend .env even if we run from project root

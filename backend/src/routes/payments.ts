@@ -1,5 +1,5 @@
 import express from "express";
-import { processPayment, refundPayment } from "@controllers/payment-controller";
+import { processPayment, refundPayment } from "@controllers/paymentController";
 import { requireRole } from "@middleware/authorization";
 
 const router = express.Router();

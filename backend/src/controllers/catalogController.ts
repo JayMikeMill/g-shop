@@ -1,10 +1,7 @@
 // controllers/catalog-controller.ts
 import { parseQueryOptions } from "@shared/types/query-options";
-import { CatalogService } from "@services/catalog-service";
-import {
-  createCrudHandler,
-  createCrudDeleteHandler,
-} from "@utils/crud-handler";
+import { CatalogService } from "@services/CatalogService";
+import { createCrudHandler, createCrudDeleteHandler } from "@utils/crudHandler";
 
 // -------------------- CATEGORY --------------------
 export const createCategory = createCrudHandler((req) =>

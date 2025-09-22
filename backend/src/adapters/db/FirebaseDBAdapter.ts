@@ -7,8 +7,8 @@ import {
 } from "@shared/types/product";
 import { Category, Collection } from "@shared/types/catalog";
 import { Order } from "@shared/types/order";
-import { DBAdapter } from "@adapters/db/db-adapter";
-import { db } from "@config/firebase/firebase-admin";
+import { DBAdapter } from "@adapters/db/DBAdapter";
+import { db } from "@config/firebase/firebaseAdmin";
 import { QueryOptions } from "@shared/types/query-options";
 
 export class FirebaseDBAdapter implements DBAdapter {

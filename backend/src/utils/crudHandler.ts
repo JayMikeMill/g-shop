@@ -1,4 +1,4 @@
-// utils/crud-handler.ts
+// utils/crudHandler.ts
 import { Request, Response, NextFunction } from "express";
 
 /**

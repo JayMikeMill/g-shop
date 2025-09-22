@@ -8,7 +8,7 @@ import {
   getProductOptionsPresets,
   createProductOptionsPreset,
   deleteProductOptionsPreset,
-} from "@controllers/product-controller";
+} from "@controllers/productController";
 import { requireRole } from "@middleware/authorization";
 
 const router = Router();

@@ -1,5 +1,5 @@
 import { PaymentRequest } from "@shared/types/payment-request";
-import { SquarePaymentAdapter } from "@adapters/payment/square-payment-adapter";
+import { SquarePaymentAdapter } from "@adapters/payment/SquarePaymentAdapter";
 
 const adapter = new SquarePaymentAdapter();
 

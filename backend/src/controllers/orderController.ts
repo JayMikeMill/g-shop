@@ -1,10 +1,7 @@
 // controllers/order-controller.ts
 import { parseQueryOptions } from "@shared/types/query-options";
-import { OrderService } from "@services/order-service";
-import {
-  createCrudHandler,
-  createCrudDeleteHandler,
-} from "@utils/crud-handler";
+import { OrderService } from "@services/OrderService";
+import { createCrudHandler, createCrudDeleteHandler } from "@utils/crudHandler";
 
 // -------------------- ORDERS --------------------
 export const createOrder = createCrudHandler((req) =>

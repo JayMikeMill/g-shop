@@ -10,7 +10,7 @@ import {
   getCollections,
   updateCollection,
   deleteCollection,
-} from "@controllers/catalog-controller";
+} from "@controllers/catalogController";
 import { requireRole } from "@middleware/authorization";
 
 const router = Router();

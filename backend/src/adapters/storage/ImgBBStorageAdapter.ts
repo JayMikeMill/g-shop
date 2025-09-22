@@ -1,4 +1,4 @@
-import { StorageAdapter } from "./storage-adapter";
+import { StorageAdapter } from "./StorageAdapter";
 import axios from "axios";
 
 const IMGBB_API_KEY = process.env.IMGBB_API_KEY;
@@ -16,7 +16,11 @@ export class ImgBBStorageAdapter implements StorageAdapter {
     return response.data.data.url;
   }
 
-  async uploadFile(file: Buffer | string, filename: string, contentType?: string): Promise<string> {
+  async uploadFile(
+    file: Buffer | string,
+    filename: string,
+    contentType?: string
+  ): Promise<string> {
     // ImgBB only supports images, so treat as image upload
     return this.uploadImage(file, filename);
   }

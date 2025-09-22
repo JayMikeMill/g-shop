@@ -5,7 +5,7 @@ import {
   getUsers,
   updateUser,
   deleteUser,
-} from "@controllers/user-controller";
+} from "@controllers/userController";
 import { requireRole } from "@middleware/authorization";
 
 const router = Router();

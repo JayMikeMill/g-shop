@@ -1,11 +1,11 @@
-import { FirebaseAuthAdapter } from "@adapters/auth/firebase-auth-adapter";
-import { FirebaseDBAdapter } from "@adapters/db/firebase-db-adapter";
-import { PrismaAdapter } from "@adapters/db/prisma-adapter";
-import { SquarePaymentAdapter } from "@adapters/payment/square-payment-adapter";
-import { FirebaseStorageAdapter } from "@adapters/storage/firebase-storage-adapter";
-import { ImgBBStorageAdapter } from "@adapters/storage/imgbb-storage-adapter";
+import { FirebaseAuthAdapter } from "@adapters/auth/FirebaseAuthAdapter";
+import { FirebaseDBAdapter } from "@adapters/db/FirebaseDBAdapter";
+import { PrismaAdapter } from "@adapters/db/PrismaAdapter";
+import { SquarePaymentAdapter } from "@adapters/payment/SquarePaymentAdapter";
+import { FirebaseStorageAdapter } from "@adapters/storage/FirebaseStorageAdapter";
+import { ImgBBStorageAdapter } from "@adapters/storage/ImgBBStorageAdapter";
 
-import { env } from "@config/env-vars";
+import { env } from "@config/envVars";
 
 // Create the adapters based on environment variables
 export const auth =

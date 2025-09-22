@@ -3,7 +3,7 @@ import {
   uploadImage,
   uploadFile,
   deleteFile,
-} from "@controllers/storage-controller";
+} from "@controllers/storageController";
 import { requireRole } from "@middleware/authorization";
 import multer from "multer";
 
