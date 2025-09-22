@@ -12,7 +12,7 @@ import AdminOrdersDash from "@pages/admin/orders";
 
 import { applyTheme } from "./theme";
 import { ProtectedRoute } from "@pages/protected-routes";
-import { Roles } from "@models/user";
+import { Roles } from "../../shared/types/user";
 
 export default function App() {
   const location = useLocation();

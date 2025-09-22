@@ -1,15 +1,18 @@
 import Database from "better-sqlite3";
-import { initTables } from "./sqlite-modules/migrations";
-import { ProductCRUD } from "./sqlite-modules/product-crud";
-import { UserCRUD } from "./sqlite-modules/user-crud";
-import { OrderCRUD } from "./sqlite-modules/order-crud";
+
+import { initTables } from "./sql/init/sqlite_init";
+
+import { ProductCRUD } from "./sql/crud/product-crud";
+import { UserCRUD } from "./sql/crud/user-crud";
+import { OrderCRUD } from "./sql/crud/order-crud";
+import { CategoryCRUD } from "./sql/crud/catalog-crud";
 import { DBAdapter } from "./db-adapter";
-import { Product, ProductOptionPreset } from "@models/product";
-import { Category } from "@models/category";
-import { CategoryCRUD } from "./sqlite-modules/category-crud";
-import { User } from "@models/user";
-import { Order } from "@models/order";
-import { QueryOptions } from "@models/query-options";
+
+import { Product, ProductOptionPreset } from "@shared/types/product";
+import { Category } from "@shared/types/catalog";
+import { User } from "@shared/types/user";
+import { Order } from "@shared/types/order";
+import { QueryOptions } from "@shared/types/query-options";
 
 export class SQLiteAdapter implements DBAdapter {
   public db: Database.Database;
@@ -79,19 +82,19 @@ export class SQLiteAdapter implements DBAdapter {
 
   // CATEGORIES
   createCategory(category: Category) {
-    return this.categories.create(category);
+    return this.categories.createCatagory(category);
   }
   getCategory(id: string) {
-    return this.categories.get(id);
+    return this.categories.getCategory(id);
   }
   getCategories() {
-    return this.categories.getAll();
+    return this.categories.getCategories();
   }
   updateCategory(id: string, update: Partial<Category>) {
-    return this.categories.update(id, update);
+    return this.categories.updateCategory(id, update);
   }
   deleteCategory(id: string) {
-    return this.categories.delete(id);
+    return this.categories.deleteCategory(id);
   }
 
   // ORDERS

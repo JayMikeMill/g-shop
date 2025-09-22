@@ -1,4 +1,4 @@
-import { PaymentRequest } from "@models/payment-info";
+import { PaymentRequest } from "@shared/types/payment-info";
 
 export interface PaymentAdapter {
   processPayment(data: PaymentRequest): Promise<any>;

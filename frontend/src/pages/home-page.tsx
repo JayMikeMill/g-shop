@@ -1,7 +1,7 @@
 import ProductCardList from "@components/product-card-list";
 import ProductLoader from "@components/product-loader";
 import { useEffect, useState } from "react";
-import type { Product } from "@models/product";
+import type { Product } from "@shared/types/product";
 import { useApi } from "@api/use-api";
 
 export default function HomePage() {

@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import { randomUUID } from "crypto";
-import { Order } from "@models/order";
-import { QueryOptions } from "@models/query-options";
+import { Order } from "@shared/types/order";
+import { QueryOptions } from "@shared/types/query-options";
 
 export class OrderCRUD {
   private db: Database.Database;

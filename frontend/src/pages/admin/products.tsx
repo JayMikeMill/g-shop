@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { Product } from "@models/product";
+import type { Product } from "@shared/types/product";
 import ProductDialog from "@components/dialogs/product-dialog";
 import { useAdminPageHeader } from "@pages/admin/dashboard";
 import { useApi } from "@api/use-api";

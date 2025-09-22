@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { CategoryService } from "@services/category-service";
+import { CatalogService } from "@services/catalog-service";
 
 export const createCategory = async (
   req: Request,
@@ -7,7 +7,7 @@ export const createCategory = async (
   next: NextFunction
 ) => {
   try {
-    const category = await CategoryService.createCategory(req.body);
+    const category = await CatalogService.createCategory(req.body);
     res.json(category);
   } catch (err: any) {
     next(err);
@@ -20,7 +20,7 @@ export const getCategory = async (
   next: NextFunction
 ) => {
   try {
-    const category = await CategoryService.getCategory(req.params.id);
+    const category = await CatalogService.getCategory(req.params.id);
     if (!category) return res.status(404).json({ error: "Category not found" });
     res.json(category);
   } catch (err: any) {
@@ -34,7 +34,7 @@ export const getCategories = async (
   next: NextFunction
 ) => {
   try {
-    const categories = await CategoryService.getCategories();
+    const categories = await CatalogService.getCategories();
     res.json(categories);
   } catch (err: any) {
     next(err);
@@ -47,7 +47,7 @@ export const updateCategory = async (
   next: NextFunction
 ) => {
   try {
-    const updated = await CategoryService.updateCategory(
+    const updated = await CatalogService.updateCategory(
       req.params.id,
       req.body
     );
@@ -64,7 +64,7 @@ export const deleteCategory = async (
   next: NextFunction
 ) => {
   try {
-    const deleted = await CategoryService.deleteCategory(req.params.id);
+    const deleted = await CatalogService.deleteCategory(req.params.id);
     if (!deleted) return res.status(404).json({ error: "Category not found" });
     res.json({ message: "Category deleted" });
   } catch (err: any) {

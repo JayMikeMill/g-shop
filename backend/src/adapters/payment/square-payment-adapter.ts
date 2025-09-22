@@ -1,11 +1,11 @@
 import { PaymentAdapter } from "./payment-adapter";
-import { PaymentRequest } from "@models/payment-info";
+import { PaymentRequest } from "@shared/types/payment-info";
 
 import { SquareClient, SquareEnvironment, Square } from "square";
 
 import crypto from "crypto"; // For idempotency keys
 import SuperJSON from "superjson";
-import { Address } from "@models/shipping-info";
+import { Address } from "@shared/types/shipping-info";
 
 import { env } from "@config/env-vars";
 

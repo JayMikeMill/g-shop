@@ -1,4 +1,4 @@
-import { type Address, type ShippingInfo } from "@models/shipping-info";
+import { type Address, type ShippingInfo } from "@shared/types/shipping-info";
 
 interface ShippingFormProps {
   shippingInfo: ShippingInfo;

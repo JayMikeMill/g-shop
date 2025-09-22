@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import { useAuth } from "@contexts/auth/auth-context";
 import LoginDialog from "@components/dialogs/login-dialog";
-import { type Role } from "@models/user";
+import { type Role } from "@shared/types/user";
 
 interface ProtectedRouteProps {
   allowedRoles: Role[];

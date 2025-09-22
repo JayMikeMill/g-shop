@@ -4,7 +4,7 @@ import Lightbox from "@components/viewers/light-box";
 import ImageListEditor from "@components/editors/image-list-editor";
 import ProductOptionsEditor from "@components/editors/product-options-editor";
 
-import type { Product, ProductOption } from "@models/product";
+import type { Product, ProductOption } from "@shared/types/product";
 import { useApi } from "@api/use-api";
 
 interface ProductDialogProps {

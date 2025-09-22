@@ -1,4 +1,4 @@
-import { Category } from "@models/category";
+import { Category } from "@shared/types/catalog";
 import Database from "better-sqlite3";
 
 export class CategoryCRUD {
@@ -8,7 +8,7 @@ export class CategoryCRUD {
     this.db = db;
   }
 
-  async create(category: Category): Promise<Category> {
+  async createCatagory(category: Category): Promise<Category> {
     try {
       this.db
         .prepare(
@@ -31,7 +31,7 @@ export class CategoryCRUD {
     }
   }
 
-  async get(id: string): Promise<Category | null> {
+  async getCategory(id: string): Promise<Category | null> {
     try {
       const row = this.db
         .prepare(`SELECT * FROM categories WHERE id = ?`)
@@ -42,7 +42,7 @@ export class CategoryCRUD {
     }
   }
 
-  async getAll(): Promise<Category[]> {
+  async getCategories(): Promise<Category[]> {
     try {
       const rows = this.db
         .prepare(`SELECT * FROM categories`)
@@ -53,12 +53,12 @@ export class CategoryCRUD {
     }
   }
 
-  async update(
+  async updateCategory(
     id: string,
     update: Partial<Category>
   ): Promise<Category | null> {
     try {
-      const category = await this.get(id);
+      const category = await this.getCategory(id);
       if (!category) return null;
       this.db
         .prepare(
@@ -74,13 +74,13 @@ export class CategoryCRUD {
           update.updated_at ?? category.updated_at,
           id
         );
-      return this.get(id);
+      return this.getCategory(id);
     } catch (err) {
       throw new Error(`CategoryCRUD.update failed: ${(err as Error).message}`);
     }
   }
 
-  async delete(id: string): Promise<void> {
+  async deleteCategory(id: string): Promise<void> {
     try {
       this.db.prepare(`DELETE FROM categories WHERE id = ?`).run(id);
     } catch (err) {

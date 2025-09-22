@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import { randomUUID } from "crypto";
-import { User } from "@models/user";
-import { QueryOptions } from "@models/query-options";
+import { User } from "@shared/types/user";
+import { QueryOptions } from "@shared/types/query-options";
 
 export class UserCRUD {
   private db: Database.Database;

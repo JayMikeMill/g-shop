@@ -1,10 +1,10 @@
 import axios from "axios";
-import type { User } from "@models/user";
-import type { Product, ProductOptionPreset } from "@models/product";
-import type { Category } from "@models/category";
-import type { PaymentRequest } from "@models/payment-info";
-import type { Order } from "@models/order";
-import type { QueryOptions } from "@models/query-options";
+import type { User } from "@shared/types/user";
+import type { Product, ProductOptionPreset } from "@shared/types/product";
+import type { Category } from "@shared/types/catalog";
+import type { PaymentRequest } from "@shared/types/payment-info";
+import type { Order } from "@shared/types/order";
+import type { QueryOptions } from "@shared/types/query-options";
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
@@ -145,21 +145,21 @@ export const createCategory = async (
   category: Category,
   token?: string | null
 ) => {
-  const res = await axios.post(`${API_BASE}/categories`, category, {
+  const res = await axios.post(`${API_BASE}/catalog/categories`, category, {
     headers: authHeaders(token),
   });
   return res.data as Category;
 };
 
 export const getCategory = async (id: string, token?: string | null) => {
-  const res = await axios.get(`${API_BASE}/categories/${id}`, {
+  const res = await axios.get(`${API_BASE}/catalog/categories/${id}`, {
     headers: authHeaders(token),
   });
   return res.data as Category;
 };
 
 export const getCategories = async (token?: string | null) => {
-  const res = await axios.get(`${API_BASE}/categories`, {
+  const res = await axios.get(`${API_BASE}/catalog/categories`, {
     headers: authHeaders(token),
   });
   return res.data as Category[];
@@ -170,14 +170,18 @@ export const updateCategory = async (
   category: Partial<Category>,
   token?: string | null
 ) => {
-  const res = await axios.put(`${API_BASE}/categories/${id}`, category, {
-    headers: authHeaders(token),
-  });
+  const res = await axios.put(
+    `${API_BASE}/catalog/categories/${id}`,
+    category,
+    {
+      headers: authHeaders(token),
+    }
+  );
   return res.data as Category;
 };
 
 export const deleteCategory = async (id: string, token?: string | null) => {
-  const res = await axios.delete(`${API_BASE}/categories/${id}`, {
+  const res = await axios.delete(`${API_BASE}/catalog/categories/${id}`, {
     headers: authHeaders(token),
   });
   return res.data;

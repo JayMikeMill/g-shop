@@ -1,11 +1,11 @@
 // backend/src/adapters/db/firebase-db-adapter.ts
-import { User } from "@models/user";
-import { Product, ProductOptionPreset } from "@models/product";
-import { Category } from "@models/category";
-import { Order } from "@models/order";
+import { User } from "@shared/types/user";
+import { Product, ProductOptionPreset } from "@shared/types/product";
+import { Category } from "@shared/types/catalog";
+import { Order } from "@shared/types/order";
 import { DBAdapter } from "@adapters/db/db-adapter";
 import { db } from "@config/firebase/firebase-admin";
-import { QueryOptions } from "@models/query-options";
+import { QueryOptions } from "@shared/types/query-options";
 
 export class FirebaseDBAdapter implements DBAdapter {
   // ---------- USERS ----------

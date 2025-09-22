@@ -1,5 +1,7 @@
 // shared/models/product.ts
 
+import { type Category } from "./catalog";
+
 // Product model
 export interface Product {
   id: number | string;
@@ -10,6 +12,8 @@ export interface Product {
   description: string;
   tags?: string[];
   options?: ProductOption[];
+  categories?: Category[];
+  dimensions?: ProductDimensions;
   stock: number;
 }
 
@@ -41,6 +45,14 @@ export interface ProductOptionPreset extends ProductOption {
 export interface SelectedProductOption {
   name: string;
   value: string;
+}
+
+// Selected product option (for cart/store use)
+export interface ProductDimensions {
+  weight_grams?: number;
+  length_cm?: number;
+  width_cm?: number;
+  height_cm?: number;
 }
 
 // check if two products have the same options selected

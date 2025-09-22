@@ -1,6 +1,6 @@
-import { User } from "@models/user";
+import { User } from "@shared/types/user";
 import { db, auth } from "@config/adapters";
-import { QueryOptions } from "@models/query-options";
+import { QueryOptions } from "@shared/types/query-options";
 
 export class UserService {
   static async createUser(user: User, password?: string): Promise<User> {

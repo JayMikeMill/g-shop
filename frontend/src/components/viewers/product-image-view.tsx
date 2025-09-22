@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { type Product } from "@models/product";
+import { type Product } from "@shared/types/product";
 
 interface ProductImageViewProps {
   product: Product;

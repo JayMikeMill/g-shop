@@ -1,5 +1,5 @@
 import ProductCard from "@components/product-card";
-import type { Product } from "@models/product";
+import type { Product } from "@shared/types/product";
 
 interface ProductCardListProps {
   products: Product[];

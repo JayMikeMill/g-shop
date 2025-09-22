@@ -1,8 +1,11 @@
-import { User } from "@models/user";
+import { User } from "@shared/types/user";
 
 export interface AuthAdapter {
-	register(user: User, password: string): Promise<User>;
-	login(email: string, password: string): Promise<{ token: string; user: User }>;
-	verifyToken(token: string): Promise<User | null>;
-	logout(userId: string, token?: string): Promise<void>;
+  register(user: User, password: string): Promise<User>;
+  login(
+    email: string,
+    password: string
+  ): Promise<{ token: string; user: User }>;
+  verifyToken(token: string): Promise<User | null>;
+  logout(userId: string, token?: string): Promise<void>;
 }

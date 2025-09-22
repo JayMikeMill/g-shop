@@ -8,11 +8,6 @@ import {
   getProductOptionsPresets,
   createProductOptionsPreset,
   deleteProductOptionsPreset,
-  createCategory,
-  getCategory,
-  getCategories,
-  updateCategory,
-  deleteCategory,
 } from "@controllers/product-controller";
 import { requireRole } from "@middleware/authorization";
 
@@ -35,10 +30,6 @@ router.delete(
   requireRole(["admin"]),
   deleteProductOptionsPreset
 );
-
-// Public: Anyone can view categories
-router.get("/categories/:id", getCategory);
-router.get("/categories", getCategories);
 
 // ---------- PRODUCT CRUD ROUTES ----------
 // Only admin can create, update, or delete products

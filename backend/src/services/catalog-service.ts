@@ -1,7 +1,7 @@
-import { Category } from "@models/category";
+import { Category } from "@shared/types/catalog";
 import { db } from "@config/adapters";
 
-export class CategoryService {
+export class CatalogService {
   static async createCategory(category: Category): Promise<Category> {
     return db.createCategory(category);
   }

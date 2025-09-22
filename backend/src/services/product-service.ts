@@ -1,7 +1,7 @@
-import { Product, ProductOptionPreset } from "@models/product";
-import { Category } from "@models/category";
+import { Product, ProductOptionPreset } from "@shared/types/product";
+import { Category } from "@shared/types/catalog";
 import { db } from "@config/adapters";
-import { QueryOptions } from "@models/query-options";
+import { QueryOptions } from "@shared/types/query-options";
 
 export class ProductService {
   static async createProduct(product: Product): Promise<Product> {

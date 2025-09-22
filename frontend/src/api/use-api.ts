@@ -1,11 +1,11 @@
 import { useAuth } from "@contexts/auth/auth-context";
-import type { User } from "@models/user";
+import type { User } from "@shared/types/user";
 import * as api from "@api/backend-api";
-import type { Product } from "@models/product";
-import type { Category } from "@models/category";
-import type { PaymentRequest } from "@models/payment-info"; // Add this import, adjust the path if needed
-import type { Order } from "@models/order";
-import type { QueryOptions } from "@models/query-options";
+import type { Product } from "@shared/types/product";
+import type { Category } from "@shared/types/catalog";
+import type { PaymentRequest } from "@shared/types/payment-info"; // Add this import, adjust the path if needed
+import type { Order } from "@shared/types/order";
+import type { QueryOptions } from "@shared/types/query-options";
 
 export function useApi() {
   const { token } = useAuth();

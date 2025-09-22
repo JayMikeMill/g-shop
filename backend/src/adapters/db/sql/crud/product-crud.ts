@@ -7,8 +7,8 @@ import type {
   ProductOptionValue,
   ProductImageSet,
   ProductOptionPreset,
-} from "@models/product";
-import { QueryOptions } from "@models/query-options";
+} from "@shared/types/product";
+import { QueryOptions } from "@shared/types/query-options";
 
 interface ProductRow
   extends Omit<Product, "id" | "images" | "tags" | "options"> {

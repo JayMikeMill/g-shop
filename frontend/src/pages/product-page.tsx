@@ -16,7 +16,7 @@ import Lightbox from "yet-another-react-lightbox";
 import { Zoom } from "yet-another-react-lightbox/plugins";
 import "yet-another-react-lightbox/styles.css";
 
-import type { Product, SelectedProductOption } from "@models/product";
+import type { Product, SelectedProductOption } from "@shared/types/product";
 import { useCart } from "@contexts/cart-context";
 
 import { useApi } from "@api/use-api";

@@ -1,6 +1,6 @@
-import { Order } from "@models/order";
+import { Order } from "@shared/types/order";
 import { db } from "@config/adapters";
-import { QueryOptions } from "@models/query-options";
+import { QueryOptions } from "@shared/types/query-options";
 
 export class OrderService {
   static async createOrder(order: Order): Promise<Order> {

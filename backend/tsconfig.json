@@ -13,19 +13,20 @@
     "noEmitOnError": false, // still emit JS even if TS errors exist
 
     "baseUrl": "./", // base path for imports
-    "paths": { // path aliases
+    "paths": {
+      // path aliases
       "@adapters/*": ["src/adapters/*"],
-      "@config/*": ["src/config/*"], 
-      "@controllers/*": ["src/controllers/*"], 
-      "@routes/*": ["src/routes/*"], 
-      "@services/*": ["src/services/*"], 
-      "@middleware/*": ["src/middleware/*"], 
-      "@models/*": ["../shared/models/*"], 
+      "@config/*": ["src/config/*"],
+      "@controllers/*": ["src/controllers/*"],
+      "@routes/*": ["src/routes/*"],
+      "@services/*": ["src/services/*"],
+      "@middleware/*": ["src/middleware/*"],
+      "@shared/*": ["../shared/*"]
     }
   },
 
   "include": [
     "./src/**/*.ts", // include all TS files in backend
-    "../shared/**/*.ts",  // include shared TS files
+    "../shared/**/*.ts" // include shared TS files
   ]
 }

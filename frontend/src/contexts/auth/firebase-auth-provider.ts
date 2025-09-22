@@ -10,7 +10,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 
-import type { User } from "@models/user";
+import type { User } from "@shared/types/user";
 import { verifyToken } from "@api/backend-api";
 import "@api/firebase/firebase-api";
 
