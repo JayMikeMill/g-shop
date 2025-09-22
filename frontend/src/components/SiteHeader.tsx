@@ -1,11 +1,11 @@
 import { SITE } from "../config";
 import { useNavigate } from "react-router-dom";
 import { ShoppingCart, Menu, X } from "lucide-react";
-import { useCart, getCartTotals } from "@contexts/cart-context";
+import { useCart, getCartTotals } from "@contexts/CartContext";
 import { useState } from "react";
 
-import SlideOutCart from "@components/shopping-cart";
-import SiteMenu from "@components/site-menu";
+import SlideOutCart from "@components/SlideOutCart";
+import SiteMenu from "@components/SiteMenu";
 
 export default function SiteHeader() {
   const navigate = useNavigate();

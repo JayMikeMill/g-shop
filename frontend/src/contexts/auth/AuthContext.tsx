@@ -1,5 +1,5 @@
 import { createContext, useContext, type ReactNode } from "react";
-import type { AuthProvider } from "./auth-provider";
+import type { AuthProvider } from "./AuthProvider";
 
 const AuthProviderContext = createContext<AuthProvider | undefined>(undefined);
 

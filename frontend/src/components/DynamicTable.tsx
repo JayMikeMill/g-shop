@@ -21,7 +21,7 @@ export interface DynamicTableProps<T> {
   searchable?: boolean;
 }
 
-export default function DynamicTable<T extends { id: string | number }>({
+export default function DynamicTable<T extends { id?: string }>({
   data,
   columns,
   onRowClick,

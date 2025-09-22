@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import { useCart, getCartTotals } from "@contexts/cart-context";
+import { useCart, getCartTotals } from "@contexts/CartContext";
 import { useNavigate } from "react-router-dom";
 
 interface SlideOutCartProps {

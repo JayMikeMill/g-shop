@@ -1,11 +1,15 @@
 // src/components/ProductDialog.tsx
 import { useState, useEffect } from "react";
-import Lightbox from "@components/viewers/light-box";
-import ImageListEditor from "@components/editors/image-list-editor";
-import ProductOptionsEditor from "@components/editors/product-options-editor";
+import ImageListEditor from "@components/editors/ImageListEditor";
+import ProductOptionsEditor from "@components/editors/ProductOptionsEditor";
+
+// Lightbox
+import Lightbox from "yet-another-react-lightbox";
+import { Zoom } from "yet-another-react-lightbox/plugins";
+import "yet-another-react-lightbox/styles.css";
 
 import type { Product, ProductOption, ProductTag } from "@shared/types/product";
-import { useApi } from "@api/use-api";
+import { useApi } from "@api/useApi";
 
 interface ProductDialogProps {
   product: Product | null; // If null, we are adding a new product
@@ -219,8 +223,11 @@ export default function ProductDialog({
       {/* Lightbox Modal */}
       {lightboxImage && (
         <Lightbox
-          image={lightboxImage}
-          onClose={() => setLightboxImage(null)}
+          slides={[{ src: lightboxImage }]}
+          close={() => setLightboxImage(null)}
+          plugins={[Zoom]}
+          styles={{ container: { backgroundColor: "rgba(0,0,0,0.5)" } }}
+          zoom={{ scrollToZoom: true, maxZoomPixelRatio: 2 }}
         />
       )}
 

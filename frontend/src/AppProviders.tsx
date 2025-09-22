@@ -1,6 +1,6 @@
-import { CartProvider } from "@contexts/cart-context";
-import { AuthContext } from "@contexts/auth/auth-context";
-import { useFirebaseAuth } from "@contexts/auth/firebase-auth-provider";
+import { CartProvider } from "@contexts/CartContext";
+import { AuthContext } from "@contexts/auth/AuthContext";
+import { useFirebaseAuth } from "@contexts/auth/useFirebaseAuth";
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   const firebaseAuth = useFirebaseAuth();

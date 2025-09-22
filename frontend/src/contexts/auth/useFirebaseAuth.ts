@@ -11,10 +11,10 @@ import {
 } from "firebase/auth";
 
 import type { User } from "@shared/types/user";
-import { verifyToken } from "@api/backend-api";
-import "@api/firebase/firebase-api";
+import { verifyToken } from "@api/backendAPI";
+import "@api/firebase/firebaseAPI";
 
-import type { AuthProvider } from "./auth-provider";
+import type { AuthProvider } from "./AuthProvider";
 
 export function useFirebaseAuth(): AuthProvider {
   const [user, setUser] = useState<User | null>(null);

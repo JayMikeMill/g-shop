@@ -1,4 +1,4 @@
-import { useCart } from "@contexts/cart-context";
+import { useCart } from "@contexts/CartContext";
 import { type Product } from "@shared/types/product";
 import { useNavigate } from "react-router-dom";
 
@@ -53,9 +53,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         )}
         {product.tags && product.tags.length > 0 && (
           <div className="absolute top-2 left-2 flex gap-1">
-            {product.tags.map((tag) => (
-              <span key={tag} className="tag-box">
-                {tag}
+            {product.tags.map((tag, index) => (
+              <span key={index} className="tag-box">
+                {tag.name}
               </span>
             ))}
           </div>

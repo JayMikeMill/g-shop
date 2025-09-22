@@ -17,9 +17,9 @@ import { Zoom } from "yet-another-react-lightbox/plugins";
 import "yet-another-react-lightbox/styles.css";
 
 import type { Product, SelectedProductOption } from "@shared/types/product";
-import { useCart } from "@contexts/cart-context";
+import { useCart } from "@contexts/CartContext";
 
-import { useApi } from "@api/use-api";
+import { useApi } from "@api/useApi";
 import type { NavigationOptions } from "swiper/types";
 
 const ProductPage = () => {
@@ -132,7 +132,7 @@ const ProductPage = () => {
               loop={false}
               className="w-full"
             >
-              {product.images.map((img, idx) => (
+              {product.images?.map((img, idx) => (
                 <SwiperSlide
                   key={idx}
                   className="flex justify-center items-center"
@@ -168,7 +168,7 @@ const ProductPage = () => {
               watchSlidesProgress
               className="!w-auto"
             >
-              {product.images.map((img, idx) => (
+              {product.images?.map((img, idx) => (
                 <SwiperSlide key={idx} className="flex justify-center !w-auto">
                   <img
                     src={img.preview}
@@ -250,9 +250,9 @@ const ProductPage = () => {
           {/* Tags & Description */}
           {Array.isArray(product.tags) && product.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-2">
-              {product.tags.map((tag) => (
-                <span key={tag} className="tag-box">
-                  {tag}
+              {product.tags.map((tag, index) => (
+                <span key={index} className="tag-box">
+                  {tag.name}
                 </span>
               ))}
             </div>
@@ -276,7 +276,7 @@ const ProductPage = () => {
         <Lightbox
           open={lightboxOpen}
           index={lightboxIndex}
-          slides={product.images.map((img) => ({ src: img.main }))}
+          slides={product.images?.map((img) => ({ src: img.main }))}
           close={() => setLightboxOpen(false)}
           plugins={[Zoom]}
           styles={{ container: { backgroundColor: "rgba(0,0,0,0.5)" } }}

@@ -1,17 +1,17 @@
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
-import SiteHeader from "@components/site-header";
-import SiteFooter from "@components/site-footer";
-import HomePage from "@pages/home-page";
-import ProductPage from "@pages/product-page";
-import CheckoutPage from "@pages/checkout-page";
-import AboutPage from "./pages/about-page";
+import SiteHeader from "@components/SiteHeader";
+import SiteFooter from "@components/SiteFooter";
+import HomePage from "@pages/HomePage";
+import ProductPage from "@pages/ProductPage";
+import CheckoutPage from "@pages/CheckoutPage";
+import AboutPage from "./pages/AboutPage";
 
-import AdminDashboard from "@pages/admin/dashboard";
-import AdminProductsDash from "@pages/admin/products";
-import AdminOrdersDash from "@pages/admin/orders";
+import AdminDashboard from "@pages/admin/AdminDashboard";
+import AdminProductsDash from "@pages/admin/Products";
+import AdminOrdersDash from "@pages/admin/Orders";
 
 import { applyTheme } from "./theme";
-import { ProtectedRoute } from "@pages/protected-routes";
+import { ProtectedRoute } from "@pages/ProtectedRoute";
 import { Roles } from "../../shared/types/user";
 
 export default function App() {

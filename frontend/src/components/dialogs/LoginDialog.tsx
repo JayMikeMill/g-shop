@@ -1,6 +1,6 @@
 // src/components/LoginDialog.tsx
 import { useState } from "react";
-import { useAuth } from "@contexts/auth/auth-context";
+import { useAuth } from "@contexts/auth/AuthContext";
 
 interface LoginDialogProps {
   onClose?: () => void; // Optional callback if you want to close dialog manually

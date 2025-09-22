@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import type { Product } from "@shared/types/product";
-import ProductDialog from "@components/dialogs/product-dialog";
-import { useAdminPageHeader } from "@pages/admin/dashboard";
-import { useApi } from "@api/use-api";
-import DynamicTable from "@components/dynamic-table";
+import ProductDialog from "@components/dialogs/ProductDialog";
+import { useAdminPageHeader } from "@pages/admin/AdminDashboard";
+import { useApi } from "@api/useApi";
+import DynamicTable from "@components/DynamicTable";
 
 export default function Products() {
   const { setPageHeader } = useAdminPageHeader();
@@ -13,7 +13,7 @@ export default function Products() {
   const [isAdding, setIsAdding] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
-  const { getProducts, deleteProduct } = useApi();
+  const { getProducts } = useApi();
 
   // Set the page header
   useEffect(() => {
@@ -52,13 +52,6 @@ export default function Products() {
     loadProducts();
   };
 
-  const handleDeleteProduct = async (product: Product) => {
-    if (window.confirm(`Are you sure you want to delete ${product.name}?`)) {
-      await deleteProduct(product.id);
-      loadProducts();
-    }
-  };
-
   return (
     <div className="pt-lg pb-lg">
       {/* Product dialog */}
@@ -92,7 +85,7 @@ export default function Products() {
                 p.images?.[0] ? (
                   <div className="flex items-center justify-center">
                     <img
-                      src={p.images[0].thumbnail}
+                      src={p.images?.[0].thumbnail}
                       className="w-20 h-20 object-cover rounded"
                     />
                   </div>

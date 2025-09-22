@@ -1,6 +1,6 @@
 // Import custom cart hook and helper function for totals
 
-import { useCart, getCartTotals } from "@contexts/cart-context";
+import { useCart, getCartTotals } from "@contexts/CartContext";
 
 // The OrderPreview component displays a summary of the current cart items
 export default function OrderPreview() {

@@ -1,4 +1,4 @@
-import { Product, SelectedProductOption } from "./product";
+import { Product, ProductVariant, SelectedProductOption } from "./product";
 import { ShippingInfo } from "./shipping";
 import { Transaction } from "./transaction";
 import { User } from "./user";
@@ -29,6 +29,7 @@ export interface OrderItem {
 
   // Related product
   product?: Product;
+  variant?: ProductVariant;
 }
 
 export const OrderStatuses = {

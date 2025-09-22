@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import CropDialog from "../dialogs/crop-dialog";
+import CropDialog from "../dialogs/CropDialog";
 import { processImageOnly } from "@utils/image-processing";
 
 interface ImagePreviewListProps {

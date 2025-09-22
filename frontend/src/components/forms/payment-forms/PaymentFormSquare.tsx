@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 // Import shared types for shipping address and cart items
 import { type ShippingInfo } from "@shared/types/shipping";
 import type { OrderItem } from "@shared/types/order";
-import { useApi } from "@api/use-api";
+import { useApi } from "@api/useApi";
 
 // Import PaymentStatus and PaymentMethod enums
 import { TransactionStatuses, PaymentMethods } from "@shared/types/transaction";
-import { useAuth } from "@contexts/auth/auth-context";
+import { useAuth } from "@contexts/auth/AuthContext";
 
 // Square environment variables (from Vite)
 const SQUARE_APPLICATION_ID = import.meta.env.VITE_SQUARE_APPLICATION_ID || "";

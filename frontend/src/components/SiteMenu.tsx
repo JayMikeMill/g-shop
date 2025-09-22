@@ -1,4 +1,4 @@
-import { useAuth } from "@contexts/auth/auth-context";
+import { useAuth } from "@contexts/auth/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 interface SiteMenuProps {

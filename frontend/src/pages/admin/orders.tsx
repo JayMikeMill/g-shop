@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { useAdminPageHeader } from "./dashboard";
-import { useApi } from "@api/use-api";
+import { useAdminPageHeader } from "./AdminDashboard";
+import { useApi } from "@api/useApi";
 import type { Order } from "@shared/types/order";
 
-import DynamicTable from "@components/dynamic-table";
-import OrderDialog from "@components/dialogs/order-dialog";
+import DynamicTable from "@components/DynamicTable";
+import OrderDialog from "@components/dialogs/OrderDialog";
 
 export default function Orders() {
   const { setPageHeader } = useAdminPageHeader();

@@ -1,8 +1,8 @@
-import ProductCardList from "@components/product-card-list";
+import ProductCardList from "@components/ProductCardList";
 import ProductLoader from "@components/product-loader";
 import { useEffect, useState } from "react";
 import type { Product } from "@shared/types/product";
-import { useApi } from "@api/use-api";
+import { useApi } from "@api/useApi";
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
