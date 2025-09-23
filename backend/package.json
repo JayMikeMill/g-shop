@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon src/index.ts",
+    "prisma:generate": "prisma generate --schema=./schema.prisma",
+    "prisma:migrate": "prisma migrate dev --schema=./schema.prisma --name init"
   },
   "keywords": [],
   "author": "",

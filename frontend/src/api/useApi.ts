@@ -1,11 +1,11 @@
 import { useAuth } from "@contexts/auth/AuthContext";
-import type { User } from "@shared/types/user";
+import type { User } from "@shared/types/User";
 import * as api from "@api/backendAPI";
-import type { Product } from "@shared/types/product";
-import type { Category } from "@shared/types/catalog";
-import type { PaymentRequest } from "@shared/types/payment-request"; // Add this import, adjust the path if needed
-import type { Order } from "@shared/types/order";
-import type { QueryOptions } from "@shared/types/query-options";
+import type { Product } from "@shared/types/Product";
+import type { Category } from "@shared/types/Catalog";
+import type { PaymentRequest } from "@shared/types/PaymentRequest"; // Add this import, adjust the path if needed
+import type { Order } from "@shared/types/Order";
+import type { QueryObject } from "@shared/types/QueryObject";
 
 export function useApi() {
   const { token } = useAuth();
@@ -47,7 +47,7 @@ export function useApi() {
     // Product
     createProduct: (product: Product) => api.createProduct(product, token),
     getProduct: (id: string) => api.getProduct(id, token),
-    getProducts: (query?: QueryOptions) => api.getProducts(query, token),
+    getProducts: (query?: QueryObject) => api.getProducts(query, token),
     updateProduct: (product: Product) => api.updateProduct(product, token),
     deleteProduct: (id: string) => api.deleteProduct(id, token),
 

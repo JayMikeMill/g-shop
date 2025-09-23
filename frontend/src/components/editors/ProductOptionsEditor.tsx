@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import type { ProductOption, ProductOptionPreset } from "@shared/types/product";
+import type { ProductOption, ProductOptionPreset } from "@shared/types/Product";
 import { useApi } from "@api/useApi";
 
 interface ProductOptionsEditorProps {

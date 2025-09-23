@@ -1,10 +1,10 @@
 import axios from "axios";
-import type { User } from "@shared/types/user";
-import type { Product, ProductOptionPreset } from "@shared/types/product";
-import type { Category } from "@shared/types/catalog";
-import type { PaymentRequest } from "@shared/types/payment-request";
-import type { Order } from "@shared/types/order";
-import type { QueryOptions } from "@shared/types/query-options";
+import type { User } from "@shared/types/User";
+import type { Product, ProductOptionPreset } from "@shared/types/Product";
+import type { Category } from "@shared/types/Catalog";
+import type { PaymentRequest } from "@shared/types/PaymentRequest";
+import type { Order } from "@shared/types/Order";
+import type { QueryObject } from "@shared/types/QueryObject";
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
@@ -44,14 +44,14 @@ export const createUser = async (
 ) =>
   axios
     .post(
-      `${API_BASE}/users`,
+      `${API_BASE}/user`,
       { user, password },
       { headers: authHeaders(token) }
     )
     .then((r) => r.data);
 export const getUser = async (id: string, token?: string | null) =>
   axios
-    .get(`${API_BASE}/users/${id}`, { headers: authHeaders(token) })
+    .get(`${API_BASE}/user/${id}`, { headers: authHeaders(token) })
     .then((r) => r.data as User);
 export const getUsers = async (
   options?: {
@@ -63,7 +63,7 @@ export const getUsers = async (
   token?: string | null
 ) =>
   axios
-    .get(`${API_BASE}/users`, { params: options, headers: authHeaders(token) })
+    .get(`${API_BASE}/user`, { params: options, headers: authHeaders(token) })
     .then((r) => r.data);
 export const updateUser = async (
   id: string,
@@ -71,11 +71,11 @@ export const updateUser = async (
   token?: string | null
 ) =>
   axios
-    .put(`${API_BASE}/users/${id}`, user, { headers: authHeaders(token) })
+    .put(`${API_BASE}/user/${id}`, user, { headers: authHeaders(token) })
     .then((r) => r.data as User);
 export const deleteUser = async (id: string, token?: string | null) =>
   axios
-    .delete(`${API_BASE}/users/${id}`, { headers: authHeaders(token) })
+    .delete(`${API_BASE}/user/${id}`, { headers: authHeaders(token) })
     .then((r) => r.data);
 
 /* ==========================
@@ -89,13 +89,10 @@ export const getProduct = async (id: string, token?: string | null) =>
   axios
     .get(`${API_BASE}/products/${id}`, { headers: authHeaders(token) })
     .then((r) => r.data as Product);
-export const getProducts = async (
-  query?: QueryOptions,
-  token?: string | null
-) =>
+export const getProducts = async (query?: QueryObject, token?: string | null) =>
   axios
     .get(`${API_BASE}/products`, { params: query, headers: authHeaders(token) })
-    .then((r) => r.data as Product[]);
+    .then((r) => r.data as { data: Product[]; total: number });
 export const updateProduct = async (product: Product, token?: string | null) =>
   axios
     .put(`${API_BASE}/products/${product.id}`, product, {
@@ -189,11 +186,11 @@ export const deleteCategory = async (id: string, token?: string | null) => {
 ========================== */
 export const createOrder = async (order: Order, token?: string | null) =>
   axios
-    .post(`${API_BASE}/orders`, order, { headers: authHeaders(token) })
+    .post(`${API_BASE}/Orders`, order, { headers: authHeaders(token) })
     .then((r) => r.data as Order);
 export const getOrder = async (id: string, token?: string | null) =>
   axios
-    .get(`${API_BASE}/orders/${id}`, { headers: authHeaders(token) })
+    .get(`${API_BASE}/Orders/${id}`, { headers: authHeaders(token) })
     .then((r) => r.data as Order);
 export const getOrders = async (
   options?: {
@@ -205,7 +202,7 @@ export const getOrders = async (
   token?: string | null
 ) =>
   axios
-    .get(`${API_BASE}/orders`, { params: options, headers: authHeaders(token) })
+    .get(`${API_BASE}/Orders`, { params: options, headers: authHeaders(token) })
     .then((r) => r.data as Order[]);
 export const updateOrder = async (
   id: string,
@@ -213,11 +210,11 @@ export const updateOrder = async (
   token?: string | null
 ) =>
   axios
-    .put(`${API_BASE}/orders/${id}`, order, { headers: authHeaders(token) })
+    .put(`${API_BASE}/Orders/${id}`, order, { headers: authHeaders(token) })
     .then((r) => r.data as Order);
 export const deleteOrder = async (id: string, token?: string | null) =>
   axios
-    .delete(`${API_BASE}/orders/${id}`, { headers: authHeaders(token) })
+    .delete(`${API_BASE}/Orders/${id}`, { headers: authHeaders(token) })
     .then((r) => r.data);
 
 /* ==========================

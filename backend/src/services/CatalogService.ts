@@ -1,6 +1,6 @@
-import { Category, Collection } from "@shared/types/catalog";
+import { Category, Collection } from "@shared/types/Catalog";
 import { db } from "@config/adapters";
-import { QueryOptions } from "@shared/types/query-options";
+import { QueryObject } from "@shared/types/QueryObject";
 
 export class CatalogService {
   static async createCategory(category: Category): Promise<Category> {
@@ -11,7 +11,7 @@ export class CatalogService {
     return db.getCategory(id);
   }
 
-  static async getCategories(query: QueryOptions): Promise<Category[]> {
+  static async getCategories(query: QueryObject): Promise<Category[]> {
     return db.getCategories(query);
   }
 
@@ -36,7 +36,7 @@ export class CatalogService {
   static async getCollection(id: string): Promise<Collection | null> {
     return db.getCollection(id);
   }
-  static async getCollections(query: QueryOptions): Promise<Collection[]> {
+  static async getCollections(query: QueryObject): Promise<Collection[]> {
     return db.getCollections(query);
   }
   static async updateCollection(

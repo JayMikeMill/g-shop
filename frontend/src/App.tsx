@@ -12,7 +12,7 @@ import AdminOrdersDash from "@pages/admin/Orders";
 
 import { applyTheme } from "./theme";
 import { ProtectedRoute } from "@pages/ProtectedRoute";
-import { Roles } from "../../shared/types/user";
+import { Roles } from "../../shared/types/User";
 
 export default function App() {
   const location = useLocation();
@@ -30,7 +30,7 @@ export default function App() {
         >
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/product/:id" element={<ProductPage />} />
+            <Route path="/Product/:id" element={<ProductPage />} />
             <Route
               path="/admin"
               element={

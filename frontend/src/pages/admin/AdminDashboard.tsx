@@ -27,7 +27,7 @@ export default function AdminDashboard() {
       {/* Navigation */}
       <nav className="flex gap-md p-5 border-b border-input-border">
         <NavLink
-          to="/admin/products"
+          to="/admin/Products"
           className={({ isActive }) =>
             `px-md py-sm w-[120px] text-center rounded border border-input-border font-semibold text-text bg-card-bg transition-all duration-200 
 						${isActive ? "bg-primary text-button-text border-primary" : "hover:bg-light hover:-translate-y-0.5 hover:shadow-md"}`
@@ -36,7 +36,7 @@ export default function AdminDashboard() {
           Products
         </NavLink>
         <NavLink
-          to="/admin/orders"
+          to="/admin/Orders"
           className={({ isActive }) =>
             `px-md py-sm w-[120px] text-center rounded border border-input-border font-semibold text-text bg-card-bg transition-all duration-200 
 						${isActive ? "bg-primary text-button-text border-primary" : "hover:bg-light hover:-translate-y-0.5 hover:shadow-md"}`

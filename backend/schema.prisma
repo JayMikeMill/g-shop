@@ -339,3 +339,4 @@ model Invoice {
   pdfUrl       String?
   createdAt    DateTime @default(now())
 }
+

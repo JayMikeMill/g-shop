@@ -1,5 +1,5 @@
 import { useCart } from "@contexts/CartContext";
-import { type Product } from "@shared/types/product";
+import { type Product } from "@shared/types/Product";
 import { useNavigate } from "react-router-dom";
 
 interface ProductCardProps {
@@ -16,7 +16,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   const handleCardClick = () => {
-    navigate(`/product/${product.id}`);
+    navigate(`/Product/${product.id}`);
   };
 
   let discountedPrice: number | null = null;

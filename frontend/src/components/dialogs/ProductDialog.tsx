@@ -3,12 +3,12 @@ import { useState, useEffect } from "react";
 import ImageListEditor from "@components/editors/ImageListEditor";
 import ProductOptionsEditor from "@components/editors/ProductOptionsEditor";
 
-// Lightbox
-import Lightbox from "yet-another-react-lightbox";
-import { Zoom } from "yet-another-react-lightbox/plugins";
-import "yet-another-react-lightbox/styles.css";
-
-import type { Product, ProductOption, ProductTag } from "@shared/types/product";
+import type {
+  Product,
+  ProductOption,
+  ProductTag,
+  ProductImageSet,
+} from "@shared/types/Product";
 import { useApi } from "@api/useApi";
 
 interface ProductDialogProps {
@@ -34,10 +34,9 @@ export default function ProductDialog({
   const [discountValue, setDiscountValue] = useState(0);
   const [discountType, setDiscountType] = useState<"%" | "$">("%");
   const [tagString, setTagString] = useState("");
-  // For lightbox, store the preview URL of the image to show
-  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   // Drag and drop state is now managed in ImagePreviewList
+  const [images, setImages] = useState<ProductImageSet[]>([]);
 
   const { createProduct, deleteProduct, updateProduct, uploadImage } = useApi();
 
@@ -59,6 +58,7 @@ export default function ProductDialog({
     setImagePreviews(
       product?.images?.map((imgSet) => imgSet.preview || imgSet.main) || []
     );
+    setImages(product?.images || []);
 
     setTagString(product?.tags?.map((tag) => tag.name).join(", ") || "");
 
@@ -104,13 +104,10 @@ export default function ProductDialog({
     e.preventDefault();
 
     try {
-      console.log("tagString", tagString);
       const tagsArray = tagString
         .split(",")
         .map((tag) => ({ name: tag.trim() }))
         .filter((tag) => tag.name !== "") as ProductTag[];
-
-      console.log("tagsArray", tagsArray);
 
       const discountString =
         discountValue > 0
@@ -192,7 +189,7 @@ export default function ProductDialog({
           description,
           discount: discountString,
           tags: tagsArray,
-          images: uploadedImages.length > 0 ? uploadedImages : product.images,
+          images: images.length > 0 ? images : product.images,
           options: productOptions,
           stock: product.stock,
         } as unknown as Product);
@@ -203,7 +200,7 @@ export default function ProductDialog({
           description,
           discount: discountString,
           tags: tagsArray,
-          images: uploadedImages,
+          images,
           options: productOptions,
           stock: 0,
         } as Product);
@@ -220,17 +217,6 @@ export default function ProductDialog({
 
   return (
     <>
-      {/* Lightbox Modal */}
-      {lightboxImage && (
-        <Lightbox
-          slides={[{ src: lightboxImage }]}
-          close={() => setLightboxImage(null)}
-          plugins={[Zoom]}
-          styles={{ container: { backgroundColor: "rgba(0,0,0,0.5)" } }}
-          zoom={{ scrollToZoom: true, maxZoomPixelRatio: 2 }}
-        />
-      )}
-
       {/* Main Dialog */}
       <div className="fixed inset-0 bg-overlay flex justify-center items-center z-50">
         <div
@@ -360,11 +346,10 @@ export default function ProductDialog({
               {/* Right/Bottom: Images (always visible, no scroll) */}
               <div className="md:w-1/3 flex flex-col gap-md flex-shrink-0">
                 <ImageListEditor
-                  imagePreviews={imagePreviews}
-                  setImagePreviews={setImagePreviews}
+                  images={images}
+                  onImagesChange={setImages}
                   setProcessedImages={setProcessedImages}
                   setIsProcessingImages={setIsProcessingImages}
-                  onLightbox={setLightboxImage}
                 />
               </div>
             </div>

@@ -1,5 +1,5 @@
-import { Order } from "./order";
-import { type Address } from "./shipping";
+import type { Order } from "./Order";
+import type { Address } from "./Shipping";
 
 export interface Transaction {
   id: string;

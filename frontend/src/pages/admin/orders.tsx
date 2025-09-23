@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAdminPageHeader } from "./AdminDashboard";
 import { useApi } from "@api/useApi";
-import type { Order } from "@shared/types/order";
+import type { Order } from "@shared/types/Order";
 
 import DynamicTable from "@components/DynamicTable";
 import OrderDialog from "@components/dialogs/OrderDialog";

@@ -17,7 +17,7 @@ function areSelectedOptionsEqual(
 }
 
 // Import StoreItem type
-import type { OrderItem } from "@shared/types/order";
+import type { OrderItem } from "@shared/types/Order";
 
 // -------------------------
 // 1. Define what the context will hold

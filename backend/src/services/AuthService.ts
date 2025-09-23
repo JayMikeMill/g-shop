@@ -1,6 +1,6 @@
 // @services/authService.ts
 import { auth } from "@config/adapters";
-import { User } from "@shared/types/user";
+import { User } from "@shared/types/User";
 
 export class AuthService {
   static async register(user: User, password: string): Promise<User> {

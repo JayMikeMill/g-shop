@@ -1,6 +1,6 @@
-import { User } from "@shared/types/user";
+import { User } from "@shared/types/User";
 import { db, auth } from "@config/adapters";
-import { QueryOptions } from "@shared/types/query-options";
+import { QueryObject } from "@shared/types/QueryObject";
 
 export class UserService {
   static async createUser(user: User, password?: string): Promise<User> {
@@ -12,7 +12,7 @@ export class UserService {
     return db.getUser(id) as Promise<User | null>;
   }
 
-  static async getUsers(query?: QueryOptions): Promise<User[]> {
+  static async getUsers(query?: QueryObject): Promise<User[]> {
     return db.getUsers(query) as Promise<User[]>;
   }
 

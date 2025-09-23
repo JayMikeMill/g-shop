@@ -1,9 +1,10 @@
-export interface QueryOptions {
+export interface QueryObject {
   conditions?: QueryCondition[];
-  limit?: number;
-  page?: number;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
+  search?: string; // add a global search field
+  limit?: number;
+  page?: number;
 }
 
 export interface QueryCondition {
@@ -12,8 +13,8 @@ export interface QueryCondition {
   value: any;
 }
 
-export function parseQueryOptions(query: Record<string, any>): QueryOptions {
-  const options: QueryOptions = {};
+export function parseQueryObject(query: Record<string, any>): QueryObject {
+  const options: QueryObject = {};
 
   if (query.limit !== undefined) {
     const n = parseInt(query.limit as string);
@@ -37,57 +38,13 @@ export function parseQueryOptions(query: Record<string, any>): QueryOptions {
   return options;
 }
 
-/**
- * Converts QueryOptions into SQL fragments and parameter array
- * @param query The QueryOptions object
- * @param jsonColumn Optional JSON column for JSON_EXTRACT filtering
- */
-export function queryOptionsToSql(query?: QueryOptions, jsonColumn?: string) {
-  let sql = "";
-  const params: any[] = [];
-
-  // WHERE conditions
-  if (query?.conditions?.length) {
-    const whereClauses = query.conditions.map((c) => {
-      params.push(c.value);
-      if (jsonColumn) {
-        return `JSON_EXTRACT(${jsonColumn}, '$.${c.field}') ${c.operator} ?`;
-      } else {
-        return `${c.field} ${c.operator} ?`;
-      }
-    });
-    sql += " WHERE " + whereClauses.join(" AND ");
-  }
-
-  // ORDER BY
-  if (query?.sortBy) {
-    if (sql) sql += " "; // spacing
-    sql += `ORDER BY ${jsonColumn ? `JSON_EXTRACT(${jsonColumn}, '$.${query.sortBy}')` : query.sortBy} ${
-      query.sortOrder === "desc" ? "DESC" : "ASC"
-    }`;
-  }
-
-  // LIMIT & OFFSET
-  if (query?.limit) {
-    sql += " LIMIT ?";
-    params.push(query.limit);
-
-    if (query.page) {
-      const offset = query.limit * (query.page - 1);
-      sql += " OFFSET ?";
-      params.push(offset);
-    }
-  }
-
-  return { sqlFragment: sql, params };
-}
-
-export function queryOptionsToPrisma(query?: QueryOptions) {
-  const where: any = {};
+export function queryOptionsToPrisma(query?: QueryObject) {
+  let where: any = {};
   const orderBy: any = {};
   let take: number | undefined;
   let skip: number | undefined;
 
+  // Handle individual conditions
   if (query?.conditions?.length) {
     for (const cond of query.conditions) {
       switch (cond.operator) {
@@ -113,17 +70,30 @@ export function queryOptionsToPrisma(query?: QueryOptions) {
     }
   }
 
+  // Handle global search across multiple fields
+  if (!query?.conditions?.length && query?.search) {
+    const search = query.search;
+    // Example: search in name, description, category
+    where.OR = [
+      { name: { contains: search, mode: "insensitive" } },
+      { description: { contains: search, mode: "insensitive" } },
+      { category: { contains: search, mode: "insensitive" } },
+    ];
+  }
+
+  // Sorting
   if (query?.sortBy) {
     orderBy[query.sortBy] = query.sortOrder === "desc" ? "desc" : "asc";
   }
 
+  // Pagination
   if (query?.limit) {
     take = query.limit;
     if (query.page) skip = query.limit * (query.page - 1);
   }
 
   return {
-    where,
+    where: Object.keys(where).length ? where : undefined,
     orderBy: Object.keys(orderBy).length ? orderBy : undefined,
     take,
     skip,

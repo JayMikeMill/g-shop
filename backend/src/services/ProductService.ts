@@ -1,7 +1,7 @@
-import { Product, ProductOptionPreset } from "@shared/types/product";
-import { Category } from "@shared/types/catalog";
+import { Product, ProductOptionPreset } from "@shared/types/Product";
+import { Category } from "@shared/types/Catalog";
 import { db } from "@config/adapters";
-import { QueryOptions } from "@shared/types/query-options";
+import { QueryObject } from "@shared/types/QueryObject";
 
 export class ProductService {
   static async createProduct(product: Product): Promise<Product> {
@@ -12,8 +12,8 @@ export class ProductService {
     return db.getProduct(id) as Promise<Product | null>;
   }
 
-  static async getProducts(query?: QueryOptions): Promise<Product[]> {
-    return db.getProducts(query) as Promise<Product[]>;
+  static async getProducts(query?: QueryObject) {
+    return db.getProducts(query);
   }
 
   static async updateProduct(

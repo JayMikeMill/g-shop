@@ -1,9 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import type { User } from "@shared/types/user";
-import {
-  QueryOptions,
-  queryOptionsToPrisma,
-} from "@shared/types/query-options";
+import type { User } from "@shared/types/User";
+import { QueryObject, queryOptionsToPrisma } from "@shared/types/QueryObject";
 
 export class UserCRUD {
   private prisma: PrismaClient;
@@ -22,7 +19,7 @@ export class UserCRUD {
     return found ? toUser(found) : null;
   }
 
-  async query(query?: QueryOptions): Promise<User[]> {
+  async query(query?: QueryObject): Promise<User[]> {
     const prismaQuery = queryOptionsToPrisma(query);
     const found = await this.prisma.user.findMany({ ...prismaQuery });
     return found.map(toUser);

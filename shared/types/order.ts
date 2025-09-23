@@ -1,7 +1,7 @@
-import { Product, ProductVariant, SelectedProductOption } from "./product";
-import { ShippingInfo } from "./shipping";
-import { Transaction } from "./transaction";
-import { User } from "./user";
+import type { Product, ProductVariant, SelectedProductOption } from "./Product";
+import type { ShippingInfo } from "./Shipping";
+import type { Transaction } from "./Transaction";
+import type { User } from "./User";
 
 export interface Order {
   id: string;

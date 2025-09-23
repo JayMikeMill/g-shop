@@ -1,15 +1,15 @@
 // backend/src/adapters/db/firebase-db-adapter.ts
-import { User } from "@shared/types/user";
+import { User } from "@shared/types/User";
 import {
   Product,
   ProductOptionPreset,
   ProductTagPreset,
-} from "@shared/types/product";
-import { Category, Collection } from "@shared/types/catalog";
-import { Order } from "@shared/types/order";
+} from "@shared/types/Product";
+import { Category, Collection } from "@shared/types/Catalog";
+import { Order } from "@shared/types/Order";
 import { DBAdapter } from "@adapters/db/DBAdapter";
 import { db } from "@config/firebase/firebaseAdmin";
-import { QueryOptions } from "@shared/types/query-options";
+import { QueryObject } from "@shared/types/QueryObject";
 
 export class FirebaseDBAdapter implements DBAdapter {
   // ---------- USERS ----------
@@ -25,7 +25,7 @@ export class FirebaseDBAdapter implements DBAdapter {
       : null;
   }
 
-  async getUsers(query?: QueryOptions): Promise<User[]> {
+  async getUsers(query?: QueryObject): Promise<User[]> {
     const { limit, page, sortBy, sortOrder } = query || {};
     let dbQuery: FirebaseFirestore.Query = db.collection("users");
     if (sortBy) {
@@ -72,7 +72,9 @@ export class FirebaseDBAdapter implements DBAdapter {
       : null;
   }
 
-  async getProducts(query?: QueryOptions): Promise<Product[]> {
+  async getProducts(
+    query?: QueryObject
+  ): Promise<{ data: Product[]; total: number }> {
     console.log("Fetching products with options:", query);
     const { limit, page, sortBy, sortOrder } = query || {};
     let dbQuery: FirebaseFirestore.Query = db.collection("products");
@@ -92,9 +94,12 @@ export class FirebaseDBAdapter implements DBAdapter {
       "Fetched products:",
       snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }) as Product)
     );
-    return snapshot.docs.map(
-      (doc) => ({ ...doc.data(), id: doc.id }) as Product
-    );
+    return {
+      data: snapshot.docs.map(
+        (doc) => ({ ...doc.data(), id: doc.id }) as Product
+      ),
+      total: snapshot.size,
+    };
   }
 
   async updateProduct(
@@ -265,7 +270,7 @@ export class FirebaseDBAdapter implements DBAdapter {
       : null;
   }
 
-  async getOrders(query?: QueryOptions): Promise<Order[]> {
+  async getOrders(query?: QueryObject): Promise<Order[]> {
     const { limit, page, sortBy, sortOrder } = query || {};
     let dbQuery: FirebaseFirestore.Query = db.collection("orders");
     if (sortBy) {

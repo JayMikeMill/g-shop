@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Order, OrderStatus } from "@shared/types/order";
+import type { Order, OrderStatus } from "@shared/types/Order";
 
 interface OrderDialogProps {
   order: Order | null;

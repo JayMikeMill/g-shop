@@ -1,5 +1,3 @@
-import { type Address } from "./shipping";
-
 // User entity
 export interface User {
   id: string; // primary key

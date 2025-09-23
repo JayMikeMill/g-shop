@@ -8,11 +8,11 @@ import {
   Product,
   ProductOptionPreset,
   ProductTagPreset,
-} from "@shared/types/product";
-import { Category, Collection } from "@shared/types/catalog";
-import { User } from "@shared/types/user";
-import { Order } from "@shared/types/order";
-import { QueryOptions } from "@shared/types/query-options";
+} from "@shared/types/Product";
+import { Category, Collection } from "@shared/types/Catalog";
+import { User } from "@shared/types/User";
+import { Order } from "@shared/types/Order";
+import { QueryObject } from "@shared/types/QueryObject";
 
 export class PrismaAdapter implements DBAdapter {
   public prisma: PrismaClient;
@@ -36,7 +36,7 @@ export class PrismaAdapter implements DBAdapter {
   getUser(id: string) {
     return this.users.get(id);
   }
-  getUsers(query?: QueryOptions) {
+  getUsers(query?: QueryObject) {
     return this.users.query(query);
   }
   updateUser(id: string, update: Partial<User>) {
@@ -53,7 +53,7 @@ export class PrismaAdapter implements DBAdapter {
   getProduct(id: string) {
     return this.products.get(id);
   }
-  getProducts(query?: QueryOptions) {
+  getProducts(query?: QueryObject) {
     return this.products.getAll(query);
   }
   updateProduct(id: string, update: Partial<Product>) {
@@ -83,7 +83,7 @@ export class PrismaAdapter implements DBAdapter {
   getProductTagPreset(id: string): Promise<ProductTagPreset | null> {
     return this.products.getTag(id);
   }
-  getProductTagPresets(query?: QueryOptions): Promise<ProductTagPreset[]> {
+  getProductTagPresets(query?: QueryObject): Promise<ProductTagPreset[]> {
     return this.products.getTags(query);
   }
   async deleteProductTagPreset(id: string): Promise<void> {
@@ -97,7 +97,7 @@ export class PrismaAdapter implements DBAdapter {
   getCategory(id: string): Promise<Category | null> {
     return this.catalog.getCategory(id);
   }
-  getCategories(query?: QueryOptions): Promise<Category[]> {
+  getCategories(query?: QueryObject): Promise<Category[]> {
     return this.catalog.getCategories(query);
   }
   updateCategory(
@@ -117,7 +117,7 @@ export class PrismaAdapter implements DBAdapter {
   getCollection(id: string): Promise<Collection | null> {
     return this.catalog.getCollection(id);
   }
-  getCollections(query?: QueryOptions): Promise<Collection[]> {
+  getCollections(query?: QueryObject): Promise<Collection[]> {
     return this.catalog.getCollections(query);
   }
   updateCollection(
@@ -137,7 +137,7 @@ export class PrismaAdapter implements DBAdapter {
   getOrder(id: string) {
     return this.orders.get(id);
   }
-  getOrders(query?: QueryOptions) {
+  getOrders(query?: QueryObject) {
     return this.orders.query(query);
   }
   updateOrder(id: string, update: Partial<Order>) {

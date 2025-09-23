@@ -1,6 +1,6 @@
-import { Order } from "@shared/types/order";
+import { Order } from "@shared/types/Order";
 import { db } from "@config/adapters";
-import { QueryOptions } from "@shared/types/query-options";
+import { QueryObject } from "@shared/types/QueryObject";
 
 export class OrderService {
   static async createOrder(order: Order): Promise<Order> {
@@ -13,7 +13,7 @@ export class OrderService {
     return db.getOrder(id);
   }
 
-  static async getOrders(query?: QueryOptions): Promise<Order[]> {
+  static async getOrders(query?: QueryObject): Promise<Order[]> {
     return db.getOrders(query);
   }
 

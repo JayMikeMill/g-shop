@@ -1,5 +1,5 @@
-// controllers/catalog-controller.ts
-import { parseQueryOptions } from "@shared/types/query-options";
+// controllers/Catalog-controller.ts
+import { parseQueryObject } from "@shared/types/QueryObject";
 import { CatalogService } from "@services/CatalogService";
 import { createCrudHandler, createCrudDeleteHandler } from "@utils/crudHandler";
 
@@ -14,7 +14,7 @@ export const getCategory = createCrudHandler(
 );
 
 export const getCategories = createCrudHandler((req) =>
-  CatalogService.getCategories(parseQueryOptions(req.query))
+  CatalogService.getCategories(parseQueryObject(req.query))
 );
 
 export const updateCategory = createCrudHandler(
@@ -38,7 +38,7 @@ export const getCollection = createCrudHandler(
 );
 
 export const getCollections = createCrudHandler((req) =>
-  CatalogService.getCollections(parseQueryOptions(req.query))
+  CatalogService.getCollections(parseQueryObject(req.query))
 );
 
 export const updateCollection = createCrudHandler(

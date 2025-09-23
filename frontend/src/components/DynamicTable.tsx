@@ -1,4 +1,6 @@
-import { useState, type ReactNode, useMemo } from "react";
+import { useState, useEffect, type ReactNode } from "react";
+import type { QueryObject } from "@shared/types/QueryObject";
+
 import "./dynamic-table.css";
 
 export interface TableColumn<T> {
@@ -13,59 +15,63 @@ export interface TableColumn<T> {
 }
 
 export interface DynamicTableProps<T> {
-  data: T[];
   columns: TableColumn<T>[];
-  onRowClick?: (row: T) => void;
-  actions?: (row: T) => ReactNode;
   pageSize?: number;
   searchable?: boolean;
+  onRowClick?: (row: T) => void;
+  actions?: (row: T) => ReactNode;
+  // **Server-side fetch function**
+  fetchPage: (query?: QueryObject) => Promise<{ data: T[]; total: number }>;
 }
 
 export default function DynamicTable<T extends { id?: string }>({
-  data,
-  columns,
-  onRowClick,
-  actions,
+  columns = [],
   pageSize = 10,
   searchable = true,
+  onRowClick,
+  actions,
+  fetchPage,
 }: DynamicTableProps<T>) {
-  const [search, setSearch] = useState("");
+  const [pageData, setPageData] = useState<T[]>([]);
+  const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [loading, setLoading] = useState(false);
 
-  // Filtered & sorted data
-  const filteredData = useMemo(() => {
-    let temp = [...data];
-    if (search) {
-      temp = temp.filter((row) =>
-        columns.some((col) => {
-          const value = (row as any)[col.id];
-          return value?.toString().toLowerCase().includes(search.toLowerCase());
-        })
-      );
-    }
-    if (sortKey) {
-      temp.sort((a, b) => {
-        const aVal = (a as any)[sortKey];
-        const bVal = (b as any)[sortKey];
-        if (aVal == null) return 1;
-        if (bVal == null) return -1;
-        if (aVal === bVal) return 0;
-        return sortOrder === "asc"
-          ? aVal > bVal
-            ? 1
-            : -1
-          : aVal < bVal
-            ? 1
-            : -1;
-      });
-    }
-    return temp;
-  }, [data, search, sortKey, sortOrder, columns]);
+  const totalPages = Math.ceil(total / pageSize);
 
-  const totalPages = Math.ceil(filteredData.length / pageSize);
-  const pageData = filteredData.slice((page - 1) * pageSize, page * pageSize);
+  const loadPage = async (pageNumber: number) => {
+    setLoading(true);
+    try {
+      const fetchQuery = {
+        search: search || undefined,
+        sortBy: sortKey || undefined,
+        sortOrder: sortKey ? sortOrder : undefined,
+        limit: pageSize,
+        page: pageNumber,
+      } as QueryObject;
+
+      console.log("Fetching page with query:", fetchQuery);
+
+      const { data, total } = await fetchPage(fetchQuery);
+
+      console.log("Fetched page result:", data);
+
+      setPageData(data);
+      setTotal(total);
+    } catch (err) {
+      console.error("Failed to load table page:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Reload whenever page, search, or sort changes
+  useEffect(() => {
+    loadPage(page);
+  }, [page, search, sortKey, sortOrder]);
 
   const handleSort = (col: TableColumn<T>) => {
     if (!col.sortable) return;
@@ -75,6 +81,12 @@ export default function DynamicTable<T extends { id?: string }>({
       setSortKey(col.id);
       setSortOrder("asc");
     }
+    setPage(1); // reset to first page when sorting changes
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    setPage(1); // reset to first page when searching
   };
 
   return (
@@ -86,33 +98,24 @@ export default function DynamicTable<T extends { id?: string }>({
             type="text"
             placeholder="Search..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={handleSearchChange}
             className="table-search"
           />
         </div>
       )}
 
-      {/* Table Container */}
+      {/* Table */}
       <div className="table-container">
         <table className="table">
           <thead>
             <tr>
-              {actions && (
-                <th
-                  className="actions w-[120px]"
-                  style={{ left: 0, zIndex: 30 }}
-                >
-                  Actions
-                </th>
-              )}
+              {actions && <th className="actions w-[120px]">Actions</th>}
               {columns.map((col) => (
                 <th
                   key={col.id}
-                  className={`${
-                    col.sortable ? "sortable" : ""
-                  } ${col.headerClassName || ""}`}
+                  className={`${col.sortable ? "sortable" : ""} ${col.headerClassName || ""}`}
                   style={col.width ? { width: col.width } : { width: "120px" }}
-                  onClick={() => col.sortable && handleSort(col)}
+                  onClick={() => handleSort(col)}
                 >
                   {col.renderHeader ? (
                     col.renderHeader()
@@ -128,27 +131,43 @@ export default function DynamicTable<T extends { id?: string }>({
               ))}
             </tr>
           </thead>
-
           <tbody>
-            {pageData.map((row, idx) => (
-              <tr
-                key={row.id}
-                onClick={() => onRowClick?.(data[idx + (page - 1) * pageSize])}
-              >
-                {actions && <td className="actions">{actions(row)}</td>}
-                {columns.map((col) => (
-                  <td
-                    key={col.id}
-                    className={col.className || ""}
-                    style={
-                      col.width ? { width: col.width } : { width: "120px" }
-                    }
-                  >
-                    {col.render ? col.render(row) : (row as any)[col.id]}
-                  </td>
-                ))}
+            {loading ? (
+              <tr>
+                <td
+                  colSpan={columns.length + (actions ? 1 : 0)}
+                  className="text-center py-4"
+                >
+                  Loading...
+                </td>
               </tr>
-            ))}
+            ) : (pageData || []).length === 0 ? (
+              <tr>
+                <td
+                  colSpan={columns.length + (actions ? 1 : 0)}
+                  className="text-center py-4"
+                >
+                  No data
+                </td>
+              </tr>
+            ) : (
+              pageData.map((row) => (
+                <tr key={row.id} onClick={() => onRowClick?.(row)}>
+                  {actions && <td className="actions">{actions(row)}</td>}
+                  {columns.map((col) => (
+                    <td
+                      key={col.id}
+                      className={col.className || ""}
+                      style={
+                        col.width ? { width: col.width } : { width: "120px" }
+                      }
+                    >
+                      {col.render ? col.render(row) : (row as any)[col.id]}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

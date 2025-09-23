@@ -1,9 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import type { Category, Collection } from "@shared/types/catalog";
-import {
-  QueryOptions,
-  queryOptionsToPrisma,
-} from "@shared/types/query-options";
+import type { Category, Collection } from "@shared/types/Catalog";
+import { QueryObject, queryOptionsToPrisma } from "@shared/types/QueryObject";
 
 export class CatalogCRUD {
   private prisma: PrismaClient;
@@ -26,7 +23,7 @@ export class CatalogCRUD {
     return found ? this.toCategory(found) : null;
   }
 
-  async getCategories(query?: QueryOptions): Promise<Category[]> {
+  async getCategories(query?: QueryObject): Promise<Category[]> {
     const prismaQuery = queryOptionsToPrisma(query);
     const found = await this.prisma.category.findMany({ ...prismaQuery });
     return found.map(this.toCategory);
@@ -65,7 +62,7 @@ export class CatalogCRUD {
     return found ? this.toCollection(found) : null;
   }
 
-  async getCollections(query?: QueryOptions): Promise<Collection[]> {
+  async getCollections(query?: QueryObject): Promise<Collection[]> {
     const prismaQuery = queryOptionsToPrisma(query);
     const found = await this.prisma.collection.findMany({ ...prismaQuery });
     return found.map(this.toCollection);

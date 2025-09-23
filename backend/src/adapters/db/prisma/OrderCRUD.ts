@@ -1,9 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import type { Order } from "@shared/types/order";
-import {
-  QueryOptions,
-  queryOptionsToPrisma,
-} from "@shared/types/query-options";
+import type { Order } from "@shared/types/Order";
+import { QueryObject, queryOptionsToPrisma } from "@shared/types/QueryObject";
 
 export class OrderCRUD {
   private prisma: PrismaClient;
@@ -24,7 +21,7 @@ export class OrderCRUD {
     return found ? toOrder(found) : null;
   }
 
-  async query(query?: QueryOptions): Promise<Order[]> {
+  async query(query?: QueryObject): Promise<Order[]> {
     const prismaQuery = queryOptionsToPrisma(query);
     const found = await this.prisma.order.findMany({ ...prismaQuery });
     return found.map(toOrder);

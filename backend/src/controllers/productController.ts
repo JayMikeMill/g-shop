@@ -1,5 +1,5 @@
-// controllers/product-controller.ts
-import { parseQueryOptions } from "@shared/types/query-options";
+// controllers/Product-controller.ts
+import { parseQueryObject } from "@shared/types/QueryObject";
 import { ProductService } from "@services/ProductService";
 import { createCrudHandler, createCrudDeleteHandler } from "@utils/crudHandler";
 
@@ -14,7 +14,7 @@ export const getProduct = createCrudHandler(
 );
 
 export const getProducts = createCrudHandler((req) =>
-  ProductService.getProducts(parseQueryOptions(req.query))
+  ProductService.getProducts(parseQueryObject(req.query))
 );
 
 export const updateProduct = createCrudHandler(

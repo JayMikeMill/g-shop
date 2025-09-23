@@ -1,4 +1,4 @@
-import type { Address } from "./shipping";
+import type { Address } from "./Shipping";
 
 export type PaymentRequest = {
   nonce: string;

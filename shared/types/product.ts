@@ -1,6 +1,6 @@
-// shared/models/product.ts
+// shared/models/Product.ts
 
-import { Category, Collection } from "./catalog";
+import type { Category, Collection } from "./Catalog";
 
 export interface Product {
   id?: string;

@@ -1,21 +1,28 @@
 import React, { useRef, useState, useEffect } from "react";
-import CropDialog from "../dialogs/CropDialog";
-import { processImageOnly } from "@utils/image-processing";
 
-interface ImagePreviewListProps {
-  imagePreviews: string[];
-  setImagePreviews: React.Dispatch<React.SetStateAction<string[]>>;
+// Lightbox
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
+import { Zoom } from "yet-another-react-lightbox/plugins";
+
+// Components
+import CropDialog from "../dialogs/CropDialog";
+
+import { processImageOnly } from "@utils/image-processing";
+import type { ProductImageSet } from "@shared/types/Product";
+
+interface ImageListEditorProps {
+  images: ProductImageSet[];
+  onImagesChange: (images: ProductImageSet[]) => void;
   setProcessedImages: React.Dispatch<React.SetStateAction<any[]>>;
   setIsProcessingImages: React.Dispatch<React.SetStateAction<boolean>>;
-  onLightbox: (src: string) => void;
 }
 
-const ImageListEditor: React.FC<ImagePreviewListProps> = ({
-  imagePreviews,
-  setImagePreviews,
+const ImageListEditor: React.FC<ImageListEditorProps> = ({
+  images,
+  onImagesChange,
   setProcessedImages,
   setIsProcessingImages,
-  onLightbox,
 }) => {
   const dragItem = useRef<number | null>(null);
   const dragOverItem = useRef<number | null>(null);
@@ -24,6 +31,8 @@ const ImageListEditor: React.FC<ImagePreviewListProps> = ({
   const [pendingCropFiles, setPendingCropFiles] = useState<File[]>([]);
   const [pendingCropFile, setPendingCropFile] = useState<File | null>(null);
   const [processingIndexes, setProcessingIndexes] = useState<number[]>([]);
+
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -50,10 +59,15 @@ const ImageListEditor: React.FC<ImagePreviewListProps> = ({
     previewUrl: string,
     originalName?: string
   ) => {
-    const index = imagePreviews.length;
+    const index = images.length;
 
     // Add preview immediately
-    setImagePreviews((prev) => [...prev, previewUrl]);
+    const newImage: ProductImageSet = {
+      main: previewUrl, // temp, will be replaced after upload
+      preview: previewUrl,
+      thumbnail: previewUrl,
+    };
+    onImagesChange([...images, newImage]);
     setProcessingIndexes((prev) => [...prev, index]);
     setPendingCropFile(null); // close dialog immediately
     setIsProcessingImages(true);
@@ -81,7 +95,7 @@ const ImageListEditor: React.FC<ImagePreviewListProps> = ({
     } catch (err: any) {
       alert(err?.message || "Error processing cropped image");
       // Remove failed image
-      setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+      onImagesChange(images.filter((_, i) => i !== index));
     } finally {
       setProcessingIndexes((prev) => prev.filter((i) => i !== index));
       setIsProcessingImages(false);
@@ -91,14 +105,7 @@ const ImageListEditor: React.FC<ImagePreviewListProps> = ({
   const handleCropCancel = () => setPendingCropFile(null);
 
   const removeImage = (index: number) => {
-    setImagePreviews((prev) => {
-      const newPreviews = [...prev];
-      const removedPreview = newPreviews.splice(index, 1)[0];
-      setProcessedImages((prevProcessed) =>
-        prevProcessed.filter((img) => img && img.previewUrl !== removedPreview)
-      );
-      return newPreviews;
-    });
+    onImagesChange(images.filter((_, i) => i !== index));
     setProcessingIndexes((prev) => prev.filter((i) => i !== index));
   };
 
@@ -111,21 +118,10 @@ const ImageListEditor: React.FC<ImagePreviewListProps> = ({
       return;
     }
 
-    setImagePreviews((prev) => {
-      const newPreviews = [...prev];
-      const dragged = newPreviews.splice(dragItem.current!, 1)[0];
-      newPreviews.splice(dragOverItem.current!, 0, dragged);
-
-      setProcessedImages((prevProcessed) =>
-        newPreviews
-          .map((preview) =>
-            prevProcessed.find((img) => img && img.previewUrl === preview)
-          )
-          .filter(Boolean)
-      );
-
-      return newPreviews;
-    });
+    const newImages = [...images];
+    const dragged = newImages.splice(dragItem.current!, 1)[0];
+    newImages.splice(dragOverItem.current!, 0, dragged);
+    onImagesChange(newImages);
 
     dragItem.current = null;
     dragOverItem.current = null;
@@ -148,9 +144,20 @@ const ImageListEditor: React.FC<ImagePreviewListProps> = ({
         />
       )}
 
-      {imagePreviews.map((preview, index) => (
+      {/* Lightbox */}
+      <Lightbox
+        open={lightboxIndex !== null}
+        close={() => setLightboxIndex(null)}
+        slides={images.map((img) => ({ src: img.main }))}
+        index={lightboxIndex ?? 0}
+        plugins={[Zoom]}
+        styles={{ container: { backgroundColor: "rgba(0,0,0,0.5)" } }}
+        zoom={{ scrollToZoom: true, maxZoomPixelRatio: 2 }}
+      />
+
+      {images.map((img, index) => (
         <div
-          key={preview + index}
+          key={img.preview + index}
           data-index={index}
           className={[
             "relative rounded-lg overflow-hidden flex-shrink-0 cursor-grab select-none",
@@ -167,7 +174,7 @@ const ImageListEditor: React.FC<ImagePreviewListProps> = ({
           }}
           onDragEnd={handleSort}
           onDragOver={(e) => e.preventDefault()}
-          onClick={() => onLightbox(preview)}
+          onClick={() => setLightboxIndex(index)}
         >
           {index === 0 && (
             <span className="absolute top-1 left-1 bg-black/60 text-white px-2 py-1 rounded text-xs font-bold pointer-events-none">
@@ -175,7 +182,7 @@ const ImageListEditor: React.FC<ImagePreviewListProps> = ({
             </span>
           )}
           <img
-            src={preview}
+            src={img.preview || img.main}
             alt="Product preview"
             className="w-full h-full object-cover block pointer-events-none"
           />
@@ -205,11 +212,11 @@ const ImageListEditor: React.FC<ImagePreviewListProps> = ({
 
       <div
         className="
-					w-[100px] h-[100px] md:w-full md:h-[100px] flex-shrink-0 
-					rounded-lg border-2 border-dashed border-gray-300 
-					flex items-center justify-center text-gray-500 
-					cursor-pointer hover:bg-gray-100 transition
-				"
+                    w-[100px] h-[100px] md:w-full md:h-[100px] flex-shrink-0 
+                    rounded-lg border-2 border-dashed border-gray-300 
+                    flex items-center justify-center text-gray-500 
+                    cursor-pointer hover:bg-gray-100 transition
+                "
         onClick={handleAddImageClick}
       >
         <span className="text-center text-sm font-medium">

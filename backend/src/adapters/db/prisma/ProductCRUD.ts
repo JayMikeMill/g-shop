@@ -6,11 +6,8 @@ import type {
   ProductTagPreset,
   ProductVariant,
   ProductReview,
-} from "@shared/types/product";
-import {
-  QueryOptions,
-  queryOptionsToPrisma,
-} from "@shared/types/query-options";
+} from "@shared/types/Product";
+import { QueryObject, queryOptionsToPrisma } from "@shared/types/QueryObject";
 
 const prisma = new PrismaClient();
 
@@ -38,13 +35,20 @@ export class ProductCRUD {
     return found ? toProduct(found) : null;
   }
 
-  async getAll(query?: QueryOptions): Promise<Product[]> {
+  async getAll(
+    query?: QueryObject
+  ): Promise<{ data: Product[]; total: number }> {
     const prismaQuery = queryOptionsToPrisma(query);
-    const products = await this.prisma.product.findMany({
-      ...prismaQuery,
-      include: PRODUCT_INCLUDE,
-    });
-    return products.map((p) => toProduct(p));
+    const [products, total] = await this.prisma.$transaction([
+      this.prisma.product.findMany({
+        ...prismaQuery,
+        include: PRODUCT_INCLUDE,
+      }),
+      this.prisma.product.count({
+        where: prismaQuery.where,
+      }),
+    ]);
+    return { data: products.map((p) => toProduct(p)), total };
   }
 
   async update(id: string, update: Partial<Product>): Promise<Product> {
@@ -117,7 +121,7 @@ export class ProductCRUD {
     return found ? { ...found, color: found.color ?? undefined } : null;
   }
 
-  async getTags(query: QueryOptions | undefined): Promise<ProductTagPreset[]> {
+  async getTags(query: QueryObject | undefined): Promise<ProductTagPreset[]> {
     const tags = await this.prisma.productTagPreset.findMany();
     return tags.map((t) => ({ ...t, color: t.color ?? undefined }));
   }
