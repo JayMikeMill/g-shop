@@ -1,5 +1,5 @@
 import ProductCardList from "@components/ProductCardList";
-import ProductLoader from "@components/Product-loader";
+import ProductLoader from "@components/ProductLoader";
 import { useEffect, useState } from "react";
 import type { Product } from "@shared/types/Product";
 import { useApi } from "@api/useApi";
@@ -14,7 +14,7 @@ export default function HomePage() {
     // Fetch products using the context, with a limit (e.g., 20)
     const fetch = async () => {
       try {
-        const result = await getProducts({ limit: 20 });
+        const { data: result } = await getProducts({ limit: 20 });
         setProducts(result);
       } finally {
         setLoading(false);

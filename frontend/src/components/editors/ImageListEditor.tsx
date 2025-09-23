@@ -106,6 +106,7 @@ const ImageListEditor: React.FC<ImageListEditorProps> = ({
 
   const removeImage = (index: number) => {
     onImagesChange(images.filter((_, i) => i !== index));
+    setProcessedImages((prev) => prev.filter((_, i) => i !== index));
     setProcessingIndexes((prev) => prev.filter((i) => i !== index));
   };
 
@@ -118,10 +119,19 @@ const ImageListEditor: React.FC<ImageListEditorProps> = ({
       return;
     }
 
+    // Reorder images
     const newImages = [...images];
     const dragged = newImages.splice(dragItem.current!, 1)[0];
     newImages.splice(dragOverItem.current!, 0, dragged);
     onImagesChange(newImages);
+
+    // Reorder processedImages to match
+    setProcessedImages((prev) => {
+      const newProcessed = [...prev];
+      const draggedProcessed = newProcessed.splice(dragItem.current!, 1)[0];
+      newProcessed.splice(dragOverItem.current!, 0, draggedProcessed);
+      return newProcessed;
+    });
 
     dragItem.current = null;
     dragOverItem.current = null;

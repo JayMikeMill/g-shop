@@ -27,7 +27,6 @@ export default function ProductDialog({
   const [productOptions, setProductOptions] = useState<ProductOption[]>([]);
 
   // Image state is now managed in ImagePreviewList
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [processedImages, setProcessedImages] = useState<any[]>([]); // Store processed blobs and preview
   const [isProcessingImages, setIsProcessingImages] = useState(false);
   const [isSavingProduct, setIsSavingProduct] = useState(false);
@@ -52,15 +51,8 @@ export default function ProductDialog({
     setPrice(product?.price || 0);
     setDescription(product?.description || "");
     setProductOptions(product?.options || []);
-
-    // setImageFiles([]); // removed, now handled in ImagePreviewList
-    // Extract preview URLs from ProductImageSet[] for display
-    setImagePreviews(
-      product?.images?.map((imgSet) => imgSet.preview || imgSet.main) || []
-    );
-    setImages(product?.images || []);
-
     setTagString(product?.tags?.map((tag) => tag.name).join(", ") || "");
+    setImages(product?.images || []);
 
     if (product && product.discount) {
       const discountStr = product.discount;
@@ -120,8 +112,8 @@ export default function ProductDialog({
       const hasImages =
         processedImages.length > 0 ||
         (product && product.images && product.images.length > 0);
-      const hasPreview = imagePreviews.length > 0;
-      if (!hasImages && !hasPreview) {
+
+      if (!hasImages) {
         alert("At least one image is required");
         return;
       }
@@ -135,8 +127,9 @@ export default function ProductDialog({
 
       // For each image in imagePreviews, if it has a processedImages entry, upload it; otherwise, use the existing product image
       let uploadedImages = [];
-      for (let i = 0; i < imagePreviews.length; i++) {
-        const previewUrl = imagePreviews[i];
+
+      for (let i = 0; i < images.length; i++) {
+        const previewUrl = images[i].preview || images[i].main;
         const processed = processedImages.find(
           (img) => img.previewUrl === previewUrl
         );
@@ -181,6 +174,7 @@ export default function ProductDialog({
         }
       }
 
+      console.log("Final uploaded images:", uploadedImages);
       if (product) {
         await updateProduct({
           id: product.id,
@@ -189,7 +183,7 @@ export default function ProductDialog({
           description,
           discount: discountString,
           tags: tagsArray,
-          images: images.length > 0 ? images : product.images,
+          images: uploadedImages, // <-- use uploadedImages
           options: productOptions,
           stock: product.stock,
         } as unknown as Product);
@@ -200,7 +194,7 @@ export default function ProductDialog({
           description,
           discount: discountString,
           tags: tagsArray,
-          images,
+          images: uploadedImages, // <-- use uploadedImages
           options: productOptions,
           stock: 0,
         } as Product);

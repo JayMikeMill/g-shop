@@ -63,7 +63,8 @@ export interface SelectedProductOption {
 
 // Variant entity
 export interface ProductVariant {
-  sku?: string;
+  id?: string;
+  options: string[];
   priceOverride?: number;
   stock: number;
 }

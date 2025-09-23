@@ -12,7 +12,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
-    addToCart({ ...product, quantity: 1, selectedOptions: [] });
+    addToCart({
+      productId: product.id ?? "",
+      quantity: 1,
+      variantId: product.variants?.[0]?.id ?? "",
+      price: product.price,
+    });
   };
 
   const handleCardClick = () => {

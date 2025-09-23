@@ -20,14 +20,14 @@ export interface Order {
 }
 
 export interface OrderItem {
-  id: string;
-  orderId: string;
+  orderId?: string;
   productId: string;
   variantId?: string;
   quantity: number;
   price: number;
 
   // Related product
+  order?: Order;
   product?: Product;
   variant?: ProductVariant;
 }
