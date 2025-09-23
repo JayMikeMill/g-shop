@@ -8,12 +8,44 @@ import type {
   ProductOption,
   ProductTag,
   ProductImageSet,
+  ProductVariant,
 } from "@shared/types/Product";
 import { useApi } from "@api/useApi";
 
 interface ProductDialogProps {
   product: Product | null; // If null, we are adding a new product
   onClose: () => void; // Callback to close dialog
+}
+
+/**
+ * Generate all possible variants for a product based on its options.
+ * - options are saved as an array of strings
+ * - stock defaults to the product's stock
+ * - priceOverride defaults to the product's price
+ */
+export function generateVariants(
+  options?: ProductOption[]
+): ProductVariant[] | undefined {
+  if (!options || options.length === 0) return;
+
+  // Get all option values arrays
+  const valuesArrays = options.map((opt) => opt.values.split(","));
+
+  if (valuesArrays.some((arr) => arr.length === 0)) return; // If any option has no values, return empty array
+
+  // Cartesian product to generate all combinations
+  const cartesian = (arr: string[][]): string[][] =>
+    arr.reduce((a, b) => a.flatMap((d) => b.map((e) => [...d, e])), [
+      [],
+    ] as string[][]);
+
+  const combos = cartesian(valuesArrays);
+
+  return combos.map((combo) => ({
+    options: combo.map((val, i) => `${options[i].name}:${val}`).join("|"),
+    stock: 0, // default stock, can be updated later
+    priceOverride: undefined,
+  }));
 }
 
 export default function ProductDialog({
@@ -174,9 +206,8 @@ export default function ProductDialog({
         }
       }
 
-      console.log("Final uploaded images:", uploadedImages);
       if (product) {
-        await updateProduct({
+        const updatedProduct = {
           id: product.id,
           name,
           price,
@@ -186,9 +217,17 @@ export default function ProductDialog({
           images: uploadedImages, // <-- use uploadedImages
           options: productOptions,
           stock: product.stock,
-        } as unknown as Product);
+        } as Product;
+
+        updatedProduct.variants = generateVariants(updatedProduct.options);
+
+        console.log("Updated Product:", updatedProduct);
+
+        await updateProduct(updatedProduct);
+        setIsSavingProduct(false);
+        onClose();
       } else {
-        await createProduct({
+        const newProduct = {
           name,
           price,
           description,
@@ -197,11 +236,17 @@ export default function ProductDialog({
           images: uploadedImages, // <-- use uploadedImages
           options: productOptions,
           stock: 0,
-        } as Product);
-      }
+        } as Product;
 
-      setIsSavingProduct(false);
-      onClose();
+        newProduct.variants = generateVariants(newProduct.options);
+
+        console.log("Adding New Product:", newProduct);
+
+        await createProduct(newProduct);
+
+        setIsSavingProduct(false);
+        onClose();
+      }
     } catch (err: any) {
       // setIsUploadingImages(false);
       setIsSavingProduct(false);

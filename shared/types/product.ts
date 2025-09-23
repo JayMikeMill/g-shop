@@ -23,6 +23,7 @@ export interface Product {
 
 // Product images
 export interface ProductImageSet {
+  id?: string;
   main: string;
   preview: string;
   thumbnail: string;
@@ -30,29 +31,23 @@ export interface ProductImageSet {
 
 // Product option
 export interface ProductOption {
-  name: string;
-  values: ProductOptionValue[];
-}
-
-// Product option value
-export interface ProductOptionValue {
-  value: string;
-}
-
-// Product option preset
-export interface ProductOptionPreset extends ProductOption {
   id?: string;
+  name: string;
+  values: string; // Comma-separated values
+}
+
+// Product option
+export interface ProductOptionsPreset {
+  id?: string;
+  name: string;
+  options: ProductOption[];
 }
 
 // Tag entity
 export interface ProductTag {
+  id?: string;
   name: string;
   color?: string;
-}
-
-// Tag preset
-export interface ProductTagPreset extends ProductTag {
-  id?: string;
 }
 
 // Selected product option (for cart/store use)
@@ -64,7 +59,7 @@ export interface SelectedProductOption {
 // Variant entity
 export interface ProductVariant {
   id?: string;
-  options: string[];
+  options: string; // serialized string like "Color:Red|Size:M"
   priceOverride?: number;
   stock: number;
 }

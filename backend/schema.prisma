@@ -214,27 +214,34 @@ model ProductTag {
 }
 
 model ProductOption {
-  id       String               @id @default(uuid())
-  product  Product              @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String
-  name     String
-  values   ProductOptionValue[]
+  id         String             @id @default(uuid())
+  product    Product            @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId  String
+  name       String
+  values     String
 }
 
-model ProductOptionValue {
-  id            String         @id @default(uuid())
-  productOption ProductOption  @relation(fields: [productOptionId], references: [id], onDelete: Cascade)
-  productOptionId String
-  value         String
+model ProductOptionsPreset {
+  id       String               @id @default(uuid())
+  name     String
+  options  ProductOptionPreset[]
+}
+
+model ProductOptionPreset {
+	id        String                @id @default(uuid())
+	preset    ProductOptionsPreset  @relation(fields: [presetId], references: [id], onDelete: Cascade)
+	presetId  String
+	name      String
+	values    String
 }
 
 model ProductVariant {
-  id           String   @id @default(uuid())
-  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId    String
-  sku          String?  @unique
+  id            String   @id @default(uuid())
+  product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId     String
+  options       String   @unique
   priceOverride Float?
-  stock        Int
+  stock         Int
 }
 
 model ProductDimensions {
@@ -262,18 +269,6 @@ model ProductReview {
 // PRODUCT PRESETS
 //////////////////////
 
-model ProductOptionPreset {
-  id     String               @id @default(uuid())
-  name   String
-  values ProductOptionPresetValue[]
-}
-
-model ProductOptionPresetValue {
-  id                   String               @id @default(uuid())
-  productOptionPreset   ProductOptionPreset @relation(fields: [presetId], references: [id], onDelete: Cascade)
-  presetId             String
-  value                String
-}
 
 model ProductTagPreset {
   id    String @id @default(uuid())

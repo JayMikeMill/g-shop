@@ -51,7 +51,8 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     setCart((prevCart) => {
       const existingIndex = prevCart.findIndex(
         (cartItem) =>
-          cartItem.id === item.id && cartItem.variantId === item.variantId
+          cartItem.productId === item.productId &&
+          cartItem.variantId === item.variantId
       );
 
       if (existingIndex !== -1) {
@@ -80,7 +81,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   const removeFromCart = (item: OrderItem) => {
     setCart((prevCart) => {
       const existingIndex = prevCart.findIndex(
-        (c) => c.id === item.id && c.variantId === item.variantId
+        (c) => c.productId === item.productId && c.variantId === item.variantId
       );
       if (existingIndex === -1) return prevCart;
 

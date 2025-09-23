@@ -73,7 +73,12 @@ const ProductPage = () => {
   };
 
   const handleAddToCart = () =>
-    addToCart({ ...product, selectedOptions, quantity: 1 });
+    addToCart({
+      productId: product.id ?? "",
+      quantity: 1,
+      price: discountedPrice || product.price,
+      variantId: "",
+    }); // price will be determined in cart context
 
   return (
     <div className="max-w-4xl mx-auto p-mt-8">

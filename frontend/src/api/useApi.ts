@@ -1,82 +1,159 @@
+import { useMemo } from "react";
 import { useAuth } from "@contexts/auth/AuthContext";
+import axios from "axios";
+
 import type { User } from "@shared/types/User";
-import * as api from "@api/backendAPI";
-import type { Product } from "@shared/types/Product";
+import type {
+  Product,
+  ProductOption,
+  ProductOptionsPreset,
+} from "@shared/types/Product";
 import type { Category } from "@shared/types/Catalog";
-import type { PaymentRequest } from "@shared/types/PaymentRequest"; // Add this import, adjust the path if needed
 import type { Order } from "@shared/types/Order";
+import type { PaymentRequest } from "@shared/types/PaymentRequest";
 import type { QueryObject } from "@shared/types/QueryObject";
 
+const API_BASE = import.meta.env.VITE_API_URL;
+
+// ----------------------
+// Generic request helpers
+// ----------------------
+const get = <T>(url: string, token?: string | null, params?: any) =>
+  axios
+    .get<T>(url, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      params,
+    })
+    .then((r) => r.data);
+
+const post = <T>(url: string, data?: any, token?: string | null) =>
+  axios
+    .post<T>(url, data, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    .then((r) => r.data);
+
+const put = <T>(url: string, data: any, token?: string | null) =>
+  axios
+    .put<T>(url, data, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    .then((r) => r.data);
+
+const del = <T>(url: string, token?: string | null, data?: any) =>
+  axios
+    .delete<T>(url, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      data,
+    })
+    .then((r) => r.data);
+
+export const verifyToken = async (token: string) =>
+  axios
+    .get(`${API_BASE}/auth/verify`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((r) => r.data);
+
+// ----------------------
+// useApi hook
+// ----------------------
 export function useApi() {
   const { token } = useAuth();
 
-  return {
-    // Auth
-    register: (payload: any) => api.register(payload),
-    login: (payload: any) => api.login(payload),
-    verifyToken: () =>
-      token ? api.verifyToken(token) : Promise.reject("No token"),
-    logout: () => (token ? api.logout(token) : Promise.reject("No token")),
+  return useMemo(
+    () => ({
+      // ---------- AUTH ----------
+      register: (payload: any) => post(`${API_BASE}/auth/register`, payload),
+      login: (payload: any) => post(`${API_BASE}/auth/login`, payload),
 
-    // Payment
-    processPayment: (payment: PaymentRequest) =>
-      api.processPayment(payment, token),
-    refundPayment: (paymentId: string) => api.refundPayment(paymentId, token),
+      // ---------- USERS ----------
+      createUser: (user: User, password?: string) =>
+        post<User>(`${API_BASE}/user`, { user, password }, token),
+      getUser: (id: string) => get<User>(`${API_BASE}/user/${id}`, token),
+      getUsers: (query?: QueryObject) =>
+        get<{ data: User[]; total: number }>(`${API_BASE}/user`, token, query),
+      updateUser: (id: string, user: User) =>
+        put<User>(`${API_BASE}/user/${id}`, user, token),
+      deleteUser: (id: string) => del<User>(`${API_BASE}/user/${id}`, token),
 
-    // Storage
-    uploadImage: (file: Blob, filename: string) =>
-      api.uploadImage(file, filename, token),
-    // Optionally update uploadFile to use FormData as well if you want to support generic files
-    uploadFile: (file: Blob, filename: string) =>
-      api.uploadFile(file, filename, token),
-    deleteFile: (url: string) => api.deleteFile(url, token),
+      // ---------- PRODUCTS ----------
+      createProduct: (product: Product) =>
+        post<Product>(`${API_BASE}/products`, product, token),
+      getProduct: (id: string) =>
+        get<Product>(`${API_BASE}/products/${id}`, token),
+      getProducts: (query?: QueryObject) =>
+        get<{ data: Product[]; total: number }>(
+          `${API_BASE}/products`,
+          token,
+          query
+        ),
+      updateProduct: (product: Product) =>
+        put<Product>(`${API_BASE}/products/${product.id}`, product, token),
+      deleteProduct: (id: string) =>
+        del<Product>(`${API_BASE}/products/${id}`, token),
 
-    // User
-    createUser: (user: User, password?: string) =>
-      api.createUser(user, password, token),
-    getUser: (id: string) => api.getUser(id, token),
-    getUsers: (options?: {
-      limit?: number;
-      page?: number;
-      sortBy?: string;
-      sortOrder?: "asc" | "desc";
-    }) => api.getUsers(options, token),
-    updateUser: (id: string, user: User) => api.updateUser(id, user, token),
-    deleteUser: (id: string) => api.deleteUser(id, token),
+      // ---------- PRODUCT OPTIONS ----------
+      createProductOptionsPreset: (preset: ProductOptionsPreset) =>
+        post(`${API_BASE}/products/options-presets`, preset, token),
+      getProductOptionsPresets: () =>
+        get<{ data: ProductOptionsPreset[]; total: number }>(
+          `${API_BASE}/products/options-presets`,
+          token
+        ),
+      deleteProductOptionsPreset: (id: string) =>
+        del(`${API_BASE}/products/options-presets/${id}`, token),
 
-    // Product
-    createProduct: (product: Product) => api.createProduct(product, token),
-    getProduct: (id: string) => api.getProduct(id, token),
-    getProducts: (query?: QueryObject) => api.getProducts(query, token),
-    updateProduct: (product: Product) => api.updateProduct(product, token),
-    deleteProduct: (id: string) => api.deleteProduct(id, token),
+      // ---------- CATEGORIES ----------
+      createCategory: (cat: Category) =>
+        post<Category>(`${API_BASE}/catalog/categories`, cat, token),
+      getCategory: (id: string) =>
+        get<Category>(`${API_BASE}/catalog/categories/${id}`, token),
+      getCategories: () =>
+        get<{ data: Category[]; total: number }>(
+          `${API_BASE}/catalog/categories`,
+          token
+        ),
+      updateCategory: (id: string, cat: Partial<Category>) =>
+        put<Category>(`${API_BASE}/catalog/categories/${id}`, cat, token),
+      deleteCategory: (id: string) =>
+        del(`${API_BASE}/catalog/categories/${id}`, token),
 
-    // Product Options Presets
-    createProductOptionsPreset: (preset: any) =>
-      api.createProductOptionsPreset(preset, token),
-    getProductOptionsPresets: () => api.getProductOptionsPresets(token),
-    deleteProductOptionsPreset: (id: string) =>
-      api.deleteProductOptionsPreset(id, token),
+      // ---------- ORDERS ----------
+      createOrder: (order: Order) =>
+        post<Order>(`${API_BASE}/orders`, order, token),
+      getOrder: (id: string) => get<Order>(`${API_BASE}/orders/${id}`, token),
+      getOrders: (query?: QueryObject) =>
+        get<{ data: Order[]; total: number }>(
+          `${API_BASE}/orders`,
+          token,
+          query
+        ),
+      updateOrder: (id: string, order: Order) =>
+        put<Order>(`${API_BASE}/orders/${id}`, order, token),
+      deleteOrder: (id: string) =>
+        del<Order>(`${API_BASE}/orders/${id}`, token),
 
-    // Categories
-    createCategory: (category: Category) => api.createCategory(category, token),
-    getCategory: (id: string) => api.getCategory(id, token),
-    getCategories: () => api.getCategories(token),
-    updateCategory: (id: string, category: Partial<Category>) =>
-      api.updateCategory(id, category, token),
-    deleteCategory: (id: string) => api.deleteCategory(id, token),
+      // ---------- PAYMENTS ----------
+      processPayment: (payment: PaymentRequest) =>
+        post(`${API_BASE}/payments/process`, payment, token),
+      refundPayment: (paymentId: string) =>
+        post(`${API_BASE}/payments/refund`, { paymentId }, token),
 
-    // Order
-    createOrder: (order: Order) => api.createOrder(order, token),
-    getOrder: (id: string) => api.getOrder(id, token),
-    getOrders: (options?: {
-      limit?: number;
-      page?: number;
-      sortBy?: string;
-      sortOrder?: "asc" | "desc";
-    }) => api.getOrders(options, token),
-    updateOrder: (id: string, order: Order) =>
-      api.updateOrder(id, order, token),
-    deleteOrder: (id: string) => api.deleteOrder(id, token),
-  };
+      // ---------- STORAGE ----------
+      uploadImage: (file: Blob, filename: string) => {
+        const form = new FormData();
+        form.append("file", file, filename);
+        return post<{ url: string }>(`${API_BASE}/storage/image`, form, token);
+      },
+      uploadFile: (file: Blob, filename: string) => {
+        const form = new FormData();
+        form.append("file", file, filename);
+        return post<{ url: string }>(`${API_BASE}/storage/file`, form, token);
+      },
+      deleteFile: (url: string) =>
+        del<{ success: boolean }>(`${API_BASE}/storage`, token, { url }),
+    }),
+    [token]
+  );
 }

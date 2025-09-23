@@ -3,29 +3,27 @@ import { db } from "@config/adapters";
 import { QueryObject } from "@shared/types/QueryObject";
 
 export class OrderService {
-  static async createOrder(order: Order): Promise<Order> {
+  static async createOrder(order: Order) {
     order.status = "pending";
     order.createdAt = new Date();
     return db.createOrder(order);
   }
 
-  static async getOrder(id: string): Promise<Order | null> {
+  static async getOrder(id: string) {
     return db.getOrder(id);
   }
 
-  static async getOrders(query?: QueryObject): Promise<Order[]> {
+  static async getOrders(query?: QueryObject) {
     return db.getOrders(query);
   }
 
-  static async updateOrder(
-    id: string,
-    update: Partial<Order>
-  ): Promise<Order | null> {
+  static async updateOrder(id: string, update: Partial<Order>) {
     return db.updateOrder(id, update);
   }
 
-  static async deleteOrder(id: string): Promise<boolean> {
-    await db.deleteOrder(id);
-    return true;
+  static async deleteOrder(id: string) {
+    const existing = await db.getOrder(id);
+    if (!existing) return null;
+    return db.deleteOrder(id);
   }
 }

@@ -1,13 +1,11 @@
 import { PrismaClient } from "@prisma/client";
-import { ProductCRUD } from "./prisma/ProductCRUD";
-import { UserCRUD } from "./prisma/UserCRUD";
-import { OrderCRUD } from "./prisma/OrderCRUD";
-import { CatalogCRUD } from "./prisma/CatalogCRUD";
+import { PrismaCRUDS } from "./prisma/mappers/prismaCRUDS";
 import { DBAdapter } from "./DBAdapter";
 import {
   Product,
-  ProductOptionPreset,
-  ProductTagPreset,
+  ProductOption,
+  ProductOptionsPreset,
+  ProductTag,
 } from "@shared/types/Product";
 import { Category, Collection } from "@shared/types/Catalog";
 import { User } from "@shared/types/User";
@@ -16,134 +14,138 @@ import { QueryObject } from "@shared/types/QueryObject";
 
 export class PrismaAdapter implements DBAdapter {
   public prisma: PrismaClient;
-  public products: ProductCRUD;
-  public catalog: CatalogCRUD;
-  public users: UserCRUD;
-  public orders: OrderCRUD;
+  private cruds: PrismaCRUDS;
 
   constructor(prismaClient: PrismaClient = new PrismaClient()) {
     this.prisma = prismaClient;
-    this.products = new ProductCRUD(this.prisma);
-    this.users = new UserCRUD(this.prisma);
-    this.orders = new OrderCRUD(this.prisma);
-    this.catalog = new CatalogCRUD(this.prisma);
+    this.cruds = new PrismaCRUDS(prismaClient);
   }
 
   // USERS
   createUser(user: User) {
-    return this.users.create(user);
+    return this.cruds.users.create(user);
   }
   getUser(id: string) {
-    return this.users.get(id);
+    return this.cruds.users.get(id);
   }
   getUsers(query?: QueryObject) {
-    return this.users.query(query);
+    return this.cruds.users.getAll(query);
   }
   updateUser(id: string, update: Partial<User>) {
-    return this.users.update(id, update);
+    return this.cruds.users.update(id, update);
   }
   deleteUser(id: string) {
-    return this.users.delete(id);
+    return this.cruds.users.delete(id);
   }
 
   // PRODUCTS
   createProduct(product: Product) {
-    return this.products.create(product);
+    return this.cruds.products.create(product);
   }
   getProduct(id: string) {
-    return this.products.get(id);
+    return this.cruds.products.get(id);
   }
   getProducts(query?: QueryObject) {
-    return this.products.getAll(query);
+    return this.cruds.products.getAll(query);
   }
   updateProduct(id: string, update: Partial<Product>) {
-    return this.products.update(id, update);
+    return this.cruds.products.update(id, update);
   }
-  async deleteProduct(id: string): Promise<void> {
-    await this.products.delete(id);
+  async deleteProduct(id: string) {
+    return this.cruds.products.delete(id);
   }
 
   // PRODUCT OPTIONS PRESETS
   createProductOptionsPreset(
-    preset: ProductOptionPreset
-  ): Promise<ProductOptionPreset> {
-    return this.products.createOptionPreset(preset);
+    preset: ProductOptionsPreset
+  ): Promise<ProductOptionsPreset> {
+    return this.cruds.productOptionsPresets.create(preset);
   }
-  getProductOptionsPresets(): Promise<ProductOptionPreset[]> {
-    return this.products.getOptionPresets();
+  getProductOptionsPresets(): Promise<{
+    data: ProductOptionsPreset[];
+    total: number;
+  }> {
+    return this.cruds.productOptionsPresets.getAll();
   }
-  deleteProductOptionsPreset(id: string): Promise<void> {
-    return this.products.deleteOptionPreset(id);
+
+  deleteProductOptionsPreset(id: string): Promise<ProductOptionsPreset> {
+    return this.cruds.productOptionsPresets.delete(id);
   }
 
   // TAGS
-  createProductTagPreset(tag: ProductTagPreset): Promise<ProductTagPreset> {
-    return this.products.createTag(tag);
+  createProductTag(tag: ProductTag): Promise<ProductTag> {
+    return this.cruds.productTags.create(tag);
   }
-  getProductTagPreset(id: string): Promise<ProductTagPreset | null> {
-    return this.products.getTag(id);
+  getProductTag(id: string): Promise<ProductTag | null> {
+    return this.cruds.productTags.get(id);
   }
-  getProductTagPresets(query?: QueryObject): Promise<ProductTagPreset[]> {
-    return this.products.getTags(query);
+  getProductTags(
+    query?: QueryObject
+  ): Promise<{ data: ProductTag[]; total: number }> {
+    return this.cruds.productTags.getAll(query);
   }
-  async deleteProductTagPreset(id: string): Promise<void> {
-    await this.products.deleteTag(id);
+  async deleteProductTag(id: string) {
+    return this.cruds.productTags.delete(id);
   }
 
   // CATEGORIES
   createCategory(category: Category): Promise<Category> {
-    return this.catalog.createCategory(category);
+    return this.cruds.categories.create(category);
   }
   getCategory(id: string): Promise<Category | null> {
-    return this.catalog.getCategory(id);
+    return this.cruds.categories.get(id);
   }
-  getCategories(query?: QueryObject): Promise<Category[]> {
-    return this.catalog.getCategories(query);
+  getCategories(
+    query?: QueryObject
+  ): Promise<{ data: Category[]; total: number }> {
+    return this.cruds.categories.getAll(query);
   }
   updateCategory(
     id: string,
     update: Partial<Category>
   ): Promise<Category | null> {
-    return this.catalog.updateCategory(id, update);
+    return this.cruds.categories.update(id, update);
   }
-  deleteCategory(id: string): Promise<void> {
-    return this.catalog.deleteCategory(id);
+  deleteCategory(id: string) {
+    return this.cruds.categories.delete(id);
   }
 
   // COLLECTIONS
   createCollection(collection: Collection): Promise<Collection> {
-    return this.catalog.createCollection(collection);
+    return this.cruds.collections.create(collection);
   }
   getCollection(id: string): Promise<Collection | null> {
-    return this.catalog.getCollection(id);
+    return this.cruds.collections.get(id);
   }
-  getCollections(query?: QueryObject): Promise<Collection[]> {
-    return this.catalog.getCollections(query);
+  getCollections(
+    query?: QueryObject
+  ): Promise<{ data: Collection[]; total: number }> {
+    return this.cruds.collections.getAll(query);
   }
   updateCollection(
     id: string,
     update: Partial<Collection>
   ): Promise<Collection | null> {
-    return this.catalog.updateCollection(id, update);
+    return this.cruds.collections.update(id, update);
   }
-  deleteCollection(id: string): Promise<void> {
-    return this.catalog.deleteCollection(id);
+  deleteCollection(id: string) {
+    return this.cruds.collections.delete(id);
   }
 
   // ORDERS
   createOrder(order: Order) {
-    return this.orders.create(order);
+    return this.cruds.orders.create(order);
   }
   getOrder(id: string) {
-    return this.orders.get(id);
+    return this.cruds.orders.get(id);
   }
   getOrders(query?: QueryObject) {
-    return this.orders.query(query);
+    return this.cruds.orders.getAll(query);
   }
   updateOrder(id: string, update: Partial<Order>) {
-    return this.orders.update(id, update);
+    return this.cruds.orders.update(id, update);
   }
-  deleteOrder(id: string): Promise<void> {
-    return this.orders.delete(id);
+  deleteOrder(id: string) {
+    return this.cruds.orders.delete(id);
   }
 }

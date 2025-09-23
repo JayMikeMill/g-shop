@@ -30,7 +30,7 @@ export function createCrudHandler(
  * @param message - message to return after deletion
  */
 export function createCrudDeleteHandler(
-  fn: (req: Request) => Promise<boolean>, // accept boolean
+  fn: (req: Request) => Promise<any>,
   message = "Deleted successfully",
   notFoundMessage = "Not found"
 ) {

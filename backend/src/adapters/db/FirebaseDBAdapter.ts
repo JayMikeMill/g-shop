@@ -2,8 +2,9 @@
 import { User } from "@shared/types/User";
 import {
   Product,
-  ProductOptionPreset,
-  ProductTagPreset,
+  ProductOption,
+  ProductOptionsPreset,
+  ProductTag,
 } from "@shared/types/Product";
 import { Category, Collection } from "@shared/types/Catalog";
 import { Order } from "@shared/types/Order";
@@ -19,81 +20,60 @@ export class FirebaseDBAdapter implements DBAdapter {
   }
 
   async getUser(id: string): Promise<User | null> {
-    const docSnap = await db.collection("users").doc(id).get();
-    return docSnap.exists
-      ? ({ ...docSnap.data(), id: docSnap.id } as User)
-      : null;
+    const doc = await db.collection("users").doc(id).get();
+    return doc.exists ? ({ ...doc.data(), id: doc.id } as User) : null;
   }
 
-  async getUsers(query?: QueryObject): Promise<User[]> {
+  async getUsers(
+    query?: QueryObject
+  ): Promise<{ data: User[]; total: number }> {
     const { limit, page, sortBy, sortOrder } = query || {};
-    let dbQuery: FirebaseFirestore.Query = db.collection("users");
-    if (sortBy) {
-      dbQuery = dbQuery.orderBy(sortBy, sortOrder || "asc");
-    }
-    if (page !== undefined && limit) {
-      // Skip to the correct page using offset
-      dbQuery = dbQuery.offset(page * limit);
-    }
-    if (limit) {
-      dbQuery = dbQuery.limit(limit);
-    }
-    const snapshot = await dbQuery.get();
-    return snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }) as User);
+    let q: FirebaseFirestore.Query = db.collection("users");
+    if (sortBy) q = q.orderBy(sortBy, sortOrder || "asc");
+    if (page !== undefined && limit) q = q.offset(page * limit);
+    if (limit) q = q.limit(limit);
+    const snapshot = await q.get();
+    return {
+      data: snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }) as User),
+      total: snapshot.size,
+    };
   }
 
   async updateUser(id: string, update: Partial<User>): Promise<User | null> {
     const user = await this.getUser(id);
     if (!user) return null;
     const updated = { ...user, ...update };
-    await db.collection("users").doc(id).set(updated); // overwrite
+    await db.collection("users").doc(id).set(updated);
     return updated;
   }
 
-  async deleteUser(id: string): Promise<void> {
+  async deleteUser(id: string): Promise<User> {
+    const user = await this.getUser(id);
+    if (!user) throw new Error("User not found");
     await db.collection("users").doc(id).delete();
+    return user;
   }
 
   // ---------- PRODUCTS ----------
   async createProduct(product: Product): Promise<Product> {
     const docRef = await db.collection("products").add(product);
-    const created = { ...product, id: docRef.id };
-    console.log("Product created:", created);
-    return created;
+    return { ...product, id: docRef.id };
   }
 
   async getProduct(id: string): Promise<Product | null> {
-    const docSnap = await db
-      .collection("products")
-      .doc(id as string)
-      .get();
-    return docSnap.exists
-      ? ({ ...docSnap.data(), id: docSnap.id } as Product)
-      : null;
+    const doc = await db.collection("products").doc(id).get();
+    return doc.exists ? ({ ...doc.data(), id: doc.id } as Product) : null;
   }
 
   async getProducts(
     query?: QueryObject
   ): Promise<{ data: Product[]; total: number }> {
-    console.log("Fetching products with options:", query);
     const { limit, page, sortBy, sortOrder } = query || {};
-    let dbQuery: FirebaseFirestore.Query = db.collection("products");
-    if (sortBy) {
-      dbQuery = dbQuery.orderBy(sortBy, sortOrder || "asc");
-    }
-    if (page !== undefined && limit) {
-      dbQuery = dbQuery.offset(page * limit);
-    }
-    if (limit) {
-      dbQuery = dbQuery.limit(limit);
-    }
-
-    const snapshot = await dbQuery.get();
-
-    console.log(
-      "Fetched products:",
-      snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }) as Product)
-    );
+    let q: FirebaseFirestore.Query = db.collection("products");
+    if (sortBy) q = q.orderBy(sortBy, sortOrder || "asc");
+    if (page !== undefined && limit) q = q.offset(page * limit);
+    if (limit) q = q.limit(limit);
+    const snapshot = await q.get();
     return {
       data: snapshot.docs.map(
         (doc) => ({ ...doc.data(), id: doc.id }) as Product
@@ -109,42 +89,88 @@ export class FirebaseDBAdapter implements DBAdapter {
     const product = await this.getProduct(id);
     if (!product) return null;
     const updated = { ...product, ...update };
-    await db
-      .collection("products")
-      .doc(id as string)
-      .set(updated);
+    await db.collection("products").doc(id).set(updated);
     return updated;
   }
 
-  async deleteProduct(id: string): Promise<void> {
-    await db
-      .collection("products")
-      .doc(id as string)
-      .delete();
+  async deleteProduct(id: string): Promise<Product> {
+    const product = await this.getProduct(id);
+    if (!product) throw new Error("Product not found");
+    await db.collection("products").doc(id).delete();
+    return product;
   }
 
   // ---------- PRODUCT OPTIONS PRESETS ----------
   async createProductOptionsPreset(
-    preset: ProductOptionPreset
-  ): Promise<ProductOptionPreset> {
+    preset: ProductOptionsPreset
+  ): Promise<ProductOptionsPreset> {
     const docRef = await db.collection("product_options_presets").add(preset);
-    const created = { ...preset, id: docRef.id };
-    console.log("Product options preset created:", created);
-    return created;
+    return { ...preset, id: docRef.id };
   }
 
-  async getProductOptionsPresets(): Promise<ProductOptionPreset[]> {
+  async getProductOptionsPresets(): Promise<{
+    data: ProductOptionsPreset[];
+    total: number;
+  }> {
     const snapshot = await db.collection("product_options_presets").get();
-    return snapshot.docs.map(
-      (doc) => ({ ...doc.data(), id: doc.id }) as ProductOptionPreset
-    );
+    return {
+      data: snapshot.docs.map(
+        (doc) => ({ ...doc.data(), id: doc.id }) as ProductOptionsPreset
+      ),
+      total: snapshot.size,
+    };
   }
 
-  async deleteProductOptionsPreset(id: string): Promise<void> {
-    await db
-      .collection("product_options_presets")
-      .doc(id as string)
-      .delete();
+  async deleteProductOptionsPreset(id: string): Promise<ProductOptionsPreset> {
+    const preset = await db.collection("product_options_presets").doc(id).get();
+    if (!preset.exists) throw new Error("Preset not found");
+    const data = { ...preset.data(), id: preset.id } as ProductOptionsPreset;
+    await db.collection("product_options_presets").doc(id).delete();
+    return data;
+  }
+
+  // ---------- PRODUCT TAGS ----------
+  async createProductTag(tag: ProductTag): Promise<ProductTag> {
+    if (!tag.id) {
+      throw new Error("Tag id is required");
+    }
+    await db.collection("tags").doc(tag.id).set(tag);
+    return tag;
+  }
+
+  async getProductTag(id: string): Promise<ProductTag | null> {
+    const doc = await db.collection("tags").doc(id).get();
+    return doc.exists ? ({ ...doc.data(), id: doc.id } as ProductTag) : null;
+  }
+
+  async getProductTags(
+    query?: QueryObject
+  ): Promise<{ data: ProductTag[]; total: number }> {
+    const snapshot = await db.collection("tags").get();
+    return {
+      data: snapshot.docs.map(
+        (doc) => ({ ...doc.data(), id: doc.id }) as ProductTag
+      ),
+      total: snapshot.size,
+    };
+  }
+
+  async updateProductTag(
+    id: string,
+    update: Partial<ProductTag>
+  ): Promise<ProductTag | null> {
+    const tag = await this.getProductTag(id);
+    if (!tag) return null;
+    const updated = { ...tag, ...update };
+    await db.collection("tags").doc(id).set(updated);
+    return updated;
+  }
+
+  async deleteProductTag(id: string): Promise<ProductTag> {
+    const tag = await this.getProductTag(id);
+    if (!tag) throw new Error("Tag not found");
+    await db.collection("tags").doc(id).delete();
+    return tag;
   }
 
   // ---------- CATEGORIES ----------
@@ -154,17 +180,18 @@ export class FirebaseDBAdapter implements DBAdapter {
   }
 
   async getCategory(id: string): Promise<Category | null> {
-    const docSnap = await db.collection("categories").doc(id).get();
-    return docSnap.exists
-      ? ({ ...docSnap.data(), id: docSnap.id } as Category)
-      : null;
+    const doc = await db.collection("categories").doc(id).get();
+    return doc.exists ? ({ ...doc.data(), id: doc.id } as Category) : null;
   }
 
-  async getCategories(): Promise<Category[]> {
+  async getCategories(): Promise<{ data: Category[]; total: number }> {
     const snapshot = await db.collection("categories").get();
-    return snapshot.docs.map(
-      (doc) => ({ ...doc.data(), id: doc.id }) as Category
-    );
+    return {
+      data: snapshot.docs.map(
+        (doc) => ({ ...doc.data(), id: doc.id }) as Category
+      ),
+      total: snapshot.size,
+    };
   }
 
   async updateCategory(
@@ -178,8 +205,11 @@ export class FirebaseDBAdapter implements DBAdapter {
     return updated;
   }
 
-  async deleteCategory(id: string): Promise<void> {
+  async deleteCategory(id: string): Promise<Category> {
+    const category = await this.getCategory(id);
+    if (!category) throw new Error("Category not found");
     await db.collection("categories").doc(id).delete();
+    return category;
   }
 
   // ---------- COLLECTIONS ----------
@@ -189,17 +219,18 @@ export class FirebaseDBAdapter implements DBAdapter {
   }
 
   async getCollection(id: string): Promise<Collection | null> {
-    const docSnap = await db.collection("collections").doc(id).get();
-    return docSnap.exists
-      ? ({ ...docSnap.data(), id: docSnap.id } as Collection)
-      : null;
+    const doc = await db.collection("collections").doc(id).get();
+    return doc.exists ? ({ ...doc.data(), id: doc.id } as Collection) : null;
   }
 
-  async getCollections(): Promise<Collection[]> {
+  async getCollections(): Promise<{ data: Collection[]; total: number }> {
     const snapshot = await db.collection("collections").get();
-    return snapshot.docs.map(
-      (doc) => ({ ...doc.data(), id: doc.id }) as Collection
-    );
+    return {
+      data: snapshot.docs.map(
+        (doc) => ({ ...doc.data(), id: doc.id }) as Collection
+      ),
+      total: snapshot.size,
+    };
   }
 
   async updateCollection(
@@ -213,48 +244,11 @@ export class FirebaseDBAdapter implements DBAdapter {
     return updated;
   }
 
-  async deleteCollection(id: string): Promise<void> {
+  async deleteCollection(id: string): Promise<Collection> {
+    const collection = await this.getCollection(id);
+    if (!collection) throw new Error("Collection not found");
     await db.collection("collections").doc(id).delete();
-  }
-
-  // ---------- TAGS ----------
-  async createProductTagPreset(
-    tag: ProductTagPreset
-  ): Promise<ProductTagPreset> {
-    if (!tag.id) {
-      throw new Error("ProductTagPreset must have a defined 'id' property.");
-    }
-    await db.collection("tags").doc(tag.id).set(tag);
-    return tag;
-  }
-
-  async getProductTagPreset(id: string): Promise<ProductTagPreset | null> {
-    const docSnap = await db.collection("tags").doc(id).get();
-    return docSnap.exists
-      ? ({ ...docSnap.data(), id: docSnap.id } as ProductTagPreset)
-      : null;
-  }
-
-  async getProductTagPresets(): Promise<ProductTagPreset[]> {
-    const snapshot = await db.collection("tags").get();
-    return snapshot.docs.map(
-      (doc) => ({ ...doc.data(), id: doc.id }) as ProductTagPreset
-    );
-  }
-
-  async updateProductTagPreset(
-    id: string,
-    update: Partial<ProductTagPreset>
-  ): Promise<ProductTagPreset | null> {
-    const tag = await this.getProductTagPreset(id);
-    if (!tag) return null;
-    const updated = { ...tag, ...update };
-    await db.collection("tags").doc(id).set(updated);
-    return updated;
-  }
-
-  async deleteProductTagPreset(id: string): Promise<void> {
-    await db.collection("tags").doc(id).delete();
+    return collection;
   }
 
   // ---------- ORDERS ----------
@@ -264,26 +258,25 @@ export class FirebaseDBAdapter implements DBAdapter {
   }
 
   async getOrder(id: string): Promise<Order | null> {
-    const docSnap = await db.collection("orders").doc(id).get();
-    return docSnap.exists
-      ? ({ ...docSnap.data(), id: docSnap.id } as Order)
-      : null;
+    const doc = await db.collection("orders").doc(id).get();
+    return doc.exists ? ({ ...doc.data(), id: doc.id } as Order) : null;
   }
 
-  async getOrders(query?: QueryObject): Promise<Order[]> {
+  async getOrders(
+    query?: QueryObject
+  ): Promise<{ data: Order[]; total: number }> {
     const { limit, page, sortBy, sortOrder } = query || {};
-    let dbQuery: FirebaseFirestore.Query = db.collection("orders");
-    if (sortBy) {
-      dbQuery = dbQuery.orderBy(sortBy, sortOrder || "asc");
-    }
-    if (page !== undefined && limit) {
-      dbQuery = dbQuery.offset(page * limit);
-    }
-    if (limit) {
-      dbQuery = dbQuery.limit(limit);
-    }
-    const snapshot = await dbQuery.get();
-    return snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }) as Order);
+    let q: FirebaseFirestore.Query = db.collection("orders");
+    if (sortBy) q = q.orderBy(sortBy, sortOrder || "asc");
+    if (page !== undefined && limit) q = q.offset(page * limit);
+    if (limit) q = q.limit(limit);
+    const snapshot = await q.get();
+    return {
+      data: snapshot.docs.map(
+        (doc) => ({ ...doc.data(), id: doc.id }) as Order
+      ),
+      total: snapshot.size,
+    };
   }
 
   async updateOrder(id: string, update: Partial<Order>): Promise<Order | null> {
@@ -294,7 +287,10 @@ export class FirebaseDBAdapter implements DBAdapter {
     return updated;
   }
 
-  async deleteOrder(id: string): Promise<void> {
+  async deleteOrder(id: string): Promise<Order> {
+    const order = await this.getOrder(id);
+    if (!order) throw new Error("Order not found");
     await db.collection("orders").doc(id).delete();
+    return order;
   }
 }

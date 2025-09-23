@@ -11,7 +11,7 @@ import {
 } from "firebase/auth";
 
 import type { User } from "@shared/types/User";
-import { verifyToken } from "@api/backendAPI";
+import { verifyToken } from "@api/useApi";
 import "@api/firebase/firebaseAPI";
 
 import type { AuthProvider } from "./AuthProvider";
