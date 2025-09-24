@@ -99,4 +99,8 @@
   .tag-box {
     @apply bg-accent text-text px-2 py-1 rounded text-xs font-semibold shadow;
   }
+
+  .options-tag {
+    @apply bg-surfaceAlt text-xs text-textSecondary px-2 py-0.5 rounded-full border border-divider;
+  }
 }

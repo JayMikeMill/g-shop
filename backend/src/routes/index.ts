@@ -23,9 +23,9 @@ router.use("/payments", paymentRoutes);
 router.use("/storage", storageRoutes);
 
 // ---------- CRUD Routes ----------
-router.use("/products", adminCRUD(db.products));
 router.use("/products/options-presets", adminCRUD(db.productOptionsPresets));
 router.use("/products/variants", adminCRUD(db.productVariants));
+router.use("/products", adminCRUD(db.products));
 
 router.use("/catalog/categories", adminCRUD(db.categories));
 router.use("/catalog/collections", adminCRUD(db.collections));

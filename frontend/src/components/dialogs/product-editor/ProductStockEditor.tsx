@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import type {
-  Product,
-  ProductOption,
-  ProductVariant,
+import {
+  parseVariantOptions,
+  type Product,
+  type ProductOption,
+  type ProductVariant,
 } from "@shared/types/Product";
 import Dropdown from "@components/controls/AnimatedDropdown";
 
@@ -88,9 +89,17 @@ const ProductStockEditor: React.FC<ProductStockEditorProps> = ({
           key={idx}
           className="flex justify-between items-center w-full border-b border-border pr-8 pb-2"
         >
-          <span className="text-md text-text font-medium">
-            {variant.options || "Variant"}
-          </span>
+          <div className="flex flex-wrap gap-1 mt-1">
+            {parseVariantOptions(variant).map((opt, optIdx) => (
+              <span
+                key={`variant-${idx}-opt-${optIdx}`}
+                className="options-tag"
+              >
+                {opt.value}
+              </span>
+            ))}
+          </div>
+
           <input
             type="number"
             min={0}

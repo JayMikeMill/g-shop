@@ -32,11 +32,11 @@ export interface ProductImageSet {
 // Product option
 export interface ProductOption {
   id?: string;
-  name: string;
-  values: string; // Comma-separated values
+  name: string; // e.g., "Color", "Size"
+  values: string; // Comma-separated values (e.g., "Red,Blue,Green")
 }
 
-// Product option
+// Product option preset (a reusable set of options)
 export interface ProductOptionsPreset {
   id?: string;
   name: string;
@@ -50,12 +50,6 @@ export interface ProductTag {
   color?: string;
 }
 
-// Selected product option (for cart/store use)
-export interface SelectedProductOption {
-  name: string;
-  value: string;
-}
-
 // Variant entity
 export interface ProductVariant {
   id?: string;
@@ -63,6 +57,15 @@ export interface ProductVariant {
   priceOverride?: number;
   stock: number;
 }
+
+// Parse serialized variant options like "Color:Red|Size:M" into objects
+export const parseVariantOptions = (variant?: ProductVariant) => {
+  if (!variant?.options) return [];
+  return variant.options.split("|").map((opt) => {
+    const [name, value] = opt.split(":");
+    return { name, value };
+  });
+};
 
 // Selected product option (for cart/store use)
 export interface ProductDimensions {
@@ -81,3 +84,7 @@ export interface ProductReview {
   comment: string;
   createdAt: Date;
 }
+
+// -------------------------
+// Product utility functions
+// -------------------------

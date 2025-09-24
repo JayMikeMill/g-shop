@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
-import { X } from "lucide-react";
-import { useCart, getCartTotals } from "@contexts/CartContext";
 import { useNavigate } from "react-router-dom";
-import type { OrderItem } from "@shared/types/Order";
+import { X } from "lucide-react";
+
+import { useCart, getCartTotals } from "@contexts/CartContext";
+import { parseVariantOptions } from "@shared/types/Product";
 
 interface SlideOutCartProps {
   isOpen: boolean;
@@ -46,17 +47,6 @@ export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
     navigate("/checkout");
   };
 
-  const getItemImageSrc = (item: OrderItem) =>
-    (item as any)?.images?.[0]?.thumbnail ||
-    (item as any)?.images?.[0]?.preview ||
-    (item as any)?.images?.[0]?.main ||
-    "";
-
-  const getSelectedOptions = (item: OrderItem) => {
-    const opts = (item as any).selectedOptions ?? (item as any).options ?? [];
-    return Array.isArray(opts) ? opts : [];
-  };
-
   return (
     <div
       className="fixed inset-0 z-50 flex"
@@ -66,17 +56,19 @@ export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
     >
       {/* Overlay */}
       <div
-        className={`absolute inset-0 bg-black bg-opacity-40 transition-opacity duration-300 ease-in-out
-        ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+        className={`absolute inset-0 bg-black bg-opacity-40 transition-opacity duration-300 ease-in-out ${
+          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
         onClick={onClose}
       />
 
       {/* Slide-out container */}
       <div
         className={`fixed top-0 right-0 h-full transform transition-transform duration-300 ease-in-out
-        w-full md:w-1/3 flex flex-col p-lg overflow-y-auto
-        bg-backgroundAlt shadow-xl rounded-l-lg
-        ${isOpen ? "translate-x-0" : "translate-x-full"}`}
+				w-full md:w-1/3 flex flex-col p-lg overflow-y-auto
+				bg-backgroundAlt shadow-xl rounded-l-lg ${
+          isOpen ? "translate-x-0" : "translate-x-full"
+        }`}
       >
         {/* Close button */}
         <button
@@ -98,12 +90,20 @@ export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
               <p className="text-textSecondary text-lg">Your cart is empty.</p>
             </div>
           ) : (
-            (cart as OrderItem[]).map((item, i) => {
-              const key = String(
-                (item as any).id ?? (item as any).productId ?? i
-              );
-              const imgSrc = getItemImageSrc(item);
-              const selectedOptions = getSelectedOptions(item);
+            cart.map((item, i) => {
+              // Fallback key
+              const key = item?.variant?.id ?? item?.product?.id ?? i;
+
+              // Fallback image
+              const imgSrc =
+                item?.product?.images?.[0]?.thumbnail ||
+                item?.product?.images?.[0]?.preview ||
+                item?.product?.images?.[0]?.main ||
+                "";
+
+              const name = item?.product?.name ?? "Unknown Product";
+              const selectedOptions = parseVariantOptions(item.variant);
+
               return (
                 <div
                   key={key}
@@ -111,55 +111,46 @@ export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
                 >
                   <img
                     src={imgSrc}
-                    alt={(item as any).name ?? "Product image"}
+                    alt={name}
                     className="w-16 h-16 object-cover rounded-card bg-surface"
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-text truncate">
-                      {(item as any).name}
-                    </p>
+                    <p className="font-semibold text-text truncate">{name}</p>
 
                     {selectedOptions.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-1">
-                        {selectedOptions.map((opt: any, idx: number) => (
+                        {selectedOptions.map((opt, idx) => (
                           <span
                             key={`${key}-opt-${idx}`}
-                            className="bg-surfaceAlt text-xs text-textSecondary px-2 py-0.5 rounded-full border border-divider"
+                            className="options-tag"
                           >
-                            {(opt.name ?? opt.key) +
-                              ": " +
-                              (opt.value ?? opt.val)}
+                            {opt.name}: {opt.value}
                           </span>
                         ))}
                       </div>
                     )}
 
                     <p className="text-textSecondary">
-                      ${Number((item as any).price ?? 0).toFixed(2)}
+                      ${item.price.toFixed(2)}
                     </p>
                   </div>
 
                   <div className="flex items-center gap-xs">
                     <button
                       className="px-2 py-1 bg-surfaceAlt rounded hover:bg-surface transition-colors"
-                      onClick={() => removeFromCart(item as any)}
-                      aria-label={`Remove one ${(item as any).name}`}
+                      onClick={() => removeFromCart({ ...item, quantity: 1 })}
+                      aria-label={`Remove one ${name}`}
                       type="button"
                     >
                       -
                     </button>
                     <span className="text-text min-w-[2ch] text-center">
-                      {(item as any).quantity}
+                      {item.quantity}
                     </span>
                     <button
                       className="px-2 py-1 bg-surfaceAlt rounded hover:bg-surface transition-colors"
-                      onClick={() =>
-                        addToCart({
-                          ...(item as any),
-                          quantity: 1,
-                        })
-                      }
-                      aria-label={`Add one ${(item as any).name}`}
+                      onClick={() => addToCart({ ...item, quantity: 1 })}
+                      aria-label={`Add one ${name}`}
                       type="button"
                     >
                       +
@@ -167,11 +158,7 @@ export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
                   </div>
 
                   <p className="w-16 text-right text-text">
-                    $
-                    {(
-                      Number((item as any).price ?? 0) *
-                      Number((item as any).quantity ?? 0)
-                    ).toFixed(2)}
+                    ${(item.price * item.quantity).toFixed(2)}
                   </p>
                 </div>
               );

@@ -2,7 +2,7 @@ import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import SiteHeader from "@components/SiteHeader";
 import SiteFooter from "@components/SiteFooter";
 import HomePage from "@pages/HomePage";
-import ProductPage from "@pages/ProductPage";
+import ProductPage from "@pages/product-page/ProductPage";
 import CheckoutPage from "@pages/CheckoutPage";
 import AboutPage from "./pages/AboutPage";
 
