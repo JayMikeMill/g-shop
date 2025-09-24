@@ -316,8 +316,7 @@ export default function ProductDialog({
                 onImagesChange={(imgs) =>
                   setLocalProduct((prev) => ({ ...prev, images: imgs }))
                 }
-                setProcessedImages={setProcessedImages}
-                setIsProcessingImages={setIsProcessingImages}
+                setIsProcessingImages={setIsProcessingImages} // keep track of processing
               />
             </div>
           </div>

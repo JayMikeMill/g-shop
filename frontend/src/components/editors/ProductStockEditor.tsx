@@ -83,7 +83,6 @@ const ProductStockEditor: React.FC<ProductStockEditorProps> = ({
           />
         </div>
       }
-      openInitially={hasVariants}
       disabled={!hasVariants}
     >
       {localVariants.map((variant, idx) => (

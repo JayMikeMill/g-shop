@@ -12,6 +12,17 @@ interface NestedFieldOptions {
 
 export type FieldMetadata<T> = Partial<Record<keyof T, NestedFieldOptions>>;
 
+function stripIds(obj: Record<string, any>) {
+  for (const key in obj) {
+    if (key === "id" || key.endsWith("Id")) {
+      delete obj[key];
+    } else if (obj[key] && typeof obj[key] === "object") {
+      stripIds(obj[key]);
+    }
+  }
+  return obj;
+}
+
 // ---------------- Nested Helpers ----------------
 function upsertNested<T extends { id?: string }>(items?: T[]) {
   if (!items?.length) return undefined;
@@ -27,7 +38,7 @@ function createNested<T extends object>(items?: T[], stripId = true) {
   return {
     create: items.map((item) => {
       const copy = { ...item };
-      if (stripId) delete (copy as any).id; // remove id to prevent duplication
+      stripIds(copy); // always strip all ids
       return copy;
     }),
   };
@@ -42,10 +53,8 @@ function replaceNested<T extends object>(items?: T[], path?: string) {
     result.create = items.map((item) => {
       const copy: { [key: string]: any } = { ...item };
 
-      // Remove id and foreign keys
-      for (const key in copy) {
-        if (key === "id" || key.endsWith("Id")) delete (copy as any)[key];
-      }
+      // Remove all IDs recursively
+      stripIds(copy);
 
       // Handle nested path recursively
       if (path && copy[path]) copy[path] = createNested(copy[path]);
