@@ -33,7 +33,6 @@ export default function ProductDialog({
     }
   );
 
-  const [processedImages, setProcessedImages] = useState<any[]>([]);
   const [isProcessingImages, setIsProcessingImages] = useState(false);
   const [isSavingProduct, setIsSavingProduct] = useState(false);
   const [discountValue, setDiscountValue] = useState(0);
@@ -114,28 +113,18 @@ export default function ProductDialog({
       // Upload images
       const uploadedImages: ProductImageSet[] = [];
       for (const img of localProduct.images) {
-        const processed = processedImages.find(
-          (p) => p.previewUrl === img.preview || img.main
-        );
-        if (processed) {
-          const main = await uploadImage(
-            processed.mainBlob,
-            processed.name.replace(/\.[^.]+$/, "") + ".webp"
-          );
-          const preview = await uploadImage(
-            processed.previewBlob,
-            processed.name.replace(/\.[^.]+$/, "") + "_preview.webp"
-          );
-          const thumb = await uploadImage(
-            processed.thumbBlob,
-            processed.name.replace(/\.[^.]+$/, "") + "_thumb.webp"
-          );
+        const isBlob = img.main.startsWith("blob:");
+        if (isBlob) {
+          const blob = await fetch(img.main).then((r) => r.blob());
+          const uploaded = await uploadImage(blob, `product_image`);
+
           uploadedImages.push({
-            main: main.url,
-            preview: preview.url,
-            thumbnail: thumb.url,
+            main: uploaded.url,
+            preview: uploaded.url, // you can adjust if your backend generates previews/thumbnails
+            thumbnail: uploaded.url,
           });
         } else {
+          // Already a URL
           uploadedImages.push(img);
         }
       }
