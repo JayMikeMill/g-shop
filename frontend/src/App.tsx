@@ -17,7 +17,7 @@ import { Roles } from "../../shared/types/User";
 export default function App() {
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith("/admin");
-  applyTheme("pastel");
+  applyTheme("dark");
   return (
     <div>
       <SiteHeader />

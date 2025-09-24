@@ -45,10 +45,10 @@ const AnimatedDropdown: React.FC<DropdownProps> = ({
   const rounding = open ? "rounded-t-md" : "rounded-md";
 
   return (
-    <div className={`border border-border ${rounding} w-full max-w-full`}>
+    <div className={`border  border-border ${rounding} w-full max-w-full`}>
       <button
         type="button"
-        className={`flex justify-between items-center ${rounding} w-full px-4 py-2 bg-background text-text font-semibold ${
+        className={`flex justify-between items-center ${rounding} w-full px-4 py-2 bg-surfaceAlt text-text font-semibold ${
           disabled ? "cursor-not-allowed opacity-70" : ""
         }`}
         onClick={() => !disabled && setOpen((prev) => !prev)}

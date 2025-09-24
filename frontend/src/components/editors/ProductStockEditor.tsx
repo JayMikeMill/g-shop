@@ -77,9 +77,7 @@ const ProductStockEditor: React.FC<ProductStockEditorProps> = ({
             }}
             disabled={hasVariants}
             onFocus={(e) => e.target.select()}
-            className={`input-box w-24 text-center ${
-              hasVariants ? "bg-backgroundAlt cursor-not-allowed" : "bg-white"
-            }`}
+            className={`input-box w-24 text-center`}
           />
         </div>
       }
@@ -90,7 +88,9 @@ const ProductStockEditor: React.FC<ProductStockEditorProps> = ({
           key={idx}
           className="flex justify-between items-center w-full border-b border-border pr-8 pb-2"
         >
-          <span>{variant.options || "Variant"}</span>
+          <span className="text-md text-text font-medium">
+            {variant.options || "Variant"}
+          </span>
           <input
             type="number"
             min={0}
