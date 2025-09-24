@@ -9,7 +9,7 @@ export default function AdminUsersDash() {
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
   const [tableKey, setTableKey] = useState(0);
 
-  const { getOrders, updateOrder } = useApi();
+  const { orders } = useApi();
 
   const handleDialogClose = () => {
     setTableKey((prev) => prev + 1);
@@ -17,7 +17,7 @@ export default function AdminUsersDash() {
 
   const handleSaveOrder = async (update: Partial<Order>) => {
     if (!editingOrder) return;
-    await updateOrder(editingOrder.id, { ...editingOrder, ...update });
+    await orders.update({ ...editingOrder, ...update });
   };
 
   return (
@@ -35,7 +35,7 @@ export default function AdminUsersDash() {
         {/* Order list */}
 
         <DynamicTable
-          fetchPage={getOrders}
+          fetchPage={orders.getAll}
           key={tableKey}
           onRowClick={(o) => setEditingOrder(o)}
           objectsName="Users"

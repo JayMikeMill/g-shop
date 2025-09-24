@@ -13,7 +13,7 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
   product,
   setProduct,
 }) => {
-  const { createProductOptionsPreset } = useApi();
+  const { productOptionsPresets } = useApi();
   const [localOptions, setLocalOptions] = useState<ProductOption[]>(
     product.options || []
   );
@@ -58,7 +58,7 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
 
     setSaving(true);
     try {
-      await createProductOptionsPreset({ name, options: localOptions });
+      await productOptionsPresets.create({ name, options: localOptions });
       alert("Preset saved successfully");
       setRefreshKey((prev) => prev + 1); // <-- refresh dropdown
     } catch (err: any) {

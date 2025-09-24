@@ -15,7 +15,8 @@ const OptionsPresetDropdown: React.FC<OptionsPresetDropdownProps> = ({
   setLocalOptions,
   refreshKey,
 }) => {
-  const { getProductOptionsPresets, deleteProductOptionsPreset } = useApi();
+  const { productOptionsPresets } = useApi();
+
   const [presets, setPresets] = useState<ProductOptionsPreset[]>([]);
   const [loadingPresets, setLoadingPresets] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -27,13 +28,13 @@ const OptionsPresetDropdown: React.FC<OptionsPresetDropdownProps> = ({
     const loadPresets = async () => {
       setLoadingPresets(true);
       try {
-        const { data } = await getProductOptionsPresets();
+        const { data } = await productOptionsPresets.getAll();
         const arr = Array.isArray(data)
           ? data
           : Array.isArray((data as { data?: ProductOptionsPreset[] })?.data)
             ? (data as { data: ProductOptionsPreset[] }).data
             : [];
-        if (mounted) setPresets(arr);
+        if (mounted) setPresets(arr as ProductOptionsPreset[]);
       } catch (err: any) {
         if (mounted) alert("Failed to load presets: " + err.message);
       } finally {
@@ -70,7 +71,7 @@ const OptionsPresetDropdown: React.FC<OptionsPresetDropdownProps> = ({
     if (!id) return;
     if (!confirm("Are you sure you want to delete this preset?")) return;
     try {
-      await deleteProductOptionsPreset(id);
+      await productOptionsPresets.delete(id);
       setPresets((prev) => prev.filter((p) => p.id !== id));
     } catch (err: any) {
       alert("Failed to delete preset: " + err.message);

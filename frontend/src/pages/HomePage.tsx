@@ -8,7 +8,7 @@ export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const { getProducts } = useApi();
+  const getProducts = useApi().products.getAll;
 
   useEffect(() => {
     // Fetch products using the context, with a limit (e.g., 20)

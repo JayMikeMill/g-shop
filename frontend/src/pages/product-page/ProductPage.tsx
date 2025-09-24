@@ -11,7 +11,7 @@ import ProductPageImages from "./ProductPageImages";
 
 const ProductPage = () => {
   const { id } = useParams<{ id: string }>();
-  const { getProduct } = useApi();
+  const getProduct = useApi().products.get;
   const { addToCart } = useCart();
 
   const [product, setProduct] = useState<Product | null>(null);

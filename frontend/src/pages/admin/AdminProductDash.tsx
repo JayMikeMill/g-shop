@@ -1,3 +1,4 @@
+// Admin product dashboard page
 import { useState, useEffect } from "react";
 import type { Product } from "@shared/types/Product";
 import ProductEditorDialog from "@components/dialogs/product-editor/ProductEditorDialog";
@@ -9,7 +10,7 @@ export default function AdminProductsDash() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [tableKey, setTableKey] = useState(0);
 
-  const { getProducts } = useApi();
+  const getProducts = useApi().products.getAll;
 
   const handleDialogClose = () => {
     setIsAdding(false);

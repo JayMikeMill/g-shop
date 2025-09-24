@@ -39,7 +39,7 @@ export default function ProductEditorDialog({
   const [discountType, setDiscountType] = useState<"%" | "$">("%");
   const [tagString, setTagString] = useState("");
 
-  const { createProduct, deleteProduct, updateProduct, uploadImage } = useApi();
+  const { products, uploadImage } = useApi();
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -77,7 +77,7 @@ export default function ProductEditorDialog({
     );
     if (!confirmed) return;
 
-    await deleteProduct(product.id);
+    await products.delete(product.id);
     onClose();
   };
 
@@ -143,9 +143,9 @@ export default function ProductEditorDialog({
       console.log("saving product", productToSave);
 
       if (product?.id) {
-        await updateProduct({ ...productToSave, id: product.id });
+        await products.update({ ...productToSave, id: product.id });
       } else {
-        await createProduct(productToSave);
+        await products.create(productToSave);
       }
 
       setIsSavingProduct(false);

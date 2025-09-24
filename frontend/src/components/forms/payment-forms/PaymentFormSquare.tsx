@@ -44,8 +44,7 @@ export default function PaymentFormSquare({
 }: SquarePaymentFormProps) {
   // State to store the Square card instance
   const [cardInstance, setCardInstance] = useState<any>(null);
-  const { processPayment, createOrder } = useApi();
-  const { user } = useAuth();
+  const { processPayment, orders } = useApi();
 
   // Initialize Square payments when the component mounts
   useEffect(() => {
@@ -136,7 +135,7 @@ export default function PaymentFormSquare({
   const onSuccess = (payment: any) => {
     setMessage("Payment successful!");
 
-    createOrder({
+    orders.create({
       id: "pending id",
       //userId: user?.id || "guest",
       items: orderItems,
