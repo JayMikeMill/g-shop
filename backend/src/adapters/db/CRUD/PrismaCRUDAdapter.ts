@@ -1,9 +1,8 @@
 // src/crud/GenericCRUD.ts
 import { PrismaClient } from "@prisma/client";
 import type { QueryObject } from "@shared/types/QueryObject";
-import { queryOptionsToPrisma } from "@shared/types/QueryObject";
-
 type NestedType = "upsertNested" | "createNested" | "set" | "upsert";
+import { CRUDAdapter } from "./CRUDAdapter";
 
 interface NestedFieldOptions {
   type: NestedType;
@@ -68,19 +67,19 @@ function replaceNested<T extends object>(items?: T[], path?: string) {
 }
 
 // ---------------- CRUD Class ----------------
-export interface PrismaCRUDOptions<T> {
+export interface PrismaCRUDAdpaterOptions<T> {
   model: keyof PrismaClient;
   include?: any;
   fields?: FieldMetadata<T>;
 }
 
-export class PrismaCRUD<T> {
+export class PrismaCRUDAdapter<T> implements CRUDAdapter<T> {
   private prisma: PrismaClient;
   private model: keyof PrismaClient;
   private include?: any;
   private fields?: FieldMetadata<T>;
 
-  constructor(prisma: PrismaClient, opts: PrismaCRUDOptions<T>) {
+  constructor(prisma: PrismaClient, opts: PrismaCRUDAdpaterOptions<T>) {
     this.prisma = prisma;
     this.model = opts.model;
     this.include = opts.include ?? {};
@@ -222,4 +221,66 @@ export class PrismaCRUD<T> {
     });
     return this.fromPrisma(deleted);
   }
+}
+
+export function queryOptionsToPrisma(query?: QueryObject) {
+  let where: any = {};
+  const orderBy: any = {};
+  let take: number | undefined;
+  let skip: number | undefined;
+
+  // Handle individual conditions
+  if (query?.conditions?.length) {
+    for (const cond of query.conditions) {
+      switch (cond.operator) {
+        case "=":
+          where[cond.field] = cond.value;
+          break;
+        case "!=":
+          where[cond.field] = { not: cond.value };
+          break;
+        case "<":
+          where[cond.field] = { lt: cond.value };
+          break;
+        case "<=":
+          where[cond.field] = { lte: cond.value };
+          break;
+        case ">":
+          where[cond.field] = { gt: cond.value };
+          break;
+        case ">=":
+          where[cond.field] = { gte: cond.value };
+          break;
+      }
+    }
+  }
+
+  // Handle global search across multiple fields
+  if (!query?.conditions?.length && query?.search) {
+    const search = query.search;
+    // Example: search in name, description, category
+    where.OR = [
+      { name: { contains: search, mode: "insensitive" } },
+      { description: { contains: search, mode: "insensitive" } },
+      { category: { contains: search, mode: "insensitive" } },
+    ];
+  }
+
+  // Sorting
+  if (query?.sortBy) {
+    orderBy[query.sortBy] = query.sortOrder === "desc" ? "desc" : "asc";
+  }
+
+  // Pagination
+  if (query?.limit) {
+    take = query.limit;
+    if (query.page) skip = query.limit * (query.page - 1);
+  }
+
+  return {
+    where: Object.keys(where).length ? where : undefined,
+    orderBy: Object.keys(orderBy).length ? orderBy : undefined,
+    take,
+    skip,
+  };
 }

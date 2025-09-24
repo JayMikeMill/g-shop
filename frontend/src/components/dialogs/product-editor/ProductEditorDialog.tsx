@@ -1,8 +1,8 @@
 // src/components/ProductDialog.tsx
 import { useState, useEffect } from "react";
 import ImageListEditor from "@components/editors/ImageListEditor";
-import ProductOptionsEditor from "@components/editors/ProductOptionsEditor";
-import ProductStockEditor from "@components/editors/ProductStockEditor";
+import ProductOptionsEditor from "./ProductOptionsEditor";
+import ProductStockEditor from "./ProductStockEditor";
 
 import type {
   Product,
@@ -16,7 +16,7 @@ interface ProductDialogProps {
   onClose: () => void; // Callback to close dialog
 }
 
-export default function ProductDialog({
+export default function ProductEditorDialog({
   product,
   onClose,
 }: ProductDialogProps) {
@@ -115,13 +115,17 @@ export default function ProductDialog({
       for (const img of localProduct.images) {
         const isBlob = img.main.startsWith("blob:");
         if (isBlob) {
-          const blob = await fetch(img.main).then((r) => r.blob());
-          const uploaded = await uploadImage(blob, `product_image`);
+          const blobM = await fetch(img.main).then((r) => r.blob());
+          const blobP = await fetch(img.preview).then((r) => r.blob());
+          const blobT = await fetch(img.thumbnail).then((r) => r.blob());
+          const uploadedMain = await uploadImage(blobM, `product_main`);
+          const uploadedPreview = await uploadImage(blobP, `product_preview`);
+          const uploadedThumbnail = await uploadImage(blobT, `product_thumb`);
 
           uploadedImages.push({
-            main: uploaded.url,
-            preview: uploaded.url, // you can adjust if your backend generates previews/thumbnails
-            thumbnail: uploaded.url,
+            main: uploadedMain.url,
+            preview: uploadedPreview.url,
+            thumbnail: uploadedThumbnail.url,
           });
         } else {
           // Already a URL
@@ -129,19 +133,14 @@ export default function ProductDialog({
         }
       }
 
-      console.log("saving product", {
-        ...localProduct,
-        tagsArray,
-        discountString,
-        uploadedImages,
-      });
-
       const productToSave: Product = {
         ...localProduct,
         tags: tagsArray,
         discount: discountString,
         images: uploadedImages,
       };
+
+      console.log("saving product", productToSave);
 
       if (product?.id) {
         await updateProduct({ ...productToSave, id: product.id });

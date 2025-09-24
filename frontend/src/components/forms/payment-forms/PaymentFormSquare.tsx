@@ -7,7 +7,11 @@ import type { OrderItem } from "@shared/types/Order";
 import { useApi } from "@api/useApi";
 
 // Import PaymentStatus and PaymentMethod enums
-import { TransactionStatuses, PaymentMethods } from "@shared/types/Transaction";
+import {
+  TransactionStatuses,
+  PaymentMethods,
+  OrderStatuses,
+} from "@shared/types/Order";
 import { useAuth } from "@contexts/auth/AuthContext";
 
 // Square environment variables (from Vite)
@@ -104,14 +108,17 @@ export default function PaymentFormSquare({
           name:
             typeof item.product === "string"
               ? item.product
-              : (item.product?.name ?? "Unknown Product"),
+              : typeof item.product === "object" && "name" in item.product
+                ? (item.product as { name: string }).name
+                : "Unknown Product",
           price: item.price,
           quantity: item.quantity,
         })),
         address: shippingInfo.address,
       });
 
-      const payment = response.payment;
+      // Narrow the type of response to access payment property
+      const payment = (response as { payment: any }).payment;
       console.log("Payment response data:", payment);
 
       // Display result message
@@ -131,15 +138,13 @@ export default function PaymentFormSquare({
 
     createOrder({
       id: "pending id",
-      userId: user?.id || "guest",
+      //userId: user?.id || "guest",
       items: orderItems,
       total,
-      status: TransactionStatuses.PAID,
+      status: OrderStatuses.PAID,
       createdAt: new Date(),
       updatedAt: new Date(),
-      paymentInfo: {
-        id: payment.id,
-        orderId: "pending id",
+      transaction: {
         method: PaymentMethods.SQUARE,
         amount: payment.amountMoney.amount,
         currency: payment.amountMoney.currency,

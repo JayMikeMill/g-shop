@@ -1,21 +1,41 @@
 import { Router } from "express";
+import { createCRUDRoute } from "./createCRUDRoute";
 import authRoutes from "@routes/auth";
-import userRoutes from "@routes/users";
-import productRoutes from "@routes/products";
-import catalogRoutes from "@routes/catalog";
-import orderRoutes from "@routes/orders";
 import paymentRoutes from "@routes/payments";
 import storageRoutes from "@routes/storage";
+import { db } from "@config/adapters";
 
 const router = Router();
 
-// Modular routing
+// ---------- Helper ----------
+function adminCRUD(crud: any, extraOptions: any = {}) {
+  return createCRUDRoute(crud, {
+    create: ["admin"],
+    update: ["admin"],
+    delete: ["admin"],
+    ...extraOptions,
+  });
+}
+
+// ---------- Modular routes ----------
 router.use("/auth", authRoutes);
-router.use("/users", userRoutes);
-router.use("/products", productRoutes);
-router.use("/Orders", orderRoutes);
-router.use("/catalog", catalogRoutes);
 router.use("/payments", paymentRoutes);
 router.use("/storage", storageRoutes);
+
+// ---------- CRUD Routes ----------
+router.use("/products", adminCRUD(db.products));
+router.use("/products/options-presets", adminCRUD(db.productOptionsPresets));
+router.use("/products/variants", adminCRUD(db.productVariants));
+
+router.use("/catalog/categories", adminCRUD(db.categories));
+router.use("/catalog/collections", adminCRUD(db.collections));
+
+// Orders and Users have custom read/update rules
+router.use("/orders", adminCRUD(db.orders, { read: ["admin", "owner"] }));
+
+router.use(
+  "/users",
+  adminCRUD(db.users, { read: ["admin", "owner"], update: ["admin", "owner"] })
+);
 
 export default router;

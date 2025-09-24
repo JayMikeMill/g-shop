@@ -13,6 +13,11 @@ export class ImgBBStorageAdapter implements StorageAdapter {
     form.append("image", base64);
     form.append("name", filename);
     const response = await axios.post(IMGBB_API_URL, form);
+
+    console.log("ImgBB upload response:", response.data);
+    console.log("image name:", filename);
+    console.log("Uploaded image URL:", response.data.data.url);
+
     return response.data.data.url;
   }
 

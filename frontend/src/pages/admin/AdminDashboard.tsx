@@ -1,63 +1,62 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "@contexts/auth/AuthContext";
-import { createContext, useState, useContext } from "react";
 
-// 1. Create context
-const AdminPageHeaderContext = createContext({
-  setPageHeader: (header: React.ReactNode) => {},
-});
-
-// Custom hook
-export const useAdminPageHeader = () => useContext(AdminPageHeaderContext);
+function navButtonClass(isActive: boolean) {
+  return `px-md py-sm w-[120px] text-center rounded-md border border-border font-semibold text-text bg-card-bg transition-all duration-200 
+    ${isActive ? "bg-primary text-text border-border" : "hover:bg-backgroundAlt hover:-translate-y-0.5 hover:shadow-md"}`;
+}
 
 export default function AdminDashboard() {
   const { logout } = useAuth();
-  const [pageHeader, setPageHeader] = useState<React.ReactNode>(null);
 
   return (
     <div className="flex flex-col w-full max-w-full font-sans bg-background">
       {/* Header */}
-      <header className="flex justify-between items-center border-b border-input-border flex-shrink-0 p-5">
-        <h1 className="text-[1.8rem] text-text m-0">Admin Dashboard</h1>
+      <header className="flex justify-between items-center border-b border-border flex-shrink-0 px-2 py-3">
+        <h1 className="text-3xl text-text">Dashboard</h1>
         <button onClick={logout} className="btn-danger">
           Logout
         </button>
       </header>
 
       {/* Navigation */}
-      <nav className="flex gap-md p-5 border-b border-input-border">
+
+      <nav className="flex gap-4 p-2 border-b border-border overflow-x-auto whitespace-nowrap">
         <NavLink
-          to="/admin/Products"
-          className={({ isActive }) =>
-            `px-md py-sm w-[120px] text-center rounded border border-input-border font-semibold text-text bg-card-bg transition-all duration-200 
-						${isActive ? "bg-primary text-button-text border-primary" : "hover:bg-light hover:-translate-y-0.5 hover:shadow-md"}`
-          }
+          to="/admin/products-dash"
+          className={({ isActive }) => navButtonClass(isActive)}
         >
           Products
         </NavLink>
         <NavLink
-          to="/admin/Orders"
-          className={({ isActive }) =>
-            `px-md py-sm w-[120px] text-center rounded border border-input-border font-semibold text-text bg-card-bg transition-all duration-200 
-						${isActive ? "bg-primary text-button-text border-primary" : "hover:bg-light hover:-translate-y-0.5 hover:shadow-md"}`
-          }
+          to="/admin/catalog-dash"
+          className={({ isActive }) => navButtonClass(isActive)}
+        >
+          Catalog
+        </NavLink>
+        <NavLink
+          to="/admin/orders-dash"
+          className={({ isActive }) => navButtonClass(isActive)}
         >
           Orders
         </NavLink>
+        <NavLink
+          to="/admin/users-dash"
+          className={({ isActive }) => navButtonClass(isActive)}
+        >
+          Users
+        </NavLink>
+        <NavLink
+          to="/admin/settings-dash"
+          className={({ isActive }) => navButtonClass(isActive)}
+        >
+          Settings
+        </NavLink>
       </nav>
-
-      {/* Optional page header */}
-      {pageHeader && (
-        <header className="flex justify-between items-center p-5 bg-card-bg border-b border-input-border">
-          {pageHeader}
-        </header>
-      )}
 
       {/* Main content */}
       <main className="flex-grow overflow-y-auto">
-        <AdminPageHeaderContext.Provider value={{ setPageHeader }}>
-          <Outlet />
-        </AdminPageHeaderContext.Provider>
+        <Outlet />
       </main>
     </div>
   );

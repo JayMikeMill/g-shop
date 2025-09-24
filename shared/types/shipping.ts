@@ -23,19 +23,19 @@ export type Address = {
 
 export const ShippingCarriers = {
   UPS: "UPS",
-  FedEx: "FedEx",
+  FedEx: "FEDEX",
   USPS: "USPS",
   DHL: "DHL",
-  Amazon: "Amazon",
+  Amazon: "AMAZON",
 } as const;
 
 export type ShippingCarrier =
   (typeof ShippingCarriers)[keyof typeof ShippingCarriers];
 
 export const ShippingMethods = {
-  STANDARD: "standard",
-  EXPRESS: "express",
-  OVERNIGHT: "overnight",
+  STANDARD: "STANDARD",
+  EXPRESS: "EXPRESS",
+  OVERNIGHT: "OVERNIGHT",
 } as const;
 
 export type ShippingMethod =

@@ -1,95 +1,46 @@
 import { useState, useEffect } from "react";
-import { useAdminPageHeader } from "./AdminDashboard";
 import { useApi } from "@api/useApi";
 import type { Order } from "@shared/types/Order";
 
 import DynamicTable from "@components/DynamicTable";
 import OrderDialog from "@components/dialogs/OrderDialog";
 
-export default function Orders() {
-  const { setPageHeader } = useAdminPageHeader();
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+export default function AdminOrdersDash() {
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
+  const [tableKey, setTableKey] = useState(0);
 
   const { getOrders, updateOrder } = useApi();
 
-  useEffect(() => {
-    setPageHeader(<h2 className="text-lg font-semibold m-0">Orders</h2>);
-    return () => setPageHeader(null);
-  }, [setPageHeader]);
-
-  useEffect(() => {
-    const loadOrders = async () => {
-      try {
-        setLoading(true);
-        const fetchedOrders = await getOrders();
-        setOrders(fetchedOrders);
-        setError(null);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadOrders();
-  }, []);
-
   const handleDialogClose = () => {
-    setEditingOrder(null);
-    // reload orders
-    (async () => {
-      try {
-        setLoading(true);
-        const fetchedOrders = await getOrders();
-        setOrders(fetchedOrders);
-        setError(null);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setLoading(false);
-      }
-    })();
+    setTableKey((prev) => prev + 1);
   };
 
   const handleSaveOrder = async (update: Partial<Order>) => {
-    if (!editingOrder) return;
+    if (!editingOrder || !editingOrder.id) return;
     await updateOrder(editingOrder.id, { ...editingOrder, ...update });
   };
 
   return (
-    <div className="p-0">
-      {/* Order dialog */}
-      {editingOrder && (
-        <OrderDialog
-          order={editingOrder}
-          onClose={handleDialogClose}
-          onSave={handleSaveOrder}
-        />
-      )}
+    <div className="pt-lg pb-lg">
+      <div className="p-0">
+        {/* Order dialog */}
+        {editingOrder && (
+          <OrderDialog
+            order={editingOrder}
+            onClose={handleDialogClose}
+            onSave={handleSaveOrder}
+          />
+        )}
 
-      {/* Loading / Error */}
-      {loading && (
-        <p className="text-text-secondary text-center py-md text-[1.2rem]">
-          Loading orders...
-        </p>
-      )}
-      {error && (
-        <p className="text-error text-center py-md text-[1.2rem]">
-          Error loading orders: {error.message}
-        </p>
-      )}
-      {orders.length == 0 && (
-        <p className="text-error text-center py-md text-[1.2rem]">
-          No orders found.
-        </p>
-      )}
+        {/* Order list */}
 
-      {/* Order list */}
-      {!loading && !error && orders.length > 0 && (
         <DynamicTable
-          data={orders}
+          fetchPage={getOrders}
+          key={tableKey}
+          onRowClick={(o) => setEditingOrder(o)}
+          objectsName="Orders"
+          pageSize={10}
+          searchable={true}
           columns={[
             {
               id: "id",
@@ -98,7 +49,9 @@ export default function Orders() {
               sortable: true,
               render: (o) => (
                 <div className="flex items-center justify-center whitespace-pre-wrap">
-                  <span className="font-semibold text-center">{o.id}</span>
+                  <span className="font-semibold text-center text-text">
+                    {o.id}
+                  </span>
                 </div>
               ),
               renderHeader: () => <span>Order ID</span>,
@@ -110,7 +63,9 @@ export default function Orders() {
               sortable: true,
               render: (o) => (
                 <div className="flex items-center justify-center whitespace-pre-wrap">
-                  <span className="font-semibold text-center">{o.userId}</span>
+                  <span className="font-semibold text-center text-text">
+                    {o.userId}
+                  </span>
                 </div>
               ),
               renderHeader: () => <span>User ID</span>,
@@ -121,7 +76,7 @@ export default function Orders() {
               width: "140px",
               render: (o) => (
                 <div className="flex items-center justify-center whitespace-pre-wrap">
-                  <span className="font-semibold text-center">
+                  <span className="font-semibold text-center text-text">
                     {o.shippingInfo?.name || ""}
                   </span>
                 </div>
@@ -140,7 +95,7 @@ export default function Orders() {
                   );
                 return (
                   <div className="flex flex-col items-center justify-center whitespace-pre-wrap text-center">
-                    <span className="font-semibold">
+                    <span className="font-semibold text-text">
                       {[
                         `${a.firstName} ${a.lastName}`.trim(),
                         a.addressLine1,
@@ -161,7 +116,7 @@ export default function Orders() {
               width: "250px",
               render: (o) => (
                 <div className="flex items-center justify-center whitespace-pre-wrap">
-                  <span className="font-semibold text-center whitespace-pre-wrap">
+                  <span className="font-semibold text-center whitespace-pre-wrap text-text">
                     {o.shippingInfo?.email || ""}
                   </span>
                 </div>
@@ -174,7 +129,7 @@ export default function Orders() {
               width: "120px",
               render: (o) => (
                 <div className="flex items-center justify-center whitespace-pre-wrap">
-                  <span className="font-semibold text-center">
+                  <span className="font-semibold text-center text-text">
                     {o.shippingInfo?.phone || ""}
                   </span>
                 </div>
@@ -188,7 +143,9 @@ export default function Orders() {
               sortable: true,
               render: (o) => (
                 <div className="flex items-center justify-center whitespace-pre-wrap">
-                  <span className="font-semibold text-center">{o.status}</span>
+                  <span className="font-semibold text-center text-text">
+                    {o.status}
+                  </span>
                 </div>
               ),
               renderHeader: () => <span>Status</span>,
@@ -196,14 +153,14 @@ export default function Orders() {
             {
               id: "timestamps",
               label: "timestamps",
-              width: "200px",
+              width: "250px",
               sortable: true,
               render: (o) => (
                 <div className="flex flex-col items-center justify-center text-center gap-1 whitespace-pre-wrap">
-                  <span className="font-semibold">
+                  <span className="font-semibold text-text">
                     {new Date(o.createdAt).toLocaleString()}
                   </span>
-                  <span className="font-semibold">
+                  <span className="font-semibold text-text">
                     {new Date(o.updatedAt).toLocaleString()}
                   </span>
                 </div>
@@ -218,7 +175,7 @@ export default function Orders() {
               sortable: true,
               render: (o) => (
                 <div className="flex items-center justify-center">
-                  <span className="font-semibold text-center">
+                  <span className="font-semibold text-center text-text">
                     ${(o.total / 100).toFixed(2)}
                   </span>
                 </div>
@@ -231,7 +188,7 @@ export default function Orders() {
               width: "50px",
               render: (o) => (
                 <div className="flex items-center justify-center">
-                  <span className="font-semibold text-center">
+                  <span className="font-semibold text-center text-text">
                     {o.items?.length || 0}
                   </span>
                 </div>
@@ -248,7 +205,7 @@ export default function Orders() {
                   return <div className="flex items-center justify-center" />;
                 return (
                   <div className="flex flex-col items-center justify-center whitespace-pre text-center">
-                    <span className="font-semibold">
+                    <span className="font-semibold text-text">
                       {[
                         `Method: ${s.method}`,
                         `Carrier: ${s.carrier}`,
@@ -267,16 +224,16 @@ export default function Orders() {
               renderHeader: () => <span>Shipping Info</span>,
             },
             {
-              id: "payment",
-              label: "Payment Info",
+              id: "transaction",
+              label: "Transaction",
               width: "150px",
               render: (o) => {
-                const p = o.paymentInfo;
+                const p = o.transaction;
                 if (!p)
                   return <div className="flex items-center justify-center" />;
                 return (
                   <div className="flex flex-col items-center justify-center whitespace-pre text-center">
-                    <span className="font-semibold">
+                    <span className="font-semibold text-text">
                       {[
                         //`Method: ${p.method}`,
                         `Status: ${p.status}`,
@@ -298,7 +255,7 @@ export default function Orders() {
               width: "300px",
               render: (o) => (
                 <div className="flex items-center justify-center whitespace-pre-wrap">
-                  <span className="font-semibold text-center">
+                  <span className="font-semibold text-center text-text">
                     {o.notes || ""}
                   </span>
                 </div>
@@ -306,26 +263,8 @@ export default function Orders() {
               renderHeader: () => <span>Notes</span>,
             },
           ]}
-          actions={(o) => (
-            <div className="flex flex-col gap-2">
-              <button
-                onClick={() => setEditingOrder(o)}
-                className="btn-primary"
-              >
-                View
-              </button>
-              <button
-                onClick={() => setEditingOrder(o)}
-                className="btn-secondary"
-              >
-                Edit
-              </button>
-            </div>
-          )}
-          pageSize={10}
-          searchable={true}
         />
-      )}
+      </div>
     </div>
   );
 }

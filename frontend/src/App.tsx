@@ -7,8 +7,11 @@ import CheckoutPage from "@pages/CheckoutPage";
 import AboutPage from "./pages/AboutPage";
 
 import AdminDashboard from "@pages/admin/AdminDashboard";
-import AdminProductsDash from "@pages/admin/Products";
-import AdminOrdersDash from "@pages/admin/Orders";
+import AdminProductsDash from "@pages/admin/AdminProductDash";
+import AdminCatalogDash from "@pages/admin/AdminCatalogDash";
+import AdminOrdersDash from "@pages/admin/AdminOrdersDash";
+import AdminUsersDash from "@pages/admin/AdminUsersDash";
+import AdminSettingsDash from "@pages/admin/AdminSettingsDash";
 
 import { applyTheme } from "./theme";
 import { ProtectedRoute } from "@pages/ProtectedRoute";
@@ -39,9 +42,11 @@ export default function App() {
                 </ProtectedRoute>
               }
             >
-              <Route index element={<Navigate to="products" replace />} />
-              <Route path="products" element={<AdminProductsDash />} />
-              <Route path="orders" element={<AdminOrdersDash />} />
+              <Route path="products-dash" element={<AdminProductsDash />} />
+              <Route path="catalog-dash" element={<AdminCatalogDash />} />
+              <Route path="orders-dash" element={<AdminOrdersDash />} />
+              <Route path="users-dash" element={<AdminUsersDash />} />
+              <Route path="settings-dash" element={<AdminSettingsDash />} />
             </Route>
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/about" element={<AboutPage />} />

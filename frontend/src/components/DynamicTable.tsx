@@ -1,4 +1,5 @@
 import { useState, useEffect, type ReactNode } from "react";
+import { Search } from "lucide-react";
 import type { QueryObject } from "@shared/types/QueryObject";
 
 import "./dynamic-table.css";
@@ -17,25 +18,29 @@ export interface TableColumn<T> {
 export interface DynamicTableProps<T> {
   columns: TableColumn<T>[];
   pageSize?: number;
+  fetchPage: (query?: QueryObject) => Promise<{ data: T[]; total: number }>;
   searchable?: boolean;
   onRowClick?: (row: T) => void;
   actions?: (row: T) => ReactNode;
-  // **Server-side fetch function**
-  fetchPage: (query?: QueryObject) => Promise<{ data: T[]; total: number }>;
+  headerButton?: ReactNode;
+  objectsName?: string;
 }
 
 export default function DynamicTable<T extends { id?: string }>({
   columns = [],
   pageSize = 10,
+  fetchPage,
   searchable = true,
   onRowClick,
   actions,
-  fetchPage,
+  headerButton: button,
+  objectsName = "Objects",
 }: DynamicTableProps<T>) {
   const [pageData, setPageData] = useState<T[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [loading, setLoading] = useState(false);
@@ -53,11 +58,7 @@ export default function DynamicTable<T extends { id?: string }>({
         page: pageNumber,
       } as QueryObject;
 
-      console.log("Fetching page with query:", fetchQuery);
-
       const { data, total } = await fetchPage(fetchQuery);
-
-      console.log("Fetched page result:", data);
 
       setPageData(data);
       setTotal(total);
@@ -84,74 +85,77 @@ export default function DynamicTable<T extends { id?: string }>({
     setPage(1); // reset to first page when sorting changes
   };
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value);
-    setPage(1); // reset to first page when searching
+  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSearch(searchInput); // triggers useEffect → fetchPage
+    setPage(1); // reset pagination
+    console.log("Search submitted:", searchInput);
   };
 
   return (
     <div className="flex flex-col gap-4 px-2">
-      {/* Search */}
-      {searchable && (
-        <div className="px-4">
-          <input
-            type="text"
-            placeholder="Search..."
-            value={search}
-            onChange={handleSearchChange}
-            className="table-search"
-          />
-        </div>
-      )}
+      <div className="flex flex-row w-full gap-2 items-center">
+        {button && <div className="h-full">{button}</div>}
+
+        {searchable && (
+          <form
+            onSubmit={handleSearchSubmit}
+            className="relative w-full h-full"
+          >
+            <input
+              type="text"
+              placeholder={
+                objectsName ? `Search ${objectsName}...` : "Search..."
+              }
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              className="input-box w-full h-full px-3 py-2 rounded border focus:outline-none"
+            />
+            <Search
+              className="text-text absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer"
+              size={20}
+              onClick={() => handleSearchSubmit(new Event("submit") as any)}
+            />
+          </form>
+        )}
+      </div>
 
       {/* Table */}
       <div className="table-container">
-        <table className="table">
-          <thead>
-            <tr>
-              {actions && <th className="actions w-[120px]">Actions</th>}
-              {columns.map((col) => (
-                <th
-                  key={col.id}
-                  className={`${col.sortable ? "sortable" : ""} ${col.headerClassName || ""}`}
-                  style={col.width ? { width: col.width } : { width: "120px" }}
-                  onClick={() => handleSort(col)}
-                >
-                  {col.renderHeader ? (
-                    col.renderHeader()
-                  ) : (
-                    <div className="flex items-center justify-center gap-1">
-                      {col.label}
-                      {sortKey === col.id && (
-                        <span>{sortOrder === "asc" ? "▲" : "▼"}</span>
-                      )}
-                    </div>
-                  )}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
+        {loading || (pageData || []).length === 0 ? (
+          <div className="w-full flex items-center justify-center border-border border rounded h-24 text-text text-3xl">
+            {loading ? "" : "No" + (objectsName ? ` ${objectsName}` : "")}
+          </div>
+        ) : (
+          <table className="table w-full">
+            <thead>
               <tr>
-                <td
-                  colSpan={columns.length + (actions ? 1 : 0)}
-                  className="text-center py-4"
-                >
-                  Loading...
-                </td>
+                {actions && <th className="actions w-[120px]">Actions</th>}
+                {columns.map((col) => (
+                  <th
+                    key={col.id}
+                    className={`${col.sortable ? "sortable" : ""} ${col.headerClassName || ""}`}
+                    style={
+                      col.width ? { width: col.width } : { width: "120px" }
+                    }
+                    onClick={() => handleSort(col)}
+                  >
+                    {col.renderHeader ? (
+                      col.renderHeader()
+                    ) : (
+                      <div className="flex items-center justify-center gap-1">
+                        {col.label}
+                        {sortKey === col.id && (
+                          <span>{sortOrder === "asc" ? "▲" : "▼"}</span>
+                        )}
+                      </div>
+                    )}
+                  </th>
+                ))}
               </tr>
-            ) : (pageData || []).length === 0 ? (
-              <tr>
-                <td
-                  colSpan={columns.length + (actions ? 1 : 0)}
-                  className="text-center py-4"
-                >
-                  No data
-                </td>
-              </tr>
-            ) : (
-              pageData.map((row) => (
+            </thead>
+            <tbody>
+              {pageData.map((row) => (
                 <tr key={row.id} onClick={() => onRowClick?.(row)}>
                   {actions && <td className="actions">{actions(row)}</td>}
                   {columns.map((col) => (
@@ -166,10 +170,10 @@ export default function DynamicTable<T extends { id?: string }>({
                     </td>
                   ))}
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {/* Pagination */}

@@ -1,31 +1,15 @@
 import { useState, useEffect } from "react";
 import type { Product } from "@shared/types/Product";
-import ProductDialog from "@components/dialogs/ProductDialog";
-import { useAdminPageHeader } from "@pages/admin/AdminDashboard";
+import ProductEditorDialog from "@components/dialogs/product-editor/ProductEditorDialog";
 import { useApi } from "@api/useApi";
 import DynamicTable from "@components/DynamicTable";
 
-export default function Products() {
-  const { setPageHeader } = useAdminPageHeader();
+export default function AdminProductsDash() {
   const [isAdding, setIsAdding] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [tableKey, setTableKey] = useState(0);
 
   const { getProducts } = useApi();
-
-  // Set the page header
-  useEffect(() => {
-    const headerContent = (
-      <div className="flex justify-between items-center w-full">
-        <h2 className="text-lg font-semibold m-0 text-text">Products</h2>
-        <button className="btn-primary" onClick={() => setIsAdding(true)}>
-          Add Product
-        </button>
-      </div>
-    );
-    setPageHeader(headerContent);
-    return () => setPageHeader(null);
-  }, [isAdding, setPageHeader]);
 
   const handleDialogClose = () => {
     setIsAdding(false);
@@ -37,7 +21,10 @@ export default function Products() {
     <div className="pt-lg pb-lg">
       {/* Product dialog */}
       {(isAdding || editingProduct) && (
-        <ProductDialog product={editingProduct} onClose={handleDialogClose} />
+        <ProductEditorDialog
+          product={editingProduct}
+          onClose={handleDialogClose}
+        />
       )}
 
       {/* Product list */}
@@ -46,6 +33,15 @@ export default function Products() {
         fetchPage={getProducts}
         key={tableKey}
         onRowClick={(p) => setEditingProduct(p)}
+        objectsName="Products"
+        headerButton={
+          <button
+            className="btn-primary whitespace-nowrap"
+            onClick={() => setIsAdding(true)}
+          >
+            Add Product
+          </button>
+        }
         columns={[
           {
             id: "image",

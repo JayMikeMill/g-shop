@@ -83,10 +83,10 @@ enum PaymentMethod {
 
 enum ShippingCarrier {
   UPS
-  FedEx
+  FEDEX
   USPS
   DHL
-  Amazon
+  AMAZON
 }
 
 enum ShippingMethod {
@@ -191,7 +191,6 @@ model Product {
   options       ProductOption[]
   reviews       ProductReview[]
   variants      ProductVariant[]
-  orderItems    OrderItem[]
   categories    Category[]         @relation("ProductCategories")
   collections   Collection[]       @relation("ProductCollections")
 }
@@ -286,52 +285,51 @@ model Order {
   userId        String?
   status        OrderStatus
   total         Int
-  notes         String?
-  paymentInfo   Transaction?
+  transaction   Transaction?
   shippingInfo  Json
   items         OrderItem[]
+  statusHistory OrderStatusHistory[]
   invoices      Invoice[]
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
-  statusHistory OrderStatusHistory[]
+  notes         String?
 }
 
 model OrderItem {
   id        String   @id @default(uuid())
   order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId   String
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String
-  variantId String?
+  product   Json     // snapshot: { id, name, description, image, etc. }
+  variant   Json?    // snapshot: { id, name, options, etc. }, optional
   quantity  Int
-  price     Int
-}
-
-model OrderStatusHistory {
-  id        String    @id @default(uuid())
-  order     Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  orderId   String
-  status    OrderStatus
-  timestamp DateTime  @default(now())
+  price     Int    // price at the time of purchase
+  total     Int    // quantity * price (optional, precomputed for convenience)
 }
 
 model Transaction {
-  id            String   @id @default(uuid())
-  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  orderId       String   @unique
-  amount        Int
-  currency      String
-  method        PaymentMethod
-  status        TransactionStatus
-  billingAddress Json?
+  id              String   @id @default(uuid())
+  order           Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId         String   @unique
+  amount          Int
+  currency        String
+  method          PaymentMethod
+  status          TransactionStatus
+  billingAddress  Json?
+}
+
+model OrderStatusHistory {
+  id           String    @id @default(uuid())
+  order        Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId      String
+  status       OrderStatus
+  timestamp    DateTime  @default(now())
 }
 
 model Invoice {
-  id           String   @id @default(uuid())
-  order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  orderId      String
-  invoiceNumber String
-  pdfUrl       String?
-  createdAt    DateTime @default(now())
+  id              String   @id @default(uuid())
+  order           Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId         String
+  invoiceNumber   String
+  pdfUrl          String?
+  createdAt       DateTime @default(now())
 }
-

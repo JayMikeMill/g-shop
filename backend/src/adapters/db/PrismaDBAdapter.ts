@@ -1,20 +1,21 @@
 // src/crud/ProductCRUD.ts
 import { PrismaClient } from "@prisma/client";
-import { PrismaCRUD, FieldMetadata } from "./prismaCRUD";
+import { PrismaCRUDAdapter } from "./CRUD/PrismaCRUDAdapter";
 
 import type {
   Product,
-  ProductOption,
   ProductOptionsPreset,
   ProductReview,
   ProductTag,
   ProductVariant,
 } from "@shared/types/Product";
+
 import { Category, Collection } from "@shared/types/Catalog";
 import { Order } from "@shared/types/Order";
 import { User } from "@shared/types/User";
+import { DBAdapter } from "./DBAdapter";
 
-export class PrismaCRUDS {
+export class PrismaDBAdapter implements DBAdapter {
   public products: ProductCRUD;
   public productTags: ProductTagPresetCRUD;
   public productReviews: ProductReviewCRUD;
@@ -25,7 +26,7 @@ export class PrismaCRUDS {
   public orders: OrderCRUD;
   public users: UserCRUD;
 
-  constructor(prismaClient: PrismaClient) {
+  constructor(prismaClient: PrismaClient = new PrismaClient()) {
     this.products = new ProductCRUD(prismaClient);
     this.productTags = new ProductTagPresetCRUD(prismaClient);
     this.productReviews = new ProductReviewCRUD(prismaClient);
@@ -38,7 +39,7 @@ export class PrismaCRUDS {
   }
 }
 
-class ProductCRUD extends PrismaCRUD<Product> {
+class ProductCRUD extends PrismaCRUDAdapter<Product> {
   constructor(prismaClient: PrismaClient) {
     super(prismaClient, {
       model: "product",
@@ -68,25 +69,25 @@ class ProductCRUD extends PrismaCRUD<Product> {
   }
 }
 
-class ProductTagPresetCRUD extends PrismaCRUD<ProductTag> {
+class ProductTagPresetCRUD extends PrismaCRUDAdapter<ProductTag> {
   constructor(prismaClient: PrismaClient) {
     super(prismaClient, { model: "productTagPreset" });
   }
 }
 
-class ProductReviewCRUD extends PrismaCRUD<ProductReview> {
+class ProductReviewCRUD extends PrismaCRUDAdapter<ProductReview> {
   constructor(prismaClient: PrismaClient) {
     super(prismaClient, { model: "productReview" });
   }
 }
 
-class ProductVariantCRUD extends PrismaCRUD<ProductVariant> {
+class ProductVariantCRUD extends PrismaCRUDAdapter<ProductVariant> {
   constructor(prismaClient: PrismaClient) {
     super(prismaClient, { model: "productVariant" });
   }
 }
 
-class ProductOptionPresetCRUD extends PrismaCRUD<ProductOptionsPreset> {
+class ProductOptionPresetCRUD extends PrismaCRUDAdapter<ProductOptionsPreset> {
   constructor(prismaClient: PrismaClient) {
     super(prismaClient, {
       model: "productOptionsPreset",
@@ -98,13 +99,13 @@ class ProductOptionPresetCRUD extends PrismaCRUD<ProductOptionsPreset> {
   }
 }
 
-class CategoryCRUD extends PrismaCRUD<Category> {
+class CategoryCRUD extends PrismaCRUDAdapter<Category> {
   constructor(prismaClient: PrismaClient) {
     super(prismaClient, { model: "category" });
   }
 }
 
-class CollectionCRUD extends PrismaCRUD<Collection> {
+class CollectionCRUD extends PrismaCRUDAdapter<Collection> {
   constructor(prismaClient: PrismaClient) {
     super(prismaClient, {
       model: "collection",
@@ -116,13 +117,27 @@ class CollectionCRUD extends PrismaCRUD<Collection> {
   }
 }
 
-class OrderCRUD extends PrismaCRUD<Order> {
+class OrderCRUD extends PrismaCRUDAdapter<Order> {
   constructor(prismaClient: PrismaClient) {
-    super(prismaClient, { model: "order" });
+    super(prismaClient, {
+      model: "order",
+      include: {
+        transaction: true,
+        items: true,
+        invoices: true,
+        statusHistory: true,
+      },
+      fields: {
+        items: { type: "upsertNested" },
+        transaction: { type: "upsertNested" },
+        invoices: { type: "upsertNested" },
+        statusHistory: { type: "upsertNested" },
+      },
+    });
   }
 }
 
-class UserCRUD extends PrismaCRUD<User> {
+class UserCRUD extends PrismaCRUDAdapter<User> {
   constructor(prismaClient: PrismaClient) {
     super(prismaClient, { model: "user" });
   }

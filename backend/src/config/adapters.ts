@@ -1,6 +1,6 @@
 import { FirebaseAuthAdapter } from "@adapters/auth/FirebaseAuthAdapter";
 import { FirebaseDBAdapter } from "@adapters/db/FirebaseDBAdapter";
-import { PrismaAdapter } from "@adapters/db/PrismaAdapter";
+import { PrismaDBAdapter } from "@adapters/db/PrismaDBAdapter";
 import { SquarePaymentAdapter } from "@adapters/payment/SquarePaymentAdapter";
 import { FirebaseStorageAdapter } from "@adapters/storage/FirebaseStorageAdapter";
 import { ImgBBStorageAdapter } from "@adapters/storage/ImgBBStorageAdapter";
@@ -14,11 +14,9 @@ export const auth =
     : new FirebaseAuthAdapter();
 
 export const db =
-  env.ADAPTER_DATABASE === "firestore"
+  env.ADAPTER_DB === "firebase"
     ? new FirebaseDBAdapter()
-    : env.ADAPTER_DATABASE === "sqlite"
-      ? new PrismaAdapter()
-      : new FirebaseDBAdapter();
+    : new PrismaDBAdapter();
 
 export const storage =
   env.ADAPTER_STORAGE === "firebase"
