@@ -6,7 +6,7 @@ import type {
   Product,
   ProductOptionsPreset,
   ProductReview,
-  ProductTag,
+  ProductTagPreset,
   ProductVariant,
 } from "@shared/types/Product";
 
@@ -17,7 +17,7 @@ import { DBAdapter } from "./DBAdapter";
 
 export class PrismaDBAdapter implements DBAdapter {
   public products: ProductCRUD;
-  public productTags: ProductTagPresetCRUD;
+  public productTagsPresets: ProductTagPresetCRUD;
   public productReviews: ProductReviewCRUD;
   public productVariants: ProductVariantCRUD;
   public productOptionsPresets: ProductOptionPresetCRUD;
@@ -28,7 +28,7 @@ export class PrismaDBAdapter implements DBAdapter {
 
   constructor(prismaClient: PrismaClient = new PrismaClient()) {
     this.products = new ProductCRUD(prismaClient);
-    this.productTags = new ProductTagPresetCRUD(prismaClient);
+    this.productTagsPresets = new ProductTagPresetCRUD(prismaClient);
     this.productReviews = new ProductReviewCRUD(prismaClient);
     this.productVariants = new ProductVariantCRUD(prismaClient);
     this.productOptionsPresets = new ProductOptionPresetCRUD(prismaClient);
@@ -69,24 +69,6 @@ class ProductCRUD extends PrismaCRUDAdapter<Product> {
   }
 }
 
-class ProductTagPresetCRUD extends PrismaCRUDAdapter<ProductTag> {
-  constructor(prismaClient: PrismaClient) {
-    super(prismaClient, { model: "productTagPreset" });
-  }
-}
-
-class ProductReviewCRUD extends PrismaCRUDAdapter<ProductReview> {
-  constructor(prismaClient: PrismaClient) {
-    super(prismaClient, { model: "productReview" });
-  }
-}
-
-class ProductVariantCRUD extends PrismaCRUDAdapter<ProductVariant> {
-  constructor(prismaClient: PrismaClient) {
-    super(prismaClient, { model: "productVariant" });
-  }
-}
-
 class ProductOptionPresetCRUD extends PrismaCRUDAdapter<ProductOptionsPreset> {
   constructor(prismaClient: PrismaClient) {
     super(prismaClient, {
@@ -96,6 +78,24 @@ class ProductOptionPresetCRUD extends PrismaCRUDAdapter<ProductOptionsPreset> {
       },
       include: { options: true },
     });
+  }
+}
+
+class ProductTagPresetCRUD extends PrismaCRUDAdapter<ProductTagPreset> {
+  constructor(prismaClient: PrismaClient) {
+    super(prismaClient, { model: "productTagPreset" });
+  }
+}
+
+class ProductVariantCRUD extends PrismaCRUDAdapter<ProductVariant> {
+  constructor(prismaClient: PrismaClient) {
+    super(prismaClient, { model: "productVariant" });
+  }
+}
+
+class ProductReviewCRUD extends PrismaCRUDAdapter<ProductReview> {
+  constructor(prismaClient: PrismaClient) {
+    super(prismaClient, { model: "productReview" });
   }
 }
 

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createCRUDRoute } from "./createCRUDRoute";
+import { createCRUDRoute } from "@routes/crud-routes/createCRUDRoute";
 import authRoutes from "@routes/auth";
 import paymentRoutes from "@routes/payments";
 import storageRoutes from "@routes/storage";
@@ -24,9 +24,17 @@ router.use("/storage", storageRoutes);
 
 // ---------- CRUD Routes ----------
 router.use("/products/options-presets", adminCRUD(db.productOptionsPresets));
+router.use("/products/tags-presets", adminCRUD(db.productTagsPresets));
 router.use("/products/variants", adminCRUD(db.productVariants));
+router.use(
+  "/products/reviews",
+  adminCRUD(db.productReviews, { create: ["user", "admin"] })
+);
+
+// Products must come last as it has nested routes
 router.use("/products", adminCRUD(db.products));
 
+// Product reviews can be created by any authenticated user
 router.use("/catalog/categories", adminCRUD(db.categories));
 router.use("/catalog/collections", adminCRUD(db.collections));
 

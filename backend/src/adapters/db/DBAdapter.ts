@@ -4,7 +4,7 @@ import {
   Product,
   ProductOptionsPreset,
   ProductReview,
-  ProductTag,
+  ProductTagPreset,
   ProductVariant,
 } from "@shared/types/Product";
 import { Category, Collection } from "@shared/types/Catalog";
@@ -13,10 +13,11 @@ import { User } from "@shared/types/User";
 
 export interface DBAdapter {
   products: CRUDAdapter<Product>;
-  productTags: CRUDAdapter<ProductTag>;
-  productReviews: CRUDAdapter<ProductReview>;
-  productVariants: CRUDAdapter<ProductVariant>;
   productOptionsPresets: CRUDAdapter<ProductOptionsPreset>;
+  productTagsPresets: CRUDAdapter<ProductTagPreset>;
+  productVariants: CRUDAdapter<ProductVariant>;
+  productReviews: CRUDAdapter<ProductReview>;
+
   categories: CRUDAdapter<Category>;
   collections: CRUDAdapter<Collection>;
   orders: CRUDAdapter<Order>;

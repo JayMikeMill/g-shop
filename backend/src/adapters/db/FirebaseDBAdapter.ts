@@ -8,6 +8,7 @@ import {
   ProductOptionsPreset,
   ProductReview,
   ProductTag,
+  ProductTagPreset,
   ProductVariant,
 } from "@shared/types/Product";
 import { Category, Collection } from "@shared/types/Catalog";
@@ -17,7 +18,7 @@ import type { DBAdapter } from "./DBAdapter";
 export class FirebaseDBAdapter implements DBAdapter {
   public users: CRUDAdapter<User>;
   public products: CRUDAdapter<Product>;
-  public productTags: CRUDAdapter<ProductTag>;
+  public productTagsPresets: CRUDAdapter<ProductTagPreset>;
   public productReviews: CRUDAdapter<ProductReview>;
   public productVariants: CRUDAdapter<ProductVariant>;
   public productOptionsPresets: CRUDAdapter<ProductOptionsPreset>;
@@ -28,7 +29,7 @@ export class FirebaseDBAdapter implements DBAdapter {
   constructor() {
     this.users = new FirebaseCRUDAdapter<User>("users");
     this.products = new FirebaseCRUDAdapter<Product>("products");
-    this.productTags = new FirebaseCRUDAdapter<ProductTag>("tags");
+    this.productTagsPresets = new FirebaseCRUDAdapter<ProductTag>("tags");
     this.productReviews = new FirebaseCRUDAdapter<ProductReview>(
       "product_reviews"
     );

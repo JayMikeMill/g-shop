@@ -50,6 +50,8 @@ export interface ProductTag {
   color?: string;
 }
 
+export interface ProductTagPreset extends ProductTag {}
+
 // Variant entity
 export interface ProductVariant {
   id?: string;
