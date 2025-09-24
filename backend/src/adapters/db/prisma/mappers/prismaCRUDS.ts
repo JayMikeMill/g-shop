@@ -40,34 +40,30 @@ export class PrismaCRUDS {
 
 class ProductCRUD extends PrismaCRUD<Product> {
   constructor(prismaClient: PrismaClient) {
-    // Define the fields metadata inline
-    const productFields: FieldMetadata<Product> = {
-      images: { type: "upsertNested" },
-      tags: { type: "upsertNested" },
-      options: { type: "upsertNested" },
-      variants: { type: "upsertNested" },
-      dimensions: { type: "upsert" },
-      categories: { type: "set" },
-      collections: { type: "set" },
-      reviews: { type: "createNested" },
-    };
-
-    // Define Prisma include inline
-    const PRODUCT_INCLUDE = {
-      images: true,
-      options: true,
-      tags: true,
-      dimensions: true,
-      categories: true,
-      collections: true,
-      variants: true,
-      reviews: true,
-    };
-
     super(prismaClient, {
       model: "product",
-      include: PRODUCT_INCLUDE,
-      fields: productFields,
+
+      fields: {
+        images: { type: "upsertNested" },
+        tags: { type: "upsertNested" },
+        options: { type: "upsertNested" },
+        variants: { type: "upsertNested" },
+        //dimensions: { type: "upsert" },
+        categories: { type: "set" },
+        collections: { type: "set" },
+        reviews: { type: "createNested" },
+      },
+
+      include: {
+        images: true,
+        options: true,
+        tags: true,
+        //dimensions: true,
+        categories: true,
+        collections: true,
+        variants: true,
+        reviews: true,
+      },
     });
   }
 }
@@ -92,14 +88,12 @@ class ProductVariantCRUD extends PrismaCRUD<ProductVariant> {
 
 class ProductOptionPresetCRUD extends PrismaCRUD<ProductOptionsPreset> {
   constructor(prismaClient: PrismaClient) {
-    const optionPresetFields: FieldMetadata<ProductOptionsPreset> = {
-      options: { type: "upsertNested" },
-    };
-
     super(prismaClient, {
       model: "productOptionsPreset",
+      fields: {
+        options: { type: "upsertNested" },
+      },
       include: { options: true },
-      fields: optionPresetFields,
     });
   }
 }
@@ -112,14 +106,12 @@ class CategoryCRUD extends PrismaCRUD<Category> {
 
 class CollectionCRUD extends PrismaCRUD<Collection> {
   constructor(prismaClient: PrismaClient) {
-    const collectionFields: FieldMetadata<Collection> = {
-      images: { type: "upsertNested" }, // assuming collections have nested images
-    };
-
     super(prismaClient, {
       model: "collection",
       include: { images: true },
-      fields: collectionFields,
+      fields: {
+        images: { type: "upsertNested" }, // assuming collections have nested images
+      },
     });
   }
 }

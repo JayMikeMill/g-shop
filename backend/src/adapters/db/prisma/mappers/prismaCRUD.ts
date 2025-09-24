@@ -34,25 +34,28 @@ function createNested<T extends object>(items?: T[], stripId = true) {
 }
 
 function replaceNested<T extends object>(items?: T[], path?: string) {
-  if (!items?.length) return undefined;
+  // Always delete existing rows
+  const result: any = { deleteMany: {} };
 
-  return {
-    deleteMany: {}, // remove all existing nested rows
-    create: items.map((item) => {
-      const copy = { ...item };
+  // If items exist, create new ones
+  if (items?.length) {
+    result.create = items.map((item) => {
+      const copy: { [key: string]: any } = { ...item };
 
-      // Remove any ID fields (id or foreign keys)
+      // Remove id and foreign keys
       for (const key in copy) {
         if (key === "id" || key.endsWith("Id")) delete (copy as any)[key];
       }
 
-      // Recursively handle nested paths
-      if (path && (copy as any)[path])
-        (copy as any)[path] = createNested((copy as any)[path]);
+      // Handle nested path recursively
+      if (path && copy[path]) copy[path] = createNested(copy[path]);
 
       return copy;
-    }),
-  };
+    });
+  }
+
+  // If items is undefined or empty, we still return { deleteMany: {} }
+  return result;
 }
 
 // ---------------- CRUD Class ----------------
@@ -112,6 +115,7 @@ export class PrismaCRUD<T> {
 
         case "upsertNested":
           if (action === "update") {
+            // Send empty array or undefined => explicitly deletes all nested rows
             result[key] = replaceNested(value as any[], path);
           } else {
             result[key] = createNested(value as any[], false);

@@ -2,13 +2,12 @@
 import { useState, useEffect } from "react";
 import ImageListEditor from "@components/editors/ImageListEditor";
 import ProductOptionsEditor from "@components/editors/ProductOptionsEditor";
+import ProductStockEditor from "@components/editors/ProductStockEditor";
 
 import type {
   Product,
-  ProductOption,
   ProductTag,
   ProductImageSet,
-  ProductVariant,
 } from "@shared/types/Product";
 import { useApi } from "@api/useApi";
 
@@ -17,84 +16,52 @@ interface ProductDialogProps {
   onClose: () => void; // Callback to close dialog
 }
 
-/**
- * Generate all possible variants for a product based on its options.
- * - options are saved as an array of strings
- * - stock defaults to the product's stock
- * - priceOverride defaults to the product's price
- */
-export function generateVariants(
-  options?: ProductOption[]
-): ProductVariant[] | undefined {
-  if (!options || options.length === 0) return;
-
-  // Get all option values arrays
-  const valuesArrays = options.map((opt) => opt.values.split(","));
-
-  if (valuesArrays.some((arr) => arr.length === 0)) return; // If any option has no values, return empty array
-
-  // Cartesian product to generate all combinations
-  const cartesian = (arr: string[][]): string[][] =>
-    arr.reduce((a, b) => a.flatMap((d) => b.map((e) => [...d, e])), [
-      [],
-    ] as string[][]);
-
-  const combos = cartesian(valuesArrays);
-
-  return combos.map((combo) => ({
-    options: combo.map((val, i) => `${options[i].name}:${val}`).join("|"),
-    stock: 0, // default stock, can be updated later
-    priceOverride: undefined,
-  }));
-}
-
 export default function ProductDialog({
   product,
   onClose,
 }: ProductDialogProps) {
-  // Form state
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState(0);
-  const [description, setDescription] = useState("");
-  const [productOptions, setProductOptions] = useState<ProductOption[]>([]);
+  const [localProduct, setLocalProduct] = useState<Product>(
+    product || {
+      name: "",
+      price: 0,
+      description: "",
+      stock: 0,
+      options: [],
+      variants: [],
+      tags: [],
+      images: [],
+    }
+  );
 
-  // Image state is now managed in ImagePreviewList
-  const [processedImages, setProcessedImages] = useState<any[]>([]); // Store processed blobs and preview
+  const [processedImages, setProcessedImages] = useState<any[]>([]);
   const [isProcessingImages, setIsProcessingImages] = useState(false);
   const [isSavingProduct, setIsSavingProduct] = useState(false);
   const [discountValue, setDiscountValue] = useState(0);
   const [discountType, setDiscountType] = useState<"%" | "$">("%");
   const [tagString, setTagString] = useState("");
 
-  // Drag and drop state is now managed in ImagePreviewList
-  const [images, setImages] = useState<ProductImageSet[]>([]);
-
   const { createProduct, deleteProduct, updateProduct, uploadImage } = useApi();
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = "auto"; // restore scroll when dialog closes
+      document.body.style.overflow = "auto";
     };
   }, []);
 
   useEffect(() => {
-    setName(product?.name || "");
-    setPrice(product?.price || 0);
-    setDescription(product?.description || "");
-    setProductOptions(product?.options || []);
-    setTagString(product?.tags?.map((tag) => tag.name).join(", ") || "");
-    setImages(product?.images || []);
+    if (!product) return;
 
-    if (product && product.discount) {
-      const discountStr = product.discount;
-      if (discountStr.includes("%")) {
+    setLocalProduct(product);
+    setTagString(product.tags?.map((t) => t.name).join(", ") || "");
+
+    if (product.discount) {
+      if (product.discount.includes("%")) {
         setDiscountType("%");
-        setDiscountValue(parseFloat(discountStr.replace("%", "")));
+        setDiscountValue(parseFloat(product.discount.replace("%", "")));
       } else {
-        // Fixed amount
         setDiscountType("$");
-        setDiscountValue(parseFloat(discountStr));
+        setDiscountValue(parseFloat(product.discount));
       }
     } else {
       setDiscountType("%");
@@ -102,25 +69,16 @@ export default function ProductDialog({
     }
   }, [product]);
 
-  // --- Image logic moved to ImagePreviewList ---
-  // See ImagePreviewList for drag, drop, crop, add, remove, lightbox, etc.
-
   const handleDelete = async () => {
     if (!product) return onClose();
+    if (!product.id) return alert("Product ID is missing.");
 
     const confirmed = window.confirm(
       `Are you sure you want to delete ${product.name}?`
     );
-
     if (!confirmed) return;
 
-    if (!product.id) {
-      alert("Product ID is missing.");
-      return;
-    }
-
     await deleteProduct(product.id);
-
     onClose();
   };
 
@@ -128,10 +86,10 @@ export default function ProductDialog({
     e.preventDefault();
 
     try {
-      const tagsArray = tagString
+      const tagsArray: ProductTag[] = tagString
         .split(",")
         .map((tag) => ({ name: tag.trim() }))
-        .filter((tag) => tag.name !== "") as ProductTag[];
+        .filter((tag) => tag.name !== "");
 
       const discountString =
         discountValue > 0
@@ -140,30 +98,24 @@ export default function ProductDialog({
             : `${discountValue}`
           : "";
 
-      // Require at least one image, whether new or existing
-      const hasImages =
-        processedImages.length > 0 ||
-        (product && product.images && product.images.length > 0);
-
-      if (!hasImages) {
+      // Require at least one image
+      if (!localProduct.images || localProduct.images.length === 0) {
         alert("At least one image is required");
         return;
       }
+
       if (isProcessingImages) {
         alert("Please wait for images to finish processing.");
         return;
       }
 
-      // setIsUploadingImages(true);
       setIsSavingProduct(true);
 
-      // For each image in imagePreviews, if it has a processedImages entry, upload it; otherwise, use the existing product image
-      let uploadedImages = [];
-
-      for (let i = 0; i < images.length; i++) {
-        const previewUrl = images[i].preview || images[i].main;
+      // Upload images
+      const uploadedImages: ProductImageSet[] = [];
+      for (const img of localProduct.images) {
         const processed = processedImages.find(
-          (img) => img.previewUrl === previewUrl
+          (p) => p.previewUrl === img.preview || img.main
         );
         if (processed) {
           const main = await uploadImage(
@@ -183,242 +135,218 @@ export default function ProductDialog({
             preview: preview.url,
             thumbnail: thumb.url,
           });
-        } else if (product && product.images) {
-          // Find the matching image in the original product.images by preview or main url
-          const existing = product.images.find(
-            (img) => img.preview === previewUrl || img.main === previewUrl
-          );
-          if (existing) {
-            uploadedImages.push(existing);
-          } else {
-            alert(
-              "Some images are missing or not processed. Please re-add them."
-            );
-            setIsSavingProduct(false);
-            return;
-          }
         } else {
-          alert(
-            "Some images are missing or not processed. Please re-add them."
-          );
-          setIsSavingProduct(false);
-          return;
+          uploadedImages.push(img);
         }
       }
 
-      if (product) {
-        const updatedProduct = {
-          id: product.id,
-          name,
-          price,
-          description,
-          discount: discountString,
-          tags: tagsArray,
-          images: uploadedImages, // <-- use uploadedImages
-          options: productOptions,
-          stock: product.stock,
-        } as Product;
+      console.log("saving product", {
+        ...localProduct,
+        tagsArray,
+        discountString,
+        uploadedImages,
+      });
 
-        updatedProduct.variants = generateVariants(updatedProduct.options);
+      const productToSave: Product = {
+        ...localProduct,
+        tags: tagsArray,
+        discount: discountString,
+        images: uploadedImages,
+      };
 
-        console.log("Updated Product:", updatedProduct);
-
-        await updateProduct(updatedProduct);
-        setIsSavingProduct(false);
-        onClose();
+      if (product?.id) {
+        await updateProduct({ ...productToSave, id: product.id });
       } else {
-        const newProduct = {
-          name,
-          price,
-          description,
-          discount: discountString,
-          tags: tagsArray,
-          images: uploadedImages, // <-- use uploadedImages
-          options: productOptions,
-          stock: 0,
-        } as Product;
-
-        newProduct.variants = generateVariants(newProduct.options);
-
-        console.log("Adding New Product:", newProduct);
-
-        await createProduct(newProduct);
-
-        setIsSavingProduct(false);
-        onClose();
+        await createProduct(productToSave);
       }
+
+      setIsSavingProduct(false);
+      onClose();
     } catch (err: any) {
-      // setIsUploadingImages(false);
       setIsSavingProduct(false);
       alert(err.message || "Error saving product");
     }
   };
 
   return (
-    <>
-      {/* Main Dialog */}
-      <div className="fixed inset-0 bg-overlay flex justify-center items-center z-50">
-        <div
-          className="
-      dialog-box
-      w-full h-full sm:h-[90vh] sm:max-w-4xl
-      flex flex-col overflow-hidden
-      px-2 sm:px-8
-    "
-        >
-          {/* Header */}
-          <div className="flex items-center justify-between pt-4 pb-2 flex-shrink-0">
-            <h2 className="text-2xl font-bold text-text text-center flex-1">
-              {product ? "Edit Product" : "Add Product"}
-            </h2>
-            <button
-              className="ml-2 text-3xl font-bold text-textSecondary hover:text-danger transition px-2"
-              onClick={onClose}
-              aria-label="Close dialog"
-              type="button"
-            >
-              &times;
-            </button>
-          </div>
-
-          {/* Form content */}
-          <form
-            onSubmit={handleSubmit}
-            className="flex flex-col flex-1 overflow-hidden gap-lg"
+    <div className="fixed inset-0 bg-overlay flex justify-center items-center z-50">
+      <div className="dialog-box w-full h-full sm:h-[90vh] sm:max-w-4xl flex flex-col overflow-hidden px-2 sm:px-8">
+        {/* Header */}
+        <div className="flex items-center justify-between pt-4 pb-2 flex-shrink-0">
+          <h2 className="text-2xl font-bold text-text text-center flex-1">
+            {product ? "Edit Product" : "Add Product"}
+          </h2>
+          <button
+            className="ml-2 text-3xl font-bold text-textSecondary hover:text-danger transition px-2"
+            onClick={onClose}
+            aria-label="Close dialog"
+            type="button"
           >
-            <div className="flex flex-1 flex-col md:flex-row gap-md overflow-hidden min-h-0">
-              {/* Left/Top: Scrollable form fields + options */}
-              <div className="px-1 flex-1 flex flex-col gap-md overflow-y-auto min-h-0">
-                {/* Name */}
-                <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
-                  Name
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    className="input-box px-md py-1 h-8 text-text"
-                  />
+            &times;
+          </button>
+        </div>
+
+        {/* Form */}
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col flex-1 overflow-hidden gap-lg"
+        >
+          <div className="flex flex-1 flex-col md:flex-row gap-md overflow-hidden min-h-0">
+            {/* Left/Top: Scrollable form fields + options */}
+            <div className="px-1 flex-1 flex flex-col gap-md overflow-y-auto">
+              {/* Name, price, discount, tags, description */}
+              <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
+                Name
+                <input
+                  type="text"
+                  value={localProduct.name}
+                  onChange={(e) =>
+                    setLocalProduct((prev) => ({
+                      ...prev,
+                      name: e.target.value,
+                    }))
+                  }
+                  required
+                  className="input-box px-md py-1 h-8 text-text"
+                />
+              </label>
+
+              {/* Price + Discount */}
+              <div className="flex gap-md items-end">
+                <label className="flex-1 flex flex-col gap-1 text-sm font-semibold text-textSecondary">
+                  Price
+                  <div className="relative">
+                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-textSecondary">
+                      $
+                    </span>
+                    <input
+                      type="number"
+                      value={localProduct.price}
+                      onChange={(e) =>
+                        setLocalProduct((prev) => ({
+                          ...prev,
+                          price: parseFloat(e.target.value),
+                        }))
+                      }
+                      required
+                      step="0.01"
+                      className="input-box pl-6 pr-md py-1 h-8 w-full"
+                    />
+                  </div>
                 </label>
 
-                {/* Price + Discount */}
-                <div className="flex gap-md items-end">
+                <div className="flex-1 flex gap-1 items-end">
                   <label className="flex-1 flex flex-col gap-1 text-sm font-semibold text-textSecondary">
-                    Price
+                    Discount
                     <div className="relative">
                       <span className="absolute left-2 top-1/2 -translate-y-1/2 text-textSecondary">
-                        $
+                        {discountType}
                       </span>
                       <input
                         type="number"
-                        value={price}
-                        onChange={(e) => setPrice(parseFloat(e.target.value))}
-                        required
-                        step="0.01"
                         className="input-box pl-6 pr-md py-1 h-8 w-full"
+                        value={discountValue}
+                        onChange={(e) =>
+                          setDiscountValue(parseFloat(e.target.value))
+                        }
+                        step="0.01"
                       />
                     </div>
                   </label>
-
-                  <div className="flex-1 flex gap-1 items-end">
-                    <label className="flex-1 flex flex-col gap-1 text-sm font-semibold text-textSecondary">
-                      Discount
-                      <div className="relative">
-                        <span className="absolute left-2 top-1/2 -translate-y-1/2 text-textSecondary">
-                          {discountType}
-                        </span>
-                        <input
-                          type="number"
-                          className="input-box pl-6 pr-md py-1 h-8 w-full"
-                          value={discountValue}
-                          onChange={(e) =>
-                            setDiscountValue(parseFloat(e.target.value))
-                          }
-                          step="0.01"
-                        />
-                      </div>
-                    </label>
-                    <select
-                      className="input-box ml-1 px-2 py-1 h-8"
-                      value={discountType}
-                      onChange={(e) =>
-                        setDiscountType(e.target.value as "%" | "$")
-                      }
-                    >
-                      <option value="%">%</option>
-                      <option value="$">$</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Tags */}
-                <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
-                  Tags (comma-separated)
-                  <input
-                    type="text"
-                    value={tagString}
-                    onChange={(e) => setTagString(e.target.value)}
-                    className="input-box px-md py-1 h-8"
-                  />
-                </label>
-
-                {/* Description */}
-                <label className="pb-0.5 flex flex-col gap-1 text-sm font-semibold text-textSecondary flex-1">
-                  Description
-                  <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    required
-                    className="input-box px-md py-1 h-full"
-                  />
-                </label>
-
-                {/* Product Options Editor (expands vertically) */}
-                <div className="flex-1 min-h-0">
-                  <ProductOptionsEditor
-                    options={productOptions}
-                    setOptions={setProductOptions}
-                  />
+                  <select
+                    className="input-box ml-1 px-2 py-1 h-8"
+                    value={discountType}
+                    onChange={(e) =>
+                      setDiscountType(e.target.value as "%" | "$")
+                    }
+                  >
+                    <option value="%">%</option>
+                    <option value="$">$</option>
+                  </select>
                 </div>
               </div>
 
-              {/* Right/Bottom: Images (always visible, no scroll) */}
-              <div className="md:w-1/3 flex flex-col gap-md flex-shrink-0">
-                <ImageListEditor
-                  images={images}
-                  onImagesChange={setImages}
-                  setProcessedImages={setProcessedImages}
-                  setIsProcessingImages={setIsProcessingImages}
+              {/* Tags */}
+              <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
+                Tags (comma-separated)
+                <input
+                  type="text"
+                  value={tagString}
+                  onChange={(e) => setTagString(e.target.value)}
+                  className="input-box px-md py-1 h-8"
+                />
+              </label>
+
+              {/* Description */}
+              <label className="pb-0.5 flex flex-col gap-1 text-sm font-semibold text-textSecondary">
+                Description
+                <textarea
+                  value={localProduct.description}
+                  onChange={(e) =>
+                    setLocalProduct((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
+                  required
+                  className="input-box px-md py-1 h-40 resize-none"
+                />
+              </label>
+
+              {/* Options + Stock container */}
+              <div className="flex flex-col gap-4">
+                {/* Product Options Editor */}
+                <ProductOptionsEditor
+                  product={localProduct}
+                  setProduct={setLocalProduct}
+                />
+
+                {/* Product Stock Editor */}
+                <ProductStockEditor
+                  product={localProduct}
+                  setProduct={setLocalProduct}
                 />
               </div>
             </div>
 
-            {/* Form Buttons */}
-            <div className="w-full grid grid-cols-2 gap-2 px-4 sm:px-8 py-4 border-t border-border sm:grid-cols-4 flex-shrink-0">
-              <button
-                className="btn-danger w-full h-12"
-                type="button"
-                onClick={handleDelete}
-              >
-                Delete
-              </button>
-              <button
-                type="submit"
-                className="btn-success w-full h-12 whitespace-nowrap"
-                disabled={isProcessingImages || isSavingProduct}
-              >
-                {isSavingProduct
-                  ? "Saving..."
-                  : isProcessingImages
-                    ? "Processing Images..."
-                    : product
-                      ? "Save Changes"
-                      : "Add Product"}
-              </button>
+            {/* Right / Images */}
+            <div className="md:w-1/3 flex flex-col gap-md flex-shrink-0">
+              <ImageListEditor
+                images={localProduct.images || []}
+                onImagesChange={(imgs) =>
+                  setLocalProduct((prev) => ({ ...prev, images: imgs }))
+                }
+                setProcessedImages={setProcessedImages}
+                setIsProcessingImages={setIsProcessingImages}
+              />
             </div>
-          </form>
-        </div>
+          </div>
+
+          {/* Form Buttons */}
+          <div className="w-full grid grid-cols-2 gap-2 px-4 sm:px-8 py-4 border-t border-border sm:grid-cols-4 flex-shrink-0">
+            <button
+              className="btn-danger w-full h-12"
+              type="button"
+              onClick={handleDelete}
+            >
+              Delete
+            </button>
+            <button
+              type="submit"
+              className="btn-success w-full h-12 whitespace-nowrap"
+              disabled={isProcessingImages || isSavingProduct}
+            >
+              {isSavingProduct
+                ? "Saving..."
+                : isProcessingImages
+                  ? "Processing Images..."
+                  : product
+                    ? "Save Changes"
+                    : "Add Product"}
+            </button>
+          </div>
+        </form>
       </div>
-    </>
+    </div>
   );
 }

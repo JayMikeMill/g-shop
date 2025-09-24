@@ -1,112 +1,66 @@
-import React, { useEffect, useState, useRef } from "react";
-import type {
-  ProductOption,
-  ProductOptionsPreset,
-} from "@shared/types/Product";
+import React, { useEffect, useState } from "react";
+import type { Product, ProductOption } from "@shared/types/Product";
+import AnimatedDropdown from "@components/controls/AnimatedDropdown";
+import OptionsPresetDropdown from "@components/controls/ProductOptionsPresetsDropdown";
 import { useApi } from "@api/useApi";
 
 interface ProductOptionsEditorProps {
-  options: ProductOption[];
-  setOptions: React.Dispatch<React.SetStateAction<ProductOption[]>>;
+  product: Product;
+  setProduct: React.Dispatch<React.SetStateAction<Product>>;
 }
 
 const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
-  options = [],
-  setOptions,
+  product,
+  setProduct,
 }) => {
-  const {
-    createProductOptionsPreset,
-    getProductOptionsPresets,
-    deleteProductOptionsPreset,
-  } = useApi();
-
-  const [presets, setPresets] = useState<ProductOptionsPreset[]>([]);
-  const [loadingPresets, setLoadingPresets] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { createProductOptionsPreset } = useApi();
+  const [localOptions, setLocalOptions] = useState<ProductOption[]>(
+    product.options || []
+  );
   const [saving, setSaving] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0); // <-- trigger refresh
 
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Load presets once
+  // Sync local options with product
   useEffect(() => {
-    let mounted = true;
-    const loadPresets = async () => {
-      setLoadingPresets(true);
-      try {
-        const { data } = await getProductOptionsPresets();
+    setLocalOptions(product.options || []);
+  }, [product.options]);
 
-        const arr = Array.isArray(data)
-          ? data
-          : Array.isArray((data as { data?: ProductOptionsPreset[] })?.data)
-            ? (data as { data: ProductOptionsPreset[] }).data
-            : [];
-
-        if (mounted) setPresets(arr);
-      } catch (err: any) {
-        if (mounted) alert("Failed to load presets: " + err.message);
-      } finally {
-        if (mounted) setLoadingPresets(false);
-      }
-    };
-    loadPresets();
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  // Click outside dropdown
+  // Push changes to product
   useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node)
-      ) {
-        setDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, []);
+    setProduct((prev) => ({
+      ...prev,
+      options: localOptions,
+    }));
+  }, [localOptions, setProduct]);
 
-  // --- Option Management ---
+  // Option management
   const addOption = () =>
-    setOptions((prev) => [...prev, { name: "", values: "" }]);
-
+    setLocalOptions((prev) => [...prev, { name: "", values: "" }]);
   const removeOption = (i: number) =>
-    setOptions((prev) => prev.filter((_, idx) => idx !== i));
-
-  const updateOptionName = (index: number, name: string) =>
-    setOptions((prev) =>
-      prev.map((opt, i) => (i === index ? { ...opt, name } : opt))
+    setLocalOptions((prev) => prev.filter((_, idx) => idx !== i));
+  const updateOptionName = (i: number, name: string) =>
+    setLocalOptions((prev) =>
+      prev.map((opt, idx) => (idx === i ? { ...opt, name } : opt))
+    );
+  const updateOptionValues = (i: number, values: string) =>
+    setLocalOptions((prev) =>
+      prev.map((opt, idx) => (idx === i ? { ...opt, values } : opt))
     );
 
-  const updateOptionValues = (index: number, value: string) =>
-    setOptions((prev) =>
-      prev.map((opt, i) => (i === index ? { ...opt, values: value } : opt))
-    );
-
-  // --- Preset Actions ---
+  // Save preset
   const handleSavePreset = async () => {
-    if (options.length === 0) {
+    if (localOptions.length === 0) {
       alert("No options to save as preset.");
       return;
     }
-
     const name = prompt("Enter preset name:");
     if (!name) return;
 
     setSaving(true);
     try {
-      const created = await createProductOptionsPreset({
-        name,
-        options,
-      });
-      const newPreset =
-        created && typeof created === "object" && "data" in created
-          ? (created as { data: ProductOptionsPreset }).data
-          : (created as ProductOptionsPreset);
-      setPresets((prev) => [...prev, newPreset]);
+      await createProductOptionsPreset({ name, options: localOptions });
       alert("Preset saved successfully");
+      setRefreshKey((prev) => prev + 1); // <-- refresh dropdown
     } catch (err: any) {
       alert("Error saving preset: " + err.message);
     } finally {
@@ -114,127 +68,74 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
     }
   };
 
-  const handleApplyPreset = (preset: ProductOptionsPreset) => {
-    setOptions(preset.options || []);
-    setDropdownOpen(false);
-  };
-
-  const handleDeletePreset = async (id?: string) => {
-    if (!id) return;
-    if (!confirm("Are you sure you want to delete this preset?")) return;
-    try {
-      await deleteProductOptionsPreset(id);
-      setPresets((prev) => prev.filter((p) => p.id !== id));
-    } catch (err: any) {
-      alert("Failed to delete preset: " + err.message);
-    }
-  };
-
   return (
-    <div className="border border-border rounded-md p-4 flex flex-col gap-4 w-full max-w-full flex-1 overflow-y-auto overflow-x-hidden">
-      <h3 className="text-lg font-semibold text-text">Product Options</h3>
+    <AnimatedDropdown
+      label={
+        <span className="text-lg font-semibold text-text">Product Options</span>
+      }
+    >
+      <div className="flex flex-col gap-4 p-4">
+        {/* Preset Dropdown */}
+        <OptionsPresetDropdown
+          localOptions={localOptions}
+          setLocalOptions={setLocalOptions}
+          refreshKey={refreshKey}
+        />
 
-      {/* Preset Dropdown */}
-      <div ref={dropdownRef} className="relative w-full max-w-sm mb-2">
-        <button
-          type="button"
-          className="input-box px-2 py-1 w-full text-left flex justify-between items-center text-text bg-background border border-border rounded"
-          onClick={() => setDropdownOpen((prev) => !prev)}
-        >
-          Select Preset...
-          <span>▼</span>
-        </button>
-
-        <div
-          className={`absolute z-10 mt-1 w-full bg-background border border-border rounded shadow-md max-h-60 overflow-y-auto transition-opacity duration-150 ${
-            dropdownOpen
-              ? "opacity-100 pointer-events-auto"
-              : "opacity-0 pointer-events-none"
-          }`}
-        >
-          {loadingPresets ? (
-            <div className="px-2 py-1 text-text">Loading...</div>
-          ) : presets.length === 0 ? (
-            <div className="px-2 py-1 text-text">No presets found</div>
-          ) : (
-            presets.map((p) => (
-              <div
-                key={p.id}
-                className="flex justify-between items-center bg-background px-2 py-1 hover:bg-secondary cursor-pointer text-text"
+        {/* Options List */}
+        {localOptions.map((opt, i) => (
+          <div
+            key={i}
+            className="p-2 flex flex-col gap-2 w-full max-w-full border-b border-border pb-2"
+          >
+            <div className="flex flex-wrap gap-2 items-center w-full">
+              <input
+                type="text"
+                placeholder="Option Name"
+                value={opt.name}
+                onChange={(e) => updateOptionName(i, e.target.value)}
+                className="input-box flex-1 min-w-0 px-2 py-1"
+              />
+              <button
+                type="button"
+                className="btn-circle-x"
+                onClick={() => removeOption(i)}
               >
-                <span className="flex-1" onClick={() => handleApplyPreset(p)}>
-                  {p.name}
-                </span>
-                <button
-                  type="button"
-                  className="btn-circle-x"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeletePreset(p.id);
-                  }}
-                >
-                  X
-                </button>
-              </div>
-            ))
-          )}
+                X
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2 items-center w-full">
+              <input
+                type="text"
+                placeholder="Values (comma-separated)"
+                value={opt.values}
+                onChange={(e) => updateOptionValues(i, e.target.value)}
+                className="input-box flex-1 min-w-0 px-2 py-1"
+              />
+            </div>
+          </div>
+        ))}
+
+        {/* Bottom Buttons */}
+        <div className="flex flex-wrap gap-2 w-full mt-auto">
+          <button
+            type="button"
+            className="btn-primary px-3 py-2 flex-shrink-0"
+            onClick={addOption}
+          >
+            Add Option
+          </button>
+          <button
+            type="button"
+            className="btn-secondary px-3 py-2 flex-shrink-0 ml-auto"
+            onClick={handleSavePreset}
+            disabled={saving}
+          >
+            {saving ? "Saving..." : "Save Preset"}
+          </button>
         </div>
       </div>
-
-      {/* Options List */}
-      {options.map((opt, i) => (
-        <div
-          key={i}
-          className="p-2 flex flex-col gap-2 w-full max-w-full border-b border-border pb-2"
-        >
-          <div className="flex flex-wrap gap-2 items-center w-full">
-            <input
-              type="text"
-              placeholder="Option Name"
-              value={opt.name}
-              onChange={(e) => updateOptionName(i, e.target.value)}
-              className="input-box flex-1 min-w-0 px-2 py-1"
-            />
-            <button
-              type="button"
-              className="btn-circle-x"
-              onClick={() => removeOption(i)}
-            >
-              X
-            </button>
-          </div>
-
-          <div className="flex flex-wrap gap-2 items-center w-full">
-            <input
-              type="text"
-              placeholder="Values (comma-separated)"
-              value={opt.values}
-              onChange={(e) => updateOptionValues(i, e.target.value)}
-              className="input-box flex-1 min-w-0 px-2 py-1"
-            />
-          </div>
-        </div>
-      ))}
-
-      {/* Bottom Buttons */}
-      <div className="flex flex-wrap gap-2 w-full mt-auto">
-        <button
-          type="button"
-          className="btn-primary px-3 py-2 flex-shrink-0"
-          onClick={addOption}
-        >
-          Add Option
-        </button>
-        <button
-          type="button"
-          className="btn-secondary px-3 py-2 flex-shrink-0 ml-auto"
-          onClick={handleSavePreset}
-          disabled={saving}
-        >
-          {saving ? "Saving..." : "Save Preset"}
-        </button>
-      </div>
-    </div>
+    </AnimatedDropdown>
   );
 };
 

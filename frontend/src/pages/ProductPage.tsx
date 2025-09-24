@@ -230,22 +230,26 @@ const ProductPage = () => {
                     {opt.name}
                   </span>
                   <div className="flex gap-2 flex-wrap">
-                    {opt.values.map((val) => (
-                      <button
-                        key={val.value}
-                        className={`px-3 py-1 rounded-full border text-lg transition-all ${
-                          selectedOptions.find(
-                            (o) => o.name === opt.name && o.value === val.value
-                          )
-                            ? "bg-primary text-text border-primary"
-                            : "bg-surface text-text border-border hover:bg-primaryDark"
-                        }`}
-                        onClick={() => handleOptionChange(opt.name, val.value)}
-                        type="button"
-                      >
-                        {val.value}
-                      </button>
-                    ))}
+                    {Array.isArray(opt.values) &&
+                      opt.values.map((val) => (
+                        <button
+                          key={val.value}
+                          className={`px-3 py-1 rounded-full border text-lg transition-all ${
+                            selectedOptions.find(
+                              (o) =>
+                                o.name === opt.name && o.value === val.value
+                            )
+                              ? "bg-primary text-text border-primary"
+                              : "bg-surface text-text border-border hover:bg-primaryDark"
+                          }`}
+                          onClick={() =>
+                            handleOptionChange(opt.name, val.value)
+                          }
+                          type="button"
+                        >
+                          {val.value}
+                        </button>
+                      ))}
                   </div>
                 </div>
               ))}
