@@ -12,7 +12,6 @@ import type {
 import { ProductTagDialog } from "./ProductTagDialog";
 
 import { useApi } from "@api/useApi";
-import AnimatedDropdownSurface from "@components/controls/AnimatedDropdownSurface";
 
 interface TagPresetsDropdownProps {
   onSelectPreset: (preset: ProductTagPreset) => void; // notify main component
@@ -140,7 +139,6 @@ interface ProductTagsEditorProps {
 const ProductTagsEditor: React.FC<ProductTagsEditorProps> = ({
   product,
   setProduct,
-  openInitially = false,
 }) => {
   const [localTags, setLocalTags] = useState<ProductTag[]>(product.tags || []);
 
@@ -165,31 +163,24 @@ const ProductTagsEditor: React.FC<ProductTagsEditorProps> = ({
     setLocalTags((prev) => prev.filter((_, idx) => idx !== i));
 
   return (
-    <AnimatedDropdownSurface
-      label={
-        <span className="text-lg font-semibold text-text">Product Tags</span>
-      }
-      openInitially={openInitially}
-    >
-      <div className="flex flex-col px-2">
-        <TagPresetsDropdown onSelectPreset={addTag} />
+    <div className="flex flex-col px-2">
+      <TagPresetsDropdown onSelectPreset={addTag} />
 
-        <div className="flex flex-wrap gap-2 mt-2">
-          {localTags.map((tag, i) => (
-            <div
-              key={i}
-              className="flex items-center gap-2 py-0.5 pr-1 rounded-md items-middle justify-middle"
-              style={{ backgroundColor: tag.color || "#ccc", color: "#fff" }}
-            >
-              <span className="text-center font-bold font-font ml-3">
-                {tag.name}
-              </span>
-              <XButton className="w-5 h-5" onClick={() => removeTag(i)} />
-            </div>
-          ))}
-        </div>
+      <div className="flex flex-wrap gap-2 mt-2">
+        {localTags.map((tag, i) => (
+          <div
+            key={i}
+            className="flex items-center gap-2 py-0.5 pr-1 rounded-md items-middle justify-middle"
+            style={{ backgroundColor: tag.color || "#ccc", color: "#fff" }}
+          >
+            <span className="text-center font-bold font-font ml-3">
+              {tag.name}
+            </span>
+            <XButton className="w-5 h-5" onClick={() => removeTag(i)} />
+          </div>
+        ))}
       </div>
-    </AnimatedDropdownSurface>
+    </div>
   );
 };
 

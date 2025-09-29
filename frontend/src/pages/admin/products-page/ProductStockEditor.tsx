@@ -5,7 +5,6 @@ import {
   type ProductOption,
   type ProductVariant,
 } from "@shared/types/Product";
-import AnimatedDropdownSurface from "@components/controls/AnimatedDropdownSurface";
 
 interface ProductStockEditorProps {
   product: Product;
@@ -13,10 +12,9 @@ interface ProductStockEditorProps {
   openInitially?: boolean; // control visibility
 }
 
-const ProductStockEditor: React.FC<ProductStockEditorProps> = ({
+export const ProductStockEditor: React.FC<ProductStockEditorProps> = ({
   product,
   setProduct,
-  openInitially = false,
 }) => {
   const hasVariants = !!product.options?.length;
   const [localVariants, setLocalVariants] = useState<ProductVariant[]>([]);
@@ -53,41 +51,19 @@ const ProductStockEditor: React.FC<ProductStockEditorProps> = ({
     }));
   }, [localVariants, hasVariants, totalStock, setProduct]);
 
+  // Update stock for a specific variant
   const updateVariantStock = (index: number, stock: number) => {
     setLocalVariants((prev) =>
       prev.map((v, i) => (i === index ? { ...v, stock } : v))
     );
   };
 
+  if (!hasVariants) {
+    return null; // No variants, no detailed stock editor
+  }
+
   return (
-    <AnimatedDropdownSurface
-      className="pt-0 pb-2"
-      label={
-        <div className="flex items-center justify-between w-full pr-4">
-          <span className="text-lg font-semibold text-text">
-            {hasVariants ? "Total Stock" : "Product Stock"}
-          </span>
-          <input
-            type="number"
-            min={0}
-            value={hasVariants ? totalStock : product.stock || 0}
-            onChange={(e) => {
-              if (!hasVariants) {
-                setProduct((prev) => ({
-                  ...prev,
-                  stock: parseInt(e.target.value) || 0,
-                }));
-              }
-            }}
-            disabled={hasVariants}
-            onFocus={(e) => e.target.select()}
-            className={`input-box w-24 text-center`}
-          />
-        </div>
-      }
-      openInitially={openInitially}
-      disabled={!hasVariants}
-    >
+    <div className="flex flex-col gap-4">
       {localVariants.map((variant, idx) => (
         <div
           key={idx}
@@ -116,7 +92,56 @@ const ProductStockEditor: React.FC<ProductStockEditorProps> = ({
           />
         </div>
       ))}
-    </AnimatedDropdownSurface>
+    </div>
+  );
+};
+
+interface ProductStockHeaderProps {
+  product: Product;
+  setProduct: React.Dispatch<React.SetStateAction<Product>>;
+}
+
+export const ProductStockHeader: React.FC<ProductStockHeaderProps> = ({
+  product,
+  setProduct,
+}) => {
+  const [localStock, setLocalStock] = useState(product.stock || 0);
+
+  // Push localVariants back into product whenever they change
+  useEffect(() => {
+    setLocalStock(product.stock || 0);
+  }, [product.id, product.variants]);
+
+  useEffect(() => {
+    setProduct((prev) => ({
+      ...prev,
+      stock: localStock,
+    }));
+  }, [localStock]);
+
+  const hasVariants = !!product.options?.length;
+  const totalStock = product.variants?.reduce(
+    (sum, v) => sum + (v.stock || 0),
+    0
+  );
+
+  return (
+    <div className="flex items-center justify-between w-full pr-4">
+      <span className="text-lg font-semibold text-text">
+        {hasVariants ? "Total Stock" : "Product Stock"}
+      </span>
+      <input
+        type="number"
+        min={0}
+        value={hasVariants ? totalStock : product.stock || 0}
+        onChange={(e) => {
+          setLocalStock(parseInt(e.target.value) || 0);
+        }}
+        disabled={hasVariants}
+        onFocus={(e) => e.target.select()}
+        className={`input-box w-24 text-center`}
+      />
+    </div>
   );
 };
 

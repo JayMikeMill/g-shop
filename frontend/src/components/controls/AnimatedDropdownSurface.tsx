@@ -3,7 +3,8 @@ import { AnimatePresence, motion } from "framer-motion";
 
 interface DropdownProps {
   className?: string;
-  label: React.ReactNode;
+  title?: string;
+  customTitle?: React.ReactNode;
   children: React.ReactNode;
   openInitially?: boolean;
   disabled?: boolean;
@@ -11,7 +12,9 @@ interface DropdownProps {
 
 const AnimatedDropdownSurface: React.FC<DropdownProps> = ({
   className,
-  label,
+  title,
+  customTitle,
+
   children,
   openInitially = false,
   disabled = false,
@@ -32,7 +35,7 @@ const AnimatedDropdownSurface: React.FC<DropdownProps> = ({
         }`}
         onClick={() => !disabled && setOpen((prev) => !prev)}
       >
-        {label}
+        {customTitle ?? title}
         {!disabled && <span>{open ? "▲" : "▼"}</span>}
       </button>
 

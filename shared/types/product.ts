@@ -87,6 +87,21 @@ export interface ProductReview {
   createdAt: Date;
 }
 
+export const emptyProduct = (): Product => {
+  return {
+    id: undefined,
+    name: "",
+    price: 0,
+    description: "",
+    stock: 0,
+    options: [],
+    variants: [],
+    tags: [],
+    images: [],
+    discount: "",
+  };
+};
+
 // -------------------------
 // Product utility functions
 // -------------------------

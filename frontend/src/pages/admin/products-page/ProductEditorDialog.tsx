@@ -3,32 +3,24 @@ import React, { useState, useEffect } from "react";
 
 // UI Components
 import { AnimatedDialog } from "@components/controls/AnimatedDialog";
-import { XButton } from "@components/controls/CustomControls";
 
 // Types
-import type { Product, ProductImageSet } from "@shared/types/Product";
+import {
+  type Product,
+  type ProductImageSet,
+  emptyProduct,
+} from "@shared/types/Product";
 
 // Editors
 import ProductOptionsEditor from "./ProductOptionsEditor";
-import ProductStockEditor from "./ProductStockEditor";
+import { ProductStockEditor, ProductStockHeader } from "./ProductStockEditor";
 import ProductTagsEditor from "./ProductTagsEditor";
 import ProductImagesEditor from "./ProductImagesEditor";
 
 // API
 import { useApi } from "@api/useApi";
-
-const emptyProduct: Product = {
-  id: undefined,
-  name: "",
-  price: 0,
-  description: "",
-  stock: 0,
-  options: [],
-  variants: [],
-  tags: [],
-  images: [],
-  discount: "",
-};
+import ProductInfoEditor from "./ProductInfoEditor";
+import AnimatedDropdownSurface from "@components/controls/AnimatedDropdownSurface";
 
 interface ProductDialogProps {
   product: Product | null;
@@ -48,9 +40,6 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
   const [isAdding, setIsAdding] = useState(false);
   const [isProcessingImages, setIsProcessingImages] = useState(false);
   const [isSavingProduct, setIsSavingProduct] = useState(false);
-  const [discountValue, setDiscountValue] = useState(0);
-  const [discountType, setDiscountType] = useState<"%" | "$">("%");
-
   const { products, uploadImage } = useApi();
 
   // Sync local product when dialog opens
@@ -70,19 +59,6 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
 
     setIsAdding(false);
     setLocalProduct(product);
-
-    if (product.discount) {
-      if (product.discount.includes("%")) {
-        setDiscountType("%");
-        setDiscountValue(parseFloat(product.discount.replace("%", "")));
-      } else {
-        setDiscountType("$");
-        setDiscountValue(parseFloat(product.discount));
-      }
-    } else {
-      setDiscountType("%");
-      setDiscountValue(0);
-    }
   }, [open, product]);
 
   const handleCancel = () => {
@@ -92,8 +68,6 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
 
   const clearProduct = () => {
     setLocalProduct(emptyProduct);
-    setDiscountValue(0);
-    setDiscountType("%");
     setIsAdding(false);
   };
 
@@ -125,13 +99,6 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
     setIsSavingProduct(true);
 
     try {
-      const discountString =
-        discountValue > 0
-          ? discountType === "%"
-            ? `${discountValue}%`
-            : `${discountValue}`
-          : "";
-
       const uploadedImages: ProductImageSet[] = [];
 
       for (const img of localProduct.images) {
@@ -156,7 +123,6 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
 
       const productToSave: Product = {
         ...localProduct,
-        discount: discountString,
         images: uploadedImages,
       };
 
@@ -185,6 +151,7 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
   });
 
   const shouldRender = isAdding || localProduct.id != undefined;
+  const hasVariants = !!localProduct.options?.length;
 
   return (
     <AnimatedDialog
@@ -199,117 +166,58 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
       >
         <div className="flex flex-1 flex-col sm:flex-row sm:gap-md overflow-hidden min-h-0">
           {/* Main Editor */}
-          <div className="flex-1 flex flex-col gap-md px-2 overflow-y-auto py-4 sm:border sm:rounded-lg sm:mt-4">
-            {/* Name */}
-            <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
-              Name
-              <input
-                type="text"
-                placeholder="Product Name"
-                value={localProduct.name}
-                onChange={(e) =>
-                  setLocalProduct((prev) => ({ ...prev, name: e.target.value }))
-                }
-                required
-                className="input-box px-md py-1 h-8 text-text"
-              />
-            </label>
-
-            {/* Price & Discount */}
-            <div className="flex gap-md items-end">
-              <label className="flex-1 flex flex-col gap-1 text-sm font-semibold text-textSecondary">
-                Price
-                <div className="relative">
-                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-textSecondary">
-                    $
-                  </span>
-                  <input
-                    type="number"
-                    min={0}
-                    onFocus={(e) => e.target.select()}
-                    value={localProduct.price}
-                    onChange={(e) =>
-                      setLocalProduct((prev) => ({
-                        ...prev,
-                        price: parseFloat(e.target.value),
-                      }))
-                    }
-                    required
-                    step="0.01"
-                    className="input-box pl-6 pr-md py-1 h-8 w-full"
-                  />
-                </div>
-              </label>
-
-              <div className="flex-1 flex gap-1 items-end">
-                <label className="flex-1 flex flex-col gap-1 text-sm font-semibold text-textSecondary">
-                  Discount
-                  <div className="relative">
-                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-textSecondary">
-                      {discountType}
-                    </span>
-                    <input
-                      type="number"
-                      min={0}
-                      onFocus={(e) => e.target.select()}
-                      className="input-box pl-6 pr-md py-1 h-8 w-full"
-                      value={discountValue}
-                      onChange={(e) =>
-                        setDiscountValue(parseFloat(e.target.value))
-                      }
-                      step="0.01"
-                    />
-                  </div>
-                </label>
-                <select
-                  className="input-box ml-1 px-2 py-1 h-8"
-                  value={discountType}
-                  onChange={(e) => setDiscountType(e.target.value as "%" | "$")}
-                >
-                  <option value="%" className="text-center">
-                    %
-                  </option>
-                  <option value="$" className="text-center">
-                    $
-                  </option>
-                </select>
-              </div>
-            </div>
-
-            {/* Description */}
-            <label className="pb-0.5 flex flex-col gap-1 text-sm font-semibold text-textSecondary">
-              Description
-              <textarea
-                value={localProduct.description}
-                placeholder="Product Description"
-                onChange={(e) =>
-                  setLocalProduct((prev) => ({
-                    ...prev,
-                    description: e.target.value,
-                  }))
-                }
-                required
-                className="input-box px-md py-1 h-40 resize-none"
-              />
-            </label>
-
+          <div className="flex-1 flex flex-col gap-md overflow-y-auto py-4 sm:border sm:rounded-lg sm:mt-4">
             {/* Editors */}
             <div className="flex flex-col gap-4">
-              <ProductTagsEditor
-                product={localProduct}
-                setProduct={setLocalProduct}
+              {/* Info Editor */}
+              <AnimatedDropdownSurface
+                title="Product Info"
                 openInitially={true}
-              />
-              <ProductOptionsEditor
-                product={localProduct}
-                setProduct={setLocalProduct}
+              >
+                <ProductInfoEditor
+                  product={localProduct}
+                  setProduct={setLocalProduct}
+                />
+              </AnimatedDropdownSurface>
+
+              {/* Tags Editor */}
+              <AnimatedDropdownSurface title="Tags" openInitially={true}>
+                <ProductTagsEditor
+                  product={localProduct}
+                  setProduct={setLocalProduct}
+                  openInitially={true}
+                />
+              </AnimatedDropdownSurface>
+
+              {/* Options Editor */}
+              <AnimatedDropdownSurface
+                title="Product Options"
                 openInitially={true}
-              />
-              <ProductStockEditor
-                product={localProduct}
-                setProduct={setLocalProduct}
-                openInitially={true}
-              />
+              >
+                <ProductOptionsEditor
+                  product={localProduct}
+                  setProduct={setLocalProduct}
+                  openInitially={true}
+                />
+              </AnimatedDropdownSurface>
+
+              {/* Stock Editor */}
+              <AnimatedDropdownSurface
+                customTitle={
+                  <ProductStockHeader
+                    product={localProduct}
+                    setProduct={setLocalProduct}
+                  />
+                }
+                openInitially={hasVariants}
+                disabled={!hasVariants}
+              >
+                <ProductStockEditor
+                  product={localProduct}
+                  setProduct={setLocalProduct}
+                  openInitially={true}
+                />
+              </AnimatedDropdownSurface>
             </div>
 
             <button

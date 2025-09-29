@@ -4,7 +4,6 @@ import type { Product, ProductOption } from "@shared/types/Product";
 import { useApi } from "@api/useApi";
 import { XButton } from "@components/controls/CustomControls";
 
-import AnimatedDropdownSurface from "@components/controls/AnimatedDropdownSurface";
 import OptionsPresetDropdown from "./ProductOptionsPresetsDropdown";
 
 interface ProductOptionsEditorProps {
@@ -16,7 +15,6 @@ interface ProductOptionsEditorProps {
 const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
   product,
   setProduct,
-  openInitially = false,
 }) => {
   const { productOptionsPresets } = useApi();
   const [localOptions, setLocalOptions] = useState<ProductOption[]>(
@@ -74,68 +72,61 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
   };
 
   return (
-    <AnimatedDropdownSurface
-      label={
-        <span className="text-lg font-semibold text-text">Product Options</span>
-      }
-      openInitially={openInitially}
-    >
-      <div className="flex flex-col gap-2 w-full">
-        {/* Preset Dropdown */}
-        <OptionsPresetDropdown
-          localOptions={localOptions}
-          setLocalOptions={setLocalOptions}
-          refreshKey={refreshKey}
-        />
+    <div className="flex flex-col gap-2 w-full">
+      {/* Preset Dropdown */}
+      <OptionsPresetDropdown
+        localOptions={localOptions}
+        setLocalOptions={setLocalOptions}
+        refreshKey={refreshKey}
+      />
 
-        {/* Options List */}
-        {localOptions.map((opt, i) => (
-          <div
-            key={i}
-            className="flex flex-col gap-2 py-4 border-t border-border"
-          >
-            <div className="flex flex-wrap gap-2 items-center w-full">
-              <input
-                type="text"
-                placeholder="Option Name"
-                value={opt.name}
-                onChange={(e) => updateOptionName(i, e.target.value)}
-                className="input-box flex-1 min-w-0 px-2 py-1"
-              />
-              <XButton onClick={() => removeOption(i)} />
-            </div>
-            <div className="flex flex-wrap gap-2 items-center w-full">
-              <input
-                type="text"
-                placeholder="Values (comma-separated)"
-                value={opt.values}
-                onChange={(e) => updateOptionValues(i, e.target.value)}
-                className="input-box flex-1 min-w-0 px-2 py-1"
-              />
-            </div>
+      {/* Options List */}
+      {localOptions.map((opt, i) => (
+        <div
+          key={i}
+          className="flex flex-col gap-2 py-4 border-t border-border"
+        >
+          <div className="flex flex-wrap gap-2 items-center w-full">
+            <input
+              type="text"
+              placeholder="Option Name"
+              value={opt.name}
+              onChange={(e) => updateOptionName(i, e.target.value)}
+              className="input-box flex-1 min-w-0 px-2 py-1"
+            />
+            <XButton onClick={() => removeOption(i)} />
           </div>
-        ))}
-
-        {/* Bottom Buttons */}
-        <div className="flex flex-wrap gap-2 w-full mt-auto">
-          <button
-            type="button"
-            className="btn-normal px-3 py-2 flex-shrink-0"
-            onClick={addOption}
-          >
-            Add Option
-          </button>
-          <button
-            type="button"
-            className="btn-normal px-3 py-2 flex-shrink-0 ml-auto"
-            onClick={handleSavePreset}
-            disabled={saving}
-          >
-            {saving ? "Saving..." : "Save Preset"}
-          </button>
+          <div className="flex flex-wrap gap-2 items-center w-full">
+            <input
+              type="text"
+              placeholder="Values (comma-separated)"
+              value={opt.values}
+              onChange={(e) => updateOptionValues(i, e.target.value)}
+              className="input-box flex-1 min-w-0 px-2 py-1"
+            />
+          </div>
         </div>
+      ))}
+
+      {/* Bottom Buttons */}
+      <div className="flex flex-wrap gap-2 w-full mt-auto">
+        <button
+          type="button"
+          className="btn-normal px-3 py-2 flex-shrink-0"
+          onClick={addOption}
+        >
+          Add Option
+        </button>
+        <button
+          type="button"
+          className="btn-normal px-3 py-2 flex-shrink-0 ml-auto"
+          onClick={handleSavePreset}
+          disabled={saving}
+        >
+          {saving ? "Saving..." : "Save Preset"}
+        </button>
       </div>
-    </AnimatedDropdownSurface>
+    </div>
   );
 };
 
