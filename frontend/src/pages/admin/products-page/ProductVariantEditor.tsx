@@ -7,12 +7,12 @@ import {
   type ProductVariant,
 } from "@shared/types/Product";
 
-interface ProductStockEditorProps {
+interface ProductVariantEditorProps {
   product: Product;
   setProduct: React.Dispatch<React.SetStateAction<Product>>;
 }
 
-export const ProductStockEditor: React.FC<ProductStockEditorProps> = ({
+export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
   product,
   setProduct,
 }) => {
@@ -36,8 +36,8 @@ export const ProductStockEditor: React.FC<ProductStockEditorProps> = ({
         );
         return {
           ...v,
-          stock: existing?.stock ?? 0,
-          price: existing?.price ?? 0,
+          stock: existing?.stock,
+          price: existing?.price,
         };
       })
     );
@@ -48,22 +48,25 @@ export const ProductStockEditor: React.FC<ProductStockEditorProps> = ({
     return a.every((val, index) => val === b[index]);
   }
 
-  // Compute total stock from localVariants
-  const totalStock = localVariants.reduce((sum, v) => sum + (v.stock || 0), 0);
-
   // Push localVariants back into product whenever they change
   useEffect(() => {
+    const totalStock = getProductStock({ ...product, variants: localVariants });
+
     setProduct((prev) => ({
       ...prev,
       variants: localVariants,
-      stock: hasVariants ? totalStock : prev.stock,
+      stock: totalStock,
     }));
-  }, [localVariants, hasVariants, totalStock, setProduct]);
+  }, [localVariants, hasVariants, setProduct]);
 
   // Update stock for a specific variant
-  const updateVariantStock = (index: number, stock: number) => {
+  const updateVariantStock = (index: number, stock: string) => {
     setLocalVariants((prev) =>
-      prev.map((v, i) => (i === index ? { ...v, stock } : v))
+      prev.map((v, i) =>
+        i === index
+          ? { ...v, stock: stock == "" ? undefined : parseInt(stock) }
+          : v
+      )
     );
   };
 
@@ -92,10 +95,10 @@ export const ProductStockEditor: React.FC<ProductStockEditorProps> = ({
           <input
             type="number"
             min={0}
+            step={1}
             value={variant.stock}
-            onChange={(e) =>
-              updateVariantStock(idx, parseInt(e.target.value) || 0)
-            }
+            placeholder="-"
+            onChange={(e) => updateVariantStock(idx, e.target.value)}
             onFocus={(e) => e.target.select()}
             className="input-box w-24 text-center"
           />
@@ -105,22 +108,26 @@ export const ProductStockEditor: React.FC<ProductStockEditorProps> = ({
   );
 };
 
-interface ProductStockHeaderProps {
+interface ProductVariantHeaderProps {
   product: Product;
   setProduct: React.Dispatch<React.SetStateAction<Product>>;
 }
 
-export const ProductStockHeader: React.FC<ProductStockHeaderProps> = ({
+export const ProductVariantHeader: React.FC<ProductVariantHeaderProps> = ({
   product,
   setProduct,
 }) => {
-  const [localStock, setLocalStock] = useState(product.stock || 0);
+  const hasVariants = !!product.options?.length;
+  const totalStock = getProductStock(product);
+
+  const [localStock, setLocalStock] = useState(totalStock);
 
   // Push localVariants back into product whenever they change
   useEffect(() => {
-    setLocalStock(product.stock || 0);
+    setLocalStock(product.stock);
   }, [product.id, product.variants]);
 
+  // Push localStock back into product whenever it changes
   useEffect(() => {
     setProduct((prev) => ({
       ...prev,
@@ -128,11 +135,10 @@ export const ProductStockHeader: React.FC<ProductStockHeaderProps> = ({
     }));
   }, [localStock]);
 
-  const hasVariants = !!product.options?.length;
-  const totalStock = product.variants?.reduce(
-    (sum, v) => sum + (v.stock || 0),
-    0
-  );
+  // Update stock for a specific variant
+  const updateStock = (stock: string) => {
+    setLocalStock(stock == "" ? undefined : parseInt(stock));
+  };
 
   return (
     <div className="flex items-center justify-between w-full pr-4">
@@ -142,9 +148,11 @@ export const ProductStockHeader: React.FC<ProductStockHeaderProps> = ({
       <input
         type="number"
         min={0}
-        value={hasVariants ? totalStock : product.stock || 0}
+        step={1}
+        value={localStock ?? ""}
+        placeholder="-"
         onChange={(e) => {
-          setLocalStock(parseInt(e.target.value) || 0);
+          updateStock(e.target.value);
         }}
         disabled={hasVariants}
         onFocus={(e) => e.target.select()}
@@ -152,6 +160,12 @@ export const ProductStockHeader: React.FC<ProductStockHeaderProps> = ({
       />
     </div>
   );
+};
+
+const getProductStock = (product: Product) => {
+  if (!product.variants || product.variants.length === 0) return product.stock;
+  if (product.variants.every((v) => v.stock === undefined)) return undefined;
+  return product.variants.reduce((sum, v) => sum + (v.stock || 0), 0);
 };
 
 /** Generate all possible variants */
@@ -181,4 +195,4 @@ export function generateVariants(
   }));
 }
 
-export default ProductStockEditor;
+export default ProductVariantEditor;

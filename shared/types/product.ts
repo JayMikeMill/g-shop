@@ -8,7 +8,7 @@ export interface Product {
   price: number;
   discount?: string;
   description: string;
-  stock: number;
+  stock?: number;
   reviewCount?: number;
   averageRating?: number;
   dimensions?: ProductDimensions;
@@ -57,7 +57,7 @@ export interface ProductVariant {
   id?: string;
   options: string[];
   price?: number;
-  stock: number;
+  stock?: number;
 }
 
 // Parse serialized variant options like "Color:Red|Size:M" into objects
@@ -93,7 +93,6 @@ export const emptyProduct = (): Product => {
     name: "",
     price: 0,
     description: "",
-    stock: 0,
     options: [],
     variants: [],
     tags: [],

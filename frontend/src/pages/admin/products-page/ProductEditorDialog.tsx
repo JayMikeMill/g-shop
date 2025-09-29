@@ -16,7 +16,10 @@ import {
 import ProductInfoEditor from "./ProductInfoEditor";
 import ProductTagsEditor from "./ProductTagsEditor";
 import ProductOptionsEditor from "./ProductOptionsEditor";
-import { ProductStockEditor, ProductStockHeader } from "./ProductStockEditor";
+import {
+  ProductVariantEditor,
+  ProductVariantHeader,
+} from "./ProductVariantEditor";
 import ProductImagesEditor from "./ProductImagesEditor";
 
 import { useApi } from "@api/useApi";
@@ -202,7 +205,7 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
               {/* Stock Editor */}
               <AnimatedDropdownSurface
                 customTitle={
-                  <ProductStockHeader
+                  <ProductVariantHeader
                     product={localProduct}
                     setProduct={setLocalProduct}
                   />
@@ -211,7 +214,7 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
                 open={!hasVariants ? false : undefined}
                 disabled={!hasVariants}
               >
-                <ProductStockEditor
+                <ProductVariantEditor
                   product={localProduct}
                   setProduct={setLocalProduct}
                 />

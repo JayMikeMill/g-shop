@@ -28,6 +28,13 @@ export const ProductDimensionsEditor: React.FC<
     }));
   }, [localDimensions, setProduct]);
 
+  const setDimension = (key: keyof ProductDimensions, value: string) => {
+    setLocalDimensions((prev) => ({
+      ...prev,
+      [key]: value === "" ? undefined : parseFloat(value),
+    }));
+  };
+
   const weightPrefix = system === "imperial" ? "oz" : "gm";
   const sizePrefix = system === "imperial" ? "in" : "cm";
 
@@ -44,13 +51,9 @@ export const ProductDimensionsEditor: React.FC<
             type="number"
             min={0}
             onFocus={(e) => e.target.select()}
-            value={localDimensions?.weight_grams ?? "0"}
-            onChange={(e) =>
-              setLocalDimensions((prev) => ({
-                ...prev,
-                weight_grams: parseFloat(e.target.value),
-              }))
-            }
+            placeholder="-"
+            value={localDimensions?.weight_grams ?? ""}
+            onChange={(e) => setDimension("weight_grams", e.target.value)}
             className={inputClass}
           />
         </div>
@@ -64,13 +67,9 @@ export const ProductDimensionsEditor: React.FC<
             type="number"
             min={0}
             onFocus={(e) => e.target.select()}
-            value={localDimensions?.length_cm ?? "0"}
-            onChange={(e) =>
-              setLocalDimensions((prev) => ({
-                ...prev,
-                length_cm: parseFloat(e.target.value),
-              }))
-            }
+            placeholder="-"
+            value={localDimensions?.length_cm ?? ""}
+            onChange={(e) => setDimension("length_cm", e.target.value)}
             className={inputClass}
           />
         </div>
@@ -83,13 +82,9 @@ export const ProductDimensionsEditor: React.FC<
             type="number"
             min={0}
             onFocus={(e) => e.target.select()}
-            value={localDimensions?.width_cm ?? "0"}
-            onChange={(e) =>
-              setLocalDimensions((prev) => ({
-                ...prev,
-                width_cm: parseFloat(e.target.value),
-              }))
-            }
+            placeholder="-"
+            value={localDimensions?.width_cm ?? ""}
+            onChange={(e) => setDimension("width_cm", e.target.value)}
             className={inputClass}
           />
         </div>
@@ -102,13 +97,9 @@ export const ProductDimensionsEditor: React.FC<
             type="number"
             min={0}
             onFocus={(e) => e.target.select()}
-            value={localDimensions?.height_cm ?? "0"}
-            onChange={(e) =>
-              setLocalDimensions((prev) => ({
-                ...prev,
-                height_cm: parseFloat(e.target.value),
-              }))
-            }
+            placeholder="-"
+            value={localDimensions?.height_cm ?? ""}
+            onChange={(e) => setDimension("height_cm", e.target.value)}
             className={inputClass}
           />
         </div>
