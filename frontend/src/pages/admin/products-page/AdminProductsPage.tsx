@@ -2,8 +2,11 @@
 import { useState, useEffect } from "react";
 import type { Product } from "@shared/types/Product";
 import { ProductEditorDialog } from "@pages/admin/products-page/ProductEditorDialog";
-import { useApi } from "@api/useApi";
+
 import DynamicTable from "@components/dynamic-table/DynamicTable";
+
+// API
+import { useApi } from "@api/useApi";
 
 export default function AdminProductsPage() {
   const [isAdding, setIsAdding] = useState(false);
@@ -11,12 +14,28 @@ export default function AdminProductsPage() {
 
   const [tableKey, setTableKey] = useState(0);
 
-  const getProducts = useApi().products.getAll;
+  const { products } = useApi();
+  const getProducts = products.getAll;
 
-  const handleDialogSave = () => {
+  const refreshState = () => {
     setIsAdding(false);
     setEditingProduct(null);
     setTableKey((prev) => prev + 1);
+  };
+
+  const handleDialogCreate = (product: Product) => {
+    products.create(product);
+    refreshState();
+  };
+
+  const handleDialogModify = (product: Product & { id: string }) => {
+    products.update(product);
+    refreshState();
+  };
+
+  const handleDialogDelete = (productId: string) => {
+    products.delete(productId);
+    refreshState();
   };
 
   const handleDialogCancel = () => {
@@ -30,7 +49,9 @@ export default function AdminProductsPage() {
       <ProductEditorDialog
         open={editingProduct !== null || isAdding}
         product={editingProduct}
-        onSave={handleDialogSave}
+        onCreate={handleDialogCreate}
+        onModify={handleDialogModify}
+        onDelete={handleDialogDelete}
         onCancel={handleDialogCancel}
       />
 

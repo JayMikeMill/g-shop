@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 
 // UI Components
 import { AnimatedDialog } from "@components/controls/AnimatedDialog";
+import AnimatedDropdownSurface from "@components/controls/AnimatedDropdownSurface";
 
 // Types
 import {
@@ -12,27 +13,29 @@ import {
 } from "@shared/types/Product";
 
 // Editors
+import ProductInfoEditor from "./ProductInfoEditor";
+import ProductTagsEditor from "./ProductTagsEditor";
 import ProductOptionsEditor from "./ProductOptionsEditor";
 import { ProductStockEditor, ProductStockHeader } from "./ProductStockEditor";
-import ProductTagsEditor from "./ProductTagsEditor";
 import ProductImagesEditor from "./ProductImagesEditor";
 
-// API
 import { useApi } from "@api/useApi";
-import ProductInfoEditor from "./ProductInfoEditor";
-import AnimatedDropdownSurface from "@components/controls/AnimatedDropdownSurface";
 
 interface ProductDialogProps {
   product: Product | null;
   open: boolean;
-  onSave: () => void;
-  onCancel?: () => void;
+  onCreate: (product: Product) => void;
+  onModify: (product: Product & { id: string }) => void;
+  onDelete: (productId: string) => void;
+  onCancel: () => void;
 }
 
 export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
   product,
   open,
-  onSave,
+  onCreate,
+  onModify,
+  onDelete,
   onCancel,
 }) => {
   const [localProduct, setLocalProduct] = useState<Product>(emptyProduct);
@@ -40,7 +43,7 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
   const [isAdding, setIsAdding] = useState(false);
   const [isProcessingImages, setIsProcessingImages] = useState(false);
   const [isSavingProduct, setIsSavingProduct] = useState(false);
-  const { products, uploadImage } = useApi();
+  const { uploadImage } = useApi();
 
   // Sync local product when dialog opens
   useEffect(() => {
@@ -72,15 +75,18 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
   };
 
   const handleDelete = async () => {
-    if (!localProduct.id) return onSave();
+    if (!localProduct.id) {
+      alert("Cannot delete a product that hasn't been created yet.");
+      return;
+    }
 
     const confirmed = window.confirm(
       `Are you sure you want to delete ${localProduct.name}?`
     );
+
     if (!confirmed) return;
 
-    await products.delete(localProduct.id);
-    onSave();
+    onDelete(localProduct.id);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -126,18 +132,14 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
         images: uploadedImages,
       };
 
-      if (localProduct.id) {
-        await products.update({
-          ...productToSave,
-          id: localProduct.id as string,
-        });
+      if (isAdding) {
+        onCreate(productToSave);
       } else {
-        await products.create(productToSave);
+        onModify({ ...productToSave, id: localProduct.id as string });
       }
 
       setIsSavingProduct(false);
       clearProduct();
-      onSave();
     } catch (err: any) {
       setIsSavingProduct(false);
       alert(err.message || "Error saving product");
@@ -155,7 +157,7 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
 
   return (
     <AnimatedDialog
-      title={isAdding ? "Add Product" : "Edit Product"}
+      title={isAdding ? "Create Product" : "Edit Product"}
       open={shouldRender}
       onClose={handleCancel}
       className="dialog-box rounded-none sm:rounded-2xl pl-2 w-full h-full sm:h-[90vh] sm:max-w-4xl flex flex-col overflow-hidden px-2 sm:px-8"
@@ -220,13 +222,16 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
               </AnimatedDropdownSurface>
             </div>
 
-            <button
-              className="btn-normal h-12"
-              type="button"
-              onClick={handleDelete}
-            >
-              Delete Product
-            </button>
+            {/* Delete Button */}
+            {!isAdding && (
+              <button
+                className="btn-normal h-12"
+                type="button"
+                onClick={handleDelete}
+              >
+                Delete Product
+              </button>
+            )}
           </div>
 
           {/* Image Editor */}
@@ -265,7 +270,7 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
                 ? "Processing Images..."
                 : localProduct.id
                   ? "Save Changes"
-                  : "Add Product"}
+                  : "Create Product"}
           </button>
         </div>
       </form>
