@@ -82,52 +82,46 @@ const CropDialog: React.FC<CropDialogProps> = ({
       title="Crop Image"
       open={open}
       onClose={onCancel}
-      className="dialog-box p-md flex flex-col w-[360px] sm:w-[400px] max-h-[90vh] overflow-hidden"
+      className="dialog-box p-md pt-0 flex flex-col w-[360px] sm:w-[400px] max-h-[90vh] overflow-hidden"
     >
-      <div className="dialog-box p-md flex flex-col w-[360px] sm:w-[400px] max-h-[90vh] overflow-hidden">
-        <div className="relative w-full h-80 mb-sm border-2 border-border rounded-md overflow-hidden bg-background">
-          {imageUrl && (
-            <Cropper
-              image={imageUrl}
-              crop={crop}
-              zoom={zoom}
-              aspect={1}
-              onCropChange={setCrop}
-              onZoomChange={setZoom}
-              onCropComplete={onCropCompleteInternal}
-              cropShape="rect"
-              showGrid={true}
-              style={{
-                containerStyle: {
-                  width: "100%",
-                  height: "100%",
-                  position: "relative",
-                },
-                cropAreaStyle: {
-                  border: "2px solid white",
-                  borderRadius: "0.5rem",
-                },
-              }}
-            />
-          )}
-        </div>
+      <div className="relative w-full h-80 mb-sm border-2 border-border rounded-md overflow-hidden bg-background">
+        {imageUrl && (
+          <Cropper
+            image={imageUrl}
+            crop={crop}
+            zoom={zoom}
+            aspect={1}
+            onCropChange={setCrop}
+            onZoomChange={setZoom}
+            onCropComplete={onCropCompleteInternal}
+            cropShape="rect"
+            showGrid={true}
+            style={{
+              containerStyle: {
+                width: "100%",
+                height: "100%",
+                position: "relative",
+              },
+              cropAreaStyle: {
+                border: "2px solid white",
+                borderRadius: "0.5rem",
+              },
+            }}
+          />
+        )}
+      </div>
 
-        <div className="flex justify-center gap-md">
-          <button
-            type="button"
-            className="btn-cancel w-full"
-            onClick={onCancel}
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            className="btn-primary w-full"
-            onClick={handleCrop}
-          >
-            Crop Image
-          </button>
-        </div>
+      <div className="flex justify-center gap-md">
+        <button type="button" className="btn-cancel w-full" onClick={onCancel}>
+          Cancel
+        </button>
+        <button
+          type="button"
+          className="btn-primary w-full"
+          onClick={handleCrop}
+        >
+          Crop Image
+        </button>
       </div>
     </AnimatedDialog>
   );

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 interface DropdownProps {
@@ -7,6 +7,7 @@ interface DropdownProps {
   customTitle?: React.ReactNode;
   children: React.ReactNode;
   openInitially?: boolean;
+  open?: boolean;
   disabled?: boolean;
 }
 
@@ -14,17 +15,23 @@ const AnimatedDropdownSurface: React.FC<DropdownProps> = ({
   className,
   title,
   customTitle,
-
   children,
   openInitially = false,
+  open: externalOpen,
   disabled = false,
 }) => {
-  const [open, setOpen] = useState(openInitially);
-  const [overflow, setOverflow] = useState(openInitially);
+  const [internalOpen, setInternalOpen] = useState(openInitially);
 
-  const contentRef = useRef<HTMLDivElement>(null);
+  // Use external prop if provided, otherwise internal state
+  const open = externalOpen !== undefined ? externalOpen : internalOpen;
+
+  const [overflow, setOverflow] = useState(open);
 
   const rounding = open ? "rounded-t-md" : "rounded-md";
+
+  useEffect(() => {
+    setOverflow(open);
+  }, [open]);
 
   return (
     <div className={`border border-border ${rounding} w-full max-w-full`}>
@@ -33,7 +40,7 @@ const AnimatedDropdownSurface: React.FC<DropdownProps> = ({
         className={`flex justify-between items-center ${rounding} w-full px-4 py-2 bg-surfaceAlt text-text font-semibold ${
           disabled ? "cursor-not-allowed" : ""
         }`}
-        onClick={() => !disabled && setOpen((prev) => !prev)}
+        onClick={() => !disabled && setInternalOpen((prev) => !prev)}
       >
         {customTitle ?? title}
         {!disabled && <span>{open ? "▲" : "▼"}</span>}
@@ -45,9 +52,8 @@ const AnimatedDropdownSurface: React.FC<DropdownProps> = ({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            onAnimationStart={() => setOverflow(false)} // hide overflow only when collapsing
+            onAnimationStart={() => setOverflow(false)}
             onAnimationComplete={() => setOverflow(open)}
-            onAnimationEnd={() => setOverflow(open)}
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className={`${overflow ? "overflow-visible" : "overflow-hidden"}`}
           >

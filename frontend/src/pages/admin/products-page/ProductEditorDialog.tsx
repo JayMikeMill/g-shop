@@ -20,6 +20,7 @@ import { ProductStockEditor, ProductStockHeader } from "./ProductStockEditor";
 import ProductImagesEditor from "./ProductImagesEditor";
 
 import { useApi } from "@api/useApi";
+import ProductDimensionsEditor from "./ProductDimensionsEditor";
 
 interface ProductDialogProps {
   product: Product | null;
@@ -146,12 +147,6 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
     }
   };
 
-  console.log("Rendering ProductEditorDialog", {
-    open,
-    isAdding,
-    localProduct,
-  });
-
   const shouldRender = isAdding || localProduct.id != undefined;
   const hasVariants = !!localProduct.options?.length;
 
@@ -160,7 +155,7 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
       title={isAdding ? "Create Product" : "Edit Product"}
       open={shouldRender}
       onClose={handleCancel}
-      className="dialog-box rounded-none sm:rounded-2xl pl-2 w-full h-full sm:h-[90vh] sm:max-w-4xl flex flex-col overflow-hidden px-2 sm:px-8"
+      className="dialog-box rounded-none sm:rounded-2xl pl-2 w-full h-full sm:h-full sm:max-w-4xl flex flex-col overflow-hidden px-2 sm:px-8"
     >
       <form
         onSubmit={handleSubmit}
@@ -168,14 +163,11 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
       >
         <div className="flex flex-1 flex-col sm:flex-row sm:gap-md overflow-hidden min-h-0">
           {/* Main Editor */}
-          <div className="flex-1 flex flex-col gap-md overflow-y-auto py-4 sm:border sm:rounded-lg sm:mt-4">
+          <div className="flex-1 flex flex-col gap-md overflow-y-auto py-4 sm:px-4 sm:border sm:rounded-lg sm:mt-4">
             {/* Editors */}
             <div className="flex flex-col gap-4">
               {/* Info Editor */}
-              <AnimatedDropdownSurface
-                title="Product Info"
-                openInitially={true}
-              >
+              <AnimatedDropdownSurface title="Info" openInitially={true}>
                 <ProductInfoEditor
                   product={localProduct}
                   setProduct={setLocalProduct}
@@ -191,15 +183,19 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
                 />
               </AnimatedDropdownSurface>
 
+              {/* Dimensions Editor */}
+              <AnimatedDropdownSurface title="Dimensions" openInitially={true}>
+                <ProductDimensionsEditor
+                  product={localProduct}
+                  setProduct={setLocalProduct}
+                />
+              </AnimatedDropdownSurface>
+
               {/* Options Editor */}
-              <AnimatedDropdownSurface
-                title="Product Options"
-                openInitially={true}
-              >
+              <AnimatedDropdownSurface title="Options" openInitially={true}>
                 <ProductOptionsEditor
                   product={localProduct}
                   setProduct={setLocalProduct}
-                  openInitially={true}
                 />
               </AnimatedDropdownSurface>
 
@@ -212,12 +208,12 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
                   />
                 }
                 openInitially={hasVariants}
+                open={!hasVariants ? false : undefined}
                 disabled={!hasVariants}
               >
                 <ProductStockEditor
                   product={localProduct}
                   setProduct={setLocalProduct}
-                  openInitially={true}
                 />
               </AnimatedDropdownSurface>
             </div>

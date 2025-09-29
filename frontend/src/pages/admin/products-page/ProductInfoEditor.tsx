@@ -52,9 +52,9 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
   ]);
 
   return (
-    <form className="flex flex-col flex-1 overflow-hidden">
+    <form className="flex flex-col flex-1 gap-2 overflow-hidden">
       {/* Name */}
-      <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
+      <label className="flex flex-col text-sm font-semibold text-textSecondary">
         Name
         <input
           type="text"
@@ -70,7 +70,7 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
 
       <div className="flex gap-md items-end">
         {/* Price */}
-        <label className="flex-1 flex flex-col gap-1 text-sm font-semibold text-textSecondary">
+        <label className="flex-1 flex flex-col text-sm font-semibold text-textSecondary">
           Price
           <div className="relative">
             <span className="absolute left-2 top-1/2 -translate-y-1/2 text-textSecondary">
@@ -95,8 +95,8 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
         </label>
 
         {/* Discount */}
-        <div className="flex-1 flex gap-1 items-end">
-          <label className="flex-1 flex flex-col gap-1 text-sm font-semibold text-textSecondary">
+        <div className="flex-1 flex items-end">
+          <label className="flex-1 flex flex-col text-sm font-semibold text-textSecondary">
             Discount
             <div className="relative">
               <span className="absolute left-2 top-1/2 -translate-y-1/2 text-textSecondary">
@@ -131,7 +131,7 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
       </div>
 
       {/* Description */}
-      <label className="pb-0.5 flex flex-col gap-1 text-sm font-semibold text-textSecondary">
+      <label className="pb-0.5 flex flex-col text-sm font-semibold text-textSecondary">
         Description
         <textarea
           value={localProduct.description}

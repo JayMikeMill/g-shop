@@ -143,6 +143,7 @@ const ProductImagesEditor: React.FC<ImageListEditorProps> = ({
       {pendingCropFile && (
         <CropDialog
           file={pendingCropFile}
+          open={!!pendingCropFile}
           onCropComplete={(blob, url) =>
             handleCropComplete(blob, url, pendingCropFile?.name)
           }

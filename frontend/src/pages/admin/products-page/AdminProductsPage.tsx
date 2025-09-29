@@ -24,16 +24,19 @@ export default function AdminProductsPage() {
   };
 
   const handleDialogCreate = (product: Product) => {
+    console.log("Creating product:", product);
     products.create(product);
     refreshState();
   };
 
   const handleDialogModify = (product: Product & { id: string }) => {
+    console.log("Modifying product:", product);
     products.update(product);
     refreshState();
   };
 
   const handleDialogDelete = (productId: string) => {
+    console.log("Deleting product:", productId);
     products.delete(productId);
     refreshState();
   };

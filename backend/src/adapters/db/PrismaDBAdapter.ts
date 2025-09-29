@@ -46,8 +46,8 @@ class ProductCRUD extends PrismaCRUDAdapter<Product> {
 
       fields: {
         images: { type: "upsertNested" },
+        variants: { type: "upsertNested" },
         tags: { type: "upsertNested" },
-        dimensions: { type: "upsertNested" },
         categories: { type: "set" },
         collections: { type: "set" },
         //reviews: { type: "createNested" },
@@ -56,7 +56,7 @@ class ProductCRUD extends PrismaCRUDAdapter<Product> {
       include: {
         images: true,
         tags: true,
-        dimensions: true,
+        variants: true,
         categories: true,
         collections: true,
         //reviews: true,

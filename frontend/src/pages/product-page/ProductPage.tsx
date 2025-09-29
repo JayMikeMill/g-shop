@@ -48,7 +48,7 @@ const ProductPage = () => {
       product: product,
       variant: selectedVariant ?? undefined,
       quantity: 1,
-      price: selectedVariant?.priceOverride ?? discountedPrice,
+      price: selectedVariant?.price ?? discountedPrice,
     });
   };
 

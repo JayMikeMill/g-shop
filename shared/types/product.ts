@@ -33,7 +33,7 @@ export interface ProductImageSet {
 export interface ProductOption {
   id?: string;
   name: string; // e.g., "Color", "Size"
-  values: string; // Comma-separated values (e.g., "Red,Blue,Green")
+  values: string[];
 }
 
 // Product option preset (a reusable set of options)
@@ -55,15 +55,15 @@ export interface ProductTagPreset extends ProductTag {}
 // Variant entity
 export interface ProductVariant {
   id?: string;
-  options: string; // serialized string like "Color:Red|Size:M"
-  priceOverride?: number;
+  options: string[];
+  price?: number;
   stock: number;
 }
 
 // Parse serialized variant options like "Color:Red|Size:M" into objects
 export const parseVariantOptions = (variant?: ProductVariant) => {
   if (!variant?.options) return [];
-  return variant.options.split("|").map((opt) => {
+  return variant.options.map((opt) => {
     const [name, value] = opt.split(":");
     return { name, value };
   });

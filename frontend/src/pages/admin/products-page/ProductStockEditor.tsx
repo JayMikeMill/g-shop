@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+
 import {
   parseVariantOptions,
   type Product,
@@ -9,7 +10,6 @@ import {
 interface ProductStockEditorProps {
   product: Product;
   setProduct: React.Dispatch<React.SetStateAction<Product>>;
-  openInitially?: boolean; // control visibility
 }
 
 export const ProductStockEditor: React.FC<ProductStockEditorProps> = ({
@@ -31,13 +31,22 @@ export const ProductStockEditor: React.FC<ProductStockEditorProps> = ({
     // Merge with existing product.variants to keep stock values
     setLocalVariants(
       newVariants.map((v) => {
-        const existing = product.variants?.find(
-          (ex) => ex.options === v.options
+        const existing = product.variants?.find((ex) =>
+          arraysEqual(ex.options, v.options)
         );
-        return { ...v, stock: existing?.stock ?? 0 };
+        return {
+          ...v,
+          stock: existing?.stock ?? 0,
+          price: existing?.price ?? 0,
+        };
       })
     );
   }, [product.options]);
+
+  function arraysEqual(a: string[], b: string[]): boolean {
+    if (a.length !== b.length) return false;
+    return a.every((val, index) => val === b[index]);
+  }
 
   // Compute total stock from localVariants
   const totalStock = localVariants.reduce((sum, v) => sum + (v.stock || 0), 0);
@@ -128,7 +137,7 @@ export const ProductStockHeader: React.FC<ProductStockHeaderProps> = ({
   return (
     <div className="flex items-center justify-between w-full pr-4">
       <span className="text-lg font-semibold text-text">
-        {hasVariants ? "Total Stock" : "Product Stock"}
+        {hasVariants ? "Stock (Total)" : "Stock"}
       </span>
       <input
         type="number"
@@ -150,12 +159,12 @@ export function generateVariants(
   options?: ProductOption[]
 ): ProductVariant[] | undefined {
   if (!options || options.length === 0) return;
-  const valuesArrays = options.map((opt) =>
-    opt.values
-      .split(",")
-      .map((v) => v.trim())
-      .filter(Boolean)
-  );
+
+  const valuesArrays = options.map((opt) => {
+    if (!Array.isArray(opt.values)) return [];
+    return opt.values.map((v) => v.trim()).filter(Boolean);
+  });
+
   if (valuesArrays.some((arr) => arr.length === 0)) return;
 
   const cartesian = (arr: string[][]): string[][] =>
@@ -166,9 +175,9 @@ export function generateVariants(
   const combos = cartesian(valuesArrays);
 
   return combos.map((combo) => ({
-    options: combo.map((val, i) => `${options[i].name}:${val}`).join("|"),
+    options: combo.map((val, i) => `${options[i].name}:${val}`),
     stock: 0,
-    priceOverride: undefined,
+    price: undefined,
   }));
 }
 

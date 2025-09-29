@@ -9,7 +9,6 @@ import OptionsPresetDropdown from "./ProductOptionsPresetsDropdown";
 interface ProductOptionsEditorProps {
   product: Product;
   setProduct: React.Dispatch<React.SetStateAction<Product>>;
-  openInitially?: boolean; // control visibility
 }
 
 const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
@@ -38,17 +37,26 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
 
   // Option management
   const addOption = () =>
-    setLocalOptions((prev) => [...prev, { name: "", values: "" }]);
+    setLocalOptions((prev) => [...prev, { name: "", values: [] }]);
   const removeOption = (i: number) =>
     setLocalOptions((prev) => prev.filter((_, idx) => idx !== i));
   const updateOptionName = (i: number, name: string) =>
     setLocalOptions((prev) =>
       prev.map((opt, idx) => (idx === i ? { ...opt, name } : opt))
     );
-  const updateOptionValues = (i: number, values: string) =>
+  const updateOptionValues = (i: number, values: string) => {
+    console.log("Updating values:", values);
+    const parsedValues = [
+      ...values.split(",").filter(Boolean),
+      ...(values.endsWith(",") ? [""] : []),
+    ];
+
     setLocalOptions((prev) =>
-      prev.map((opt, idx) => (idx === i ? { ...opt, values } : opt))
+      prev.map((opt, idx) =>
+        idx === i ? { ...opt, values: parsedValues } : opt
+      )
     );
+  };
 
   // Save preset
   const handleSavePreset = async () => {
@@ -100,7 +108,7 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
             <input
               type="text"
               placeholder="Values (comma-separated)"
-              value={opt.values}
+              value={opt?.values.join(",")}
               onChange={(e) => updateOptionValues(i, e.target.value)}
               className="input-box flex-1 min-w-0 px-2 py-1"
             />

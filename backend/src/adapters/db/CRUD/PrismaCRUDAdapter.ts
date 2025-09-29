@@ -197,6 +197,7 @@ export class PrismaCRUDAdapter<T> implements CRUDInterface<T> {
   }
 
   async update(updates: Partial<T> & { id?: string }): Promise<T> {
+    console.log("Updating with:", updates);
     if (!updates.id) {
       throw new Error("Document id is required for update");
     }
