@@ -8,17 +8,17 @@ export interface Product {
   price: number;
   discount?: string;
   description: string;
-  stock?: number;
+  stock: number | null;
   reviewCount?: number;
   averageRating?: number;
-  dimensions?: ProductDimensions;
-  images?: ProductImageSet[];
-  tags?: ProductTag[];
-  options?: ProductOption[];
-  variants?: ProductVariant[];
-  categories?: Category[];
-  collections?: Collection[];
-  reviews?: ProductReview[];
+  dimensions: ProductDimensions;
+  images: ProductImageSet[];
+  tags: ProductTag[];
+  options: ProductOption[];
+  variants: ProductVariant[];
+  categories: Category[];
+  collections: Collection[];
+  reviews: ProductReview[];
 }
 
 // Product images
@@ -56,8 +56,8 @@ export interface ProductTagPreset extends ProductTag {}
 export interface ProductVariant {
   id?: string;
   options: string[];
-  price?: number;
-  stock?: number;
+  price: number | null;
+  stock: number | null;
 }
 
 // Parse serialized variant options like "Color:Red|Size:M" into objects
@@ -92,15 +92,31 @@ export const emptyProduct = (): Product => {
     id: undefined,
     name: "",
     price: 0,
+    discount: undefined,
     description: "",
+    stock: null,
+    reviewCount: undefined,
+    averageRating: undefined,
+
+    images: [],
+    dimensions: {},
+    tags: [],
     options: [],
     variants: [],
-    tags: [],
-    images: [],
-    discount: "",
+    categories: [],
+    collections: [],
+    reviews: [],
   };
 };
 
 // -------------------------
 // Product utility functions
 // -------------------------
+
+export const priceToFloat = (cents: number) => {
+  return cents / 100;
+};
+
+export const floatToPrice = (price: number) => {
+  return Math.round(price * 100);
+};

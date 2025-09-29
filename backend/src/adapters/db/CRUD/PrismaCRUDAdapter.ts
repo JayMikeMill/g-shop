@@ -96,14 +96,14 @@ export class PrismaCRUDAdapter<T> implements CRUDInterface<T> {
 
     for (const key in this.fields) {
       const value = data[key as keyof T];
-      if (value === undefined) continue;
 
-      // 🔑 remove field completely if not present
-      if (
-        value === undefined ||
-        value === null ||
-        (Array.isArray(value) && !value.length)
-      ) {
+      if (value === undefined || value === null) {
+        result[key] = null;
+        continue;
+      }
+
+      // 🔑 remove array field completely if not present
+      if (Array.isArray(value) && !value.length) {
         delete result[key];
         continue;
       }

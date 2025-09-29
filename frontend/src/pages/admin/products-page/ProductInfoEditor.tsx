@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { type Product, emptyProduct } from "@shared/types/Product";
+import {
+  type Product,
+  emptyProduct,
+  priceToFloat,
+  floatToPrice,
+} from "@shared/types/Product";
 
 interface ProductInfoEditorProps {
   product: Product;
@@ -52,7 +57,7 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
   ]);
 
   return (
-    <form className="flex flex-col flex-1 gap-2 overflow-hidden">
+    <div className="flex flex-col flex-1 gap-2 overflow-hidden">
       {/* Name */}
       <label className="flex flex-col text-sm font-semibold text-textSecondary">
         Name
@@ -80,11 +85,11 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
               type="number"
               min={0}
               onFocus={(e) => e.target.select()}
-              value={localProduct.price}
+              value={priceToFloat(localProduct.price)}
               onChange={(e) =>
                 setLocalProduct((prev) => ({
                   ...prev,
-                  price: parseFloat(e.target.value),
+                  price: floatToPrice(parseFloat(e.target.value)),
                 }))
               }
               required
@@ -107,7 +112,7 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
                 min={0}
                 onFocus={(e) => e.target.select()}
                 className="input-box pl-6 pr-md py-1 h-8 w-full"
-                value={discountValue}
+                value={discountValue > 0 ? `${discountValue}` : ""}
                 onChange={(e) => setDiscountValue(parseFloat(e.target.value))}
                 step="0.01"
               />
@@ -146,7 +151,7 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
           className="input-box px-md py-1 h-40 resize-none"
         />
       </label>
-    </form>
+    </div>
   );
 };
 

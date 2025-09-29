@@ -5,6 +5,8 @@ import {
   type Product,
   type ProductOption,
   type ProductVariant,
+  priceToFloat,
+  floatToPrice,
 } from "@shared/types/Product";
 
 interface ProductVariantEditorProps {
@@ -17,7 +19,9 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
   setProduct,
 }) => {
   const hasVariants = !!product.options?.length;
-  const [localVariants, setLocalVariants] = useState<ProductVariant[]>([]);
+  const [localVariants, setLocalVariants] = useState<ProductVariant[]>(
+    product.variants
+  );
 
   // Generate variants when options change
   useEffect(() => {
@@ -26,7 +30,7 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
       return;
     }
 
-    const newVariants = generateVariants(product.options) || [];
+    const newVariants = generateVariants(product.options);
 
     // Merge with existing product.variants to keep stock values
     setLocalVariants(
@@ -36,8 +40,8 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
         );
         return {
           ...v,
-          stock: existing?.stock,
-          price: existing?.price,
+          stock: existing?.stock || null,
+          price: existing?.price || null,
         };
       })
     );
@@ -55,7 +59,7 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
     setProduct((prev) => ({
       ...prev,
       variants: localVariants,
-      stock: totalStock,
+      stock: totalStock ?? null,
     }));
   }, [localVariants, hasVariants, setProduct]);
 
@@ -63,8 +67,20 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
   const updateVariantStock = (index: number, stock: string) => {
     setLocalVariants((prev) =>
       prev.map((v, i) =>
+        i === index ? { ...v, stock: stock == "" ? null : parseInt(stock) } : v
+      )
+    );
+  };
+
+  // Update stock for a specific variant
+  const updateVariantPrice = (index: number, price: string) => {
+    setLocalVariants((prev) =>
+      prev.map((v, i) =>
         i === index
-          ? { ...v, stock: stock == "" ? undefined : parseInt(stock) }
+          ? {
+              ...v,
+              price: price == "" ? null : floatToPrice(parseFloat(price)),
+            }
           : v
       )
     );
@@ -75,13 +91,24 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col">
+      <div className="flex justify-between gap-2 items-center w-full border-b border-border">
+        <span className="text-lg font-semibold text-text w-[40%] text-center">
+          Variant
+        </span>
+        <span className="text-lg font-semibold text-text w-[30%] text-center">
+          Stock
+        </span>
+        <span className="text-lg font-semibold text-text w-[30%] text-center">
+          Price
+        </span>
+      </div>
       {localVariants.map((variant, idx) => (
         <div
           key={idx}
-          className="flex justify-between items-center w-full border-b border-border pr-8 py-2"
+          className="flex justify-between gap-2 items-center w-full border-b border-border py-2"
         >
-          <div className="flex flex-wrap gap-1 mt-1">
+          <div className="flex flex-wrap gap-1 mt-1 justify-center w-[40%]">
             {parseVariantOptions(variant).map((opt, optIdx) => (
               <span
                 key={`variant-${idx}-opt-${optIdx}`}
@@ -92,16 +119,34 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
             ))}
           </div>
 
+          {/* Stock count */}
           <input
             type="number"
             min={0}
             step={1}
-            value={variant.stock}
+            value={variant.stock ?? ""}
             placeholder="-"
             onChange={(e) => updateVariantStock(idx, e.target.value)}
             onFocus={(e) => e.target.select()}
-            className="input-box w-24 text-center"
+            className="input-box w-[30%] text-center"
           />
+
+          {/* Price in dollars */}
+          <div className="relative w-[30%]">
+            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500">
+              $
+            </span>
+            <input
+              type="number"
+              min={0}
+              step={0.01}
+              value={variant.price ? priceToFloat(variant.price) : ""}
+              placeholder="-"
+              onChange={(e) => updateVariantPrice(idx, e.target.value)}
+              onFocus={(e) => e.target.select()}
+              className="input-box w-full text-center" // add padding-left for the $ sign
+            />
+          </div>
         </div>
       ))}
     </div>
@@ -131,7 +176,7 @@ export const ProductVariantHeader: React.FC<ProductVariantHeaderProps> = ({
   useEffect(() => {
     setProduct((prev) => ({
       ...prev,
-      stock: localStock,
+      stock: localStock ?? null,
     }));
   }, [localStock]);
 
@@ -141,9 +186,9 @@ export const ProductVariantHeader: React.FC<ProductVariantHeaderProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-between w-full pr-4">
+    <div className="flex items-center gap-8 w-full pr-4">
       <span className="text-lg font-semibold text-text">
-        {hasVariants ? "Stock (Total)" : "Stock"}
+        {hasVariants ? "Total Stock" : "Stock"}
       </span>
       <input
         type="number"
@@ -169,17 +214,15 @@ const getProductStock = (product: Product) => {
 };
 
 /** Generate all possible variants */
-export function generateVariants(
-  options?: ProductOption[]
-): ProductVariant[] | undefined {
-  if (!options || options.length === 0) return;
+export function generateVariants(options?: ProductOption[]): ProductVariant[] {
+  if (!options || options.length === 0) return [];
 
   const valuesArrays = options.map((opt) => {
     if (!Array.isArray(opt.values)) return [];
     return opt.values.map((v) => v.trim()).filter(Boolean);
   });
 
-  if (valuesArrays.some((arr) => arr.length === 0)) return;
+  if (valuesArrays.some((arr) => arr.length === 0)) return [];
 
   const cartesian = (arr: string[][]): string[][] =>
     arr.reduce((a, b) => a.flatMap((d) => b.map((e) => [...d, e])), [
@@ -190,8 +233,8 @@ export function generateVariants(
 
   return combos.map((combo) => ({
     options: combo.map((val, i) => `${options[i].name}:${val}`),
-    stock: 0,
-    price: undefined,
+    stock: null,
+    price: null,
   }));
 }
 

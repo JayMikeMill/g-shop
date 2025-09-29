@@ -46,6 +46,8 @@ export default function AdminProductsPage() {
     setEditingProduct(null);
   };
 
+  if (editingProduct) console.log("Editing product:", editingProduct);
+
   return (
     <div className="pt-lg pb-lg">
       {/* Product dialog */}

@@ -17,14 +17,14 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
 }) => {
   const { productOptionsPresets } = useApi();
   const [localOptions, setLocalOptions] = useState<ProductOption[]>(
-    product.options || []
+    product.options
   );
   const [saving, setSaving] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0); // <-- trigger refresh
 
   // Sync local options with product
   useEffect(() => {
-    setLocalOptions(product.options || []);
+    setLocalOptions(product.options);
   }, [product.options]);
 
   // Push changes to product

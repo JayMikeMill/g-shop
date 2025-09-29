@@ -140,12 +140,11 @@ const ProductTagsEditor: React.FC<ProductTagsEditorProps> = ({
   product,
   setProduct,
 }) => {
-  const [localTags, setLocalTags] = useState<ProductTag[]>(product.tags || []);
+  const [localTags, setLocalTags] = useState<ProductTag[]>(product.tags);
 
   // Sync local tags with product
   useEffect(() => {
-    setLocalTags(product.tags || []);
-    console.log("ProductTagsEditor sync", { tags: product.tags });
+    setLocalTags(product.tags);
   }, [product.id]);
 
   useEffect(

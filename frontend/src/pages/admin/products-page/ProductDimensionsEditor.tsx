@@ -11,16 +11,16 @@ export const ProductDimensionsEditor: React.FC<
 > = ({ product, setProduct }) => {
   const system = "imperial" as "imperial" | "metric"; // Future: allow user to select
 
-  const [localDimensions, setLocalDimensions] = useState<
-    ProductDimensions | undefined
-  >();
+  const [localDimensions, setLocalDimensions] = useState<ProductDimensions>(
+    product.dimensions
+  );
 
   // Generate variants when options change
   useEffect(() => {
     setLocalDimensions(product.dimensions);
   }, [product.id]);
 
-  // Push local dimensionsq back into product whenever they change
+  // Push local dimensions back into product whenever they change
   useEffect(() => {
     setProduct((prev) => ({
       ...prev,
@@ -74,6 +74,7 @@ export const ProductDimensionsEditor: React.FC<
           />
         </div>
       </label>
+
       {/* Width */}
       <label className={labelClass}>
         {"Width (" + sizePrefix + ")"}
@@ -89,6 +90,7 @@ export const ProductDimensionsEditor: React.FC<
           />
         </div>
       </label>
+
       {/* Height */}
       <label className={labelClass}>
         {"Height (" + sizePrefix + ")"}
