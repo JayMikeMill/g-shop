@@ -158,17 +158,18 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
       title={isAdding ? "Create Product" : "Edit Product"}
       open={shouldRender}
       onClose={handleCancel}
-      className="dialog-box rounded-none sm:rounded-2xl pl-2 w-full h-full sm:h-full sm:max-w-4xl flex flex-col overflow-hidden px-2 sm:px-8"
+      className="dialog-box flex flex-col overflow-hidden rounded-none pl-2 w-full h-full 
+      sm:rounded-2xl sm:h-full sm:max-w-3xl px-md sm:px-lg zoom-90"
     >
       <form
         onSubmit={handleSubmit}
         className="flex flex-col flex-1 overflow-hidden border-t"
       >
-        <div className="flex flex-1 flex-col sm:flex-row sm:gap-md overflow-hidden min-h-0">
+        <div className="flex flex-1 flex-col sm:flex-row sm:gap-md sm:py-md overflow-hidden min-h-0">
           {/* Main Editor */}
-          <div className="flex-1 flex flex-col gap-md overflow-y-auto py-4 sm:px-4 sm:border sm:rounded-lg sm:mt-4">
+          <div className="flex-1 flex flex-col gap-md overflow-y-auto pb-md sm:border sm:rounded-lg">
             {/* Editors */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-md">
               {/* Info Editor */}
               <AnimatedDropdownSurface title="Info" openInitially={true}>
                 <ProductInfoEditor
@@ -211,7 +212,6 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
                   />
                 }
                 openInitially={hasVariants}
-                open={!hasVariants ? false : undefined}
                 disabled={!hasVariants}
               >
                 <ProductVariantEditor
@@ -224,7 +224,7 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
             {/* Delete Button */}
             {!isAdding && (
               <button
-                className="btn-normal h-12"
+                className="btn-normal h-12 w-1/2 self-center"
                 type="button"
                 onClick={handleDelete}
               >
@@ -234,43 +234,40 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
           </div>
 
           {/* Image Editor */}
-          <div className=" flex flex-col flex-shrink-0  sm:w-1/3 sm:border-t sm:border sm:mt-4">
-            <span className="text-xl font-semibold text-text text-center rounded-t-sm py-2 hidden hidden sm:block">
-              Product Images
-            </span>
+          <div className=" flex flex-col flex-shrink-0  pb-md gap-md sm:w-1/3 sm:pb-0">
             <ProductImagesEditor
-              className="sm:border-0"
+              className=""
               images={localProduct.images ?? []}
               onImagesChange={(imgs) =>
                 setLocalProduct((prev) => ({ ...prev, images: imgs }))
               }
               setIsProcessingImages={setIsProcessingImages}
             />
-          </div>
-        </div>
 
-        {/* Footer Buttons */}
-        <div className="w-full flex flex-row gap-2 px-4 sm:px-40 items-center py-4 border-border flex-shrink-0">
-          <button
-            className="btn-cancel w-full h-12"
-            type="button"
-            onClick={handleCancel}
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="btn-normal w-full h-12 whitespace-nowrap"
-            disabled={isProcessingImages || isSavingProduct}
-          >
-            {isSavingProduct
-              ? "Saving..."
-              : isProcessingImages
-                ? "Processing Images..."
-                : localProduct.id
-                  ? "Save Changes"
-                  : "Create Product"}
-          </button>
+            {/* Footer Buttons */}
+            <div className="w-full flex flex-row gap-2 sm:px-0 items-center sm:flex-col sm:gap-2">
+              <button
+                className="btn-cancel w-full h-12 whitespace-nowrap sm:hidden"
+                type="button"
+                onClick={handleCancel}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn-normal w-full h-12 whitespace-nowrap"
+                disabled={isProcessingImages || isSavingProduct}
+              >
+                {isSavingProduct
+                  ? "Saving..."
+                  : isProcessingImages
+                    ? "Processing Images..."
+                    : localProduct.id
+                      ? "Save Changes"
+                      : "Create Product"}
+              </button>
+            </div>
+          </div>
         </div>
       </form>
     </AnimatedDialog>

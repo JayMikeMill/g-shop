@@ -27,17 +27,15 @@ const AnimatedDropdownSurface: React.FC<DropdownProps> = ({
 
   const [overflow, setOverflow] = useState(open);
 
-  const rounding = open ? "rounded-t-md" : "rounded-md";
-
   useEffect(() => {
     setOverflow(open);
   }, [open]);
 
   return (
-    <div className={`border border-border ${rounding} w-full max-w-full`}>
+    <div className={`border border-border rounded-md w-full max-w-full`}>
       <button
         type="button"
-        className={`flex justify-between items-center ${rounding} w-full px-4 py-2 bg-surfaceAlt text-text font-semibold ${
+        className={`flex justify-between items-center rounded-md w-full px-4 py-2 bg-surfaceAlt text-text font-semibold ${
           disabled ? "cursor-not-allowed" : ""
         }`}
         onClick={() => !disabled && setInternalOpen((prev) => !prev)}

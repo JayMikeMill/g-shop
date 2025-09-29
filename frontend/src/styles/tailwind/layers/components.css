@@ -76,6 +76,10 @@
          transition;
   }
 
+  .zoom-90 {
+    transform: scale(0.6);
+    transform-origin: top center;
+  }
   /* =========================
 	   Disabled State
 	========================= */
