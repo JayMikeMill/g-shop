@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useCart } from "@contexts/CartContext";
 import { type ShippingInfo } from "@shared/types/Shipping";
 
-import OrderPreview from "./OrderPreview";
+import OrderSummary from "./OrderSummary";
 import ShippingForm from "./ShippingForm";
 
 //import PaymentFormSquare from "./payment-forms/PaymentFormSquare";
@@ -47,19 +47,20 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     setShippingCost(shippingInfo.address.postalCode ? 5 : 0);
-  }, [shippingInfo]);
+  }, [shippingInfo.address.postalCode]);
 
   return (
-    <div className="max-w-[700px] p-2 mx-auto font-sans text-text relative">
-      <h2 className="text-[2rem]  text-bold text-center text-title pb-md">
+    <div className="flex flex-col flex-1 gap-lg max-w-[700px] p-2 mx-auto font-sans text-text">
+      <h2 className="text-[3rem]  text-bold text-center text-title pb-md">
         Checkout
       </h2>
 
-      <OrderPreview />
+      <OrderSummary />
 
       <ShippingForm
+        className="p-4"
         defaultValues={shippingInfo}
-        onChange={(data) => setShippingInfo(data)}
+        onChange={setShippingInfo}
       />
 
       <PaymentFormStripe

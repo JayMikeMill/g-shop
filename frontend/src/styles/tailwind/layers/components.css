@@ -117,7 +117,7 @@
   }
 
   .surface-box {
-    @apply bg-surface rounded-lg shadow-xl;
+    @apply bg-surface rounded-lg shadow-lg;
   }
 
   .tag-box {

@@ -123,10 +123,8 @@ function InnerStripeForm({
   };
 
   return (
-    <div className="input-box p-lg bg-surface rounded-lg shadow-xl flex flex-col gap-md text-text font-sans">
-      <h3 className="text-3xl mb-lg text-center font-bold">
-        {total > 0 ? "Payment" : ""}
-      </h3>
+    <div className="surface-box p-lg flex flex-col gap-md text-text font-sans">
+      <h3 className="text-xl mb-lg text-center font-bold">Payment Info</h3>
       <p className="text-lg font-semibold text-text text-right md:text-left">
         Total: ${total.toFixed(2)}
       </p>

@@ -5,14 +5,12 @@ import {
   type ShippingInfo,
 } from "@shared/types/Shipping";
 import { z } from "zod";
-import { useForm, type Resolver } from "react-hook-form";
+import { useForm, useWatch, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-// Utility to create Zod enums from const objects
 const zEnum = <T extends Record<string, string>>(obj: T) =>
   z.enum(Object.values(obj) as [string, ...string[]]);
 
-// Address schema
 const addressSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
@@ -24,7 +22,6 @@ const addressSchema = z.object({
   country: z.string().min(1, "Country is required"),
 });
 
-// Shipping info schema (for validation only)
 const shippingSchema = z.object({
   name: z.string().optional(),
   email: z.string().email("Invalid email"),
@@ -40,139 +37,181 @@ const shippingSchema = z.object({
 interface ShippingFormProps {
   defaultValues?: ShippingInfo;
   onChange: (data: ShippingInfo) => void;
+  className?: string;
 }
 
 export default function ShippingForm({
   defaultValues,
   onChange,
+  className,
 }: ShippingFormProps) {
   const {
+    control,
     register,
-    watch,
-    formState: { errors },
     handleSubmit,
+    formState: { errors },
   } = useForm<ShippingInfo>({
-    defaultValues,
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      method: Object.values(ShippingMethods)[0],
+      carrier: Object.values(ShippingCarriers)[0],
+      trackingNumber: null,
+      cost: 0,
+      notes: "",
+      ...defaultValues,
+      address: {
+        firstName: "",
+        lastName: "",
+        addressLine1: "",
+        addressLine2: "",
+        city: "",
+        state: "",
+        postalCode: "",
+        country: "US",
+        ...(defaultValues?.address ?? {}),
+      },
+    },
     resolver: zodResolver(shippingSchema) as unknown as Resolver<ShippingInfo>,
     mode: "onChange",
   });
 
-  const values = watch();
+  const values = useWatch({ control });
+
   useEffect(() => {
-    onChange(values);
+    const fullValues: ShippingInfo = {
+      name: values.name ?? "",
+      email: values.email ?? "",
+      phone: values.phone ?? "",
+      method: values.method ?? Object.values(ShippingMethods)[0],
+      carrier: values.carrier ?? Object.values(ShippingCarriers)[0],
+      trackingNumber: values.trackingNumber ?? null,
+      cost: values.cost ?? 0,
+      notes: values.notes ?? "",
+      address: {
+        firstName: values.address?.firstName ?? "",
+        lastName: values.address?.lastName ?? "",
+        addressLine1: values.address?.addressLine1 ?? "",
+        addressLine2: values.address?.addressLine2 ?? "",
+        city: values.address?.city ?? "",
+        state: values.address?.state ?? "",
+        postalCode: values.address?.postalCode ?? "",
+        country: values.address?.country ?? "US",
+      },
+    };
+    onChange(fullValues);
   }, [values, onChange]);
 
   const submitForm = (data: ShippingInfo) => {
     console.log("Shipping info submitted:", data);
   };
 
-  // Common input styles
-  const inputClasses = "input-box";
-  const selectClasses = inputClasses;
-  const textareaClasses =
-    "w-full border border-border rounded-md p-2 text-text bg-input focus:outline-none focus:ring-2 focus:ring-primary h-24";
+  const inputClassName = "input-box w-full px-2 h-8";
+  const labelClassName = "px-1";
 
   return (
-    <form onSubmit={handleSubmit(submitForm)} className="space-y-md">
-      {/* Name */}
-      <div>
-        <label className="block mb-1 font-semibold">Name</label>
-        <input className={inputClasses} {...register("name")} />
-        <p className="text-red-500">{errors.name?.message}</p>
+    <form
+      onSubmit={handleSubmit(submitForm)}
+      className={`surface-box flex flex-col gap-4 ${className}`}
+    >
+      <h3 className="text-xl mb-lg text-text text-center font-bold">
+        {"Shipping Information"}
+      </h3>
+      {/* Name Row */}
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <label className={labelClassName}>First Name</label>
+          <input
+            className={inputClassName}
+            {...register("address.firstName")}
+          />
+        </div>
+        <div className="flex-1">
+          <label className={labelClassName}>Last Name</label>
+          <input className={inputClassName} {...register("address.lastName")} />
+        </div>
       </div>
 
-      {/* Email */}
+      {/* Address Line 1 - full width */}
       <div>
-        <label className="block mb-1 font-semibold">Email</label>
-        <input className={inputClasses} {...register("email")} />
-        <p className="text-red-500">{errors.email?.message}</p>
+        <label className={labelClassName}>Address Line 1</label>
+        <input
+          className={inputClassName}
+          {...register("address.addressLine1")}
+        />
       </div>
 
-      {/* Phone */}
+      {/* Address Line 2 - full width */}
       <div>
-        <label className="block mb-1 font-semibold">Phone</label>
-        <input className={inputClasses} {...register("phone")} />
-        <p className="text-red-500">{errors.phone?.message}</p>
+        <label className={labelClassName}>Address Line 2</label>
+        <input
+          className={inputClassName}
+          {...register("address.addressLine2")}
+        />
       </div>
 
-      {/* Address Fields */}
-      <div>
-        <label className="block mb-1 font-semibold">First Name</label>
-        <input className={inputClasses} {...register("address.firstName")} />
-        <p className="text-red-500">{errors.address?.firstName?.message}</p>
+      {/* City + State Row */}
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <label className={labelClassName}>City</label>
+          <input className={inputClassName} {...register("address.city")} />
+        </div>
+        <div className="flex-1">
+          <label className={labelClassName}>State</label>
+          <input className={inputClassName} {...register("address.state")} />
+        </div>
       </div>
 
-      <div>
-        <label className="block mb-1 font-semibold">Last Name</label>
-        <input className={inputClasses} {...register("address.lastName")} />
-        <p className="text-red-500">{errors.address?.lastName?.message}</p>
+      {/* Postal Code + Country Row */}
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <label className={labelClassName}>Postal Code</label>
+          <input
+            className={inputClassName}
+            {...register("address.postalCode")}
+          />
+        </div>
+        <div className="flex-1">
+          <label className={labelClassName}>Country</label>
+          <input className={inputClassName} {...register("address.country")} />
+        </div>
       </div>
 
-      <div>
-        <label className="block mb-1 font-semibold">Address Line 1</label>
-        <input className={inputClasses} {...register("address.addressLine1")} />
-        <p className="text-red-500">{errors.address?.addressLine1?.message}</p>
+      {/* Email + Phone Row */}
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <label className={labelClassName}>Email</label>
+          <input className={inputClassName} {...register("email")} />
+        </div>
+        <div className="flex-1">
+          <label className={labelClassName}>Phone</label>
+          <input className={inputClassName} {...register("phone")} />
+        </div>
       </div>
 
-      <div>
-        <label className="block mb-1 font-semibold">Address Line 2</label>
-        <input className={inputClasses} {...register("address.addressLine2")} />
-      </div>
-
-      <div>
-        <label className="block mb-1 font-semibold">City</label>
-        <input className={inputClasses} {...register("address.city")} />
-        <p className="text-red-500">{errors.address?.city?.message}</p>
-      </div>
-
-      <div>
-        <label className="block mb-1 font-semibold">State</label>
-        <input className={inputClasses} {...register("address.state")} />
-        <p className="text-red-500">{errors.address?.state?.message}</p>
-      </div>
-
-      <div>
-        <label className="block mb-1 font-semibold">Postal Code</label>
-        <input className={inputClasses} {...register("address.postalCode")} />
-        <p className="text-red-500">{errors.address?.postalCode?.message}</p>
-      </div>
-
-      <div>
-        <label className="block mb-1 font-semibold">Country</label>
-        <input className={inputClasses} {...register("address.country")} />
-        <p className="text-red-500">{errors.address?.country?.message}</p>
-      </div>
-
-      {/* Shipping method */}
-      <div>
-        <label className="block mb-1 font-semibold">Shipping Method</label>
-        <select className={selectClasses} {...register("method")}>
-          {Object.values(ShippingMethods).map((m) => (
-            <option key={m} value={m}>
-              {m}
-            </option>
-          ))}
-        </select>
-        <p className="text-red-500">{errors.method?.message}</p>
-      </div>
-
-      {/* Carrier */}
-      <div>
-        <label className="block mb-1 font-semibold">Carrier</label>
-        <select className={selectClasses} {...register("carrier")}>
-          {Object.values(ShippingCarriers).map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
-        <p className="text-red-500">{errors.carrier?.message}</p>
-      </div>
-
-      {/* Notes */}
-      <div>
-        <label className="block mb-1 font-semibold">Notes</label>
-        <textarea className={textareaClasses} {...register("notes")} />
+      {/* Shipping Method + Carrier Row */}
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <label className={labelClassName}>Shipping Method</label>
+          <select className={inputClassName} {...register("method")}>
+            {Object.values(ShippingMethods).map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex-1">
+          <label className={labelClassName}>Carrier</label>
+          <select className={inputClassName} {...register("carrier")}>
+            {Object.values(ShippingCarriers).map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
     </form>
   );

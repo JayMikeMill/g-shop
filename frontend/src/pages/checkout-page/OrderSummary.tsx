@@ -1,20 +1,20 @@
 import { useCart, getCartTotals } from "@contexts/CartContext";
 import { parseVariantOptions } from "@shared/types/Product";
 
-export default function OrderPreview() {
+export default function OrderSummary() {
   const { cart } = useCart();
   const totals = getCartTotals(cart);
 
   if (cart.length === 0) {
     return (
-      <div className="max-w-[700px] mx-auto p-6 bg-surface rounded-lg shadow text-gray-800 text-center">
+      <div className="surface-box mx-auto p-6 text-center">
         <p>Your order is empty.</p>
       </div>
     );
   }
 
   return (
-    <div className="p-6 bg-surface rounded-lg shadow flex flex-col gap-4">
+    <div className="surface-box p-6 flex flex-col gap-4">
       <h3 className="text-center text-xl font-semibold mb-4">Order Summary</h3>
 
       <div className="flex flex-col gap-3">
