@@ -37,7 +37,8 @@
       "@shared/*": ["../shared/*"],
       "@data/*": ["src/data/*"],
       "@config/*": ["src/config/*"],
-      "@styles/*": ["src/styles/*"]
+      "@styles/*": ["src/styles/*"],
+      "@ui": ["src/components/UI"]
     }
   },
 

@@ -17,6 +17,7 @@ export default defineConfig({
       "@utils": path.resolve(__dirname, "./src/utils"),
       "@data": path.resolve(__dirname, "./src/data"),
       "@styles": path.resolve(__dirname, "./src/styles"),
+      "@ui": path.resolve(__dirname, "./src/components/UI"),
       "@shared": path.resolve(__dirname, "../shared"),
     },
   },

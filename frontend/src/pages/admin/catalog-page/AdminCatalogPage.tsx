@@ -23,10 +23,29 @@ export function AdminCatalogPage({ apiKey, typeLabel }: AdminCatalogPageProps) {
 
   const api = useApi()[apiKey];
 
-  const handleDialogSave = () => {
+  const clearState = () => {
     setIsAdding(false);
     setEditingItem(null);
     setTableKey((prev) => prev + 1);
+  };
+
+  const handleDialogCreate = (item: Collection | Category) => {
+    api.create(item);
+    console.log("Created item:", item);
+    clearState();
+  };
+
+  const handleDialogModify = (item: Collection | Category) => {
+    if (item && item.id) {
+      api.update({ ...item, id: item.id as string });
+      console.log("Modified item:", item);
+      clearState();
+    }
+  };
+
+  const handleDialogDelete = () => {
+    api.delete(editingItem?.id as string);
+    clearState();
   };
 
   const handleDialogCancel = () => {
@@ -40,7 +59,9 @@ export function AdminCatalogPage({ apiKey, typeLabel }: AdminCatalogPageProps) {
       <CatalogDialog
         open={editingItem !== null || isAdding}
         item={editingItem}
-        onSave={handleDialogSave}
+        onCreate={handleDialogCreate}
+        onModify={handleDialogModify}
+        onDelete={handleDialogDelete}
         onCancel={handleDialogCancel}
         typeLabel={typeLabel}
         apiKey={apiKey}

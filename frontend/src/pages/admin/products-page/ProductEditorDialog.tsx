@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 // UI Components
 import { AnimatedDialog } from "@components/controls/AnimatedDialog";
 import AnimatedDropdownSurface from "@components/controls/AnimatedDropdownSurface";
+import { CircleSpinner } from "@components/UI";
 
 // Types
 import {
@@ -23,7 +24,7 @@ import {
 
 import { useApi } from "@api/useApi";
 import ProductDimensionsEditor from "./ProductDimensionsEditor";
-import { ImagesEditor } from "@components/controls/ImageEditor";
+import { MultiImageEditor } from "@components/controls/ImageEditor";
 import ProductImageProcessor from "./ProductImagesProcessor";
 
 interface ProductDialogProps {
@@ -162,6 +163,13 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
       className="dialog-box flex flex-col overflow-hidden rounded-none pl-2 w-full h-full 
       sm:rounded-2xl sm:max-w-3xl px-md sm:px-lg zoom-90"
     >
+      {/* Loading Spinner */}
+      {isSavingProduct && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/30">
+          <CircleSpinner text={`Saving Product...`} />
+        </div>
+      )}
+
       <form
         onSubmit={handleSubmit}
         className="flex flex-col flex-1 overflow-hidden border-t"
@@ -236,7 +244,7 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
 
           {/* Image Editor */}
           <div className=" flex flex-col flex-shrink-0  pb-md gap-md sm:w-1/3 sm:pb-0">
-            <ImagesEditor<ProductImageSet>
+            <MultiImageEditor<ProductImageSet>
               className=""
               images={localProduct.images ?? []}
               onImagesChange={(imgs) =>
@@ -246,7 +254,7 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
                 }))
               }
               processor={ProductImageProcessor.process}
-              getPreview={(item: ProductImageSet) => item.preview} // optional, for lightbox
+              getPreview={(item: ProductImageSet) => item.preview}
               setIsProcessingImages={setIsProcessingImages}
             />
 

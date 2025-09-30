@@ -6,7 +6,11 @@ import { AnimatedDialog } from "@components/controls/AnimatedDialog";
 import type { Collection, Category } from "@shared/types/Catalog";
 
 import { useApi } from "@api/useApi";
-import { ImagesEditor } from "@components/controls/ImageEditor";
+
+import { CircleSpinner } from "@ui";
+
+import { ImageEditor } from "@components/controls/ImageEditor";
+
 import CollectionImageProcessor from "./CollectionImagesProcessor";
 
 // Types
@@ -18,8 +22,10 @@ export interface CollectionImageSet {
 interface CatalogDialogProps<T extends Collection> {
   open: boolean;
   item: T | null;
-  onSave: () => void;
-  onCancel?: () => void;
+  onCreate: (collection: T) => void;
+  onModify: (collection: T & { id: string }) => void;
+  onDelete: (collectionId: T) => void;
+  onCancel: () => void;
   apiKey: "categories" | "collections";
   typeLabel: "Category" | "Collection";
 }
@@ -27,9 +33,10 @@ interface CatalogDialogProps<T extends Collection> {
 export function CatalogDialog<T extends Collection>({
   open,
   item,
-  onSave,
+  onCreate,
+  onModify,
+  onDelete,
   onCancel,
-  apiKey,
   typeLabel: type,
 }: CatalogDialogProps<T>) {
   const emptyItem: T = {
@@ -44,7 +51,9 @@ export function CatalogDialog<T extends Collection>({
   const [localItem, setLocalItem] = useState<T>(emptyItem);
   const [isAdding, setIsAdding] = useState(false);
   const [isProcessingImages, setIsProcessingImages] = useState(false);
-  const api = useApi()[apiKey];
+  const [isSavingCollection, setIsSavingCollection] = useState(false);
+
+  const { uploadImage } = useApi();
 
   useEffect(() => {
     if (!open) {
@@ -67,29 +76,56 @@ export function CatalogDialog<T extends Collection>({
   };
   const handleCancel = () => {
     clearItem();
-    onCancel?.();
+    onCancel();
   };
 
-  const saveItem: () => boolean = () => {
+  const handleSave = async () => {
     try {
+      setIsSavingCollection(true); // spinner for saving collection
+
+      await uploadImages(); // we'll handle spinner for uploading separately
+
       if (isAdding) {
-        api.create(localItem);
-      } else if (localItem.id) {
-        api.update({ ...localItem, id: localItem.id });
+        onCreate(localItem);
       } else {
-        throw new Error("Item ID is missing for update.");
+        onModify({ ...localItem, id: localItem.id! });
       }
-      return true;
-    } catch (error) {
-      console.error("Error saving item:", error);
-      return false;
+
+      clearItem();
+    } catch (err: any) {
+      alert(err?.message || "Error saving collection");
+    } finally {
+      setIsSavingCollection(false);
     }
   };
 
-  const handleSave = () => {
-    if (saveItem()) {
-      clearItem();
-      onSave();
+  const uploadImages = async () => {
+    if (!localItem.images) return;
+
+    try {
+      if (localItem.images.banner.startsWith("blob:")) {
+        const blobBanner = await fetch(localItem.images.banner).then((r) =>
+          r.blob()
+        );
+        const uploadedBanner = await uploadImage(
+          blobBanner,
+          `collection_banner`
+        );
+        localItem.images.banner = uploadedBanner.url;
+      }
+
+      if (localItem.images.preview.startsWith("blob:")) {
+        const blobPreview = await fetch(localItem.images.preview).then((r) =>
+          r.blob()
+        );
+        const uploadedPreview = await uploadImage(
+          blobPreview,
+          `collection_preview`
+        );
+        localItem.images.preview = uploadedPreview.url;
+      }
+    } catch (err) {
+      throw new Error("Error uploading images");
     }
   };
 
@@ -103,6 +139,13 @@ export function CatalogDialog<T extends Collection>({
       className="dialog-box flex flex-col overflow-hidden rounded-none pl-2 w-full h-full 
       sm:rounded-2xl sm:max-w-3xl px-md sm:px-lg"
     >
+      {/* Loading Spinner */}
+      {isSavingCollection && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/30">
+          <CircleSpinner text={`Saving ${type}...`} />
+        </div>
+      )}
+
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -197,31 +240,14 @@ export function CatalogDialog<T extends Collection>({
         <div className="flex flex-col gap-2">
           <span className="text-sm font-semibold text-text">Images</span>
 
-          <ImagesEditor<CollectionImageSet>
-            images={localItem.images ? [localItem.images] : []}
-            onImagesChange={(imgs: CollectionImageSet[]) =>
-              setLocalItem((prev) => ({
-                ...prev,
-                images: imgs[0] as CollectionImageSet,
-              }))
+          {/* Banner Image Editor */}
+          <ImageEditor<CollectionImageSet>
+            image={localItem.images}
+            onImageChange={(img: CollectionImageSet | undefined) =>
+              setLocalItem((prev) => ({ ...prev, images: img }))
             }
+            getPreview={(img) => img?.banner || ""}
             processor={CollectionImageProcessor.processBanner}
-            staticSlots={[
-              {
-                key: "Preview",
-                processor: CollectionImageProcessor.processPreview,
-                mapResult: (r) => ({ preview: r.preview }),
-                getPreview: (r) => r.preview,
-                className: "w-[20%]",
-              },
-              {
-                key: "Banner",
-                processor: CollectionImageProcessor.processBanner,
-                mapResult: (r) => ({ banner: r.banner }),
-                getPreview: (r) => r.banner,
-                className: "w-[20%]",
-              },
-            ]}
             setIsProcessingImages={setIsProcessingImages}
           />
         </div>

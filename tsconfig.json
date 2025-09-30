@@ -18,7 +18,8 @@
   "include": [
     "backend/src/**/*.ts",
     "frontend/src/**/*.tsx",
-    "unit-tests/**/*"
+    "unit-tests/**/*",
+    "frontend/src/components/ui/index.ts"
   ],
   "exclude": ["node_modules", "dist", "build"]
 }
