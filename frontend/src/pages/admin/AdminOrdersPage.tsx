@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { useApi } from "@api/useApi";
 import type { Order } from "@shared/types/Order";
 
-import DynamicTable from "@components/dynamic-table/DynamicTable";
-import OrderDialog from "@components/dialogs/OrderDialog";
+import { DynamicTable } from "@components/UI";
 
 export default function AdminOrdersPage() {
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
@@ -27,15 +26,6 @@ export default function AdminOrdersPage() {
   return (
     <div className="pt-lg pb-lg">
       <div className="p-0">
-        {/* Order dialog */}
-        {editingOrder && (
-          <OrderDialog
-            order={editingOrder}
-            onClose={handleDialogClose}
-            onSave={handleSaveOrder}
-          />
-        )}
-
         {/* Order list */}
 
         <DynamicTable

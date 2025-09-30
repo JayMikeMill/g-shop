@@ -58,8 +58,8 @@ export default function CheckoutPage() {
       <OrderPreview />
 
       <ShippingForm
-        shippingInfo={shippingInfo}
-        setShippingInfo={setShippingInfo}
+        defaultValues={shippingInfo}
+        onChange={(data) => setShippingInfo(data)}
       />
 
       <PaymentFormStripe

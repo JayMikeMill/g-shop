@@ -115,7 +115,6 @@ const TagPresetsDropdown: React.FC<TagPresetsDropdownProps> = ({
       </button>
 
       {/* Create Tag Dialog */}
-
       <ProductTagDialog
         open={creating}
         name={newTagName}

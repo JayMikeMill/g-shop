@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 import { useAuth } from "@contexts/auth/AuthContext";
-import LoginDialog from "@components/dialogs/LoginDialog";
+import { Navigate, useLocation } from "react-router-dom";
 import { type UserRole } from "@shared/types/User";
 
 interface ProtectedRouteProps {
@@ -12,20 +12,21 @@ export function ProtectedRoute({
   allowedRoles,
   children,
 }: ProtectedRouteProps) {
+  const location = useLocation();
   const { user, loading } = useAuth();
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return null; // or a spinner while auth is being checked
+  }
+
+  console.log("ProtectedRoute - user:", user);
   const notAuth = !user || !user.role || !allowedRoles.includes(user.role);
 
-  return (
-    <>
-      <LoginDialog
-        open={notAuth}
-        onClose={() => {
-          window.location.reload();
-        }}
-      />
-      {!notAuth && children}
-    </>
-  );
+  if (notAuth) {
+    console.log("ProtectedRoute - redirecting to login");
+    // Redirect to login page, remember where the user tried to go
+    return <Navigate to="/admin-login" state={{ from: location }} replace />;
+  }
+
+  return children;
 }

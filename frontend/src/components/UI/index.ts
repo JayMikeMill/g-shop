@@ -5,3 +5,4 @@ export * from "./ImageEditor";
 export * from "./AnimatedDropdownSurface";
 export * from "./AnimatedDropdownBox";
 export * from "./CropDialog";
+export * from "./DynamicTable";

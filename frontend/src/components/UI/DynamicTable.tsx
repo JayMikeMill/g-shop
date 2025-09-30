@@ -25,7 +25,7 @@ export interface DynamicTableProps<T> {
   objectsName?: string;
 }
 
-export default function DynamicTable<T extends { id?: string }>({
+export const DynamicTable = <T extends { id?: string }>({
   columns = [],
   pageSize = 10,
   fetchPage,
@@ -33,7 +33,7 @@ export default function DynamicTable<T extends { id?: string }>({
   onRowClick,
   headerButton: button,
   objectsName = "Objects",
-}: DynamicTableProps<T>) {
+}: DynamicTableProps<T>) => {
   const [pageData, setPageData] = useState<T[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -194,4 +194,4 @@ export default function DynamicTable<T extends { id?: string }>({
       )}
     </div>
   );
-}
+};

@@ -3,7 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { XButton } from "@components/UI";
 
 interface AnimatedDialogProps {
-  title: string;
+  title?: string;
+  titleClassName?: string;
+  showHeader?: boolean;
+  showXButton?: boolean;
   open: boolean;
   onClose: () => void;
   children: React.ReactNode;
@@ -12,7 +15,10 @@ interface AnimatedDialogProps {
 }
 
 export const AnimatedDialog: React.FC<AnimatedDialogProps> = ({
-  title,
+  title = "Dialog",
+  titleClassName,
+  showHeader = true,
+  showXButton = true,
   open,
   onClose,
   children,
@@ -84,12 +90,17 @@ export const AnimatedDialog: React.FC<AnimatedDialogProps> = ({
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <div className="flex items-center justify-between border-b mx-2 pt-4 pb-2 flex-shrink-0 pl-4">
-              <h2 className="text-2xl font-bold text-text text-left  flex-1">
+            <div
+              className={`flex items-center justify-between
+              border-b mx-2 pt-4 pb-2 flex-shrink-0 pl-4 ${!showHeader ? "hidden" : ""}`}
+            >
+              <h2
+                className={`text-2xl font-bold text-text flex-1 ${titleClassName}`}
+              >
                 {title}
               </h2>
               <XButton
-                className="w-8 h-8"
+                className={`w-8 h-8 ${!showXButton ? "hidden" : ""}`}
                 onClick={onClose}
                 aria-label="Close dialog"
               />

@@ -13,7 +13,7 @@ interface ProductOptionSelectorProps {
 
 const parseVariantOptions = (variant: ProductVariant) => {
   const obj: Record<string, string> = {};
-  variant.options.split("|").forEach((opt) => {
+  variant.options.forEach((opt) => {
     const [name, value] = opt.split(":");
     if (name && value) obj[name] = value;
   });
@@ -31,7 +31,8 @@ const isOptionEnabled = (
   if (!product.variants) return false;
 
   return product.variants.some((variant) => {
-    if (variant.stock <= 0) return false;
+    if (variant.stock && variant.stock <= 0) return false;
+
     const opts = parseVariantOptions(variant);
 
     // top-level option: only needs to exist in stock
@@ -75,7 +76,7 @@ const ProductOptionSelector: React.FC<ProductOptionSelectorProps> = ({
     const initial: SelectedProductOption[] = [];
 
     product.options.forEach((opt, index) => {
-      const values = opt.values.split(",").map((v) => v.trim());
+      const values = opt.values.map((v) => v.trim());
       let selectedValue = values[0];
 
       for (const val of values) {
@@ -109,7 +110,7 @@ const ProductOptionSelector: React.FC<ProductOptionSelectorProps> = ({
     if (product.options) {
       for (let i = optionIndex + 1; i < product.options.length; i++) {
         const opt = product.options[i];
-        const values = opt.values.split(",").map((v) => v.trim());
+        const values = opt.values.map((v) => v.trim());
         let validValue = values.find((v) =>
           isOptionEnabled(product, i, opt.name, v, updated)
         );
@@ -125,7 +126,7 @@ const ProductOptionSelector: React.FC<ProductOptionSelectorProps> = ({
   return (
     <>
       {product.options?.map((opt, index) => {
-        const values = opt.values.split(",").map((v) => v.trim());
+        const values = opt.values.map((v) => v.trim());
 
         return (
           <div

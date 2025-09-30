@@ -1,0 +1,123 @@
+// src/pages/AdminLoginPage.tsx
+import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "@contexts/auth/AuthContext";
+import { AnimatedDialog } from "@components/UI";
+
+export default function AdminLoginPage() {
+  const { user, login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const authorized = user && user.role === "admin";
+
+  if (authorized) {
+    navigate("/admin", { replace: true });
+  }
+
+  // Redirect after login (default to home)
+  const from = (location.state as any)?.from?.pathname || "/";
+
+  const handleLogin = async (email: string, password: string) => {
+    setError(null);
+    setLoading(true);
+    console.log("Logging in with", email, password);
+    try {
+      await login(email, password);
+      navigate(from, { replace: true });
+    } catch (err: any) {
+      setError(err.message || "Failed to login");
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <AdminLoginDialog
+        open={true}
+        loading={loading}
+        error={error}
+        onClose={() => {}}
+        onSubmit={handleLogin}
+      />
+    </div>
+  );
+}
+
+interface AdminLoginDialogProps {
+  open: boolean;
+  onClose: () => void;
+  loading?: boolean;
+  error?: string | null;
+  onSubmit?: (email: string, password: string) => Promise<void>;
+}
+
+function AdminLoginDialog({
+  open,
+  onClose,
+  loading = false,
+  error,
+  onSubmit,
+}: AdminLoginDialogProps & { fullScreen?: boolean }) {
+  const [email, setEmail] = useState("aptotekinfo@gmail.com");
+  const [password, setPassword] = useState("aptotek2025");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!onSubmit) return;
+
+    await onSubmit(email, password); // await so parent can handle loading & errors
+  };
+
+  return (
+    <AnimatedDialog
+      title="Admin Login"
+      titleClassName="text-center"
+      showXButton={false}
+      open={open}
+      onClose={onClose || (() => {})}
+      className="w-full max-w-md mx-lg"
+    >
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-md w-full p-lg"
+      >
+        <label className="flex flex-col gap-xs text-base font-semibold text-textSecondary">
+          <span className="mb-xs">Email</span>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="input-box px-lg py-md"
+            autoComplete="username"
+          />
+        </label>
+        <label className="flex flex-col gap-xs text-base font-semibold text-textSecondary">
+          <span className="mb-xs">Password</span>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="input-box px-lg py-md"
+            autoComplete="current-password"
+          />
+        </label>
+        {error && (
+          <p className="text-error text-base text-center mt-xs">{error}</p>
+        )}
+        <button
+          type="submit"
+          className="btn-normal h-12 w-64 self-center"
+          disabled={loading}
+        >
+          {loading ? "Logging in..." : "Login"}
+        </button>
+      </form>
+    </AnimatedDialog>
+  );
+}

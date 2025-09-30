@@ -10,7 +10,7 @@ export const CircleSpinner: React.FC<CircleSpinnerProps> = ({ text }) => {
   return (
     <div className="flex flex-col items-center justify-center gap-2">
       <div
-        className="border-4 border-gray-200 border-t-primary rounded-full animate-spin"
+        className="border-4 border-gray-200 border-t-primary rounded-full animate-spin z-50"
         style={{ width: size, height: size }}
       />
       {text && <span className="text-3xl text-white">{text}</span>}

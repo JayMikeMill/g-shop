@@ -1,49 +1,73 @@
 // Admin product dashboard page
-import { useState, useEffect } from "react";
-import type { Product } from "@shared/types/Product";
-import { ProductEditorDialog } from "@pages/admin/products-page/ProductEditorDialog";
+import { useState } from "react";
 
-import DynamicTable from "@components/dynamic-table/DynamicTable";
+// UI Components
+import { AnimatedDialog, DynamicTable, CircleSpinner } from "@components/UI";
+import { ProductEditorForm } from "./ProductEditorForm";
+
+// Types
+import type { Product } from "@shared/types/Product";
 
 // API
 import { useApi } from "@api/useApi";
 
 export default function AdminProductsPage() {
-  const [isAdding, setIsAdding] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [isSavingProduct, setIsSavingProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   const [tableKey, setTableKey] = useState(0);
 
-  const { products } = useApi();
+  const { products, uploadImage } = useApi();
   const getProducts = products.getAll;
 
-  const refreshState = () => {
-    setIsAdding(false);
+  const saveProductImages = async (product: Product) => {
+    console.log("Processing images for product:", product);
+
+    for (const img of product.images) {
+      if (img.main.startsWith("blob:")) {
+        const blobM = await fetch(img.main).then((r) => r.blob());
+        const blobP = await fetch(img.preview).then((r) => r.blob());
+        const blobT = await fetch(img.thumbnail).then((r) => r.blob());
+
+        const uploadedMain = await uploadImage(blobM, `product_main`);
+        const uploadedPreview = await uploadImage(blobP, `product_preview`);
+        const uploadedThumbnail = await uploadImage(blobT, `product_thumb`);
+
+        img.main = uploadedMain.url;
+        img.preview = uploadedPreview.url;
+        img.thumbnail = uploadedThumbnail.url;
+      }
+    }
+  };
+
+  const clearState = (refreshTable: boolean = true) => {
+    setIsCreating(false);
     setEditingProduct(null);
-    setTableKey((prev) => prev + 1);
+    if (refreshTable) setTableKey((k) => k + 1);
   };
 
-  const handleDialogCreate = (product: Product) => {
+  const handleDialogSave = async (product: Product, isNew: boolean) => {
     console.log("Creating product:", product);
-    products.create(product);
-    refreshState();
+    setIsSavingProduct(true);
+    await saveProductImages(product);
+    if (isNew) {
+      await products.create(product);
+    } else {
+      await products.update(product as Product & { id: string });
+    }
+    setIsSavingProduct(false);
+    clearState();
   };
 
-  const handleDialogModify = (product: Product & { id: string }) => {
-    console.log("Modifying product:", product);
-    products.update(product);
-    refreshState();
-  };
-
-  const handleDialogDelete = (productId: string) => {
+  const handleDialogDelete = async (productId: string) => {
     console.log("Deleting product:", productId);
-    products.delete(productId);
-    refreshState();
+    await products.delete(productId);
+    clearState();
   };
 
   const handleDialogCancel = () => {
-    setIsAdding(false);
-    setEditingProduct(null);
+    clearState(false);
   };
 
   if (editingProduct) console.log("Editing product:", editingProduct);
@@ -51,17 +75,32 @@ export default function AdminProductsPage() {
   return (
     <div className="pt-lg pb-lg">
       {/* Product dialog */}
-      <ProductEditorDialog
-        open={editingProduct !== null || isAdding}
-        product={editingProduct}
-        onCreate={handleDialogCreate}
-        onModify={handleDialogModify}
-        onDelete={handleDialogDelete}
-        onCancel={handleDialogCancel}
-      />
+      <AnimatedDialog
+        open={editingProduct !== null || isCreating}
+        title={isCreating ? "Create Product" : "Edit Product"}
+        onClose={handleDialogCancel}
+        className="dialog-box flex flex-col overflow-hidden rounded-none pl-2 w-full h-full 
+            sm:rounded-2xl sm:max-w-3xl px-md sm:px-lg zoom-90 z-49"
+      >
+        <ProductEditorForm
+          product={editingProduct}
+          onCreate={(p) => handleDialogSave(p, true)}
+          onModify={(p) => handleDialogSave(p, false)}
+          onDelete={handleDialogDelete}
+          onCancel={handleDialogCancel}
+        />
+      </AnimatedDialog>
+
+      {/* Spinner overlay OUTSIDE the dialog */}
+      {isSavingProduct && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30">
+          <CircleSpinner
+            text={`${isCreating ? "Creating" : "Modifying"} Product...`}
+          />
+        </div>
+      )}
 
       {/* Product list */}
-
       <DynamicTable
         fetchPage={getProducts}
         key={tableKey}
@@ -70,7 +109,7 @@ export default function AdminProductsPage() {
         headerButton={
           <button
             className="btn-normal whitespace-nowrap"
-            onClick={() => setIsAdding(true)}
+            onClick={() => setIsCreating(true)}
           >
             Add Product
           </button>

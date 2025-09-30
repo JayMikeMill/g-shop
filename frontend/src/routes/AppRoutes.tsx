@@ -2,18 +2,17 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
 // Admin pages
-import AdminDashboardPage from "@pages/admin/AdminDashboardPage";
-import AdminProductsPage from "@pages/admin/products-page/AdminProductsPage";
-
-import AdminCatalogPageWrapper from "@pages/admin/catalog-page/AdminCatalogPageWrapper";
 import {
+  AdminLoginPage,
+  AdminDashboardPage,
+  AdminProductsPage,
+  AdminCatalogPageWrapper,
   AdminCategoriesPage,
   AdminCollectionsPage,
-} from "@pages/admin/catalog-page/AdminCatalogPage";
-
-import AdminOrdersPage from "@pages/admin/AdminOrdersPage";
-import AdminUsersPage from "@pages/admin/AdminUsersPage";
-import AdminSettingsPage from "@pages/admin/AdminSettingsPage";
+  AdminOrdersPage,
+  AdminUsersPage,
+  AdminSettingsPage,
+} from "./AdminRoutes";
 
 // Public pages
 import HomePage from "@pages/HomePage";
@@ -35,6 +34,8 @@ export default function AppRoutes() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/Product/:id" element={<ProductPage />} />
+
+        <Route path="/admin-login" element={<AdminLoginPage />} />
         <Route
           path="/admin"
           element={

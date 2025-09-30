@@ -23,7 +23,7 @@ export const ProductTagDialog: React.FC<ProductTagDialogProps> = ({
 }) => {
   return (
     <AnimatedDialog
-      title="Create Tag Preset"
+      showHeader={false}
       open={open}
       onClose={onClose}
       onEnter={onSave} // handle Enter key
@@ -86,7 +86,7 @@ export function ColorPickerButton({
 
       {/* Dialog */}
       <AnimatedDialog
-        title="Select Color"
+        showHeader={false}
         open={open}
         onClose={() => setOpen(false)}
         className="p-2"

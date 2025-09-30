@@ -1,3 +1,4 @@
+// shared/types/Shipping.ts
 export type ShippingInfo = {
   name?: string;
   address: Address;

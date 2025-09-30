@@ -175,10 +175,8 @@ function BaseImageEditor<T extends Record<string, any>>({
       let updated = [...images];
       if (single) {
         updated = [processedItem];
-        delete updated[0].main; // remove temp URL
       } else {
         updated[index] = processedItem;
-        delete updated[index].main; // remove temp URL
       }
 
       onImagesChange(updated);
