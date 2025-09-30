@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { XButton } from "./CustomControls";
+import { XButton } from "@components/UI";
 
 interface AnimatedDialogProps {
   title: string;

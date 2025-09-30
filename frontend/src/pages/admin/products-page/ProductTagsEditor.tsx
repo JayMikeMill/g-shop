@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
-import { XButton } from "@components/controls/CustomControls";
-import { AnimatedDropdownBox } from "@components/controls/AnimatedDropdownBox";
+import { XButton } from "@components/UI";
+import { AnimatedDropdownBox } from "@components/UI";
 
 import type {
   Product,

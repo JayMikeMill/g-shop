@@ -1,4 +1,4 @@
-// src/components/controls/CircleSpinner.tsx
+// CircleSpinner.tsx
 import React from "react";
 
 interface CircleSpinnerProps {

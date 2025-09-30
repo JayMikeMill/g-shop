@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from "react";
 
 // UI Components
-import { AnimatedDialog } from "@components/controls/AnimatedDialog";
-import AnimatedDropdownSurface from "@components/controls/AnimatedDropdownSurface";
+import { AnimatedDialog } from "@components/UI";
+import { AnimatedDropdownSurface } from "@components/UI";
 import { CircleSpinner } from "@components/UI";
 
 // Types
@@ -24,8 +24,8 @@ import {
 
 import { useApi } from "@api/useApi";
 import ProductDimensionsEditor from "./ProductDimensionsEditor";
-import { MultiImageEditor } from "@components/controls/ImageEditor";
 import ProductImageProcessor from "./ProductImagesProcessor";
+import { MultiImageEditor } from "@components/UI";
 
 interface ProductDialogProps {
   product: Product | null;

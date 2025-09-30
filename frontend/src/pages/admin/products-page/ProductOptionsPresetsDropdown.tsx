@@ -4,8 +4,8 @@ import type {
   ProductOptionsPreset,
 } from "@shared/types/Product";
 import { useApi } from "@api/useApi";
-import { XButton } from "@components/controls/CustomControls";
-import { AnimatedDropdownBox } from "@components/controls/AnimatedDropdownBox"; // adjust path
+import { XButton } from "@components/UI";
+import { AnimatedDropdownBox } from "@components/UI"; // adjust path
 
 interface OptionsPresetDropdownProps {
   localOptions: ProductOption[];

@@ -1,4 +1,4 @@
-import { AnimatedDialog } from "@components/controls/AnimatedDialog";
+import { AnimatedDialog } from "@components/UI";
 import React, { useState } from "react";
 import Cropper from "react-easy-crop";
 
@@ -10,7 +10,7 @@ interface CropDialogProps {
   ratio?: number; // default 1 (square)
 }
 
-const CropDialog: React.FC<CropDialogProps> = ({
+export const CropDialog: React.FC<CropDialogProps> = ({
   open,
   file,
   onCropComplete,
@@ -126,5 +126,3 @@ const CropDialog: React.FC<CropDialogProps> = ({
     </AnimatedDialog>
   );
 };
-
-export default CropDialog;

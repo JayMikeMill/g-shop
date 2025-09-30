@@ -15,13 +15,13 @@ interface AnimatedDropdownBoxProps<T> {
   menuClassName?: string;
 }
 
-export function AnimatedDropdownBox<T>({
+export const AnimatedDropdownBox = <T,>({
   items,
   headerText = "Select...",
   noItemsText = "No items",
   className,
   menuClassName,
-}: AnimatedDropdownBoxProps<T>) {
+}: AnimatedDropdownBoxProps<T>) => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -82,4 +82,4 @@ export function AnimatedDropdownBox<T>({
       </AnimatePresence>
     </div>
   );
-}
+};

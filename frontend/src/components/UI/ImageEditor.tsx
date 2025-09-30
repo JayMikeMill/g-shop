@@ -2,8 +2,8 @@ import React, { useRef, useState, useEffect } from "react";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import { Zoom } from "yet-another-react-lightbox/plugins";
-import CropDialog from "@components/dialogs/CropDialog";
-import { XButton } from "./CustomControls";
+import { CropDialog } from "@components/UI";
+import { XButton } from "@components/UI";
 
 // --- ImageSlot Component ---
 interface ImageSlotProps {

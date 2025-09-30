@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { AnimatedDialog } from "@components/controls/AnimatedDialog";
 import { HexColorPicker } from "react-colorful";
+import { AnimatedDialog } from "@components/UI";
 
 interface ProductTagDialogProps {
   name: string;
@@ -23,6 +23,7 @@ export const ProductTagDialog: React.FC<ProductTagDialogProps> = ({
 }) => {
   return (
     <AnimatedDialog
+      title="Create Tag Preset"
       open={open}
       onClose={onClose}
       onEnter={onSave} // handle Enter key
@@ -85,6 +86,7 @@ export function ColorPickerButton({
 
       {/* Dialog */}
       <AnimatedDialog
+        title="Select Color"
         open={open}
         onClose={() => setOpen(false)}
         className="p-2"

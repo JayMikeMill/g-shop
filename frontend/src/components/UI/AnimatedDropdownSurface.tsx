@@ -11,7 +11,7 @@ interface DropdownProps {
   disabled?: boolean;
 }
 
-const AnimatedDropdownSurface: React.FC<DropdownProps> = ({
+export const AnimatedDropdownSurface: React.FC<DropdownProps> = ({
   className,
   title,
   customTitle,
@@ -62,5 +62,3 @@ const AnimatedDropdownSurface: React.FC<DropdownProps> = ({
     </div>
   );
 };
-
-export default AnimatedDropdownSurface;

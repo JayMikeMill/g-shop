@@ -1,9 +1,16 @@
+// File: frontend/src/pages/admin/products-page/ProductOptionsEditor.tsx
+
+// React
 import React, { useEffect, useState } from "react";
 import type { Product, ProductOption } from "@shared/types/Product";
 
-import { useApi } from "@api/useApi";
-import { XButton } from "@components/controls/CustomControls";
+// UI Components
+import { XButton } from "@components/UI";
 
+// Api
+import { useApi } from "@api/useApi";
+
+// Components
 import OptionsPresetDropdown from "./ProductOptionsPresetsDropdown";
 
 interface ProductOptionsEditorProps {

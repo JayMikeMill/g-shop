@@ -2,16 +2,16 @@
 import { useState, useEffect } from "react";
 
 // UI Components
-import { AnimatedDialog } from "@components/controls/AnimatedDialog";
+
 import type { Collection, Category } from "@shared/types/Catalog";
 
-import { useApi } from "@api/useApi";
-
-import { CircleSpinner } from "@ui";
-
-import { ImageEditor } from "@components/controls/ImageEditor";
+import { AnimatedDialog } from "@components/UI";
+import { ImageEditor } from "@components/UI";
+import { CircleSpinner } from "@components/UI";
 
 import CollectionImageProcessor from "./CollectionImagesProcessor";
+
+import { useApi } from "@api/useApi";
 
 // Types
 export interface CollectionImageSet {

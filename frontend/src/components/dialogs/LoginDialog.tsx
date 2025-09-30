@@ -1,7 +1,7 @@
 // src/components/LoginDialog.tsx
 import { useState } from "react";
 import { useAuth } from "@contexts/auth/AuthContext";
-import { AnimatedDialog } from "@components/controls/AnimatedDialog";
+import { AnimatedDialog } from "@components/UI";
 
 interface LoginDialogProps {
   open: boolean;
