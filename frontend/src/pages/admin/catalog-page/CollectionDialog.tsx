@@ -237,18 +237,37 @@ export function CatalogDialog<T extends Collection>({
         </label>
 
         {/* Images */}
-        <div className="flex flex-col gap-2">
-          <span className="text-sm font-semibold text-text">Images</span>
+        <div className="flex flex-row gap-2">
+          {/* Preview Image Editor */}
+          <ImageEditor<CollectionImageSet>
+            image={localItem.images}
+            onImageChange={(img: CollectionImageSet | undefined) =>
+              setLocalItem((prev) => ({
+                ...prev,
+                images: { ...prev.images, preview: img?.preview },
+              }))
+            }
+            getPreview={(img) => img?.preview || ""}
+            processor={CollectionImageProcessor.processPreview}
+            setIsProcessingImages={setIsProcessingImages}
+            emptyText="+ Add Preview Image"
+            className="w-32 aspect-[1/1]"
+          />
 
           {/* Banner Image Editor */}
           <ImageEditor<CollectionImageSet>
             image={localItem.images}
             onImageChange={(img: CollectionImageSet | undefined) =>
-              setLocalItem((prev) => ({ ...prev, images: img }))
+              setLocalItem((prev) => ({
+                ...prev,
+                images: { ...prev.images, banner: img?.banner },
+              }))
             }
             getPreview={(img) => img?.banner || ""}
             processor={CollectionImageProcessor.processBanner}
             setIsProcessingImages={setIsProcessingImages}
+            emptyText="+ Add Banner Image"
+            className="flex-1"
           />
         </div>
         {/* Footer Buttons */}

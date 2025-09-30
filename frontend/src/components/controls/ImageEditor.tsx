@@ -3,6 +3,7 @@ import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import { Zoom } from "yet-another-react-lightbox/plugins";
 import CropDialog from "@components/dialogs/CropDialog";
+import { XButton } from "./CustomControls";
 
 // --- ImageSlot Component ---
 interface ImageSlotProps {
@@ -69,16 +70,15 @@ function ImageSlot({
 
       {/* Remove */}
       {src && (
-        <button
-          type="button"
+        <XButton
           onClick={(e) => {
             e.stopPropagation();
             onRemove();
           }}
-          className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full cursor-pointer z-10 bg-black/50 text-white p-0 text-md font-mono"
-        >
-          X
-        </button>
+          className="absolute top-1 right-1 w-6 h-6 flex
+           rounded-full cursor-pointer z-10 bg-black/50 
+           text-white p-0"
+        />
       )}
     </div>
   );
@@ -192,6 +192,14 @@ function BaseImageEditor<T extends Record<string, any>>({
         delete copy[index];
         return copy;
       });
+
+      // Remove temporary preview
+      setPreviews((prev) => {
+        const copy = { ...prev };
+        delete copy[index];
+        return copy;
+      });
+
       setIsProcessingImages(false);
     }
   };
