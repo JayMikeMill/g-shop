@@ -1,15 +1,13 @@
 // src/components/CatalogDialog.tsx
-import { useState, useEffect, type SetStateAction } from "react";
+import { useState, useEffect } from "react";
 
 // UI Components
 import { AnimatedDialog } from "@components/controls/AnimatedDialog";
-import { XButton } from "@components/controls/CustomControls";
 import type { Collection, Category } from "@shared/types/Catalog";
 
 import { useApi } from "@api/useApi";
-import e from "cors";
-import ImageEditor from "./CollectionImagesEditor";
-import CollectionImagesEditor from "./CollectionImagesEditor";
+import { ImagesEditor } from "@components/controls/ImageEditor";
+import CollectionImageProcessor from "./CollectionImagesProcessor";
 
 // Types
 export interface CollectionImageSet {
@@ -95,24 +93,26 @@ export function CatalogDialog<T extends Collection>({
     }
   };
 
+  console.log("Rendering CatalogDialog with localItem:", localItem);
+
   return (
     <AnimatedDialog
       title={isAdding ? `Add ${type}` : `Edit ${type}`}
       open={open}
       onClose={handleCancel}
-      className="dialog-box rounded-none sm:rounded-2xl h-auto max-w-5xl max-h-[90vh]
-      flex flex-col overflow-hidden py-4 px-4 sm:px-8"
+      className="dialog-box flex flex-col overflow-hidden rounded-none pl-2 w-full h-full 
+      sm:rounded-2xl sm:max-w-3xl px-md sm:px-lg"
     >
       <form
         onSubmit={(e) => {
           e.preventDefault();
           handleSave();
         }}
-        className="flex flex-col gap-4 flex-1 overflow-y-auto py-4"
+        className="flex flex-1 flex-col gap-4 overflow-y-auto py-4 w-auto"
       >
-        <div className="flex flex-row gap-md w-auto">
+        <div className="flex flex-row gap-md min-w-0">
           {/* Name */}
-          <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
+          <label className="flex flex-1 flex-col gap-1 text-sm w-auto font-semibold text-text">
             {type} Name
             <input
               type="text"
@@ -122,12 +122,12 @@ export function CatalogDialog<T extends Collection>({
                 setLocalItem((prev) => ({ ...prev, name: e.target.value }))
               }
               required
-              className="input-box px-2 py-1 h-10"
+              className="input-box px-2 py-1 h-10 w-full"
             />
           </label>
 
           {/* Slug */}
-          <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
+          <label className="flex flex-1 flex-col gap-1 text-sm font-semibold text-text">
             Slug
             <input
               type="text"
@@ -137,14 +137,14 @@ export function CatalogDialog<T extends Collection>({
                 setLocalItem((prev) => ({ ...prev, slug: e.target.value }))
               }
               required
-              className="input-box px-2 py-1 h-10"
+              className="input-box px-2 py-1 h-10 w-full"
             />
           </label>
         </div>
 
         {/* SEO */}
         <div className="flex flex-col gap-2">
-          <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
+          <label className="flex flex-col gap-1 text-sm font-semibold text-text">
             SEO Title
             <input
               type="text"
@@ -160,7 +160,7 @@ export function CatalogDialog<T extends Collection>({
             />
           </label>
 
-          <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
+          <label className="flex flex-col gap-1 text-sm font-semibold text-text">
             Keywords (comma-separated)
             <input
               type="text"
@@ -181,7 +181,7 @@ export function CatalogDialog<T extends Collection>({
         </div>
 
         {/* Description */}
-        <label className="flex flex-col gap-1 text-sm font-semibold text-textSecondary">
+        <label className="flex flex-col gap-1 text-sm font-semibold text-text">
           Description
           <textarea
             placeholder="Description"
@@ -195,20 +195,36 @@ export function CatalogDialog<T extends Collection>({
 
         {/* Images */}
         <div className="flex flex-col gap-2">
-          <span className="text-sm font-semibold text-textSecondary">
-            Images
-          </span>
+          <span className="text-sm font-semibold text-text">Images</span>
 
-          <CollectionImagesEditor
-            className="w-full, h-[100px]"
-            images={localItem.images || null}
-            onImagesChange={(images) =>
-              setLocalItem((prev) => ({ ...prev, images }))
+          <ImagesEditor<CollectionImageSet>
+            images={localItem.images ? [localItem.images] : []}
+            onImagesChange={(imgs: CollectionImageSet[]) =>
+              setLocalItem((prev) => ({
+                ...prev,
+                images: imgs[0] as CollectionImageSet,
+              }))
             }
+            processor={CollectionImageProcessor.processBanner}
+            staticSlots={[
+              {
+                key: "Preview",
+                processor: CollectionImageProcessor.processPreview,
+                mapResult: (r) => ({ preview: r.preview }),
+                getPreview: (r) => r.preview,
+                className: "w-[20%]",
+              },
+              {
+                key: "Banner",
+                processor: CollectionImageProcessor.processBanner,
+                mapResult: (r) => ({ banner: r.banner }),
+                getPreview: (r) => r.banner,
+                className: "w-[80%]",
+              },
+            ]}
             setIsProcessingImages={setIsProcessingImages}
           />
         </div>
-
         {/* Footer Buttons */}
         <div className="w-full flex flex-row gap-2 px-0 sm:px-0 items-center py-4 border-t flex-shrink-0">
           <button

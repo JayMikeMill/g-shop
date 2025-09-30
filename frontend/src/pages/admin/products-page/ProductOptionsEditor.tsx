@@ -120,18 +120,18 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
       <div className="flex flex-wrap gap-2 w-full mt-auto">
         <button
           type="button"
-          className="btn-normal px-3 py-2 flex-shrink-0"
-          onClick={addOption}
-        >
-          Add Option
-        </button>
-        <button
-          type="button"
           className="btn-normal px-3 py-2 flex-shrink-0 ml-auto"
           onClick={handleSavePreset}
           disabled={saving}
         >
           {saving ? "Saving..." : "Save Preset"}
+        </button>
+        <button
+          type="button"
+          className="btn-normal px-3 py-2 flex-shrink-0"
+          onClick={addOption}
+        >
+          Add Option
         </button>
       </div>
     </div>

@@ -18,7 +18,7 @@ export interface Product {
   variants: ProductVariant[];
   categories: Category[];
   collections: Collection[];
-  reviews: ProductReview[];
+  reviews?: ProductReview[];
 }
 
 // Product images
@@ -105,7 +105,6 @@ export const emptyProduct = (): Product => {
     variants: [],
     categories: [],
     collections: [],
-    reviews: [],
   };
 };
 

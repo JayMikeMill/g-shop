@@ -20,10 +20,11 @@ import {
   ProductVariantEditor,
   ProductVariantHeader,
 } from "./ProductVariantEditor";
-import ProductImagesEditor from "./ProductImagesEditor";
 
 import { useApi } from "@api/useApi";
 import ProductDimensionsEditor from "./ProductDimensionsEditor";
+import { ImagesEditor } from "@components/controls/ImageEditor";
+import ProductImageProcessor from "./ProductImagesProcessor";
 
 interface ProductDialogProps {
   product: Product | null;
@@ -159,7 +160,7 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
       open={shouldRender}
       onClose={handleCancel}
       className="dialog-box flex flex-col overflow-hidden rounded-none pl-2 w-full h-full 
-      sm:rounded-2xl sm:h-full sm:max-w-3xl px-md sm:px-lg zoom-90"
+      sm:rounded-2xl sm:max-w-3xl px-md sm:px-lg zoom-90"
     >
       <form
         onSubmit={handleSubmit}
@@ -235,12 +236,17 @@ export const ProductEditorDialog: React.FC<ProductDialogProps> = ({
 
           {/* Image Editor */}
           <div className=" flex flex-col flex-shrink-0  pb-md gap-md sm:w-1/3 sm:pb-0">
-            <ProductImagesEditor
+            <ImagesEditor<ProductImageSet>
               className=""
               images={localProduct.images ?? []}
               onImagesChange={(imgs) =>
-                setLocalProduct((prev) => ({ ...prev, images: imgs }))
+                setLocalProduct((prev) => ({
+                  ...prev,
+                  images: imgs as ProductImageSet[],
+                }))
               }
+              processor={ProductImageProcessor.process}
+              getPreview={(item: ProductImageSet) => item.preview} // optional, for lightbox
               setIsProcessingImages={setIsProcessingImages}
             />
 
