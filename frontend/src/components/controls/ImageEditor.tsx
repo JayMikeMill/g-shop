@@ -58,7 +58,7 @@ function ImageSlot<T extends Record<string, any>>({
 }: ImageSlotProps<T>) {
   // Text shown if the slot is empty
   const emptyText = isStatic ? `+ Add ${slot?.key}` : "+ Add Image";
-
+  const emptyBorder = src ? "" : "border-2 border-dashed border-gray-300";
   return (
     <div
       key={isStatic ? slot!.key : index}
@@ -68,7 +68,10 @@ function ImageSlot<T extends Record<string, any>>({
       onDragEnd={onDragEnd}
       onDragOver={(e) => e.preventDefault()}
       onClick={onClick}
-      className={`relative rounded-lg overflow-hidden flex-shrink-0 w-[100px] h-[100px] md:w-full md:h-[100px] select-none cursor-pointer flex items-center justify-center border-2 border-dashed border-gray-300 hover:bg-gray-100 transition ${slot?.className || ""}`}
+      className={`relative rounded-lg overflow-hidden flex-shrink-0 w-[100px] h-[100px]
+		 md:w-full md:h-[100px] select-none cursor-pointer flex items-center 
+		 justify-center  ${emptyBorder} hover:bg-gray-100 
+		 transition ${slot?.className || ""}`}
     >
       {/* Image preview or empty text */}
       {src ? (
@@ -318,6 +321,21 @@ export function ImagesEditor<T extends Record<string, any>>({
     );
   };
 
+  const lightBoxSlides = isStaticEditor
+    ? ((staticSlots ?? [])
+        .map((slot) => {
+          if (!images[0]) return null; // skip if no image
+          return {
+            src: slot.getPreview
+              ? slot.getPreview(images[0])
+              : (images[0] as any).main,
+          };
+        })
+        .filter(Boolean) as { src: string }[]) // remove nulls
+    : images.map((img) => ({
+        src: getPreview ? getPreview(img) : (img as any).main,
+      }));
+
   return (
     <div
       className={`input-box flex gap-2 p-2 overflow-x-auto h-[120px] flex-nowrap items-center sm:grid sm:grid-cols-2 sm:auto-rows-min sm:h-full sm:overflow-y-auto ${className}`}
@@ -344,9 +362,7 @@ export function ImagesEditor<T extends Record<string, any>>({
           <Lightbox
             open
             close={() => setLightboxIndex(null)}
-            slides={images.map((img) => ({
-              src: getPreview ? getPreview(img) : (img as any).main,
-            }))}
+            slides={lightBoxSlides}
             index={lightboxIndex ?? 0}
             plugins={[Zoom]}
             styles={{ container: { backgroundColor: "rgba(0,0,0,0.5)" } }}

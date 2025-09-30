@@ -219,7 +219,7 @@ export function CatalogDialog<T extends Collection>({
                 processor: CollectionImageProcessor.processBanner,
                 mapResult: (r) => ({ banner: r.banner }),
                 getPreview: (r) => r.banner,
-                className: "w-[80%]",
+                className: "w-[20%]",
               },
             ]}
             setIsProcessingImages={setIsProcessingImages}
