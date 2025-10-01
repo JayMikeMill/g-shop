@@ -74,12 +74,7 @@ export function AdminCatalogPage({ apiKey, typeLabel }: AdminCatalogPageProps) {
         onRowClick={(item: Collection | Category) => setEditingItem(item)}
         objectsName={typeLabel + "s"}
         headerButton={
-          <Button
-            className="btn-normal whitespace-nowrap"
-            onClick={() => setIsAdding(true)}
-          >
-            Add {typeLabel}
-          </Button>
+          <Button onClick={() => setIsAdding(true)}>Add {typeLabel}</Button>
         }
         columns={[
           {

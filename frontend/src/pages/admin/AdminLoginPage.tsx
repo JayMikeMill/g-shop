@@ -110,7 +110,7 @@ function AdminLoginDialog({
         )}
         <Button
           type="submit"
-          className="btn-normal h-12 w-64 self-center"
+          className="h-12 w-64 self-center"
           disabled={loading}
         >
           {loading ? "Logging in..." : "Login"}

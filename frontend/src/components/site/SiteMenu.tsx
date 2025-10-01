@@ -71,7 +71,7 @@ export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
 
           {/* Slide-out menu */}
           <motion.div
-            className="relative bg-surface w-2/3 max-w-xs h-full shadow-lg p-lg flex flex-col gap-4"
+            className="relative bg-card w-2/3 max-w-xs h-full shadow-lg p-lg flex flex-col gap-4"
             initial={{ x: "-100%" }}
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}

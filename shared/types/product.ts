@@ -47,7 +47,8 @@ export interface ProductOptionsPreset {
 export interface ProductTag {
   id?: string;
   name: string;
-  color?: string;
+  color: string;
+  textColor: string;
 }
 
 export interface ProductTagPreset extends ProductTag {}

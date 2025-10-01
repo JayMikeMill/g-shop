@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Button } from "@components/ui";
+import { Button, TagBox } from "@components/ui";
 import { AnimatedDropdownBox } from "@components/ui";
 
 import type {
@@ -12,6 +12,7 @@ import type {
 import { ProductTagDialog } from "./ProductTagDialog";
 
 import { useApi } from "@api/useApi";
+import { color } from "framer-motion";
 
 interface TagPresetsDropdownProps {
   onSelectPreset: (preset: ProductTagPreset) => void; // notify main component
@@ -26,6 +27,7 @@ const TagPresetsDropdown: React.FC<TagPresetsDropdownProps> = ({
 
   const [newTagName, setNewTagName] = useState("");
   const [newTagColor, setNewTagColor] = useState("#000000");
+  const [newTagTextColor, setNewTagTextColor] = useState("#ffffff");
 
   // Load presets
   useEffect(() => {
@@ -57,11 +59,13 @@ const TagPresetsDropdown: React.FC<TagPresetsDropdownProps> = ({
       const created = await productTagsPresets.create({
         name: newTagName.trim(),
         color: newTagColor,
+        textColor: newTagTextColor,
       });
       setPresets((prev) => [...prev, created]);
       setCreating(false);
       setNewTagName("");
-      setNewTagColor("#ffffffff");
+      setNewTagColor("#bebebeff");
+      setNewTagTextColor("#ffffff");
     } catch (err) {
       console.error("Error creating tag preset", err);
     }
@@ -117,6 +121,8 @@ const TagPresetsDropdown: React.FC<TagPresetsDropdownProps> = ({
         setName={setNewTagName}
         color={newTagColor}
         setColor={setNewTagColor}
+        textColor={newTagTextColor}
+        setTextColor={setNewTagTextColor}
         onClose={() => setCreating(false)}
         onSave={createPreset}
       />
@@ -162,19 +168,22 @@ const ProductTagsEditor: React.FC<ProductTagsEditorProps> = ({
 
       <div className="flex flex-wrap gap-2 mt-2">
         {localTags.map((tag, i) => (
-          <div
-            key={i}
-            className="flex items-center gap-2 py-0.5 pr-1 rounded-md items-middle justify-middle"
-            style={{ backgroundColor: tag.color || "#ccc", color: "#fff" }}
-          >
-            <span className="text-center font-bold font-font ml-3">
-              {tag.name}
-            </span>
-            <Button
-              variant={"xicon"}
-              className="w-5 h-5"
-              onClick={() => removeTag(i)}
-            />
+          <div key={i} className="flex items-center gap-2">
+            <TagBox
+              color={tag.color || "#ccc"}
+              text={tag.name}
+              textColor={tag.textColor}
+            >
+              <Button
+                variant={"xicon"}
+                className="w-5 h-5"
+                style={{
+                  backgroundColor: tag.color || "#ccc",
+                  color: tag.textColor || "#fff",
+                }}
+                onClick={() => removeTag(i)}
+              />
+            </TagBox>
           </div>
         ))}
       </div>

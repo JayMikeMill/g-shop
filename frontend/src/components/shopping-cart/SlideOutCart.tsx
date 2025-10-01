@@ -61,7 +61,8 @@ export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
 
             {/* Slide-out container */}
             <motion.div
-              className="fixed top-0 right-0 h-full w-full md:w-1/3 flex flex-col p-lg overflow-y-auto bg-backgroundAlt shadow-xl rounded-l-lg"
+              className={`fixed top-0 right-0 h-full w-full md:w-1/3 flex flex-col 
+                p-lg overflow-y-auto bg-card shadow-xl rounded-l-lg`}
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}

@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 
 import type { Collection, Category } from "@shared/types/Catalog";
 
-import { AnimatedDialog, Button, Input } from "@components/ui";
+import { AnimatedDialog, Button, Input, Textarea } from "@components/ui";
 import { ImageEditor } from "@components/ui";
 import { CircleSpinner } from "@components/ui";
 
@@ -224,13 +224,13 @@ export function CatalogDialog<T extends Collection>({
         {/* Description */}
         <label className="flex flex-col gap-1 text-sm font-semibold text-text">
           Description
-          <textarea
+          <Textarea
             placeholder="Description"
             value={localItem.description ?? ""}
             onChange={(e) =>
               setLocalItem((prev) => ({ ...prev, description: e.target.value }))
             }
-            className="input-box px-2 py-1 h-24 resize-none"
+            className="px-2 py-1 h-24 resize-none"
           />
         </label>
 

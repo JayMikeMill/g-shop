@@ -8,7 +8,7 @@ import { useApi } from "@api/useApi";
 
 import ProductOptionSelector from "./ProductOptionsSelector";
 import ProductPageImages from "./ProductPageImages";
-import { Button } from "@components/ui";
+import { Button, TagBox } from "@components/ui";
 
 const ProductPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -116,9 +116,12 @@ const ProductPage = () => {
           {Array.isArray(product.tags) && product.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-2">
               {product.tags.map((tag, index) => (
-                <span key={index} className="tag-box">
-                  {tag.name}
-                </span>
+                <TagBox
+                  key={index}
+                  text={tag.name}
+                  color={tag.color ? tag.color : "accent"}
+                  textColor={tag.textColor ? tag.textColor : "#fff"}
+                />
               ))}
             </div>
           )}

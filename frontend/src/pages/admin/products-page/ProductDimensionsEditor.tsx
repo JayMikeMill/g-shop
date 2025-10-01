@@ -39,7 +39,6 @@ export const ProductDimensionsEditor: React.FC<
   const weightPrefix = system === "imperial" ? "oz" : "gm";
   const sizePrefix = system === "imperial" ? "in" : "cm";
 
-  const inputClass = "input-box h-8 w-full text-center";
   const labelClass =
     "flex-1 flex flex-col gap-1 font-semibold text-textSecondary text-center";
   return (

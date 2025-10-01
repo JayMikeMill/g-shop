@@ -1,3 +1,6 @@
+// Barrel file for UI components
+
+// Custom components
 export * from "./custom/CircleSpinner";
 export * from "./custom/AnimatedDialog";
 export * from "./custom/ImageEditor";
@@ -5,7 +8,9 @@ export * from "./custom/AnimatedDropdownSurface";
 export * from "./custom/AnimatedDropdownBox";
 export * from "./custom/CropDialog";
 export * from "./custom/DynamicTable";
+export * from "./custom/TagBox";
 
+// Primitives
 export * from "./primitives/Label";
 export * from "./primitives/Button";
 export * from "./primitives/Input";

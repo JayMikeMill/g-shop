@@ -204,6 +204,7 @@ model ProductTag {
   productId String
   name      String
   color     String?
+  textColor String?
 }
 
 model ProductVariant {
@@ -230,6 +231,7 @@ model ProductTagPreset {
   id    String @id @default(uuid())
   name  String
   color String?
+  textColor String?
 }
 
 model ProductOptionsPreset {

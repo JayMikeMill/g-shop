@@ -272,7 +272,7 @@ function BaseImageEditor<T extends Record<string, any>>({
     src: getPreview ? getPreview(img) : (img as any).main,
   }));
 
-  const multiClass = `input-box flex gap-2 p-2 overflow-x-auto h-[120px] flex-nowrap items-center sm:grid sm:grid-cols-2 sm:auto-rows-min sm:h-full sm:overflow-y-auto ${className}`;
+  const multiClass = `border border-border rounded flex gap-2 p-2 overflow-x-auto h-[120px] flex-nowrap items-center sm:grid sm:grid-cols-2 sm:auto-rows-min sm:h-full sm:overflow-y-auto ${className}`;
   const singleClass = `items-center ${className}`;
 
   return (

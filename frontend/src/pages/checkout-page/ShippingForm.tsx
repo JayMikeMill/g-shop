@@ -7,7 +7,7 @@ import {
 import { z } from "zod";
 import { useForm, useWatch, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@components/ui";
+import { Input, Label } from "@components/ui";
 
 const zEnum = <T extends Record<string, string>>(obj: T) =>
   z.enum(Object.values(obj) as [string, ...string[]]);
@@ -108,9 +108,6 @@ export default function ShippingForm({
     console.log("Shipping info submitted:", data);
   };
 
-  const inputClassName = "input-box w-full px-2 h-8";
-  const labelClassName = "px-1";
-
   return (
     <form
       onSubmit={handleSubmit(submitForm)}
@@ -122,80 +119,68 @@ export default function ShippingForm({
       {/* Name Row */}
       <div className="flex gap-4">
         <div className="flex-1">
-          <label className={labelClassName}>First Name</label>
-          <Input
-            className={inputClassName}
-            {...register("address.firstName")}
-          />
+          <Label>First Name</Label>
+          <Input {...register("address.firstName")} />
         </div>
         <div className="flex-1">
-          <label className={labelClassName}>Last Name</label>
-          <Input className={inputClassName} {...register("address.lastName")} />
+          <Label>Last Name</Label>
+          <Input {...register("address.lastName")} />
         </div>
       </div>
 
       {/* Address Line 1 - full width */}
       <div>
-        <label className={labelClassName}>Address Line 1</label>
-        <Input
-          className={inputClassName}
-          {...register("address.addressLine1")}
-        />
+        <Label>Address Line 1</Label>
+        <Input {...register("address.addressLine1")} />
       </div>
 
       {/* Address Line 2 - full width */}
       <div>
-        <label className={labelClassName}>Address Line 2</label>
-        <Input
-          className={inputClassName}
-          {...register("address.addressLine2")}
-        />
+        <Label>Address Line 2</Label>
+        <Input {...register("address.addressLine2")} />
       </div>
 
       {/* City + State Row */}
       <div className="flex gap-4">
         <div className="flex-1">
-          <label className={labelClassName}>City</label>
-          <Input className={inputClassName} {...register("address.city")} />
+          <Label>City</Label>
+          <Input {...register("address.city")} />
         </div>
         <div className="flex-1">
-          <label className={labelClassName}>State</label>
-          <Input className={inputClassName} {...register("address.state")} />
+          <Label>State</Label>
+          <Input {...register("address.state")} />
         </div>
       </div>
 
       {/* Postal Code + Country Row */}
       <div className="flex gap-4">
         <div className="flex-1">
-          <label className={labelClassName}>Postal Code</label>
-          <Input
-            className={inputClassName}
-            {...register("address.postalCode")}
-          />
+          <Label>Postal Code</Label>
+          <Input {...register("address.postalCode")} />
         </div>
         <div className="flex-1">
-          <label className={labelClassName}>Country</label>
-          <Input className={inputClassName} {...register("address.country")} />
+          <Label>Country</Label>
+          <Input {...register("address.country")} />
         </div>
       </div>
 
       {/* Email + Phone Row */}
       <div className="flex gap-4">
         <div className="flex-1">
-          <label className={labelClassName}>Email</label>
-          <Input className={inputClassName} {...register("email")} />
+          <Label>Email</Label>
+          <Input {...register("email")} />
         </div>
         <div className="flex-1">
-          <label className={labelClassName}>Phone</label>
-          <Input className={inputClassName} {...register("phone")} />
+          <Label>Phone</Label>
+          <Input {...register("phone")} />
         </div>
       </div>
 
       {/* Shipping Method + Carrier Row */}
       <div className="flex gap-4">
         <div className="flex-1">
-          <label className={labelClassName}>Shipping Method</label>
-          <select className={inputClassName} {...register("method")}>
+          <Label>Shipping Method</Label>
+          <select {...register("method")}>
             {Object.values(ShippingMethods).map((m) => (
               <option key={m} value={m}>
                 {m}
@@ -204,8 +189,8 @@ export default function ShippingForm({
           </select>
         </div>
         <div className="flex-1">
-          <label className={labelClassName}>Carrier</label>
-          <select className={inputClassName} {...register("carrier")}>
+          <Label>Carrier</Label>
+          <select {...register("carrier")}>
             {Object.values(ShippingCarriers).map((c) => (
               <option key={c} value={c}>
                 {c}

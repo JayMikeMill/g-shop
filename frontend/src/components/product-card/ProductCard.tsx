@@ -2,6 +2,8 @@ import { useCart } from "@contexts/CartContext";
 import { type Product } from "@shared/types/Product";
 import { useNavigate } from "react-router-dom";
 
+import { TagBox } from "@components/ui";
+
 interface ProductCardProps {
   product: Product;
 }
@@ -58,9 +60,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {product.tags && product.tags.length > 0 && (
           <div className="absolute top-2 left-2 flex gap-1">
             {product.tags.map((tag, index) => (
-              <span key={index} className="tag-box">
-                {tag.name}
-              </span>
+              <TagBox
+                key={index}
+                text={tag.name}
+                color={tag.color ? tag.color : "accent"}
+                textColor={tag.textColor ? tag.textColor : "#fff"}
+              />
             ))}
           </div>
         )}

@@ -66,10 +66,3 @@
 .table-pagination button:disabled {
   @apply opacity-50 cursor-not-allowed;
 }
-
-/* =========================
-     Search Input
-  ========================== */
-.table-search {
-  @apply input-box w-full text-sm px-md py-sm;
-}

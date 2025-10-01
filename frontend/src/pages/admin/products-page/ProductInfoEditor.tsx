@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 // UI Components
-import { Input, inputVariants, Label } from "@components/ui";
+import { Input, inputVariants, Label, Textarea } from "@components/ui";
 
 // Types
 import {
@@ -77,14 +77,14 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
         />
       </Label>
 
-      <div className="flex gap-md items-end justify-between">
+      <div className="flex gap-md justify-left">
         {/* Price */}
-        <Label className="flex-col gap-xs text-center">
+        <Label className="flex-col gap-xs  w-32">
           Price
           <div className="relative">
             <Input
               type="number"
-              className="w-32 text-center"
+              className="text-center"
               min={0}
               onFocus={(e) => e.target.select()}
               value={priceToFloat(localProduct.price)}
@@ -101,11 +101,11 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
         </Label>
 
         {/* Discount */}
-        <div className="flex-1 flex items-end">
-          <Label className="flex-col gap-xs text-center">
+        <div className="flex items-end gap-sm">
+          <Label className="flex-col gap-xs">
             Discount
             <Input
-              className="w-32 text-center"
+              className="text-center  w-32"
               type="number"
               min={0}
               onFocus={(e) => e.target.select()}
@@ -117,7 +117,7 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
 
           {/* Discount Type */}
           <select
-            className={inputVariants({ className: "ml-2 w-10" })}
+            className={inputVariants({ className: "w-10" })}
             value={discountType}
             onChange={(e) => setDiscountType(e.target.value as "%" | "$")}
           >
@@ -134,7 +134,7 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
       {/* Description */}
       <Label className="flex-col gap-xs">
         Description
-        <textarea
+        <Textarea
           value={localProduct.description}
           placeholder="Product Description"
           onChange={(e) =>
@@ -144,7 +144,7 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
             }))
           }
           required
-          className="input-box px-md py-1 h-40 resize-none"
+          className="px-md py-1 h-40 resize-none"
         />
       </Label>
     </div>
