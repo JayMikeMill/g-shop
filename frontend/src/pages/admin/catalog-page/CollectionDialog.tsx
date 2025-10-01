@@ -136,7 +136,7 @@ export function CatalogDialog<T extends Collection>({
       title={isAdding ? `Add ${type}` : `Edit ${type}`}
       open={open}
       onClose={handleCancel}
-      className="dialog-box flex flex-col overflow-hidden rounded-none pl-2 w-full h-full 
+      className="flex flex-col overflow-hidden rounded-none pl-2 w-full h-full 
       sm:rounded-2xl sm:max-w-3xl px-md sm:px-lg"
     >
       {/* Loading Spinner */}

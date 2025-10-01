@@ -84,8 +84,8 @@ export default function AdminProductsPage() {
         open={editingProduct !== null || isCreating}
         title={isCreating ? "Create Product" : "Edit Product"}
         onClose={handleDialogCancel}
-        className="dialog-box flex flex-col overflow-hidden rounded-none pl-2 w-full h-full 
-            sm:rounded-2xl sm:max-w-3xl px-md sm:px-lg zoom-90 z-49"
+        className="flex flex-col overflow-hidden pl-2 w-full h-full 
+            sm:rounded-2xl sm:max-w-3xl px-md sm:px-lg z-49"
       >
         <ProductEditorForm
           product={editingProduct}

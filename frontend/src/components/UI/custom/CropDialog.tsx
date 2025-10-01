@@ -82,7 +82,7 @@ export const CropDialog: React.FC<CropDialogProps> = ({
       title="Crop Image"
       open={open}
       onClose={onCancel}
-      className="dialog-box p-md pt-0 flex flex-col w-[360px] sm:w-[400px] max-h-[90vh] overflow-hidden"
+      className="p-md pt-0 flex flex-col w-[360px] sm:w-[400px] max-h-[90vh] overflow-hidden"
     >
       <div className="relative w-full h-80 mb-sm border-2 border-border rounded-md overflow-hidden bg-background">
         {imageUrl && (

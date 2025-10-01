@@ -129,10 +129,6 @@
 
 /* Custom component styles */
 @layer components {
-  .dialog-box {
-    @apply rounded-lg shadow-xl border border-[var(--border)] bg-card;
-  }
-
   .surface-box {
     @apply bg-card rounded-lg shadow-xl;
   }

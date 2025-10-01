@@ -80,14 +80,12 @@ const TagPresetsDropdown: React.FC<TagPresetsDropdownProps> = ({
     value: p,
     render: (preset: ProductTagPreset) => (
       <div className="flex gap-2 items-center w-auto cursor-pointer hover:bg-backgroundAlt z-100">
-        {/* Colored circle */}
-        <div
-          className="w-4 h-4 rounded-full"
-          style={{
-            backgroundColor: preset.color ?? "#ccc",
-          }}
+        <TagBox
+          className="w-full h-6 self-center"
+          text={preset.name}
+          color={preset.color}
+          textColor={preset.textColor}
         />
-        <span className="flex-1 text-text">{preset.name}</span>
         <Button
           variant={"xicon"}
           className="w-8 h-8"
@@ -102,7 +100,7 @@ const TagPresetsDropdown: React.FC<TagPresetsDropdownProps> = ({
   }));
 
   return (
-    <div className="relative flex items-center gap-2">
+    <div className="relative flex items-center gap-2 w-3/4">
       {/* Dropdown */}
       <AnimatedDropdownBox
         items={dropdownItems}
