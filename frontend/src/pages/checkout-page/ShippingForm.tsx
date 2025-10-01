@@ -7,6 +7,7 @@ import {
 import { z } from "zod";
 import { useForm, useWatch, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Input } from "@components/ui";
 
 const zEnum = <T extends Record<string, string>>(obj: T) =>
   z.enum(Object.values(obj) as [string, ...string[]]);
@@ -122,21 +123,21 @@ export default function ShippingForm({
       <div className="flex gap-4">
         <div className="flex-1">
           <label className={labelClassName}>First Name</label>
-          <input
+          <Input
             className={inputClassName}
             {...register("address.firstName")}
           />
         </div>
         <div className="flex-1">
           <label className={labelClassName}>Last Name</label>
-          <input className={inputClassName} {...register("address.lastName")} />
+          <Input className={inputClassName} {...register("address.lastName")} />
         </div>
       </div>
 
       {/* Address Line 1 - full width */}
       <div>
         <label className={labelClassName}>Address Line 1</label>
-        <input
+        <Input
           className={inputClassName}
           {...register("address.addressLine1")}
         />
@@ -145,7 +146,7 @@ export default function ShippingForm({
       {/* Address Line 2 - full width */}
       <div>
         <label className={labelClassName}>Address Line 2</label>
-        <input
+        <Input
           className={inputClassName}
           {...register("address.addressLine2")}
         />
@@ -155,11 +156,11 @@ export default function ShippingForm({
       <div className="flex gap-4">
         <div className="flex-1">
           <label className={labelClassName}>City</label>
-          <input className={inputClassName} {...register("address.city")} />
+          <Input className={inputClassName} {...register("address.city")} />
         </div>
         <div className="flex-1">
           <label className={labelClassName}>State</label>
-          <input className={inputClassName} {...register("address.state")} />
+          <Input className={inputClassName} {...register("address.state")} />
         </div>
       </div>
 
@@ -167,14 +168,14 @@ export default function ShippingForm({
       <div className="flex gap-4">
         <div className="flex-1">
           <label className={labelClassName}>Postal Code</label>
-          <input
+          <Input
             className={inputClassName}
             {...register("address.postalCode")}
           />
         </div>
         <div className="flex-1">
           <label className={labelClassName}>Country</label>
-          <input className={inputClassName} {...register("address.country")} />
+          <Input className={inputClassName} {...register("address.country")} />
         </div>
       </div>
 
@@ -182,11 +183,11 @@ export default function ShippingForm({
       <div className="flex gap-4">
         <div className="flex-1">
           <label className={labelClassName}>Email</label>
-          <input className={inputClassName} {...register("email")} />
+          <Input className={inputClassName} {...register("email")} />
         </div>
         <div className="flex-1">
           <label className={labelClassName}>Phone</label>
-          <input className={inputClassName} {...register("phone")} />
+          <Input className={inputClassName} {...register("phone")} />
         </div>
       </div>
 

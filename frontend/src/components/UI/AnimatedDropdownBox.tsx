@@ -40,12 +40,12 @@ export const AnimatedDropdownBox = <T,>({
   const toggle = () => setOpen((prev) => !prev);
 
   return (
-    <div ref={ref} className={`relative w-full ${className ?? ""}`}>
+    <div ref={ref} className={`relative ${className ?? ""}`}>
       {/* Dropdown button */}
       {
         <Button
           type="button"
-          className="bg-background text-primaryForeground transition-all
+          className="bg-background text-primaryForeground
             shadow-sm px-2 py-1 w-full text-leftflex border border-input
             justify-between items-center"
           onClick={toggle}
@@ -63,7 +63,7 @@ export const AnimatedDropdownBox = <T,>({
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
             className={`absolute z-10 mt-1 w-full bg-background 
-              border border-border rounded border-input
+              border border-input rounded border-input
               shadow-md max-h-60 overflow-y-auto ${menuClassName ?? ""}`}
           >
             {items.length === 0 ? (
@@ -72,7 +72,7 @@ export const AnimatedDropdownBox = <T,>({
               items.map((item, idx) => (
                 <div
                   key={idx}
-                  className="px-2 py-1 hover:bg-background cursor-pointer"
+                  className="px-2 py-1 hover:bg-accent cursor-pointer hover:bg-accent transition-colors"
                   onClick={() => {
                     item.onClick?.(item.value);
                     setOpen(false);

@@ -8,6 +8,7 @@ import {
   priceToFloat,
   floatToPrice,
 } from "@shared/types/Product";
+import { Input } from "@components/ui";
 
 interface ProductVariantEditorProps {
   product: Product;
@@ -120,7 +121,7 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
           </div>
 
           {/* Stock count */}
-          <input
+          <Input
             type="number"
             min={0}
             step={1}
@@ -128,7 +129,7 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
             placeholder="-"
             onChange={(e) => updateVariantStock(idx, e.target.value)}
             onFocus={(e) => e.target.select()}
-            className="input-box w-[30%] text-center"
+            className="w-[30%] text-center"
           />
 
           {/* Price in dollars */}
@@ -136,7 +137,7 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
             <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500">
               $
             </span>
-            <input
+            <Input
               type="number"
               min={0}
               step={0.01}
@@ -144,7 +145,7 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
               placeholder="-"
               onChange={(e) => updateVariantPrice(idx, e.target.value)}
               onFocus={(e) => e.target.select()}
-              className="input-box w-full text-center" // add padding-left for the $ sign
+              className="w-full text-center" // add padding-left for the $ sign
             />
           </div>
         </div>

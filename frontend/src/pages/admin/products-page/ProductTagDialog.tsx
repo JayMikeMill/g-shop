@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { HexColorPicker } from "react-colorful";
-import { AnimatedDialog, Button } from "@components/ui";
+import { AnimatedDialog, Button, Input } from "@components/ui";
 
 interface ProductTagDialogProps {
   name: string;
@@ -40,12 +40,12 @@ export const ProductTagDialog: React.FC<ProductTagDialogProps> = ({
           className="w-12 h-8 rounded-md border border-gray-400 shadow-sm"
         />
 
-        <input
+        <Input
           type="text"
           placeholder="Tag Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="input-box px-2 py-1 w-full"
+          className="px-2 py-1 w-full"
         />
       </div>
 
@@ -96,12 +96,12 @@ export function ColorPickerButton({
           </div>
           <HexColorPicker color={color} onChange={onChange} />
 
-          <input
+          <Input
             type="text"
             value={color}
             onFocus={(e) => e.target.select()}
             onChange={(e) => onChange(e.target.value)}
-            className="input-box px-2 py-1 w-auto mt-2 text-center"
+            className="px-2 py-1 w-auto mt-2 text-center"
           />
           <Button className="w-auto mt-2" onClick={() => setOpen(false)}>
             Select Color

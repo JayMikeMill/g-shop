@@ -13,7 +13,11 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
           file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground
           placeholder:text-muted-foreground focus-visible:outline-none 
           focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed 
-          disabled:opacity-50 md:text-sm`,
+          disabled:opacity-50 md:text-sm
+          appearance-none 
+          [&::-webkit-outer-spin-button]:appearance-none 
+          [&::-webkit-inner-spin-button]:appearance-none 
+          [moz-appearance:textfield] `,
           className
         )}
         ref={ref}

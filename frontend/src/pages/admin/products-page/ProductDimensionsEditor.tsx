@@ -49,6 +49,7 @@ export const ProductDimensionsEditor: React.FC<
         {"Weight (" + weightPrefix + ")"}
         <div className="relative">
           <Input
+            className="text-center"
             type="number"
             min={0}
             onFocus={(e) => e.target.select()}
@@ -64,6 +65,7 @@ export const ProductDimensionsEditor: React.FC<
         {"Length (" + sizePrefix + ")"}
         <div className="relative">
           <Input
+            className="text-center"
             type="number"
             min={0}
             onFocus={(e) => e.target.select()}
@@ -79,6 +81,7 @@ export const ProductDimensionsEditor: React.FC<
         {"Width (" + sizePrefix + ")"}
         <div className="relative">
           <Input
+            className="text-center"
             type="number"
             min={0}
             onFocus={(e) => e.target.select()}
@@ -94,6 +97,7 @@ export const ProductDimensionsEditor: React.FC<
         {"Height (" + sizePrefix + ")"}
         <div className="relative">
           <Input
+            className="text-center"
             type="number"
             min={0}
             onFocus={(e) => e.target.select()}
