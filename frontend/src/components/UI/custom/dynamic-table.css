@@ -17,19 +17,19 @@
   ========================== */
 .table thead th {
   @apply font-bold uppercase text-center text-sm px-md py-sm 
-           border-b border-l border-border cursor-pointer sticky top-0 z-10 
-           bg-primary text-primary-foreground transition-colors duration-200;
+          border-b border-l border-border cursor-pointer sticky top-0 z-10 
+          bg-primary text-primary-foreground transition-colors duration-200;
 }
 
 .table thead th.sortable:hover {
-  @apply bg-secondary text-secondary-foreground;
+  @apply bg-primary-400 text-primary-foreground;
 }
 
 /* =========================
      Table Body Rows
   ========================== */
 .table tbody tr {
-  @apply transition-colors duration-200;
+  @apply transition-colors duration-300;
 }
 
 .table tbody tr:nth-child(even) {
@@ -38,6 +38,10 @@
 
 .table tbody tr:nth-child(odd) {
   @apply bg-card;
+}
+
+.table tbody tr:hover {
+  @apply bg-primary-50;
 }
 
 /* =========================

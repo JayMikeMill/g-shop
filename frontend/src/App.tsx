@@ -3,7 +3,7 @@ import SiteHeader from "@components/site/SiteHeader";
 import SiteFooter from "@components/site/SiteFooter";
 import AppRoutes from "./routes/AppRoutes";
 
-import { applyTheme } from "./theme";
+import { applyTheme } from "./styles/theme";
 
 export default function App() {
   applyTheme("light");

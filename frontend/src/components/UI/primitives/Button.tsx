@@ -6,10 +6,10 @@ import { TrashIcon, XIcon } from "lucide-react";
 
 const buttonVariants = cva(
   `inline-flex items-center justify-center px-6 py-2 gap-2 whitespace-nowrap 
-  text-sm font-semibold shadow-sm rounded-md 
+  text-sm font-semibold shadow-sm rounded-md border border-primary-200
   cursor-pointer transition-all duration-200 
   hover:-translate-y-[0.1rem]  hover:shadow-md 
-  active:-translate-y-[0.2rem]   active:shadow-lg 
+  active:-translate-y-[0.2rem]   active:shadow-lg active:bg-primary-600
   disabled:pointer-events-none disabled:opacity-50`,
   //[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0`,
 
