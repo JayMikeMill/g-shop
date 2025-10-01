@@ -2,14 +2,14 @@ import { useState, useRef, useEffect, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@components/ui";
 
-interface DropdownItem<T> {
+interface SelectItem<T> {
   value: T;
   render: (item: T) => ReactNode;
   onClick?: (item: T) => void;
 }
 
-interface AnimatedDropdownBoxProps<T> {
-  items: DropdownItem<T>[];
+interface AnimatedSelectProps<T> {
+  items: SelectItem<T>[];
   headerText?: string;
   noItemsText?: string;
   className?: string;
@@ -22,7 +22,7 @@ export const AnimatedDropdownBox = <T,>({
   noItemsText = "No items",
   className,
   menuClassName,
-}: AnimatedDropdownBoxProps<T>) => {
+}: AnimatedSelectProps<T>) => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 

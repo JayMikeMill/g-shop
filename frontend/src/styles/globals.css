@@ -9,7 +9,7 @@
     /* 🎨 Base surfaces */
     --background: #ffffff; /* app/page background */
     --foreground: #1f2937; /* default text */
-    --card: #ffffff; /* card/dialog/panel background */
+    --card: #fefefe; /* card/dialog/panel background */
     --card-foreground: #1f2937; /* text on cards */
     --popover: #ffffff; /* dropdowns, tooltips, floating layers */
     --popover-foreground: #1f2937; /* text on popovers */

@@ -5,7 +5,7 @@ export * from "./custom/CircleSpinner";
 export * from "./custom/AnimatedDialog";
 export * from "./custom/ImageEditor";
 export * from "./custom/AnimatedDropdownSurface";
-export * from "./custom/AnimatedDropdownBox";
+export * from "./custom/AnimatedSelect/";
 export * from "./custom/CropDialog";
 export * from "./custom/DynamicTable";
 export * from "./custom/TagBox";
