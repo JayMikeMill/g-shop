@@ -151,7 +151,7 @@ export function CatalogDialog<T extends Collection>({
           e.preventDefault();
           handleSave();
         }}
-        className="flex flex-1 flex-col gap-4 overflow-y-auto py-4 w-auto"
+        className="flex flex-1 flex-col gap-4 overflow-y-auto py-4 w-auto  px-1"
       >
         <div className="flex flex-row gap-md min-w-0">
           {/* Name */}

@@ -6,7 +6,7 @@ import { TrashIcon, XIcon } from "lucide-react";
 
 const buttonVariants = cva(
   `inline-flex items-center justify-center px-6 py-2 gap-2 whitespace-nowrap 
-  text-sm font-semibold shadow-sm border border-input rounded-md 
+  text-sm font-semibold shadow-sm rounded-md 
   cursor-pointer transition-all duration-200 
   hover:-translate-y-[0.1rem]  hover:shadow-md 
   active:-translate-y-[0.2rem]   active:shadow-lg 
@@ -16,7 +16,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-background text-primaryForeground",
+        default: "bg-primary text-primary-foreground",
 
         destructive: `bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90`,
 
@@ -26,13 +26,21 @@ const buttonVariants = cva(
         secondary: `bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80`,
         ghost: `hover:bg-accent hover:text-accent-foreground`,
 
-        link: `text-primary underline-offset-4 hover:underline`,
+        flat: `bg-transparent text-base shadow-none
+        border border-input
+        hover:bg-accent hover:text-accent-foreground 
+        active:bg-accent/80`,
+
+        flatLink: `underline-offset-4 shadow-none
+        hover:underline hover:translate-none hover:shadow-none 
+        active:translate-none active:shadow-none`,
 
         xicon: `w-10 h-10 p-0 flex items-center justify-center rounded-full 
           text-foreground border-none shadow-none flex transition-colors 
-          hover:bg-destructive hover:translate-none hover:shadow-none [&_svg]:shrink-0`,
+          hover:bg-background hover:translate-none hover:shadow-none [&_svg]:shrink-0
+          active:translate-none active:shadow-none`,
         raised: `-translate-y-[0.1rem] shadow-md hover:shadow-lg 
-          bg-primary text-primary-foreground`,
+          bg-accent text-primary-foreground`,
       },
       size: {
         default: "h-9 px-4 py-2",

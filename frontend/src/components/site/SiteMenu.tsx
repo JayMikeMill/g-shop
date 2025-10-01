@@ -79,7 +79,7 @@ export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
           >
             {/* Close button */}
             <Button
-              className="absolute text-text top-sm right-sm p-2 rounded hover:bg-surfaceAlt transition-colors z-10"
+              variant="xicon"
               onClick={handleClose}
               aria-label="Close menu"
               type="button"
@@ -88,26 +88,24 @@ export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
             </Button>
 
             {/* Menu links */}
-            <Button
-              className="text-lg font-medium text-text hover:underline text-left"
-              onClick={() => handleNavigate("/")}
-            >
-              Home
-            </Button>
-            <Button
-              className="text-lg font-medium text-text hover:underline text-left"
-              onClick={() => handleNavigate("/about")}
-            >
-              About
-            </Button>
             {user?.role === "admin" && (
               <Button
-                className="text-lg font-medium text-text hover:underline text-left"
+                variant={"flatLink"}
                 onClick={() => handleNavigate("/admin")}
               >
                 Admin Dashboard
               </Button>
             )}
+
+            <Button variant={"flatLink"} onClick={() => handleNavigate("/")}>
+              Home
+            </Button>
+            <Button
+              variant={"flatLink"}
+              onClick={() => handleNavigate("/about")}
+            >
+              About
+            </Button>
           </motion.div>
         </div>
       )}

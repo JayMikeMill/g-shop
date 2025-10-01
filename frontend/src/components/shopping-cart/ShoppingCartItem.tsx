@@ -1,8 +1,8 @@
 // frontend/src/components/cart/ShoppingCartItem.tsx
-import { Button } from "@components/ui";
+import { Button, TagBox } from "@components/ui";
 import type { CartItem } from "@models/CartItem";
 import { parseVariantOptions } from "@shared/types/Product";
-
+import { Plus, Minus, Tag } from "lucide-react";
 interface ShoppingCartItemProps {
   item: CartItem;
   addToCart: (item: CartItem) => void;
@@ -37,9 +37,13 @@ export default function ShoppingCartItem({
         {selectedOptions.length > 0 && (
           <div className="flex flex-wrap gap-1 mt-1">
             {selectedOptions.map((opt, idx) => (
-              <span key={`${key}-opt-${idx}`} className="options-tag">
-                {opt.name}: {opt.value}
-              </span>
+              <TagBox
+                key={idx}
+                color="accent"
+                textColor="primary-foreground"
+                text={opt.value}
+                className="rounded-full"
+              />
             ))}
           </div>
         )}
@@ -49,21 +53,25 @@ export default function ShoppingCartItem({
 
       <div className="flex items-center gap-xs">
         <Button
+          variant={"flat"}
+          className="rounded-full p-2"
           onClick={() => removeFromCart({ ...item, quantity: 1 })}
           aria-label={`Remove one ${name}`}
           type="button"
         >
-          -
+          <Minus className="w-4 h-4" />
         </Button>
         <span className="text-text min-w-[2ch] text-center">
           {item.quantity}
         </span>
         <Button
+          variant={"flat"}
+          className="rounded-full p-2"
           onClick={() => addToCart({ ...item, quantity: 1 })}
           aria-label={`Add one ${name}`}
           type="button"
         >
-          +
+          <Plus className="w-4 h-4" />
         </Button>
       </div>
 

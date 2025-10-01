@@ -10,11 +10,12 @@ export default function AdminDashboardPage() {
       {/* Header */}
       <header className="flex justify-between items-center border-b border-border flex-shrink-0 px-2 py-3">
         <h1 className="text-3xl text-text ">Dashboard</h1>
-        <Button onClick={logout}>Logout</Button>
+        <Button variant={"destructive"} onClick={logout}>
+          Logout
+        </Button>
       </header>
 
       {/* Navigation */}
-
       <nav className="flex gap-2 p-2 py-4 border-b border-border overflow-x-auto whitespace-nowrap">
         <NavLink
           to="/admin/products"

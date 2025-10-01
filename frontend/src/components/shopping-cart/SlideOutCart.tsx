@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback } from "react";
-import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ShoppingCart from "./ShoppingCart";
 import { Button } from "@components/ui";
@@ -61,7 +60,7 @@ export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
 
             {/* Slide-out container */}
             <motion.div
-              className={`fixed top-0 right-0 h-full w-full md:w-1/3 flex flex-col 
+              className={`fixed top-0 right-0 h-full w-full md:w-1/2 flex flex-col 
                 p-lg overflow-y-auto bg-card shadow-xl rounded-l-lg`}
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
@@ -70,14 +69,12 @@ export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
             >
               {/* Close button */}
               <Button
+                variant="xicon"
+                className="self-end"
                 onClick={handleClose}
-                aria-label="Close cart"
-                type="button"
-              >
-                <X size={24} />
-              </Button>
+              />
 
-              <h2 className="text-title font-bold mb-md text-text">
+              <h2 className="text-title font-bold mb-md text-center">
                 Shopping Cart
               </h2>
 

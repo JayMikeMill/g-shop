@@ -19,16 +19,12 @@ export default function SiteHeader() {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
-    <header className="bg-surface shadow sticky top-0 z-30">
+    <header className="bg-card shadow sticky top-0 z-30">
       {/* Header row */}
-      <div className="max-w-6xl mx-auto flex items-center justify-between px-md py-sm">
+      <div className="w-full flex items-center justify-between px-md py-sm">
         {/* Left: Menu button (mobile) */}
-        <Button onClick={toggleMenu}>
-          {isMenuOpen ? (
-            <X className="text-text" size={24} />
-          ) : (
-            <Menu className="text-text" size={24} />
-          )}
+        <Button variant={"flat"} onClick={toggleMenu}>
+          <Menu className="text-text" size={24} />
         </Button>
 
         {/* Center: Logo + label */}
@@ -39,18 +35,10 @@ export default function SiteHeader() {
           <img src={SITE.logo} alt="Logo" className="max-h-10" />
         </div>
 
-        {/* Right: Cart icon */}
-        <div
-          className="relative cursor-pointer"
-          onClick={() => setIsCartOpen(true)}
-        >
+        {/* Left: Cart button (mobile) */}
+        <Button variant={"flat"} onClick={() => setIsCartOpen(true)}>
           <ShoppingCart className="text-text" size={24} />
-          {cartTotals.totalItems > 0 && (
-            <span className="absolute -top-2 -right-2 bg-accent text-white rounded-full text-xs px-2 py-0.5">
-              {cartTotals.totalItems}
-            </span>
-          )}
-        </div>
+        </Button>
       </div>
 
       {/* Slide-out menu */}

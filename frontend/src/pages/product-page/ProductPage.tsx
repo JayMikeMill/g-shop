@@ -132,11 +132,7 @@ const ProductPage = () => {
           </div>
 
           <div className="flex items-center justify-center gap-4 mt-4">
-            <Button
-              className="px-6 py-2"
-              onClick={handleAddToCart}
-              disabled={!selectedVariant}
-            >
+            <Button onClick={handleAddToCart} disabled={!selectedVariant}>
               Add to Cart
             </Button>
           </div>
