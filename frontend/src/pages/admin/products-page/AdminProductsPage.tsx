@@ -2,7 +2,12 @@
 import { useState } from "react";
 
 // UI Components
-import { AnimatedDialog, DynamicTable, CircleSpinner } from "@components/ui";
+import {
+  AnimatedDialog,
+  DynamicTable,
+  CircleSpinner,
+  Button,
+} from "@components/ui";
 import { ProductEditorForm } from "./ProductEditorForm";
 
 // Types
@@ -107,12 +112,7 @@ export default function AdminProductsPage() {
         onRowClick={(p) => setEditingProduct(p)}
         objectsName="Products"
         headerButton={
-          <button
-            className="btn-normal whitespace-nowrap"
-            onClick={() => setIsCreating(true)}
-          >
-            Add Product
-          </button>
+          <Button onClick={() => setIsCreating(true)}>Add Product</Button>
         }
         columns={[
           {

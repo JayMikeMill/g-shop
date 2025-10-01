@@ -16,6 +16,7 @@ import {
 } from "@shared/types/Order";
 
 import type { CartItem } from "@models/CartItem";
+import { Button } from "@components/ui";
 
 interface StripePaymentFormProps {
   total: number;
@@ -154,13 +155,13 @@ function InnerStripeForm({
           }}
         />
       </div>
-      <button
+      <Button
         onClick={handlePayment}
-        className="bg-primary hover:bg-primaryDark text-white rounded-md px-6 py-3 font-semibold shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed w-full"
+        className="w-full"
         disabled={!stripe || !elements}
       >
         Pay Now
-      </button>
+      </Button>
     </div>
   );
 }

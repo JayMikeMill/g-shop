@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@contexts/auth/AuthContext";
-import { AnimatedDialog, Input } from "@components/ui";
+import { AnimatedDialog, Button, Input } from "@components/ui";
 
 export default function AdminLoginPage() {
   const { user, login } = useAuth();
@@ -108,13 +108,13 @@ function AdminLoginDialog({
         {error && (
           <p className="text-error text-base text-center mt-xs">{error}</p>
         )}
-        <button
+        <Button
           type="submit"
           className="btn-normal h-12 w-64 self-center"
           disabled={loading}
         >
           {loading ? "Logging in..." : "Login"}
-        </button>
+        </Button>
       </form>
     </AnimatedDialog>
   );

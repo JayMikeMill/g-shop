@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import type { Product, ProductVariant } from "@shared/types/Product";
+import { Button } from "@components/ui";
 
 interface SelectedProductOption {
   name: string;
@@ -150,16 +151,14 @@ const ProductOptionSelector: React.FC<ProductOptionSelectorProps> = ({
                 );
 
                 return (
-                  <button
+                  <Button
                     key={val}
-                    type="button"
                     disabled={!enabled}
                     onClick={() => handleOptionClick(opt.name, val)}
-                    className={`px-3 py-1 rounded-full border text-lg transition-all
-		            ${selected ? "bg-primary text-text border-primary" : !enabled ? "opacity-50 cursor-not-allowed bg-surface text-text border-border" : "bg-surface text-text border-border hover:bg-primaryDark"}`}
+                    className={`${selected ? "bg-primary text-text border-primary" : !enabled ? "opacity-50 cursor-not-allowed bg-surface text-text border-border" : "bg-surface text-text border-border hover:bg-primaryDark"}`}
                   >
                     {val}
-                  </button>
+                  </Button>
                 );
               })}
             </div>

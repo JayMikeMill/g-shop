@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 
 import type { Collection, Category } from "@shared/types/Catalog";
 
-import { AnimatedDialog, Input } from "@components/ui";
+import { AnimatedDialog, Button, Input } from "@components/ui";
 import { ImageEditor } from "@components/ui";
 import { CircleSpinner } from "@components/ui";
 
@@ -270,16 +270,12 @@ export function CatalogDialog<T extends Collection>({
         </div>
         {/* Footer Buttons */}
         <div className="w-full flex flex-row gap-2 px-0 sm:px-0 items-center py-4 border-t flex-shrink-0">
-          <button
-            type="button"
-            className="btn-cancel w-full h-12"
-            onClick={handleCancel}
-          >
+          <Button type="button" className="w-full h-12" onClick={handleCancel}>
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
-            className="btn-normal w-full h-12"
+            className="w-full h-12"
             disabled={isProcessingImages}
           >
             {isProcessingImages
@@ -287,7 +283,7 @@ export function CatalogDialog<T extends Collection>({
               : isAdding
                 ? `Add ${type}`
                 : `Save Changes`}
-          </button>
+          </Button>
         </div>
       </form>
     </AnimatedDialog>

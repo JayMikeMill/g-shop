@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "@contexts/auth/AuthContext";
-import { NavButton } from "@components/ui";
+import { Button, NavButton } from "@components/ui";
 
 export default function AdminDashboardPage() {
   const { logout } = useAuth();
@@ -10,9 +10,7 @@ export default function AdminDashboardPage() {
       {/* Header */}
       <header className="flex justify-between items-center border-b border-border flex-shrink-0 px-2 py-3">
         <h1 className="text-3xl text-text ">Dashboard</h1>
-        <button onClick={logout} className="btn-normal">
-          Logout
-        </button>
+        <Button onClick={logout}>Logout</Button>
       </header>
 
       {/* Navigation */}

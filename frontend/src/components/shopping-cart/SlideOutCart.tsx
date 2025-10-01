@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ShoppingCart from "./ShoppingCart";
+import { Button } from "@components/ui";
 
 interface SlideOutCartProps {
   isOpen: boolean;
@@ -67,14 +68,13 @@ export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
               {/* Close button */}
-              <button
-                className="text-text absolute top-sm right-sm p-2 rounded hover:bg-surfaceAlt transition-colors"
+              <Button
                 onClick={handleClose}
                 aria-label="Close cart"
                 type="button"
               >
                 <X size={24} />
-              </button>
+              </Button>
 
               <h2 className="text-title font-bold mb-md text-text">
                 Shopping Cart

@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@contexts/auth/AuthContext";
+import { Button } from "@components/ui";
 
 interface SiteMenuProps {
   isOpen: boolean;
@@ -77,35 +78,35 @@ export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             {/* Close button */}
-            <button
+            <Button
               className="absolute text-text top-sm right-sm p-2 rounded hover:bg-surfaceAlt transition-colors z-10"
               onClick={handleClose}
               aria-label="Close menu"
               type="button"
             >
               <X size={24} />
-            </button>
+            </Button>
 
             {/* Menu links */}
-            <button
+            <Button
               className="text-lg font-medium text-text hover:underline text-left"
               onClick={() => handleNavigate("/")}
             >
               Home
-            </button>
-            <button
+            </Button>
+            <Button
               className="text-lg font-medium text-text hover:underline text-left"
               onClick={() => handleNavigate("/about")}
             >
               About
-            </button>
+            </Button>
             {user?.role === "admin" && (
-              <button
+              <Button
                 className="text-lg font-medium text-text hover:underline text-left"
                 onClick={() => handleNavigate("/admin")}
               >
                 Admin Dashboard
-              </button>
+              </Button>
             )}
           </motion.div>
         </div>

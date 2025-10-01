@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { XButton } from "@components/ui";
+import { Button, XButton } from "@components/ui";
 import { AnimatedDropdownBox } from "@components/ui";
 
 import type {
@@ -106,13 +106,7 @@ const TagPresetsDropdown: React.FC<TagPresetsDropdownProps> = ({
       />
 
       {/* Create Tag Button */}
-      <button
-        type="button"
-        className="btn-normal px-3 py-1 whitespace-nowrap"
-        onClick={() => setCreating(true)}
-      >
-        Create Tag
-      </button>
+      <Button onClick={() => setCreating(true)}>Create Tag</Button>
 
       {/* Create Tag Dialog */}
       <ProductTagDialog

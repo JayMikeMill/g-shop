@@ -46,7 +46,7 @@ export const AnimatedDropdownBox = <T,>({
         <Button
           type="button"
           className="bg-background text-primaryForeground transition-all
-            shadow-sm px-2 py-1 w-full text-left flex border-input
+            shadow-sm px-2 py-1 w-full text-leftflex border border-input
             justify-between items-center"
           onClick={toggle}
         >

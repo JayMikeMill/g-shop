@@ -1,4 +1,4 @@
-import { AnimatedDialog } from "@components/ui";
+import { AnimatedDialog, Button } from "@components/ui";
 import React, { useState } from "react";
 import Cropper from "react-easy-crop";
 
@@ -112,16 +112,12 @@ export const CropDialog: React.FC<CropDialogProps> = ({
       </div>
 
       <div className="flex justify-center gap-md">
-        <button type="button" className="btn-cancel w-full" onClick={onCancel}>
+        <Button type="button" className="w-full" onClick={onCancel}>
           Cancel
-        </button>
-        <button
-          type="button"
-          className="btn-primary w-full"
-          onClick={handleCrop}
-        >
+        </Button>
+        <Button onClick={handleCrop} className="w-full">
           Crop Image
-        </button>
+        </Button>
       </div>
     </AnimatedDialog>
   );

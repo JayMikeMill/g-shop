@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 
 // UI Components
-import { AnimatedDropdownSurface } from "@components/ui";
+import { AnimatedDropdownSurface, Button } from "@components/ui";
 
 // Types
 import {
@@ -172,13 +172,13 @@ export const ProductEditorForm: React.FC<ProductEditorFormProps> = ({
 
           {/* Delete Button */}
           {!isAdding && (
-            <button
-              className="btn-normal h-12 w-1/2 self-center"
+            <Button
+              className="h-12 w-1/2 self-center"
               type="button"
               onClick={handleDelete}
             >
               Delete Product
-            </button>
+            </Button>
           )}
         </div>
 
@@ -200,15 +200,15 @@ export const ProductEditorForm: React.FC<ProductEditorFormProps> = ({
 
           {/* Footer Buttons */}
           <div className="w-full flex flex-row gap-2 sm:px-0 items-center sm:flex-col sm:gap-2">
-            <button
-              className="btn-cancel w-full h-12 whitespace-nowrap sm:hidden"
+            <Button
+              className="w-full h-12 sm:hidden"
               type="button"
               onClick={handleCancel}
             >
               Cancel
-            </button>
-            <button
-              className="btn-normal w-full h-12 whitespace-nowrap"
+            </Button>
+            <Button
+              className="w-full h-12"
               disabled={isProcessingImages || isSavingProduct}
               onClick={handleSave}
             >
@@ -219,7 +219,7 @@ export const ProductEditorForm: React.FC<ProductEditorFormProps> = ({
                   : localProduct.id
                     ? "Save Changes"
                     : "Create Product"}
-            </button>
+            </Button>
           </div>
         </div>
       </div>

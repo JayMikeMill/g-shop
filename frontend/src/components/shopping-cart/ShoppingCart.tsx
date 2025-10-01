@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useCart, getCartTotals } from "@contexts/CartContext";
 import ShoppingCartItem from "./ShoppingCartItem";
+import { Button } from "@components/ui";
 
 interface ShoppingCartProps {
   // optional callback if you want SlideOutCart to close when checkout is clicked
@@ -59,13 +60,9 @@ export default function ShoppingCart({
         </div>
 
         {/* Checkout button */}
-        <button
-          className="btn-primary w-full mt-sm"
-          onClick={handleProceedToCheckout}
-          type="button"
-        >
+        <Button onClick={handleProceedToCheckout} type="button">
           Proceed to Checkout
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 // Components
-import { DynamicTable } from "@components/ui";
+import { Button, DynamicTable } from "@components/ui";
 import type { Category, Collection } from "@shared/types/Catalog";
 import { CatalogDialog } from "./CollectionDialog";
 
@@ -74,12 +74,12 @@ export function AdminCatalogPage({ apiKey, typeLabel }: AdminCatalogPageProps) {
         onRowClick={(item: Collection | Category) => setEditingItem(item)}
         objectsName={typeLabel + "s"}
         headerButton={
-          <button
+          <Button
             className="btn-normal whitespace-nowrap"
             onClick={() => setIsAdding(true)}
           >
             Add {typeLabel}
-          </button>
+          </Button>
         }
         columns={[
           {

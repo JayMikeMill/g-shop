@@ -8,6 +8,7 @@ import { useApi } from "@api/useApi";
 
 import ProductOptionSelector from "./ProductOptionsSelector";
 import ProductPageImages from "./ProductPageImages";
+import { Button } from "@components/ui";
 
 const ProductPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -128,13 +129,13 @@ const ProductPage = () => {
           </div>
 
           <div className="flex items-center justify-center gap-4 mt-4">
-            <button
-              className="btn-primary px-6 py-2"
+            <Button
+              className="px-6 py-2"
               onClick={handleAddToCart}
               disabled={!selectedVariant}
             >
               Add to Cart
-            </button>
+            </Button>
           </div>
         </div>
       </div>

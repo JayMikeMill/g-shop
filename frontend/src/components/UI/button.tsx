@@ -5,16 +5,16 @@ import { cn } from "@components/lib/utils";
 
 const buttonVariants = cva(
   `inline-flex items-center justify-center gap-2 whitespace-nowrap 
-  text-sm shadow-none
+  text-sm shadow-sm border border-input
   font-semibold rounded-md cursor-pointer transition-all duration-200 px-6 py-2 
-  hover:-translate-y-0.5   hover:shadow-md
-  active:-translate-y-1   active:shadow-lg
+  hover:-translate-y-[0.1rem]  hover:shadow-md
+  active:-translate-y-[0.2rem]   active:shadow-lg
   disabled:pointer-events-none disabled:opacity-50 
   [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0`,
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground",
+        default: "bg-background text-primaryForeground",
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:

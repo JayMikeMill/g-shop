@@ -7,6 +7,7 @@ import { useState } from "react";
 import { SITE } from "../../site-config";
 import SlideOutCart from "@components/shopping-cart/SlideOutCart";
 import SiteMenu from "@components/site/SiteMenu";
+import { Button } from "@components/ui";
 
 export default function SiteHeader() {
   const navigate = useNavigate();
@@ -22,16 +23,13 @@ export default function SiteHeader() {
       {/* Header row */}
       <div className="max-w-6xl mx-auto flex items-center justify-between px-md py-sm">
         {/* Left: Menu button (mobile) */}
-        <button
-          className="p-2 rounded hover:bg-surface-hover"
-          onClick={toggleMenu}
-        >
+        <Button onClick={toggleMenu}>
           {isMenuOpen ? (
             <X className="text-text" size={24} />
           ) : (
             <Menu className="text-text" size={24} />
           )}
-        </button>
+        </Button>
 
         {/* Center: Logo + label */}
         <div

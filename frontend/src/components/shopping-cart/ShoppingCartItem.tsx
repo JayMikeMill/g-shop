@@ -1,4 +1,5 @@
 // frontend/src/components/cart/ShoppingCartItem.tsx
+import { Button } from "@components/ui";
 import type { CartItem } from "@models/CartItem";
 import { parseVariantOptions } from "@shared/types/Product";
 
@@ -47,25 +48,23 @@ export default function ShoppingCartItem({
       </div>
 
       <div className="flex items-center gap-xs">
-        <button
-          className="px-2 py-1 bg-surfaceAlt rounded-full text-text"
+        <Button
           onClick={() => removeFromCart({ ...item, quantity: 1 })}
           aria-label={`Remove one ${name}`}
           type="button"
         >
           -
-        </button>
+        </Button>
         <span className="text-text min-w-[2ch] text-center">
           {item.quantity}
         </span>
-        <button
-          className="px-2 py-1 bg-surfaceAlt rounded-full text-text"
+        <Button
           onClick={() => addToCart({ ...item, quantity: 1 })}
           aria-label={`Add one ${name}`}
           type="button"
         >
           +
-        </button>
+        </Button>
       </div>
 
       <p className="w-16 text-right text-text">
