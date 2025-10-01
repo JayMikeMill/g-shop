@@ -32,13 +32,14 @@
       "@contexts/*": ["src/contexts/*"],
       "@api/*": ["src/api/*"],
       "@hooks/*": ["src/hooks/*"],
+      "@lib/*": ["src/components/lib/*"],
       "@utils/*": ["src/utils/*"],
       "@models/*": ["src/models/*"],
       "@shared/*": ["../shared/*"],
       "@data/*": ["src/data/*"],
       "@config/*": ["src/config/*"],
       "@styles/*": ["src/styles/*"],
-      "@ui": ["src/components/UI"]
+      "@ui": ["src/components/ui"]
     }
   },
 

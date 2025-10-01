@@ -1,25 +1,33 @@
-/* Table Container */
+/* =========================
+     Table Container
+  ========================== */
 .table-container {
-  @apply overflow-x-auto w-full rounded-card shadow-card border border-divider;
+  @apply overflow-x-auto w-full rounded-card shadow-card border border-border;
 }
 
-/* Table */
+/* =========================
+     Table
+  ========================== */
 .table {
   @apply w-full border-collapse table-fixed font-sans min-w-[800px];
 }
 
-/* Table header */
+/* =========================
+     Table Header
+  ========================== */
 .table thead th {
   @apply font-bold uppercase text-center text-sm px-md py-sm 
-   border-b border-l border-divider cursor-pointer sticky top-0 z-10 bg-primary
-   text-buttonText transition-colors duration-200;
+           border-b border-l border-border cursor-pointer sticky top-0 z-10 
+           bg-primary text-primary-foreground transition-colors duration-200;
 }
 
 .table thead th.sortable:hover {
-  @apply bg-secondary;
+  @apply bg-secondary text-secondary-foreground;
 }
 
-/* Table body rows */
+/* =========================
+     Table Body Rows
+  ========================== */
 .table tbody tr {
   @apply transition-colors duration-200;
 }
@@ -29,32 +37,39 @@
 }
 
 .table tbody tr:nth-child(odd) {
-  @apply bg-backgroundAlt;
+  @apply bg-card;
 }
 
-/* Table cells */
+/* =========================
+     Table Cells
+  ========================== */
 .table td {
-  @apply px-md py-sm border-r border-divider text-center break-words;
+  @apply px-md py-sm border-r border-border text-center break-words;
 }
 
-/* Pagination */
+/* =========================
+     Pagination
+  ========================== */
 .table-pagination {
   @apply flex justify-center gap-2 mt-4;
 }
 
 .table-pagination button {
-  @apply cursor-pointer transition-all duration-200 px-4 py-2 rounded border border-divider bg-backgroundAlt text-text;
+  @apply cursor-pointer transition-all duration-200 px-4 py-2 rounded border border-border 
+           bg-card text-foreground;
 }
 
 .table-pagination button:hover:not(:disabled) {
-  @apply bg-surface border-primary text-primary;
+  @apply bg-primary text-primary-foreground border-primary;
 }
 
 .table-pagination button:disabled {
   @apply opacity-50 cursor-not-allowed;
 }
 
-/* Search input */
+/* =========================
+     Search Input
+  ========================== */
 .table-search {
   @apply input-box w-full text-sm px-md py-sm;
 }

@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "@contexts/auth/AuthContext";
-import { NavButton } from "@components/UI";
+import { NavButton } from "@components/ui";
 
 export default function AdminDashboardPage() {
   const { logout } = useAuth();

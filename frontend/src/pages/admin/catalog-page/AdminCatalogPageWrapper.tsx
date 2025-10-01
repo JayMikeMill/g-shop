@@ -1,6 +1,6 @@
 // AdminCatalogPageWrapper.tsx
 import { NavLink, Outlet } from "react-router-dom";
-import { NavButton } from "@components/UI";
+import { NavButton } from "@components/ui";
 
 export default function AdminCatalogPageWrapper() {
   return (

@@ -1,4 +1,4 @@
-import { AnimatedDialog } from "@components/UI";
+import { AnimatedDialog } from "@components/ui";
 import React, { useState } from "react";
 import Cropper from "react-easy-crop";
 

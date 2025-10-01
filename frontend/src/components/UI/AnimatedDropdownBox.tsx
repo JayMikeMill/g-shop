@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@components/ui";
 
 interface DropdownItem<T> {
   value: T;
@@ -42,14 +43,16 @@ export const AnimatedDropdownBox = <T,>({
     <div ref={ref} className={`relative w-full ${className ?? ""}`}>
       {/* Dropdown button */}
       {
-        <button
+        <Button
           type="button"
-          className="input-box px-2 py-1 w-full text-left flex justify-between items-center"
+          className="bg-background text-primaryForeground transition-all
+            shadow-sm px-2 py-1 w-full text-left flex border-input
+            justify-between items-center"
           onClick={toggle}
         >
           {headerText}
           <span>{open ? "▲" : "▼"}</span>
-        </button>
+        </Button>
       }
       {/* Animated Dropdown menu */}
       <AnimatePresence>
@@ -59,7 +62,9 @@ export const AnimatedDropdownBox = <T,>({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className={`absolute z-10 mt-1 w-full bg-background border border-border rounded shadow-md max-h-60 overflow-y-auto ${menuClassName ?? ""}`}
+            className={`absolute z-10 mt-1 w-full bg-background 
+              border border-border rounded border-input
+              shadow-md max-h-60 overflow-y-auto ${menuClassName ?? ""}`}
           >
             {items.length === 0 ? (
               <div className="px-2 py-1 text-text">{noItemsText}</div>
@@ -67,7 +72,7 @@ export const AnimatedDropdownBox = <T,>({
               items.map((item, idx) => (
                 <div
                   key={idx}
-                  className="px-2 py-1 hover:bg-backgroundAlt cursor-pointer"
+                  className="px-2 py-1 hover:bg-background cursor-pointer"
                   onClick={() => {
                     item.onClick?.(item.value);
                     setOpen(false);

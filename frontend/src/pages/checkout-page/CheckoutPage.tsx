@@ -50,11 +50,7 @@ export default function CheckoutPage() {
   }, [shippingInfo.address.postalCode]);
 
   return (
-    <div className="flex flex-col flex-1 gap-lg max-w-[700px] p-2 mx-auto font-sans text-text">
-      <h2 className="text-[3rem]  text-bold text-center text-title pb-md">
-        Checkout
-      </h2>
-
+    <div className="flex flex-col flex-1 gap-lg max-w-[700px] p-sm mx-auto font-sans text-text">
       <OrderSummary />
 
       <ShippingForm

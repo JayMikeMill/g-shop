@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 
 // UI Components
-import { AnimatedDropdownSurface } from "@components/UI";
+import { AnimatedDropdownSurface } from "@components/ui";
 
 // Types
 import {
@@ -23,7 +23,7 @@ import {
 
 import ProductDimensionsEditor from "./ProductDimensionsEditor";
 import ProductImageProcessor from "./ProductImagesProcessor";
-import { MultiImageEditor } from "@components/UI";
+import { MultiImageEditor } from "@components/ui";
 
 interface ProductEditorFormProps {
   product: Product | null;
@@ -48,6 +48,7 @@ export const ProductEditorForm: React.FC<ProductEditorFormProps> = ({
 
   // Sync local product when dialog opens
   useEffect(() => {
+    console.log("ProductEditorForm - product changed:", product);
     // Creating new product
     if (product) {
       setLocalProduct(product);
@@ -85,9 +86,7 @@ export const ProductEditorForm: React.FC<ProductEditorFormProps> = ({
     onDelete(localProduct.id);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSave = async () => {
     if (!localProduct.images || localProduct.images.length === 0) {
       alert("At least one image is required");
       return;
@@ -114,10 +113,7 @@ export const ProductEditorForm: React.FC<ProductEditorFormProps> = ({
   const hasVariants = !!localProduct.options?.length;
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col flex-1 overflow-hidden border-t"
-    >
+    <div className="flex flex-col flex-1 overflow-hidden border-t">
       <div className="flex flex-1 flex-col sm:flex-row sm:gap-md sm:py-md overflow-hidden min-h-0">
         {/* Main Editor */}
         <div className="flex-1 flex flex-col gap-md overflow-y-auto pb-md sm:border sm:rounded-lg">
@@ -212,9 +208,9 @@ export const ProductEditorForm: React.FC<ProductEditorFormProps> = ({
               Cancel
             </button>
             <button
-              type="submit"
               className="btn-normal w-full h-12 whitespace-nowrap"
               disabled={isProcessingImages || isSavingProduct}
+              onClick={handleSave}
             >
               {isSavingProduct
                 ? "Saving..."
@@ -227,6 +223,6 @@ export const ProductEditorForm: React.FC<ProductEditorFormProps> = ({
           </div>
         </div>
       </div>
-    </form>
+    </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { HexColorPicker } from "react-colorful";
-import { AnimatedDialog } from "@components/UI";
+import { AnimatedDialog } from "@components/ui";
 
 interface ProductTagDialogProps {
   name: string;

@@ -5,9 +5,9 @@ import { useState, useEffect } from "react";
 
 import type { Collection, Category } from "@shared/types/Catalog";
 
-import { AnimatedDialog } from "@components/UI";
-import { ImageEditor } from "@components/UI";
-import { CircleSpinner } from "@components/UI";
+import { AnimatedDialog, Input } from "@components/ui";
+import { ImageEditor } from "@components/ui";
+import { CircleSpinner } from "@components/ui";
 
 import CollectionImageProcessor from "./CollectionImagesProcessor";
 
@@ -157,7 +157,8 @@ export function CatalogDialog<T extends Collection>({
           {/* Name */}
           <label className="flex flex-1 flex-col gap-1 text-sm w-auto font-semibold text-text">
             {type} Name
-            <input
+            <Input
+              className="w-full"
               type="text"
               placeholder={`${type} Name`}
               value={localItem.name}
@@ -165,14 +166,13 @@ export function CatalogDialog<T extends Collection>({
                 setLocalItem((prev) => ({ ...prev, name: e.target.value }))
               }
               required
-              className="input-box px-2 py-1 h-10 w-full"
             />
           </label>
 
           {/* Slug */}
           <label className="flex flex-1 flex-col gap-1 text-sm font-semibold text-text">
             Slug
-            <input
+            <Input
               type="text"
               placeholder="URL Slug"
               value={localItem.slug}
@@ -180,7 +180,7 @@ export function CatalogDialog<T extends Collection>({
                 setLocalItem((prev) => ({ ...prev, slug: e.target.value }))
               }
               required
-              className="input-box px-2 py-1 h-10 w-full"
+              className="w-full"
             />
           </label>
         </div>
@@ -189,7 +189,7 @@ export function CatalogDialog<T extends Collection>({
         <div className="flex flex-col gap-2">
           <label className="flex flex-col gap-1 text-sm font-semibold text-text">
             SEO Title
-            <input
+            <Input
               type="text"
               placeholder="SEO Title"
               value={localItem.seo?.title ?? ""}
@@ -199,13 +199,12 @@ export function CatalogDialog<T extends Collection>({
                   seo: { ...prev.seo, title: e.target.value },
                 }))
               }
-              className="input-box px-2 py-1 h-10"
             />
           </label>
 
           <label className="flex flex-col gap-1 text-sm font-semibold text-text">
             Keywords (comma-separated)
-            <input
+            <Input
               type="text"
               placeholder="keyword1, keyword2"
               value={localItem.seo?.keywords?.join(", ") ?? ""}
@@ -218,7 +217,6 @@ export function CatalogDialog<T extends Collection>({
                   },
                 }))
               }
-              className="input-box px-2 py-1 h-10"
             />
           </label>
         </div>

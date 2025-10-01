@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 // UI Components
-import { AnimatedDialog, DynamicTable, CircleSpinner } from "@components/UI";
+import { AnimatedDialog, DynamicTable, CircleSpinner } from "@components/ui";
 import { ProductEditorForm } from "./ProductEditorForm";
 
 // Types

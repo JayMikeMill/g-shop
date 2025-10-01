@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import type { Product, ProductOption } from "@shared/types/Product";
 
 // UI Components
-import { XButton } from "@components/UI";
+import { Button, Input, XButton } from "@components/ui";
 
 // Api
 import { useApi } from "@api/useApi";
@@ -93,6 +93,7 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
         localOptions={localOptions}
         setLocalOptions={setLocalOptions}
         refreshKey={refreshKey}
+        className="w-1/2"
       />
 
       {/* Options List */}
@@ -102,22 +103,21 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
           className="flex flex-col gap-2 py-4 border-t border-border"
         >
           <div className="flex flex-wrap gap-2 items-center w-full">
-            <input
+            <Input
               type="text"
+              className="flex-1"
               placeholder="Option Name"
               value={opt.name}
               onChange={(e) => updateOptionName(i, e.target.value)}
-              className="input-box flex-1 min-w-0 px-2 py-1"
             />
             <XButton onClick={() => removeOption(i)} />
           </div>
           <div className="flex flex-wrap gap-2 items-center w-full">
-            <input
+            <Input
               type="text"
               placeholder="Values (comma-separated)"
               value={opt?.values.join(",")}
               onChange={(e) => updateOptionValues(i, e.target.value)}
-              className="input-box flex-1 min-w-0 px-2 py-1"
             />
           </div>
         </div>
@@ -125,21 +125,12 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
 
       {/* Bottom Buttons */}
       <div className="flex flex-wrap gap-2 w-full mt-auto">
-        <button
-          type="button"
-          className="btn-normal px-3 py-2 flex-shrink-0 ml-auto"
-          onClick={handleSavePreset}
-          disabled={saving}
-        >
+        <Button type="button" onClick={handleSavePreset} disabled={saving}>
           {saving ? "Saving..." : "Save Preset"}
-        </button>
-        <button
-          type="button"
-          className="btn-normal px-3 py-2 flex-shrink-0"
-          onClick={addOption}
-        >
+        </Button>
+        <Button type="button" onClick={addOption}>
           Add Option
-        </button>
+        </Button>
       </div>
     </div>
   );

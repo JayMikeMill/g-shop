@@ -1,50 +1,61 @@
 /** @type {import('tailwindcss').Config} */
+
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-  darkMode: "class",
+  darkMode: ["class", "class"],
   theme: {
     extend: {
       colors: {
-        // Core palette
-        primary: "var(--color-primary)",
-        primaryDark: "var(--color-primary-dark)",
-        secondary: "var(--color-secondary)",
-        secondaryDark: "var(--color-secondary-dark)",
-        accent: "var(--color-accent)",
+        /* Base / Background */
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+        card: {
+          DEFAULT: "var(--card)",
+          foreground: "var(--card-foreground)",
+        },
+        popover: {
+          DEFAULT: "var(--popover)",
+          foreground: "var(--popover-foreground)",
+        },
 
-        // Backgrounds
-        background: "var(--color-background)",
-        backgroundAlt: "var(--color-background-alt)",
-        surface: "var(--color-surface)",
-        surfaceAlt: "var(--color-surface-alt)",
-        card: "var(--color-card-bg)",
+        /* Primary & Accent */
+        primary: {
+          DEFAULT: "var(--primary)",
+          foreground: "var(--primary-foreground)",
+        },
+        secondary: {
+          DEFAULT: "var(--secondary)",
+          foreground: "var(--secondary-foreground)",
+        },
+        accent: {
+          DEFAULT: "var(--accent)",
+          foreground: "var(--accent-foreground)",
+        },
 
-        // Text
-        text: "var(--color-text)",
-        textSecondary: "var(--color-text-secondary)",
-        textMuted: "var(--color-text-muted)",
-        textInverted: "var(--color-text-inverted)",
-
-        // Borders & dividers
-        border: "var(--color-border)",
-        divider: "var(--color-divider)",
-        inputBorder: "var(--color-input-border)",
-
-        // Buttons
-        buttonBg: "var(--color-button-bg)",
-        buttonHover: "var(--color-button-hover)",
-        buttonText: "var(--color-button-text)",
-
-        // States
+        /* Alerts / States */
+        destructive: {
+          DEFAULT: "var(--destructive)",
+          foreground: "var(--destructive-foreground)",
+        },
         success: "var(--color-success)",
         warning: "var(--color-warning)",
         error: "var(--color-error)",
         danger: "var(--color-danger)",
         info: "var(--color-info)",
 
-        // Old helpers
-        light: "var(--color-light)",
-        dark: "var(--color-dark)",
+        /* Borders & Inputs */
+        border: "var(--border)",
+        input: "var(--input)",
+        ring: "var(--ring)",
+
+        /* Charts */
+        chart: {
+          1: "var(--chart-1)",
+          2: "var(--chart-2)",
+          3: "var(--chart-3)",
+          4: "var(--chart-4)",
+          5: "var(--chart-5)",
+        },
       },
       spacing: {
         xs: "var(--spacing-xs)",
@@ -52,43 +63,48 @@ export default {
         md: "var(--spacing-md)",
         lg: "var(--spacing-lg)",
         xl: "var(--spacing-xl)",
-        "2xl": "3rem",
-        "3xl": "4rem",
       },
       borderRadius: {
-        DEFAULT: "var(--border-radius)",
-        card: "var(--card-border-radius)",
-        full: "9999px",
+        DEFAULT: "var(--radius-small)",
+        card: "var(--radius-card)",
+        small: "var(--radius-small)",
+        medium: "var(--radius-medium)",
+        large: "var(--radius-large)",
+        full: "var(--radius-full)",
+      },
+      boxShadow: {
+        DEFAULT: "var(--box-shadow)",
+        small: "var(--box-shadow-small)",
+        medium: "var(--box-shadow-medium)",
+        large: "var(--box-shadow-large)",
+        xlarge: "var(--box-shadow-xlarge)",
+        "2xl": "var(--box-shadow-2xl)",
       },
       fontFamily: {
         sans: ["var(--font-family)", "ui-sans-serif", "system-ui"],
-        display: ["Poppins", "ui-sans-serif"],
-        serif: ["Merriweather", "serif"],
-        mono: ["Fira Code", "monospace"],
       },
       fontSize: {
         base: "var(--font-size-base)",
         title: "var(--font-size-title)",
         price: "var(--font-size-price)",
       },
-      boxShadow: {
-        card: "var(--box-shadow)",
-        sm: "0 1px 2px rgba(0,0,0,0.05)",
-        md: "0 4px 6px rgba(0,0,0,0.1)",
-        lg: "0 10px 15px rgba(0,0,0,0.15)",
-        xl: "0 20px 25px rgba(0,0,0,0.2)",
-        "2xl": "0 25px 50px rgba(0,0,0,0.25)",
-      },
       transitionDuration: {
-        DEFAULT: "300ms",
-        fast: "150ms",
-        slow: "500ms",
+        DEFAULT: "var(--trans-dur)",
+        fast: "var(--trans-dur-fast)",
+        medium: "var(--trans-dur-medium)",
+        slow: "var(--trans-dur-slow)",
+        xslow: "var(--trans-dur-xslow)",
       },
       transitionTimingFunction: {
-        DEFAULT: "cubic-bezier(0.4, 0, 0.2, 1)",
-        bounce: "cubic-bezier(.68,-0.55,.27,1.55)",
+        DEFAULT: "var(--trans-func)",
+        bounce: "var(--trans-func-bounce)",
+        ease: "var(--trans-func-ease)",
+        "ease-in": "var(--trans-func-ease-in)",
+        "ease-out": "var(--trans-func-ease-out)",
+        linear: "var(--trans-func-ease-linear)",
+        "ease-in-out": "var(--trans-func-ease-in-out)",
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 };

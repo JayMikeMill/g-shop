@@ -4,18 +4,20 @@ import type {
   ProductOptionsPreset,
 } from "@shared/types/Product";
 import { useApi } from "@api/useApi";
-import { XButton } from "@components/UI";
-import { AnimatedDropdownBox } from "@components/UI"; // adjust path
+import { XButton } from "@components/ui";
+import { AnimatedDropdownBox } from "@components/ui"; // adjust path
 
 interface OptionsPresetDropdownProps {
   localOptions: ProductOption[];
   setLocalOptions: React.Dispatch<React.SetStateAction<ProductOption[]>>;
   refreshKey?: any; // changes whenever a new preset is saved
+  className?: string;
 }
 
 const OptionsPresetDropdown: React.FC<OptionsPresetDropdownProps> = ({
   setLocalOptions,
   refreshKey,
+  className,
 }) => {
   const { productOptionsPresets } = useApi();
 
@@ -63,7 +65,7 @@ const OptionsPresetDropdown: React.FC<OptionsPresetDropdownProps> = ({
   const dropdownItems = presets.map((preset) => ({
     value: preset,
     render: (p: ProductOptionsPreset) => (
-      <div className="flex justify-between items-center gap-2">
+      <div className={`flex justify-between items-center gap-2`}>
         <span className="flex-1 text-text">{p.name}</span>
         <XButton
           onClick={(e) => {
@@ -81,7 +83,7 @@ const OptionsPresetDropdown: React.FC<OptionsPresetDropdownProps> = ({
       items={dropdownItems}
       headerText="Select Preset..."
       noItemsText="No option presets."
-      className="mb-2"
+      className={`mb-2 ${className}`}
     />
   );
 };

@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 // Components
-import { DynamicTable } from "@components/UI";
+import { DynamicTable } from "@components/ui";
 import type { Category, Collection } from "@shared/types/Catalog";
 import { CatalogDialog } from "./CollectionDialog";
 

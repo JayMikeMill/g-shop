@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@contexts/auth/AuthContext";
-import { AnimatedDialog } from "@components/UI";
+import { AnimatedDialog, Input } from "@components/ui";
 
 export default function AdminLoginPage() {
   const { user, login } = useAuth();
@@ -87,23 +87,21 @@ function AdminLoginDialog({
       >
         <label className="flex flex-col gap-xs text-base font-semibold text-textSecondary">
           <span className="mb-xs">Email</span>
-          <input
+          <Input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="input-box px-lg py-md"
             autoComplete="username"
           />
         </label>
         <label className="flex flex-col gap-xs text-base font-semibold text-textSecondary">
           <span className="mb-xs">Password</span>
-          <input
+          <Input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="input-box px-lg py-md"
             autoComplete="current-password"
           />
         </label>

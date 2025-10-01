@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useApi } from "@api/useApi";
 import type { Order } from "@shared/types/Order";
 
-import { DynamicTable } from "@components/UI";
+import { DynamicTable } from "@components/ui";
 
 export default function AdminUsersPage() {
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);

@@ -3,6 +3,7 @@ import { Search } from "lucide-react";
 import type { QueryObject } from "@shared/types/QueryObject";
 
 import "./dynamic-table.css";
+import { Input } from "./input";
 
 export interface TableColumn<T> {
   id: string;
@@ -100,14 +101,13 @@ export const DynamicTable = <T extends { id?: string }>({
             onSubmit={handleSearchSubmit}
             className="relative w-full h-full"
           >
-            <input
+            <Input
               type="text"
               placeholder={
                 objectsName ? `Search ${objectsName}...` : "Search..."
               }
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="input-box w-full h-full px-3 py-2 rounded border focus:outline-none"
             />
             <Search
               className="text-text absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer"

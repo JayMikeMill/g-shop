@@ -2,8 +2,8 @@ import React, { useRef, useState, useEffect } from "react";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import { Zoom } from "yet-another-react-lightbox/plugins";
-import { CropDialog } from "@components/UI";
-import { XButton } from "@components/UI";
+import { CropDialog, Input } from "@components/ui";
+import { XButton } from "@components/ui";
 
 // --- ImageSlot Component ---
 interface ImageSlotProps {
@@ -311,7 +311,7 @@ function BaseImageEditor<T extends Record<string, any>>({
       )}
 
       {/* Hidden file input */}
-      <input
+      <Input
         ref={fileInputRef}
         type="file"
         accept="image/*"

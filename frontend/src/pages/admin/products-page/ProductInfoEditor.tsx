@@ -1,4 +1,9 @@
 import React, { useEffect, useState } from "react";
+
+// UI Components
+import { Input, Label } from "@components/ui";
+
+// Types
 import {
   type Product,
   emptyProduct,
@@ -59,9 +64,9 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
   return (
     <div className="flex flex-col flex-1 gap-2 overflow-hidden">
       {/* Name */}
-      <label className="flex flex-col text-sm font-semibold text-textSecondary">
+      <Label className="flex flex-col text-sm font-semibold text-textSecondary">
         Name
-        <input
+        <Input
           type="text"
           placeholder="Product Name"
           value={localProduct.name}
@@ -69,19 +74,18 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
             setLocalProduct((prev) => ({ ...prev, name: e.target.value }))
           }
           required
-          className="input-box px-md py-1 h-8 text-text"
         />
-      </label>
+      </Label>
 
       <div className="flex gap-md items-end">
         {/* Price */}
-        <label className="flex-1 flex flex-col text-sm font-semibold text-textSecondary">
+        <Label className="flex-1 flex flex-col text-sm font-semibold text-textSecondary">
           Price
           <div className="relative">
             <span className="absolute left-2 top-1/2 -translate-y-1/2 text-textSecondary">
               $
             </span>
-            <input
+            <Input
               type="number"
               min={0}
               onFocus={(e) => e.target.select()}
@@ -94,30 +98,30 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
               }
               required
               step="0.01"
-              className="input-box pl-6 pr-md py-1 h-8 w-full"
+              className="w-full"
             />
           </div>
-        </label>
+        </Label>
 
         {/* Discount */}
         <div className="flex-1 flex items-end">
-          <label className="flex-1 flex flex-col text-sm font-semibold text-textSecondary">
+          <Label className="flex-1 flex flex-col text-sm font-semibold text-textSecondary">
             Discount
             <div className="relative">
               <span className="absolute left-2 top-1/2 -translate-y-1/2 text-textSecondary">
                 {discountType}
               </span>
-              <input
+              <Input
                 type="number"
                 min={0}
                 onFocus={(e) => e.target.select()}
-                className="input-box pl-6 pr-md py-1 h-8 w-full"
+                className="w-full"
                 value={discountValue > 0 ? `${discountValue}` : ""}
                 onChange={(e) => setDiscountValue(parseFloat(e.target.value))}
                 step="0.01"
               />
             </div>
-          </label>
+          </Label>
 
           {/* Discount Type */}
           <select
@@ -136,7 +140,7 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
       </div>
 
       {/* Description */}
-      <label className="pb-0.5 flex flex-col text-sm font-semibold text-textSecondary">
+      <Label className="flex flex-col text-sm font-semibold text-textSecondary">
         Description
         <textarea
           value={localProduct.description}
@@ -150,7 +154,7 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
           required
           className="input-box px-md py-1 h-40 resize-none"
         />
-      </label>
+      </Label>
     </div>
   );
 };
