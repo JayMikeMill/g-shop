@@ -18,34 +18,28 @@ export const applyTheme = (theme: "light" | "dark" | "pastel") => {
 
 // Refreshes the theme by recalculating color shades
 export function refreshTheme() {
-  const root = document.documentElement;
-
-  const originalPrimary = getComputedStyle(root)
-    .getPropertyValue("--primary")
-    .trim();
-  const originalSecondary = getComputedStyle(root)
-    .getPropertyValue("--secondary")
-    .trim();
-  const originalAccent = getComputedStyle(root)
-    .getPropertyValue("--accent")
-    .trim();
-
-  setColorShades("primary", originalPrimary);
-  setColorShades("secondary", originalSecondary);
-  setColorShades("accent", originalAccent);
+  setColorShades("primary");
+  setColorShades("secondary");
+  setColorShades("accent");
+  setColorShades("destructive");
 }
 
 // Generates and sets CSS variables for color shades
-export function setColorShades(varName: string, baseColor: string) {
+export function setColorShades(cssVarName: string) {
   const root = document.documentElement;
 
+  // get the base color from the CSS variable
+  const baseColor = getComputedStyle(root)
+    .getPropertyValue(`--${cssVarName}`)
+    .trim();
+
   const shades = twShades(baseColor);
-  console.log(`Setting shades for --${varName}:`, shades);
+  console.log(`Setting shades for --${cssVarName}:`, shades);
 
   for (const [key, value] of Object.entries(shades)) {
-    root.style.setProperty(`--${varName}-${key}`, value as string);
+    root.style.setProperty(`--${cssVarName}-${key}`, value as string);
   }
 
   // Also store the default primary
-  root.style.setProperty(`--${varName}`, baseColor);
+  root.style.setProperty(`--${cssVarName}`, baseColor);
 }

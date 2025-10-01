@@ -6,19 +6,21 @@ import { TrashIcon, XIcon } from "lucide-react";
 
 const buttonVariants = cva(
   `inline-flex items-center justify-center px-6 py-2 gap-2 whitespace-nowrap 
-  text-sm font-semibold shadow-sm rounded-md border border-primary-200
+  text-sm font-semibold rounded-md 
   cursor-pointer transition-all duration-200 
-  hover:-translate-y-[0.1rem]  hover:shadow-md 
-  active:-translate-y-[0.2rem]   active:shadow-lg active:bg-primary-600
-  disabled:pointer-events-none disabled:opacity-50`,
+  hover:-translate-y-[0.1rem]   hover:shadow-sm 
+  active:-translate-y-[0.2rem]  active:shadow-md
+  disabled:pointer-events-none  disabled:opacity-50`,
   //[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0`,
 
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground",
+        default: `bg-primary text-primary-foreground 
+          active:bg-primary-600`,
 
-        destructive: `bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90`,
+        destructive: `bg-destructive text-destructive-foreground 
+          active:bg-destructive-600`,
 
         outline: `border border-input bg-background shadow-sm 
           hover:bg-accent hover:text-accent-foreground`,
@@ -28,8 +30,8 @@ const buttonVariants = cva(
 
         flat: `bg-transparent text-base shadow-none
         border border-input
-        hover:bg-accent hover:text-accent-foreground 
-        active:bg-accent/80`,
+        hover:bg-primary-100 hover:text-base
+        active:bg-primary-400`,
 
         flatLink: `underline-offset-4 shadow-none
         hover:underline hover:translate-none hover:shadow-none 
@@ -39,8 +41,11 @@ const buttonVariants = cva(
           text-foreground border-none shadow-none flex transition-colors 
           hover:bg-background hover:translate-none hover:shadow-none [&_svg]:shrink-0
           active:translate-none active:shadow-none`,
-        raised: `-translate-y-[0.1rem] shadow-md hover:shadow-lg 
-          bg-accent text-primary-foreground`,
+
+        raised: `bg-accent text-primary-foreground 
+        -translate-y-[0.1rem] scale-110
+        hover: shadow-md hover:-translate-y-[0.2rem]
+        active:bg-accent-600 active:-translate-y-[0.3rem]`,
       },
       size: {
         default: "h-9 px-4 py-2",

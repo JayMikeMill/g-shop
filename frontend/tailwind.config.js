@@ -83,6 +83,22 @@ export default {
         destructive: {
           DEFAULT: "var(--destructive)",
           foreground: "var(--destructive-foreground)",
+
+          ...twShades("--destructive"),
+
+          /* Generated using tw-color-shades at runtime */
+          10: "var(--destructive-10)",
+          50: "var(--destructive-50)",
+          100: "var(--destructive-100)",
+          200: "var(--destructive-200)",
+          300: "var(--destructive-300)",
+          400: "var(--destructive-400)",
+          500: "var(--destructive-500)",
+          600: "var(--destructive-600)",
+          700: "var(--destructive-700)",
+          800: "var(--destructive-800)",
+          900: "var(--destructive-900)",
+          950: "var(--destructive-950)",
         },
         success: "var(--color-success)",
         warning: "var(--color-warning)",

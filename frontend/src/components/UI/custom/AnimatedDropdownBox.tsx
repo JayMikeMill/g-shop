@@ -44,10 +44,11 @@ export const AnimatedDropdownBox = <T,>({
       {/* Dropdown button */}
       {
         <Button
-          type="button"
-          className="bg-background text-primaryForeground
-            shadow-sm px-2 py-1 w-full text-leftflex border border-input
-            justify-between items-center"
+          className={`bg-background text-primaryForeground
+            shadow-sm px-2 py-1 w-full text-left flex border border-input
+            justify-between items-center 
+            hover:translate-none hover:bg-primary-50
+            active:translate-none active:bg-primary-100`}
           onClick={toggle}
         >
           {headerText}
@@ -72,7 +73,7 @@ export const AnimatedDropdownBox = <T,>({
               items.map((item, idx) => (
                 <div
                   key={idx}
-                  className="px-2 py-1 hover:bg-accent cursor-pointer hover:bg-accent transition-colors"
+                  className="px-2 py-1 hover:bg-primary-50 cursor-pointer hover:bg-accent transition-colors"
                   onClick={() => {
                     item.onClick?.(item.value);
                     setOpen(false);

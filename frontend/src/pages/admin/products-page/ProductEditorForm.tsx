@@ -173,8 +173,8 @@ export const ProductEditorForm: React.FC<ProductEditorFormProps> = ({
           {/* Delete Button */}
           {!isAdding && (
             <Button
+              variant="destructive"
               className="h-12 w-1/2 self-center"
-              type="button"
               onClick={handleDelete}
             >
               Delete Product
