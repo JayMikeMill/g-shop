@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 // UI Components
-import { Input, Label } from "@components/ui";
+import { Input, inputVariants, Label } from "@components/ui";
 
 // Types
 import {
@@ -62,9 +62,9 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
   ]);
 
   return (
-    <div className="flex flex-col flex-1 gap-2 overflow-hidden">
+    <div className="flex flex-col flex-1 gap-md overflow-hidden p-0.5">
       {/* Name */}
-      <Label className="flex flex-col text-sm font-semibold text-textSecondary">
+      <Label className="flex-col gap-xs">
         Name
         <Input
           type="text"
@@ -77,16 +77,14 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
         />
       </Label>
 
-      <div className="flex gap-md items-end">
+      <div className="flex gap-md items-end justify-between">
         {/* Price */}
-        <Label className="flex-1 flex flex-col text-sm font-semibold text-textSecondary">
+        <Label className="flex-col gap-xs text-center">
           Price
           <div className="relative">
-            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-textSecondary">
-              $
-            </span>
             <Input
               type="number"
+              className="w-32 text-center"
               min={0}
               onFocus={(e) => e.target.select()}
               value={priceToFloat(localProduct.price)}
@@ -98,34 +96,28 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
               }
               required
               step="0.01"
-              className="w-full"
             />
           </div>
         </Label>
 
         {/* Discount */}
         <div className="flex-1 flex items-end">
-          <Label className="flex-1 flex flex-col text-sm font-semibold text-textSecondary">
+          <Label className="flex-col gap-xs text-center">
             Discount
-            <div className="relative">
-              <span className="absolute left-2 top-1/2 -translate-y-1/2 text-textSecondary">
-                {discountType}
-              </span>
-              <Input
-                type="number"
-                min={0}
-                onFocus={(e) => e.target.select()}
-                className="w-full"
-                value={discountValue > 0 ? `${discountValue}` : ""}
-                onChange={(e) => setDiscountValue(parseFloat(e.target.value))}
-                step="0.01"
-              />
-            </div>
+            <Input
+              className="w-32 text-center"
+              type="number"
+              min={0}
+              onFocus={(e) => e.target.select()}
+              value={discountValue > 0 ? `${discountValue}` : ""}
+              onChange={(e) => setDiscountValue(parseFloat(e.target.value))}
+              step="0.01"
+            />
           </Label>
 
           {/* Discount Type */}
           <select
-            className="input-box ml-1 px-2 py-1 h-8"
+            className={inputVariants({ className: "ml-2 w-10" })}
             value={discountType}
             onChange={(e) => setDiscountType(e.target.value as "%" | "$")}
           >
@@ -140,7 +132,7 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
       </div>
 
       {/* Description */}
-      <Label className="flex flex-col text-sm font-semibold text-textSecondary">
+      <Label className="flex-col gap-xs">
         Description
         <textarea
           value={localProduct.description}

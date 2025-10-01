@@ -1,6 +1,6 @@
 // AdminCatalogPageWrapper.tsx
 import { NavLink, Outlet } from "react-router-dom";
-import { NavButton } from "@components/ui";
+import { buttonVariants } from "@components/ui";
 
 export default function AdminCatalogPageWrapper() {
   return (
@@ -9,13 +9,17 @@ export default function AdminCatalogPageWrapper() {
       <nav className="flex gap-2 p-2 py-4 border-b border-border overflow-x-auto whitespace-nowrap">
         <NavLink
           to="categories"
-          className={({ isActive }) => NavButton(isActive)}
+          className={({ isActive }) =>
+            buttonVariants({ variant: isActive ? "raised" : "default" })
+          }
         >
           Categories
         </NavLink>
         <NavLink
           to="collections"
-          className={({ isActive }) => NavButton(isActive)}
+          className={({ isActive }) =>
+            buttonVariants({ variant: isActive ? "raised" : "default" })
+          }
         >
           Collections
         </NavLink>

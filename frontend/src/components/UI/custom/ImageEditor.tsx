@@ -2,8 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import { Zoom } from "yet-another-react-lightbox/plugins";
-import { CropDialog, Input } from "@components/ui";
-import { XButton } from "@components/ui";
+import { Button, CropDialog, Input } from "@components/ui";
 
 // --- ImageSlot Component ---
 interface ImageSlotProps {
@@ -70,14 +69,14 @@ function ImageSlot({
 
       {/* Remove */}
       {src && (
-        <XButton
+        <Button
+          variant={"xicon"}
           onClick={(e) => {
             e.stopPropagation();
             onRemove();
           }}
-          className="absolute top-1 right-1 w-6 h-6 flex
-           rounded-full cursor-pointer z-10 bg-black/50 
-           text-white p-0"
+          className={`absolute top-1 right-1 w-6 h-6 flex cursor-pointer z-10 
+          bg-black/50 text-white p-0`}
         />
       )}
     </div>

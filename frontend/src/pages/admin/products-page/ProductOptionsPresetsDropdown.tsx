@@ -4,7 +4,7 @@ import type {
   ProductOptionsPreset,
 } from "@shared/types/Product";
 import { useApi } from "@api/useApi";
-import { XButton } from "@components/ui";
+import { Button } from "@components/ui";
 import { AnimatedDropdownBox } from "@components/ui"; // adjust path
 
 interface OptionsPresetDropdownProps {
@@ -67,7 +67,9 @@ const OptionsPresetDropdown: React.FC<OptionsPresetDropdownProps> = ({
     render: (p: ProductOptionsPreset) => (
       <div className={`flex justify-between items-center gap-2`}>
         <span className="flex-1 text-text">{p.name}</span>
-        <XButton
+        <Button
+          variant={"xicon"}
+          className="w-5 h-5"
           onClick={(e) => {
             e.stopPropagation();
             handleDeletePreset(p.id);

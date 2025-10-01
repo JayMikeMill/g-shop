@@ -11,7 +11,7 @@ import {
 import { ProductEditorForm } from "./ProductEditorForm";
 
 // Types
-import type { Product } from "@shared/types/Product";
+import { priceToFloat, type Product } from "@shared/types/Product";
 
 // API
 import { useApi } from "@api/useApi";
@@ -156,7 +156,7 @@ export default function AdminProductsPage() {
             render: (p) => (
               <div className="flex items-center justify-center">
                 <span className="font-semibold text-center text-text">
-                  {p.price.toFixed(2)}
+                  {priceToFloat(p.price).toFixed(2)}
                 </span>
               </div>
             ),

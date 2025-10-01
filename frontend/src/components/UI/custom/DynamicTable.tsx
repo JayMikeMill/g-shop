@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 import type { QueryObject } from "@shared/types/QueryObject";
 
 import "./dynamic-table.css";
-import { Input } from "./input";
+import { Input } from "../primitives/Input";
 
 export interface TableColumn<T> {
   id: string;

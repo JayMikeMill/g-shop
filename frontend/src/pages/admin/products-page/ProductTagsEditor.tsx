@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Button, XButton } from "@components/ui";
+import { Button } from "@components/ui";
 import { AnimatedDropdownBox } from "@components/ui";
 
 import type {
@@ -84,7 +84,9 @@ const TagPresetsDropdown: React.FC<TagPresetsDropdownProps> = ({
           }}
         />
         <span className="flex-1 text-text">{preset.name}</span>
-        <XButton
+        <Button
+          variant={"xicon"}
+          className="w-8 h-8"
           onClick={(e) => {
             e.stopPropagation();
             deletePreset(p.id);
@@ -168,7 +170,11 @@ const ProductTagsEditor: React.FC<ProductTagsEditorProps> = ({
             <span className="text-center font-bold font-font ml-3">
               {tag.name}
             </span>
-            <XButton className="w-5 h-5" onClick={() => removeTag(i)} />
+            <Button
+              variant={"xicon"}
+              className="w-5 h-5"
+              onClick={() => removeTag(i)}
+            />
           </div>
         ))}
       </div>

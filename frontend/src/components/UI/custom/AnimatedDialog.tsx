@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { XButton } from "@components/ui";
+import { Button } from "@components/ui";
 
 interface AnimatedDialogProps {
   title?: string;
@@ -93,7 +93,8 @@ export const AnimatedDialog: React.FC<AnimatedDialogProps> = ({
                   {title}
                 </h2>
                 {showXButton && (
-                  <XButton
+                  <Button
+                    variant={"xicon"}
                     className="w-8 h-8"
                     onClick={onClose}
                     aria-label="Close dialog"

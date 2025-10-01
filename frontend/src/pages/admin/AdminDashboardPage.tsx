@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "@contexts/auth/AuthContext";
-import { Button, NavButton } from "@components/ui";
+import { Button, buttonVariants } from "@components/ui";
 
 export default function AdminDashboardPage() {
   const { logout } = useAuth();
@@ -18,31 +18,41 @@ export default function AdminDashboardPage() {
       <nav className="flex gap-2 p-2 py-4 border-b border-border overflow-x-auto whitespace-nowrap">
         <NavLink
           to="/admin/products"
-          className={({ isActive }) => NavButton(isActive)}
+          className={({ isActive }) =>
+            buttonVariants({ variant: isActive ? "raised" : "default" })
+          }
         >
           Products
         </NavLink>
         <NavLink
           to="/admin/catalog"
-          className={({ isActive }) => NavButton(isActive)}
+          className={({ isActive }) =>
+            buttonVariants({ variant: isActive ? "raised" : "default" })
+          }
         >
           Catalog
         </NavLink>
         <NavLink
           to="/admin/orders"
-          className={({ isActive }) => NavButton(isActive)}
+          className={({ isActive }) =>
+            buttonVariants({ variant: isActive ? "raised" : "default" })
+          }
         >
           Orders
         </NavLink>
         <NavLink
           to="/admin/users"
-          className={({ isActive }) => NavButton(isActive)}
+          className={({ isActive }) =>
+            buttonVariants({ variant: isActive ? "raised" : "default" })
+          }
         >
           Users
         </NavLink>
         <NavLink
           to="/admin/settings"
-          className={({ isActive }) => NavButton(isActive)}
+          className={({ isActive }) =>
+            buttonVariants({ variant: isActive ? "raised" : "default" })
+          }
         >
           Settings
         </NavLink>
