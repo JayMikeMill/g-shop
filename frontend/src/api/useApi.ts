@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import { useAuth } from "@contexts/auth/AuthContext";
-import axios from "axios";
+import { apiClient, setAuthToken } from "./client";
 
 import type { CRUDInterface } from "@shared/types/crud-interface";
-
+import type { QueryObject } from "@shared/types/QueryObject";
 import type {
   Product,
   ProductTagPreset,
@@ -14,68 +14,60 @@ import type {
 import type { User } from "@shared/types/User";
 import type { Collection, Category } from "@shared/types/Catalog";
 import type { Order } from "@shared/types/Order";
-import type { QueryObject } from "@shared/types/QueryObject";
 
-const API_BASE = import.meta.env.VITE_API_URL;
+// Generic helpers
+const get = async <T>(url: string, params?: any): Promise<T> => {
+  const r = await apiClient.get<T>(url, { params });
+  return r.data;
+};
 
-const get = <T>(url: string, token?: string | null, params?: any) =>
-  axios
-    .get<T>(url, {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-      params,
-    })
-    .then((r) => r.data);
+const post = async <T>(url: string, data?: any): Promise<T> => {
+  const r = await apiClient.post<T>(url, data);
+  return r.data;
+};
 
-const post = <T>(url: string, data?: any, token?: string | null) =>
-  axios
-    .post<T>(url, data, {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-    })
-    .then((r) => r.data);
+const put = async <T>(url: string, data: any): Promise<T> => {
+  const r = await apiClient.put<T>(url, data);
+  return r.data;
+};
 
-const put = <T>(url: string, data: any, token?: string | null) =>
-  axios
-    .put<T>(url, data, {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-    })
-    .then((r) => r.data);
+const del = async <T>(url: string, data?: any): Promise<T> => {
+  const r = await apiClient.delete<T>(url, { data });
+  return r.data;
+};
 
-const del = <T>(url: string, token?: string | null, data?: any) =>
-  axios
-    .delete<T>(url, {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-      data,
-    })
-    .then((r) => r.data);
+// CRUD factory
+function CRUD<T extends { id?: string }>(name: string): CRUDInterface<T> {
+  return {
+    create: (data: Partial<T>) => post<T>(`/${name}`, data),
+    get: (id: string) => get<T | null>(`/${name}/${id}`),
+    getAll: (query?: QueryObject) =>
+      get<{ data: T[]; total: number }>(`/${name}`, query),
+    update: (updates: Partial<T> & { id: string }) =>
+      put<T>(`/${name}/${updates.id}`, updates),
+    delete: (id: string) => del<T>(`/${name}/${id}`),
+  };
+}
 
-export const verifyToken = async (token: string) =>
-  axios
-    .get(`${API_BASE}/auth/verify`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    .then((r) => r.data);
+// Standalone function (outside the hook)
+export async function verifyToken(token: string) {
+  const r = await apiClient.get("/auth/verify", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return r.data;
+}
 
+// Hook
 export function useApi() {
   const { token } = useAuth();
 
   return useMemo(() => {
-    const CRUD = <T extends { id?: string }>(
-      name: string,
-      token?: string
-    ): CRUDInterface<T> => ({
-      create: (data: Partial<T>) => post<T>(`${API_BASE}/${name}`, data, token),
-      get: (id: string) => get<T | null>(`${API_BASE}/${name}/${id}`, token),
-      getAll: (query?: QueryObject) =>
-        get<{ data: T[]; total: number }>(`${API_BASE}/${name}`, token, query),
-      update: (updates: Partial<T> & { id: string }) =>
-        put<T>(`${API_BASE}/${name}/${updates.id}`, updates, token),
-      delete: (id: string) => del<T>(`${API_BASE}/${name}/${id}`, token),
-    });
+    setAuthToken(token);
 
     return {
       auth: {
-        register: (payload: any) => post(`${API_BASE}/auth/register`, payload),
-        login: (payload: any) => post(`${API_BASE}/auth/login`, payload),
+        register: (payload: any) => post(`/auth/register`, payload),
+        login: (payload: any) => post(`/auth/login`, payload),
       },
 
       // CRUD resources
@@ -95,20 +87,20 @@ export function useApi() {
       uploadImage: (file: Blob, filename: string) => {
         const form = new FormData();
         form.append("file", file, filename);
-        return post<{ url: string }>(`${API_BASE}/storage/image`, form, token);
+        return post<{ url: string }>(`/storage/image`, form);
       },
       uploadFile: (file: Blob, filename: string) => {
         const form = new FormData();
         form.append("file", file, filename);
-        return post<{ url: string }>(`${API_BASE}/storage/file`, form, token);
+        return post<{ url: string }>(`/storage/file`, form);
       },
       deleteFile: (url: string) =>
-        del<{ success: boolean }>(`${API_BASE}/storage`, token, { url }),
+        del<{ success: boolean }>(`/storage`, { url }),
+
       // custom endpoints
-      processPayment: (payment: any) =>
-        post(`${API_BASE}/payments/process`, payment, token),
+      processPayment: (payment: any) => post(`/payments/process`, payment),
       refundPayment: (paymentId: string) =>
-        post(`${API_BASE}/payments/refund`, { paymentId }, token),
+        post(`/payments/refund`, { paymentId }),
     };
   }, [token]);
 }
