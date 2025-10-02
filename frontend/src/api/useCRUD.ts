@@ -35,7 +35,7 @@ export function useCRUD<T extends { id?: string }>(
       });
     },
 
-    get: (id: string) =>
+    getOne: (id: string) =>
       useQuery({
         queryKey: [resource, id],
         queryFn: () => crud.getOne(id),

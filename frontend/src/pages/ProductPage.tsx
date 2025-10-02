@@ -13,12 +13,14 @@ import ProductImagesViewer from "@features/products/ProductImagesViewer";
 import { Button, TagBox } from "@components/ui";
 
 const ProductPage = () => {
+  // Get product ID from URL params
   const { id } = useParams<{ id: string }>();
-  const { addItem } = useCart();
 
-  // ✅ Correct API hook: products.get(id)
+  // Cart context, API hooks
+  const { addItem } = useCart();
   const { products } = useApi();
-  const { data: product, isLoading, error } = products.get(id ?? "");
+
+  const { data: product, isLoading, error } = products.getOne(id ?? "");
 
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     null
