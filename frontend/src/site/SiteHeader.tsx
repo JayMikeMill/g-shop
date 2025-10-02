@@ -2,12 +2,13 @@
 import { useNavigate } from "react-router-dom";
 import { ShoppingCart, Menu } from "lucide-react";
 
-import { useCart } from "@features/cart/useCart";
-
 import { useState } from "react";
 
 import { SITE } from "../site-config";
-import SlideOutCart from "@components/shopping-cart/SlideOutCart";
+
+import { useCart } from "@features/cart/useCart";
+import SlideOutCart from "@features/cart/SlideOutCart";
+
 import SiteMenu from "./SiteMenu";
 import { Button } from "@components/ui";
 
