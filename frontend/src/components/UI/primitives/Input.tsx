@@ -79,4 +79,4 @@ const NumberInput = React.forwardRef<
 
 Input.displayName = "Input";
 
-export { inputVariants, Input, NumberInput as NumberInput };
+export { inputVariants, Input, NumberInput };
