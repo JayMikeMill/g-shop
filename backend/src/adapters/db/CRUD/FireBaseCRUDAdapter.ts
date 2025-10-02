@@ -1,6 +1,6 @@
 // backend/src/crud/FirebaseCRUD.ts
 import { db } from "@config/firebase/firebaseAdmin";
-import type { CRUDInterface } from "@shared/types/crud-interface";
+import type { CRUDInterface } from "@shared/types/CRUDInterface";
 
 export class FirebaseCRUDAdapter<T extends { id?: string }>
   implements CRUDInterface<T>
@@ -19,7 +19,7 @@ export class FirebaseCRUDAdapter<T extends { id?: string }>
     return { ...data, id: docRef.id };
   }
 
-  async get(id: string): Promise<T | null> {
+  async getOne(id: string): Promise<T | null> {
     const doc = await db.collection(this.collection).doc(id).get();
     return doc.exists ? ({ ...doc.data(), id: doc.id } as T) : null;
   }

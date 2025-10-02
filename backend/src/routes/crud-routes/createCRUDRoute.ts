@@ -3,7 +3,7 @@ import { Router, Request, Response, NextFunction } from "express";
 import { requireRole } from "@middleware/authorization";
 import type { Role } from "@middleware/authorization";
 import { QueryObject, parseQueryObject } from "@shared/types/QueryObject";
-import { CRUDInterface } from "@shared/types/crud-interface";
+import { CRUDInterface } from "@shared/types/CRUDInterface";
 
 /**
  * If rolesAllowed is empty or undefined, route is public.
@@ -68,7 +68,7 @@ export function createCRUDRoute(
     next: NextFunction
   ) => {
     try {
-      const item = await crud.get(req.params.id);
+      const item = await crud.getOne(req.params.id);
       if (!item) return res.status(404).json({ error: "Not found" });
       res.json(item);
     } catch (err) {

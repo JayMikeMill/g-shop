@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { CRUDInterface } from "@shared/types/crud-interface";
+import type { CRUDInterface } from "@shared/types/CRUDInterface";
 import { type QueryObject, toQueryString } from "@shared/types/QueryObject";
 import { get, post, put, del } from "./client";
 
@@ -7,7 +7,7 @@ import { get, post, put, del } from "./client";
 function CRUD<T extends { id?: string }>(name: string): CRUDInterface<T> {
   return {
     create: (data: Partial<T>) => post<T>(`/${name}`, data),
-    get: (id: string) => get<T | null>(`/${name}/${id}`),
+    getOne: (id: string) => get<T | null>(`/${name}/${id}`),
     getAll: (query?: QueryObject) =>
       get<{ data: T[]; total: number }>(`/${name}?${toQueryString(query)}`),
     update: (updates: Partial<T> & { id: string }) =>
@@ -38,7 +38,7 @@ export function useCRUD<T extends { id?: string }>(
     get: (id: string) =>
       useQuery({
         queryKey: [resource, id],
-        queryFn: () => crud.get(id),
+        queryFn: () => crud.getOne(id),
         enabled: !!id,
       }),
 

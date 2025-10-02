@@ -1,5 +1,5 @@
 import { apiClient } from "./client";
-import type { CRUDInterface } from "@shared/types/crud-interface";
+import type { CRUDInterface } from "@shared/types/CRUDInterface";
 import { type QueryObject, toQueryString } from "@shared/types/QueryObject";
 
 // Generic HTTP helpers
@@ -17,7 +17,7 @@ export function CRUD<T extends { id?: string }>(
 ): CRUDInterface<T> {
   return {
     create: (data: Partial<T>) => post<T>(`/${name}`, data),
-    get: (id: string) => get<T | null>(`/${name}/${id}`),
+    getOne: (id: string) => get<T | null>(`/${name}/${id}`),
     getAll: (query?: QueryObject) => {
       const qs = query ? `?${toQueryString(query)}` : "";
       return get<{ data: T[]; total: number }>(`/${name}${qs}`);

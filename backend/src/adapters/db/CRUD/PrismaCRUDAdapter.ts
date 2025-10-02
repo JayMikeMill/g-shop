@@ -2,7 +2,7 @@
 import { PrismaClient } from "@prisma/client";
 import type { QueryObject } from "@shared/types/QueryObject";
 type NestedType = "upsertNested" | "createNested" | "set" | "upsert";
-import { CRUDInterface } from "@shared/types/crud-interface";
+import { CRUDInterface } from "@shared/types/CRUDInterface";
 
 interface NestedFieldOptions {
   type: NestedType;
@@ -178,7 +178,7 @@ export class PrismaCRUDAdapter<T> implements CRUDInterface<T> {
     return this.fromPrisma(created);
   }
 
-  async get(id: string): Promise<T | null> {
+  async getOne(id: string): Promise<T | null> {
     const found = await this.client.findUnique({
       where: { id },
       include: this.include,

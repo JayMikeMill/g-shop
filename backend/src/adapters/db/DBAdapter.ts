@@ -1,4 +1,4 @@
-import { CRUDInterface } from "@shared/types/crud-interface";
+import { CRUDInterface } from "@shared/types/CRUDInterface";
 
 import {
   Product,
