@@ -2,9 +2,11 @@
 import { useState } from "react";
 
 // Components
-import { Button, buttonVariants, DynamicTable } from "@components/ui";
-import type { Category, Collection } from "@shared/types/Catalog";
+import { buttonVariants } from "@components/ui";
 import { CatalogDialog } from "@features/admin-dash/catalog-editor/CollectionDialog";
+import { CollectionTable } from "@features/admin-dash/catalog-editor/CatalogTable";
+
+import type { Category, Collection } from "@shared/types/Catalog";
 
 // API hook
 import { useApi } from "@api/useApi";
@@ -46,7 +48,7 @@ interface AdminCatalogPageProps {
   typeLabel: "Category" | "Collection";
 }
 
-function AdminCatalogPage({ apiKey, typeLabel }: AdminCatalogPageProps) {
+export function AdminCatalogPage({ apiKey, typeLabel }: AdminCatalogPageProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [editingItem, setEditingItem] = useState<Collection | Category | null>(
     null
@@ -63,14 +65,12 @@ function AdminCatalogPage({ apiKey, typeLabel }: AdminCatalogPageProps) {
 
   const handleDialogCreate = (item: Collection | Category) => {
     api.create(item);
-    console.log("Created item:", item);
     clearState();
   };
 
   const handleDialogModify = (item: Collection | Category) => {
     if (item && item.id) {
       api.update({ ...item, id: item.id as string });
-      console.log("Modified item:", item);
       clearState();
     }
   };
@@ -87,7 +87,6 @@ function AdminCatalogPage({ apiKey, typeLabel }: AdminCatalogPageProps) {
 
   return (
     <div className="pt-lg pb-lg">
-      {/* Catalog dialog */}
       <CatalogDialog
         open={editingItem !== null || isAdding}
         item={editingItem}
@@ -99,42 +98,13 @@ function AdminCatalogPage({ apiKey, typeLabel }: AdminCatalogPageProps) {
         apiKey={apiKey}
       />
 
-      {/* Catalog list */}
-      <DynamicTable
-        fetchPage={api.getAll}
-        key={tableKey}
-        onRowClick={(item: Collection | Category) => setEditingItem(item)}
-        objectsName={typeLabel + "s"}
-        headerButton={
-          <Button onClick={() => setIsAdding(true)}>Add {typeLabel}</Button>
-        }
-        columns={[
-          {
-            id: "name",
-            label: "Name",
-            sortable: true,
-            render: (item: Collection | Category) => (
-              <div className="flex items-center justify-center">
-                <span className="font-semibold text-center text-text">
-                  {item.name}
-                </span>
-              </div>
-            ),
-          },
-          {
-            id: "description",
-            label: "Description",
-            render: (item: Collection | Category) => (
-              <div className="flex items-top justify-left">
-                <span className="font-semibold text-text">
-                  {item.description}
-                </span>
-              </div>
-            ),
-          },
-        ]}
-        pageSize={10}
-        searchable={true}
+      {/* Catalog table */}
+      <CollectionTable
+        fetcher={api.getAll}
+        onRowClick={setEditingItem}
+        onAddClick={() => setIsAdding(true)}
+        typeLabel={typeLabel}
+        keyProp={tableKey}
       />
     </div>
   );
