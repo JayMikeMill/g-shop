@@ -5,7 +5,7 @@ import type {
 } from "@shared/types/Product";
 import { useApi } from "@api/useApi";
 import { Button } from "@components/ui";
-import { AnimatedDropdownBox } from "@components/ui"; // adjust path
+import { AnimatedSelect } from "@components/ui"; // adjust path
 
 interface OptionsPresetDropdownProps {
   localOptions: ProductOption[];
@@ -81,7 +81,7 @@ const OptionsPresetDropdown: React.FC<OptionsPresetDropdownProps> = ({
   }));
 
   return (
-    <AnimatedDropdownBox
+    <AnimatedSelect
       items={dropdownItems}
       headerText="Select Preset..."
       noItemsText="No option presets."

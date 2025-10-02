@@ -16,7 +16,7 @@ interface AnimatedSelectProps<T> {
   menuClassName?: string;
 }
 
-export const AnimatedDropdownBox = <T,>({
+export const AnimatedSelect = <T,>({
   items,
   headerText = "Select...",
   noItemsText = "No items",

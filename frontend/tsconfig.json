@@ -43,11 +43,5 @@
     }
   },
 
-  "include": [
-    "./src",
-    "vite-env.d.ts",
-    "global.d.ts",
-    "tailwind.config.js",
-    "src/components/ui/custom/AnimatedSelect/.tsx"
-  ] // files to include
+  "include": ["./src", "vite-env.d.ts", "global.d.ts", "tailwind.config.js"] // files to include
 }

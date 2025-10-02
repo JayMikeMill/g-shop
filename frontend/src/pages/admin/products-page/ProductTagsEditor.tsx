@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Button, TagBox } from "@components/ui";
-import { AnimatedDropdownBox } from "@components/ui";
+import { Button, TagBox, AnimatedSelect } from "@components/ui";
 
 import type {
   Product,
@@ -12,7 +11,6 @@ import type {
 import { ProductTagDialog } from "./ProductTagDialog";
 
 import { useApi } from "@api/useApi";
-import { color } from "framer-motion";
 
 interface TagPresetsDropdownProps {
   onSelectPreset: (preset: ProductTagPreset) => void; // notify main component
@@ -102,7 +100,7 @@ const TagPresetsDropdown: React.FC<TagPresetsDropdownProps> = ({
   return (
     <div className="relative flex items-center gap-2 w-3/4">
       {/* Dropdown */}
-      <AnimatedDropdownBox
+      <AnimatedSelect
         items={dropdownItems}
         headerText="Select Tag..."
         noItemsText="No tag presets."

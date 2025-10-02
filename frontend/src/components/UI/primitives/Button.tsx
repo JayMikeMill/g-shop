@@ -4,48 +4,69 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@components/lib/utils";
 import { TrashIcon, XIcon } from "lucide-react";
 
-const buttonVariants = cva(
-  `inline-flex items-center justify-center px-6 py-2 gap-2 whitespace-nowrap 
+const baseButton = `
+  inline-flex items-center justify-center px-6 py-2 gap-2 whitespace-nowrap 
   text-sm font-semibold rounded-md 
   cursor-pointer transition-all duration-200 
-  hover:-translate-y-[0.1rem]   hover:shadow-sm 
-  active:-translate-y-[0.2rem]  active:shadow-md
-  disabled:pointer-events-none  disabled:opacity-50`,
-  //[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0`,
+  hover:-translate-y-[0.1rem] hover:shadow-sm 
+  active:-translate-y-[0.2rem] active:shadow-md
+  disabled:pointer-events-none disabled:opacity-50
+`; //[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0`,
+
+const buttonVariants = cva(
+  "",
 
   {
     variants: {
       variant: {
-        default: `bg-primary text-primary-foreground 
+        default:
+          baseButton +
+          `bg-primary text-primary-foreground 
           active:bg-primary-600`,
 
-        destructive: `bg-destructive text-destructive-foreground 
+        destructive:
+          baseButton +
+          `bg-destructive text-destructive-foreground 
           active:bg-destructive-600`,
 
-        outline: `border border-input bg-background shadow-sm 
+        outline:
+          baseButton +
+          `border border-input bg-background shadow-sm 
           hover:bg-accent hover:text-accent-foreground`,
 
-        secondary: `bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80`,
-        ghost: `hover:bg-accent hover:text-accent-foreground`,
+        secondary:
+          baseButton +
+          `bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80`,
+        ghost: baseButton + `hover:bg-accent hover:text-accent-foreground`,
 
-        flat: `bg-transparent text-base shadow-none
+        flat:
+          baseButton +
+          `bg-transparent text-base shadow-none
         border border-input
         hover:bg-primary-100 hover:text-base
         active:bg-primary-400`,
 
-        flatLink: `underline-offset-4 shadow-none
+        flatLink:
+          baseButton +
+          `underline-offset-4 shadow-none
         hover:underline hover:translate-none hover:shadow-none 
         active:translate-none active:shadow-none`,
 
-        xicon: `w-10 h-10 p-0 flex items-center justify-center rounded-full 
-          text-foreground border-none shadow-none flex transition-colors 
+        xicon:
+          baseButton +
+          `w-10 h-10 p-0 flex items-center justify-center rounded-full
+          text-foreground border-none shadow-none flex transition-colors
           hover:bg-background hover:translate-none hover:shadow-none [&_svg]:shrink-0
           active:translate-none active:shadow-none`,
 
-        raised: `bg-accent text-primary-foreground 
+        raised:
+          baseButton +
+          `bg-accent text-primary-foreground
         -translate-y-[0.1rem] scale-110
         hover: shadow-md hover:-translate-y-[0.2rem]
         active:bg-accent-600 active:-translate-y-[0.3rem]`,
+
+        blank: "",
       },
       size: {
         default: "h-9 px-4 py-2",

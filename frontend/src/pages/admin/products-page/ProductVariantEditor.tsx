@@ -189,10 +189,9 @@ export const ProductVariantHeader: React.FC<ProductVariantHeaderProps> = ({
   return (
     <div className="flex items-center gap-8 w-full pr-4">
       <span className="text-lg font-semibold text-text">
-        {hasVariants ? "Total Stock" : "Stock"}
+        {hasVariants ? "Total Stock" : "Product Stock"}
       </span>
       <Input
-        type="number"
         min={0}
         step={1}
         value={localStock ?? ""}
@@ -202,7 +201,7 @@ export const ProductVariantHeader: React.FC<ProductVariantHeaderProps> = ({
         }}
         disabled={hasVariants}
         onFocus={(e) => e.target.select()}
-        className={`w-24 text-center`}
+        className={`w-24 text-center h-6 bg-background disabled:opacity-100`}
       />
     </div>
   );

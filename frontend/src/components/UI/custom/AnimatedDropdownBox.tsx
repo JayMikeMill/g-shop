@@ -1,7 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Button } from "../primitives/Button";
 
-interface DropdownProps {
+interface AnimatedDropdownBoxProps {
   className?: string;
   title?: string;
   customTitle?: React.ReactNode;
@@ -11,7 +12,7 @@ interface DropdownProps {
   disabled?: boolean;
 }
 
-export const AnimatedDropdownSurface: React.FC<DropdownProps> = ({
+export const AnimatedDropdownBox: React.FC<AnimatedDropdownBoxProps> = ({
   className,
   title,
   customTitle,
@@ -33,16 +34,16 @@ export const AnimatedDropdownSurface: React.FC<DropdownProps> = ({
 
   return (
     <div className={`border border-border rounded-md w-full max-w-full`}>
-      <button
-        type="button"
-        className={`flex justify-between items-center rounded-md w-full px-4 py-2 bg-surfaceAlt text-text font-semibold ${
-          disabled ? "cursor-not-allowed" : ""
-        }`}
+      <Button
+        variant="blank"
+        className={`flex justify-between items-center bg-primary-100
+          rounded-md w-full px-4 py-2 text-base font-semibold 
+           ${disabled ? "cursor-not-allowed" : ""}`}
         onClick={() => !disabled && setInternalOpen((prev) => !prev)}
       >
         {customTitle ?? title}
         {!disabled && <span>{open ? "▲" : "▼"}</span>}
-      </button>
+      </Button>
 
       <AnimatePresence initial={false}>
         {open && (

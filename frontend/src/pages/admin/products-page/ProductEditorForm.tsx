@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 
 // UI Components
-import { AnimatedDropdownSurface, Button } from "@components/ui";
+import { AnimatedDropdownBox, AnimatedSelect, Button } from "@components/ui";
 
 // Types
 import {
@@ -118,42 +118,42 @@ export const ProductEditorForm: React.FC<ProductEditorFormProps> = ({
         {/* Main Editor */}
         <div className="flex-1 flex flex-col gap-md overflow-y-auto pb-md sm:border sm:rounded-lg">
           {/* Editors */}
-          <div className="flex flex-col gap-md">
+          <div className="flex flex-col gap-md p-sm">
             {/* Info Editor */}
-            <AnimatedDropdownSurface title="Info" openInitially={true}>
+            <AnimatedDropdownBox title="Product Info" openInitially={true}>
               <ProductInfoEditor
                 product={localProduct}
                 setProduct={setLocalProduct}
               />
-            </AnimatedDropdownSurface>
+            </AnimatedDropdownBox>
 
             {/* Tags Editor */}
-            <AnimatedDropdownSurface title="Tags" openInitially={true}>
+            <AnimatedDropdownBox title="Product Tags" openInitially={true}>
               <ProductTagsEditor
                 product={localProduct}
                 setProduct={setLocalProduct}
                 openInitially={true}
               />
-            </AnimatedDropdownSurface>
+            </AnimatedDropdownBox>
 
             {/* Dimensions Editor */}
-            <AnimatedDropdownSurface title="Dimensions" openInitially={true}>
+            <AnimatedDropdownBox title="Dimensions" openInitially={true}>
               <ProductDimensionsEditor
                 product={localProduct}
                 setProduct={setLocalProduct}
               />
-            </AnimatedDropdownSurface>
+            </AnimatedDropdownBox>
 
             {/* Options Editor */}
-            <AnimatedDropdownSurface title="Options" openInitially={true}>
+            <AnimatedDropdownBox title="Options" openInitially={true}>
               <ProductOptionsEditor
                 product={localProduct}
                 setProduct={setLocalProduct}
               />
-            </AnimatedDropdownSurface>
+            </AnimatedDropdownBox>
 
             {/* Stock Editor */}
-            <AnimatedDropdownSurface
+            <AnimatedDropdownBox
               customTitle={
                 <ProductVariantHeader
                   product={localProduct}
@@ -167,7 +167,7 @@ export const ProductEditorForm: React.FC<ProductEditorFormProps> = ({
                 product={localProduct}
                 setProduct={setLocalProduct}
               />
-            </AnimatedDropdownSurface>
+            </AnimatedDropdownBox>
           </div>
 
           {/* Delete Button */}
