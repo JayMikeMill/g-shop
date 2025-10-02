@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { SITE } from "../site-config";
+import { SITE } from "../../site-config";
 
 const SiteFooter: React.FC = () => {
   const navigate = useNavigate();
