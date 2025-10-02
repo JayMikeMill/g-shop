@@ -1,7 +1,7 @@
 // src/pages/AdminLoginPage.tsx
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "@contexts/auth/AuthContext";
+import { useAuth } from "@features/auth/useAuth";
 import { AnimatedDialog, Button, Input } from "@components/ui";
 
 export default function AdminLoginPage() {

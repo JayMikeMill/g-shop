@@ -16,6 +16,7 @@ import type { AuthProvider } from "./AuthProvider";
 
 const STORAGE_KEY = "authToken";
 const SECRET_KEY = "12345678901234567890123456789012"; // exactly 32 chars = 256 bits
+
 // Simple encryption/decryption using Web Crypto API
 async function encryptToken(token: string) {
   const enc = new TextEncoder();
@@ -55,7 +56,7 @@ async function decryptToken(encryptedToken: string) {
   return new TextDecoder().decode(decrypted);
 }
 
-export function useFirebaseAuth(): AuthProvider {
+export default function FirebaseAuthProvider(): AuthProvider {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);

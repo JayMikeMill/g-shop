@@ -1,15 +1,7 @@
 // AppProviders.tsx
-import { AuthContext } from "@contexts/auth/AuthContext";
-import { useFirebaseAuth } from "@contexts/auth/useFirebaseAuth";
 import { Provider } from "react-redux";
 import { store } from "@app/store";
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
-  const firebaseAuth = useFirebaseAuth();
-
-  return (
-    <Provider store={store}>
-      <AuthContext provider={firebaseAuth}>{children}</AuthContext>
-    </Provider>
-  );
+  return <Provider store={store}>{children}</Provider>;
 }

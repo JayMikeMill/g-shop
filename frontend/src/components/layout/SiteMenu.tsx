@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@contexts/auth/AuthContext";
+import { useAuth } from "@features/auth/useAuth";
 import { Button } from "@components/ui";
 
 interface SiteMenuProps {

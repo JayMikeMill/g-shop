@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { useAuth } from "@contexts/auth/AuthContext";
+import { useAuth } from "@features/auth/useAuth";
 import { Button, buttonVariants } from "@components/ui";
 
 export default function AdminDashboardPage() {

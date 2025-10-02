@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useAuth } from "@contexts/auth/AuthContext";
+import { useAuth } from "@features/auth/useAuth";
 import { apiClient, setAuthToken } from "./client";
 
 import type { CRUDInterface } from "@shared/types/crud-interface";
