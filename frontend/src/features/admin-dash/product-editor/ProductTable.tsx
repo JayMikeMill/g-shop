@@ -2,28 +2,44 @@
 import type { Product } from "@shared/types/Product";
 import { priceToFloat } from "@shared/types/Product";
 import { DynamicTable, Button } from "@components/ui";
-import type { QueryObject } from "@shared/types/QueryObject";
 
 interface ProductTableProps {
-  productsFetcher: (
-    query?: QueryObject
-  ) => Promise<{ data: Product[]; total: number }>;
+  products: Product[];
+  loading?: boolean;
+  page?: number;
+  totalPages?: number;
+  onPageChange?: (page: number) => void;
   onRowClick: (product: Product) => void;
   onAddClick: () => void;
-  keyProp?: number;
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
+  onSearchSubmit?: () => void;
 }
 
 export function ProductTable({
-  productsFetcher,
+  products,
+  loading,
+  page = 1,
+  totalPages = 1,
+  onPageChange,
   onRowClick,
   onAddClick,
-  keyProp,
+  searchValue,
+  onSearchChange,
+  onSearchSubmit,
 }: ProductTableProps) {
   return (
-    <DynamicTable
-      fetchPage={productsFetcher}
-      key={keyProp}
+    <DynamicTable<Product>
+      data={products}
+      loading={loading}
+      page={page}
+      totalPages={totalPages}
+      onPageChange={onPageChange}
       onRowClick={onRowClick}
+      searchable={!!onSearchChange && !!onSearchSubmit}
+      searchValue={searchValue}
+      onSearchChange={onSearchChange}
+      onSearchSubmit={onSearchSubmit}
       objectsName="Products"
       headerButton={<Button onClick={onAddClick}>Add Product</Button>}
       columns={[
@@ -40,10 +56,7 @@ export function ProductTable({
                 />
               </div>
             ) : (
-              <div
-                className="w-20 h-20 flex items-center justify-center 
-								bg-light rounded text-xs"
-              >
+              <div className="w-20 h-20 flex items-center justify-center bg-light rounded text-xs">
                 No Image
               </div>
             ),
@@ -75,8 +88,8 @@ export function ProductTable({
         },
         {
           id: "tags",
-          width: "120px",
           label: "Tags",
+          width: "120px",
           render: (p: Product) => (
             <div className="flex items-center justify-center">
               <span className="font-semibold text-center text-text">
@@ -98,8 +111,6 @@ export function ProductTable({
           ),
         },
       ]}
-      pageSize={5}
-      searchable={true}
     />
   );
 }

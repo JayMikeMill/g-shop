@@ -1,33 +1,51 @@
-// src/features/admin-dash/catalog-editor/CatalogTable.tsx
-import { DynamicTable, Button } from "@components/ui";
+// src/features/admin-dash/catalog-editor/CollectionTable.tsx
 import type { Category, Collection } from "@shared/types/Catalog";
+import { DynamicTable, Button } from "@components/ui";
 
 interface CollectionTableProps<T extends Category | Collection> {
-  fetcher: () => Promise<{ data: T[]; total: number }>;
+  data: T[];
+  loading?: boolean;
+  page?: number;
+  totalPages?: number;
+  onPageChange?: (page: number) => void;
   onRowClick: (item: T) => void;
   onAddClick: () => void;
-  typeLabel: string;
-  keyProp?: number;
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
+  onSearchSubmit?: () => void;
 }
 
 export function CollectionTable<T extends Category | Collection>({
-  fetcher,
+  data,
+  loading,
+  page = 1,
+  totalPages = 1,
+  onPageChange,
   onRowClick,
   onAddClick,
-  typeLabel,
-  keyProp,
+  searchValue,
+  onSearchChange,
+  onSearchSubmit,
 }: CollectionTableProps<T>) {
   return (
-    <DynamicTable
-      fetchPage={fetcher}
-      key={keyProp}
+    <DynamicTable<T>
+      data={data}
+      loading={loading}
+      page={page}
+      totalPages={totalPages}
+      onPageChange={onPageChange}
       onRowClick={onRowClick}
-      objectsName={typeLabel + "s"}
-      headerButton={<Button onClick={onAddClick}>Add {typeLabel}</Button>}
+      searchable={!!onSearchChange && !!onSearchSubmit}
+      searchValue={searchValue}
+      onSearchChange={onSearchChange}
+      onSearchSubmit={onSearchSubmit}
+      objectsName="Collections"
+      headerButton={<Button onClick={onAddClick}>Add Collection</Button>}
       columns={[
         {
           id: "name",
           label: "Name",
+          width: "150px",
           sortable: true,
           render: (item: T) => (
             <div className="flex items-center justify-center">
@@ -40,6 +58,7 @@ export function CollectionTable<T extends Category | Collection>({
         {
           id: "description",
           label: "Description",
+          width: "300px",
           render: (item: T) => (
             <div className="flex items-top justify-left">
               <span className="font-semibold text-text">
@@ -49,8 +68,8 @@ export function CollectionTable<T extends Category | Collection>({
           ),
         },
       ]}
-      pageSize={10}
-      searchable={true}
     />
   );
 }
+
+export default CollectionTable;

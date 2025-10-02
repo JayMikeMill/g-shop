@@ -1,79 +1,60 @@
-import React, { useEffect, useState } from "react";
-
+import React, { useState, useEffect } from "react";
 import { Button, TagBox, AnimatedSelect } from "@components/ui";
-
 import type {
   Product,
   ProductTag,
   ProductTagPreset,
 } from "@shared/types/Product";
-
 import { ProductTagDialog } from "./ProductTagDialog";
-
 import { useApi } from "@api/useApi";
 
 interface TagPresetsDropdownProps {
-  onSelectPreset: (preset: ProductTagPreset) => void; // notify main component
+  onSelectPreset: (preset: ProductTagPreset) => void;
 }
 
 const TagPresetsDropdown: React.FC<TagPresetsDropdownProps> = ({
   onSelectPreset,
 }) => {
   const { productTagsPresets } = useApi();
-  const [presets, setPresets] = useState<ProductTagPreset[]>([]);
-  const [creating, setCreating] = useState(false);
 
+  // Queries
+  const { data: presetsData, refetch } = productTagsPresets.getAll();
+  const presets = presetsData?.data ?? [];
+
+  // Mutations
+  const createPresetMutation = productTagsPresets.create();
+  const deletePresetMutation = productTagsPresets.delete();
+
+  // Create preset state
+  const [creating, setCreating] = useState(false);
   const [newTagName, setNewTagName] = useState("");
   const [newTagColor, setNewTagColor] = useState("#000000");
   const [newTagTextColor, setNewTagTextColor] = useState("#ffffff");
 
-  // Load presets
-  useEffect(() => {
-    (async () => {
-      try {
-        const res = await productTagsPresets.getAll();
-        setPresets(res.data);
-      } catch (err) {
-        console.error("Error loading tag presets", err);
-      }
-    })();
-  }, []);
-
-  // Delete preset
-  const deletePreset = async (id?: string) => {
-    if (!id) return;
-    try {
-      await productTagsPresets.delete(id);
-      setPresets((prev) => prev.filter((p) => p.id !== id));
-    } catch (err) {
-      console.error("Error deleting tag preset", err);
-    }
-  };
-
-  // Create preset
   const createPreset = async () => {
     if (!newTagName.trim()) return;
-    try {
-      const created = await productTagsPresets.create({
-        name: newTagName.trim(),
-        color: newTagColor,
-        textColor: newTagTextColor,
-      });
-      setPresets((prev) => [...prev, created]);
-      setCreating(false);
-      setNewTagName("");
-      setNewTagColor("#bebebeff");
-      setNewTagTextColor("#ffffff");
-    } catch (err) {
-      console.error("Error creating tag preset", err);
-    }
+    await createPresetMutation.mutateAsync({
+      name: newTagName.trim(),
+      color: newTagColor,
+      textColor: newTagTextColor,
+    });
+    setCreating(false);
+    setNewTagName("");
+    setNewTagColor("#bebebeff");
+    setNewTagTextColor("#ffffff");
+    refetch(); // refresh presets list
+  };
+
+  const deletePreset = async (id?: string) => {
+    if (!id) return;
+    await deletePresetMutation.mutateAsync(id);
+    refetch();
   };
 
   const handleSelect = (preset: ProductTagPreset) => {
     onSelectPreset(preset);
   };
 
-  // Map presets to AnimatedDropdownBox items
   const dropdownItems = presets.map((p) => ({
     value: p,
     render: (preset: ProductTagPreset) => (
@@ -85,7 +66,7 @@ const TagPresetsDropdown: React.FC<TagPresetsDropdownProps> = ({
           textColor={preset.textColor}
         />
         <Button
-          variant={"xicon"}
+          variant="xicon"
           className="w-8 h-8"
           onClick={(e) => {
             e.stopPropagation();
@@ -99,7 +80,6 @@ const TagPresetsDropdown: React.FC<TagPresetsDropdownProps> = ({
 
   return (
     <div className="relative flex items-center gap-2 w-3/4">
-      {/* Dropdown */}
       <AnimatedSelect
         items={dropdownItems}
         headerText="Select Tag..."
@@ -107,10 +87,8 @@ const TagPresetsDropdown: React.FC<TagPresetsDropdownProps> = ({
         className="w-full"
       />
 
-      {/* Create Tag Button */}
       <Button onClick={() => setCreating(true)}>Create Tag</Button>
 
-      {/* Create Tag Dialog */}
       <ProductTagDialog
         open={creating}
         name={newTagName}
@@ -126,11 +104,11 @@ const TagPresetsDropdown: React.FC<TagPresetsDropdownProps> = ({
   );
 };
 
-/* -------------------- 3. ProductTagsEditor Component -------------------- */
+/* -------------------- ProductTagsEditor -------------------- */
 interface ProductTagsEditorProps {
   product: Product;
   setProduct: React.Dispatch<React.SetStateAction<Product>>;
-  openInitially?: boolean; // parent controls visibility
+  openInitially?: boolean;
 }
 
 const ProductTagsEditor: React.FC<ProductTagsEditorProps> = ({
@@ -139,15 +117,13 @@ const ProductTagsEditor: React.FC<ProductTagsEditorProps> = ({
 }) => {
   const [localTags, setLocalTags] = useState<ProductTag[]>(product.tags);
 
-  // Sync local tags with product
   useEffect(() => {
     setLocalTags(product.tags);
   }, [product.id]);
 
-  useEffect(
-    () => setProduct((prev) => ({ ...prev, tags: localTags })),
-    [localTags]
-  );
+  useEffect(() => {
+    setProduct((prev) => ({ ...prev, tags: localTags }));
+  }, [localTags]);
 
   const addTag = (preset: ProductTagPreset) => {
     if (!localTags.some((t) => t.name === preset.name)) {
@@ -171,7 +147,7 @@ const ProductTagsEditor: React.FC<ProductTagsEditorProps> = ({
               textColor={tag.textColor}
             >
               <Button
-                variant={"xicon"}
+                variant="xicon"
                 className="w-5 h-5"
                 style={{
                   backgroundColor: tag.color || "#ccc",

@@ -23,9 +23,12 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
   setProduct,
 }) => {
   const { productOptionsPresets } = useApi();
+  const { create: createPreset } = productOptionsPresets;
+
   const [localOptions, setLocalOptions] = useState<ProductOption[]>(
     product.options
   );
+
   const [saving, setSaving] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0); // <-- trigger refresh
 
@@ -76,7 +79,7 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
 
     setSaving(true);
     try {
-      await productOptionsPresets.create({ name, options: localOptions });
+      await createPreset().mutateAsync({ name, options: localOptions });
       alert("Preset saved successfully");
       setRefreshKey((prev) => prev + 1); // <-- refresh dropdown
     } catch (err: any) {
@@ -90,9 +93,7 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
     <div className="flex flex-col gap-2 w-full">
       {/* Preset Dropdown */}
       <OptionsPresetDropdown
-        localOptions={localOptions}
         setLocalOptions={setLocalOptions}
-        refreshKey={refreshKey}
         className="w-1/2"
       />
 

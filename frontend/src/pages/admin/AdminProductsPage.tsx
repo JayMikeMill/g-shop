@@ -4,38 +4,67 @@ import { ProductEditorForm } from "@features/admin-dash/product-editor/ProductEd
 import { useApi } from "@api/useApi";
 import type { Product } from "@shared/types/Product";
 import { ProductTable } from "@features/admin-dash/product-editor/ProductTable";
+import type { QueryObject } from "@shared/types/QueryObject";
 
 export default function AdminProductsPage() {
   const [isCreating, setIsCreating] = useState(false);
   const [isSavingProduct, setIsSavingProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [tableKey, setTableKey] = useState(0);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const pageSize = 5; // adjust if needed
 
-  const { products, uploadImage } = useApi();
-  const getProducts = products.getAll;
+  const { products } = useApi();
 
-  const clearState = (refreshTable = true) => {
+  // Fetch products using hook, pass query
+  const {
+    data: productsData,
+    isLoading,
+    refetch: refetchProducts, // <-- get the refetch function
+  } = products.getAll({ page, limit: pageSize, search } as QueryObject);
+
+  const productList = productsData?.data ?? [];
+  const totalPages = productsData?.total
+    ? Math.ceil(productsData.total / pageSize)
+    : 1;
+
+  // Setup mutation hooks
+  const createProduct = products.create();
+  const updateProduct = products.update();
+  const deleteProduct = products.delete();
+
+  const clearState = () => {
     setIsCreating(false);
     setEditingProduct(null);
-    if (refreshTable) setTableKey((k) => k + 1);
   };
 
   const handleDialogSave = async (product: Product, isNew: boolean) => {
     setIsSavingProduct(true);
-    // handle image uploads...
-    if (isNew) await products.create(product);
-    else await products.update(product as Product & { id: string });
-    setIsSavingProduct(false);
-    clearState();
+    try {
+      if (isNew) await createProduct.mutateAsync(product);
+      else await updateProduct.mutateAsync(product as Product & { id: string });
+      clearState();
+    } catch (err: any) {
+      alert("Failed to save product: " + err.message);
+    } finally {
+      setIsSavingProduct(false);
+    }
+    refetchProducts(); // Refresh product list after save
   };
 
   const handleDialogDelete = async (productId: string) => {
-    await products.delete(productId);
-    clearState();
+    if (!productId) return;
+    try {
+      await deleteProduct.mutateAsync(productId);
+      clearState();
+    } catch (err: any) {
+      alert("Failed to delete product: " + err.message);
+    }
+    refetchProducts(); // Refresh product list after delete
   };
 
   const handleDialogCancel = () => {
-    clearState(false);
+    clearState();
   };
 
   return (
@@ -68,10 +97,16 @@ export default function AdminProductsPage() {
 
       {/* Product table */}
       <ProductTable
-        productsFetcher={getProducts}
+        products={productList}
+        loading={isLoading}
+        page={page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+        searchValue={search}
+        onSearchChange={setSearch}
+        onSearchSubmit={() => setPage(1)} // reset page when searching
         onRowClick={setEditingProduct}
         onAddClick={() => setIsCreating(true)}
-        keyProp={tableKey}
       />
     </div>
   );

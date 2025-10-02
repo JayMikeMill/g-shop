@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import { AppProviders } from "./AppProviders";
+import { AppProviders } from "./app/providers";
 
 // Import component-specific CSS
 import "@styles/globals.css";

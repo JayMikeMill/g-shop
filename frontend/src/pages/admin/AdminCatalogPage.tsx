@@ -2,7 +2,12 @@
 import { useState } from "react";
 
 // Components
-import { buttonVariants } from "@components/ui";
+import {
+  Button,
+  buttonVariants,
+  CircleSpinner,
+  DynamicTable,
+} from "@components/ui";
 import { CatalogDialog } from "@features/admin-dash/catalog-editor/CollectionDialog";
 import { CollectionTable } from "@features/admin-dash/catalog-editor/CatalogTable";
 
@@ -11,6 +16,7 @@ import type { Category, Collection } from "@shared/types/Catalog";
 // API hook
 import { useApi } from "@api/useApi";
 import { NavLink, Outlet } from "react-router-dom";
+import type { QueryObject } from "@shared/types/QueryObject";
 
 export default function AdminCatalogPageWrapper() {
   return (
@@ -49,62 +55,106 @@ interface AdminCatalogPageProps {
 }
 
 export function AdminCatalogPage({ apiKey, typeLabel }: AdminCatalogPageProps) {
-  const [isAdding, setIsAdding] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [isSavingItem, setIsSavingItem] = useState(false);
   const [editingItem, setEditingItem] = useState<Collection | Category | null>(
     null
   );
-  const [tableKey, setTableKey] = useState(0);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const pageSize = 10;
 
   const api = useApi()[apiKey];
 
+  // Fetch items
+  const {
+    data: itemsData,
+    isLoading,
+    refetch: refetchItems,
+  } = api.getAll({ page, limit: pageSize, search } as QueryObject);
+
+  const itemList = itemsData?.data ?? [];
+  const totalPages = itemsData?.total
+    ? Math.ceil(itemsData.total / pageSize)
+    : 1;
+
+  // Mutation hooks
+  const createItem = api.create();
+  const updateItem = api.update();
+  const deleteItem = api.delete();
+
   const clearState = () => {
-    setIsAdding(false);
+    setIsCreating(false);
     setEditingItem(null);
-    setTableKey((prev) => prev + 1);
   };
 
-  const handleDialogCreate = (item: Collection | Category) => {
-    api.create(item);
-    clearState();
-  };
-
-  const handleDialogModify = (item: Collection | Category) => {
-    if (item && item.id) {
-      api.update({ ...item, id: item.id as string });
+  const handleDialogSave = async (
+    item: Collection | Category,
+    isNew: boolean
+  ) => {
+    setIsSavingItem(true);
+    try {
+      if (isNew) await createItem.mutateAsync(item);
+      else await updateItem.mutateAsync(item as Collection & { id: string });
       clearState();
+    } catch (err: any) {
+      alert(`Failed to save ${typeLabel}: ${err.message}`);
+    } finally {
+      setIsSavingItem(false);
     }
+    refetchItems();
   };
 
-  const handleDialogDelete = () => {
-    api.delete(editingItem?.id as string);
-    clearState();
+  const handleDialogDelete = async (itemId: string) => {
+    if (!itemId) return;
+    try {
+      await deleteItem.mutateAsync(itemId);
+      clearState();
+    } catch (err: any) {
+      alert(`Failed to delete ${typeLabel}: ${err.message}`);
+    }
+    refetchItems();
   };
 
   const handleDialogCancel = () => {
-    setIsAdding(false);
-    setEditingItem(null);
+    clearState();
   };
 
   return (
     <div className="pt-lg pb-lg">
+      {/* Catalog dialog */}
       <CatalogDialog
-        open={editingItem !== null || isAdding}
+        open={editingItem !== null || isCreating}
         item={editingItem}
-        onCreate={handleDialogCreate}
-        onModify={handleDialogModify}
-        onDelete={handleDialogDelete}
+        onCreate={(i) => handleDialogSave(i, true)}
+        onModify={(i) => handleDialogSave(i, false)}
+        onDelete={() => editingItem?.id && handleDialogDelete(editingItem.id)}
         onCancel={handleDialogCancel}
         typeLabel={typeLabel}
         apiKey={apiKey}
       />
 
-      {/* Catalog table */}
+      {/* Spinner overlay */}
+      {isSavingItem && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30">
+          <CircleSpinner
+            text={`${isCreating ? "Creating" : "Modifying"} ${typeLabel}...`}
+          />
+        </div>
+      )}
+
+      {/* Collection table */}
       <CollectionTable
-        fetcher={api.getAll}
+        data={itemList}
+        loading={isLoading}
+        page={page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+        searchValue={search}
+        onSearchChange={setSearch}
+        onSearchSubmit={() => setPage(1)} // reset page when searching
         onRowClick={setEditingItem}
-        onAddClick={() => setIsAdding(true)}
-        typeLabel={typeLabel}
-        keyProp={tableKey}
+        onAddClick={() => setIsCreating(true)}
       />
     </div>
   );

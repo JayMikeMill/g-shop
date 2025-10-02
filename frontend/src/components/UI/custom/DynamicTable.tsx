@@ -1,9 +1,7 @@
-import { useState, useEffect, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Search } from "lucide-react";
-import type { QueryObject } from "@shared/types/QueryObject";
-
+import { Input } from "@components/ui";
 import "./dynamic-table.css";
-import { Input } from "../primitives/Input";
 
 export interface TableColumn<T> {
   id: string;
@@ -18,87 +16,47 @@ export interface TableColumn<T> {
 
 export interface DynamicTableProps<T> {
   columns: TableColumn<T>[];
-  pageSize?: number;
-  fetchPage: (query?: QueryObject) => Promise<{ data: T[]; total: number }>;
+  data: T[];
+  loading?: boolean;
+  page?: number;
+  totalPages?: number;
+  onPageChange?: (page: number) => void;
   searchable?: boolean;
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
+  onSearchSubmit?: () => void;
   onRowClick?: (row: T) => void;
   headerButton?: ReactNode;
   objectsName?: string;
 }
 
 export const DynamicTable = <T extends { id?: string }>({
-  columns = [],
-  pageSize = 10,
-  fetchPage,
+  columns,
+  data,
+  loading = false,
+  page = 1,
+  totalPages = 1,
+  onPageChange,
   searchable = true,
+  searchValue = "",
+  onSearchChange,
+  onSearchSubmit,
   onRowClick,
-  headerButton: button,
+  headerButton,
   objectsName = "Objects",
 }: DynamicTableProps<T>) => {
-  const [pageData, setPageData] = useState<T[]>([]);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState("");
-  const [searchInput, setSearchInput] = useState("");
-  const [sortKey, setSortKey] = useState<string | null>(null);
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [loading, setLoading] = useState(false);
-
-  const totalPages = Math.ceil(total / pageSize);
-
-  const loadPage = async (pageNumber: number) => {
-    setLoading(true);
-    try {
-      const fetchQuery = {
-        search: search || undefined,
-        sortBy: sortKey || undefined,
-        sortOrder: sortKey ? sortOrder : undefined,
-        limit: pageSize,
-        page: pageNumber,
-      } as QueryObject;
-
-      const { data, total } = await fetchPage(fetchQuery);
-
-      setPageData(data);
-      setTotal(total);
-    } catch (err) {
-      console.error("Failed to load table page:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Reload whenever page, search, or sort changes
-  useEffect(() => {
-    loadPage(page);
-  }, [page, search, sortKey, sortOrder]);
-
-  const handleSort = (col: TableColumn<T>) => {
-    if (!col.sortable) return;
-    if (sortKey === col.id) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortKey(col.id);
-      setSortOrder("asc");
-    }
-    setPage(1); // reset to first page when sorting changes
-  };
-
-  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSearch(searchInput); // triggers useEffect → fetchPage
-    setPage(1); // reset pagination
-    console.log("Search submitted:", searchInput);
-  };
-
   return (
     <div className="flex flex-col gap-4 px-2">
+      {/* Header */}
       <div className="flex flex-row w-full gap-2 items-center">
-        {button && <div className="h-full">{button}</div>}
+        {headerButton && <div className="h-full">{headerButton}</div>}
 
-        {searchable && (
+        {searchable && onSearchChange && onSearchSubmit && (
           <form
-            onSubmit={handleSearchSubmit}
+            onSubmit={(e) => {
+              e.preventDefault();
+              onSearchSubmit();
+            }}
             className="relative w-full h-full"
           >
             <Input
@@ -106,13 +64,13 @@ export const DynamicTable = <T extends { id?: string }>({
               placeholder={
                 objectsName ? `Search ${objectsName}...` : "Search..."
               }
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
+              value={searchValue}
+              onChange={(e) => onSearchChange(e.target.value)}
             />
             <Search
               className="text-text absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer"
               size={20}
-              onClick={() => handleSearchSubmit(new Event("submit") as any)}
+              onClick={onSearchSubmit}
             />
           </form>
         )}
@@ -120,9 +78,9 @@ export const DynamicTable = <T extends { id?: string }>({
 
       {/* Table */}
       <div className="table-container">
-        {loading || (pageData || []).length === 0 ? (
+        {loading || data.length === 0 ? (
           <div className="w-full flex items-center justify-center border-border border rounded h-24 text-text text-3xl">
-            {loading ? "" : "No" + (objectsName ? ` ${objectsName}` : "")}
+            {loading ? "Loading..." : `No ${objectsName}`}
           </div>
         ) : (
           <table className="table w-full">
@@ -131,28 +89,18 @@ export const DynamicTable = <T extends { id?: string }>({
                 {columns.map((col) => (
                   <th
                     key={col.id}
-                    className={`${col.sortable ? "sortable" : ""} ${col.headerClassName || ""}`}
+                    className={col.headerClassName || ""}
                     style={
                       col.width ? { width: col.width } : { width: "120px" }
                     }
-                    onClick={() => handleSort(col)}
                   >
-                    {col.renderHeader ? (
-                      col.renderHeader()
-                    ) : (
-                      <div className="flex items-center justify-center gap-1">
-                        {col.label}
-                        {sortKey === col.id && (
-                          <span>{sortOrder === "asc" ? "▲" : "▼"}</span>
-                        )}
-                      </div>
-                    )}
+                    {col.renderHeader ? col.renderHeader() : col.label}
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {pageData.map((row) => (
+              {data.map((row) => (
                 <tr
                   key={row.id}
                   onClick={() => onRowClick?.(structuredClone(row))}
@@ -176,9 +124,9 @@ export const DynamicTable = <T extends { id?: string }>({
       </div>
 
       {/* Pagination */}
-      {totalPages > 1 && (
+      {totalPages > 1 && onPageChange && (
         <div className="table-pagination">
-          <button disabled={page === 1} onClick={() => setPage(page - 1)}>
+          <button disabled={page === 1} onClick={() => onPageChange(page - 1)}>
             Prev
           </button>
           <span className="flex items-center text-text">
@@ -186,7 +134,7 @@ export const DynamicTable = <T extends { id?: string }>({
           </span>
           <button
             disabled={page === totalPages}
-            onClick={() => setPage(page + 1)}
+            onClick={() => onPageChange(page + 1)}
           >
             Next
           </button>
@@ -195,3 +143,4 @@ export const DynamicTable = <T extends { id?: string }>({
     </div>
   );
 };
+export default DynamicTable;
