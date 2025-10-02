@@ -3,7 +3,7 @@ import { useAuth } from "@features/auth/useAuth";
 import { apiClient, setAuthToken } from "./client";
 
 import type { CRUDInterface } from "@shared/types/crud-interface";
-import type { QueryObject } from "@shared/types/QueryObject";
+import { type QueryObject, toQueryString } from "@shared/types/QueryObject";
 import type {
   Product,
   ProductTagPreset,
@@ -42,7 +42,7 @@ function CRUD<T extends { id?: string }>(name: string): CRUDInterface<T> {
     create: (data: Partial<T>) => post<T>(`/${name}`, data),
     get: (id: string) => get<T | null>(`/${name}/${id}`),
     getAll: (query?: QueryObject) =>
-      get<{ data: T[]; total: number }>(`/${name}`, query),
+      get<{ data: T[]; total: number }>(`/${name}?${toQueryString(query)}`),
     update: (updates: Partial<T> & { id: string }) =>
       put<T>(`/${name}/${updates.id}`, updates),
     delete: (id: string) => del<T>(`/${name}/${id}`),
