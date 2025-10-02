@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import type { Product, ProductOption } from "@shared/types/Product";
 
 // UI Components
-import { Button, Input } from "@components/ui";
+import { Button, Input, XButton } from "@components/ui";
 
 // Api
 import { useApi } from "@api/useApi";
@@ -111,11 +111,7 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
               value={opt.name}
               onChange={(e) => updateOptionName(i, e.target.value)}
             />
-            <Button
-              variant={"xicon"}
-              className="w-8 h-8"
-              onClick={() => removeOption(i)}
-            />
+            <XButton className="w-8 h-8" onClick={() => removeOption(i)} />
           </div>
           <div className="flex flex-wrap gap-2 items-center w-full">
             <Input

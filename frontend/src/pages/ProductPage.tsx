@@ -20,28 +20,33 @@ const ProductPage = () => {
   const { addItem } = useCart();
   const { products } = useApi();
 
+  // Fetch product data
   const { data: product, isLoading, error } = products.getOne(id ?? "");
 
+  // Local state for selected variant
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     null
   );
 
-  if (isLoading || !product)
+  // Handle loading and error states
+  if (isLoading || !product) {
     return <div className="p-8 text-center text-textSecondary">Loading...</div>;
-
-  if (error)
+  } else if (error) {
     return (
       <div className="p-8 text-center text-red-500">
         Failed to load product: {String((error as any).message)}
       </div>
     );
+  }
 
+  // Calculate discounted price if applicable
   const discountedPrice = product.discount
     ? typeof product.discount === "string" && product.discount.includes("%")
       ? product.price * (1 - parseFloat(product.discount) / 100)
       : product.price - parseFloat(product.discount)
     : product.price;
 
+  // Format discount label
   const discountLabel =
     product.discount &&
     typeof product.discount === "string" &&
@@ -51,6 +56,7 @@ const ProductPage = () => {
         ? `$${parseFloat(product.discount).toFixed(2)}`
         : null;
 
+  // Handle adding product to cart
   const handleAddToCart = () => {
     addItem({
       product,
@@ -68,6 +74,8 @@ const ProductPage = () => {
           <h1 className="text-4xl font-bold text-text text-center">
             {product.name}
           </h1>
+
+          {/* Price display with discount handling */}
           <div className="flex items-center justify-center gap-2">
             {product.discount && discountedPrice < product.price ? (
               <>
@@ -87,7 +95,7 @@ const ProductPage = () => {
           </div>
         </div>
 
-        {/* Product Image */}
+        {/* Product Images */}
         <div className="w-full md:w-auto flex justify-center pb-4">
           <ProductImagesViewer images={product.images ?? []} />
         </div>
@@ -115,11 +123,13 @@ const ProductPage = () => {
             </div>
           </div>
 
+          {/* Product Options Selector */}
           <ProductOptionSelector
             product={product}
             onVariantChange={setSelectedVariant}
           />
 
+          {/* Product Tags */}
           {Array.isArray(product.tags) && product.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-2">
               {product.tags.map((tag, index) => (
@@ -133,11 +143,13 @@ const ProductPage = () => {
             </div>
           )}
 
+          {/* Product Description */}
           <div className="text-text text-xl">Product Description</div>
           <div className="text-textSecondary mb-4 whitespace-pre-line">
             {product.description}
           </div>
 
+          {/* Add to Cart Button */}
           <div className="flex items-center justify-center gap-4 mt-4">
             <Button onClick={handleAddToCart} disabled={!selectedVariant}>
               Add to Cart

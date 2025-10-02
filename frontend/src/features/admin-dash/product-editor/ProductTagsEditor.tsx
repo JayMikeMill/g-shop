@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Button, TagBox, AnimatedSelect } from "@components/ui";
+
+import { Button, XButton, TagBox, AnimatedSelect } from "@components/ui";
+
 import type {
   Product,
   ProductTag,
   ProductTagPreset,
 } from "@shared/types/Product";
+
 import { ProductTagDialog } from "./ProductTagDialog";
 import { useApi } from "@api/useApi";
 
@@ -65,8 +68,7 @@ const TagPresetsDropdown: React.FC<TagPresetsDropdownProps> = ({
           color={preset.color}
           textColor={preset.textColor}
         />
-        <Button
-          variant="xicon"
+        <XButton
           className="w-8 h-8"
           onClick={(e) => {
             e.stopPropagation();
@@ -146,8 +148,7 @@ const ProductTagsEditor: React.FC<ProductTagsEditorProps> = ({
               text={tag.name}
               textColor={tag.textColor}
             >
-              <Button
-                variant="xicon"
+              <XButton
                 className="w-5 h-5"
                 style={{
                   backgroundColor: tag.color || "#ccc",

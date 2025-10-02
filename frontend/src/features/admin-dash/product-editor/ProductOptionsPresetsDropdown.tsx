@@ -4,8 +4,7 @@ import type {
   ProductOptionsPreset,
 } from "@shared/types/Product";
 
-import { Button } from "@components/ui";
-import { AnimatedSelect } from "@components/ui"; // adjust path
+import { XButton, AnimatedSelect } from "@components/ui"; // adjust path
 
 import { useApi } from "@api/useApi";
 
@@ -55,8 +54,7 @@ const OptionsPresetDropdown: React.FC<OptionsPresetDropdownProps> = ({
     render: (p: ProductOptionsPreset) => (
       <div className="flex justify-between items-center gap-2">
         <span className="flex-1 text-text">{p.name}</span>
-        <Button
-          variant="xicon"
+        <XButton
           className="w-5 h-5"
           onClick={(e) => {
             e.stopPropagation();

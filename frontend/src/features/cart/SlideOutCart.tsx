@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ShoppingCart from "./ShoppingCart";
-import { Button } from "@components/ui";
+import { XButton } from "@components/ui";
 
 interface SlideOutCartProps {
   isOpen: boolean;
@@ -68,11 +68,7 @@ export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
               {/* Close button */}
-              <Button
-                variant="xicon"
-                className="self-end"
-                onClick={handleClose}
-              />
+              <XButton className="self-end" onClick={handleClose} />
 
               <h2 className="text-title font-bold mb-md text-center">
                 Shopping Cart

@@ -24,7 +24,6 @@ export default {
         primary: {
           DEFAULT: "var(--primary)",
           foreground: "var(--primary-foreground)",
-          ...twShades("--primary"),
 
           /* Generated using tw-color-shades at runtime */
           10: "var(--primary-10)",
@@ -43,9 +42,8 @@ export default {
         secondary: {
           DEFAULT: "var(--secondary)",
           foreground: "var(--secondary-foreground)",
-          ...twShades("--secondary"),
 
-          /* Generated using tw-color-shades at runtime */
+          /* Generated at runtime */
           10: "var(--secondary-10)",
           50: "var(--secondary-50)",
           100: "var(--secondary-100)",
@@ -62,9 +60,8 @@ export default {
         accent: {
           DEFAULT: "var(--accent)",
           foreground: "var(--accent-foreground)",
-          ...twShades("--accent"),
 
-          /* Generated using tw-color-shades at runtime */
+          /* Generated at runtime */
           10: "var(--accent-10)",
           50: "var(--accent-50)",
           100: "var(--accent-100)",
@@ -84,9 +81,7 @@ export default {
           DEFAULT: "var(--destructive)",
           foreground: "var(--destructive-foreground)",
 
-          ...twShades("--destructive"),
-
-          /* Generated using tw-color-shades at runtime */
+          /* Generated at runtime */
           10: "var(--destructive-10)",
           50: "var(--destructive-50)",
           100: "var(--destructive-100)",
@@ -100,6 +95,7 @@ export default {
           900: "var(--destructive-900)",
           950: "var(--destructive-950)",
         },
+
         success: "var(--color-success)",
         warning: "var(--color-warning)",
         error: "var(--color-error)",

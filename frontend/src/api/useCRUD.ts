@@ -28,7 +28,6 @@ export function useCRUD<T extends { id?: string }>(
   return {
     // Queries
     getAll: (query?: QueryObject) => {
-      console.log("useCRUD getAll called with query:", resource);
       return useQuery({
         queryKey: [resource, query],
         queryFn: () => crud.getAll(query),

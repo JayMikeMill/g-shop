@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@features/auth/useAuth";
-import { Button } from "@components/ui";
+import { Button, XButton } from "@components/ui";
 
 interface SiteMenuProps {
   isOpen: boolean;
@@ -78,14 +78,13 @@ export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             {/* Close button */}
-            <Button
-              variant="xicon"
+            <XButton
               onClick={handleClose}
               aria-label="Close menu"
               type="button"
             >
               <X size={24} />
-            </Button>
+            </XButton>
 
             {/* Menu links */}
             {user?.role === "admin" && (

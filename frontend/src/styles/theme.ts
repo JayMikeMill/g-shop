@@ -34,7 +34,6 @@ export function setColorShades(cssVarName: string) {
     .trim();
 
   const shades = twShades(baseColor);
-  console.log(`Setting shades for --${cssVarName}:`, shades);
 
   for (const [key, value] of Object.entries(shades)) {
     root.style.setProperty(`--${cssVarName}-${key}`, value as string);
