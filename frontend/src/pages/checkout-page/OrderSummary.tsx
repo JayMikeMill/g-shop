@@ -1,9 +1,9 @@
-import { useCart, getCartTotals } from "@contexts/CartContext";
+// Cart state management
+import { useCart } from "@features/cart/useCart";
 import { parseVariantOptions } from "@shared/types/Product";
 
 export default function OrderSummary() {
-  const { cart } = useCart();
-  const totals = getCartTotals(cart);
+  const { cart, totals } = useCart();
 
   if (cart.length === 0) {
     return (

@@ -30,6 +30,8 @@
       "@pages/*": ["src/pages/*"],
       "@components/*": ["src/components/*"],
       "@contexts/*": ["src/contexts/*"],
+      "@app/*": ["src/app/*"],
+      "@features/*": ["src/features/*"],
       "@api/*": ["src/api/*"],
       "@hooks/*": ["src/hooks/*"],
       "@lib/*": ["src/components/lib/*"],

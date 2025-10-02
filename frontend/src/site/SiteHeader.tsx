@@ -1,7 +1,9 @@
 // SiteHeader.tsx
 import { useNavigate } from "react-router-dom";
-import { ShoppingCart, Menu, X } from "lucide-react";
-import { useCart, getCartTotals } from "@contexts/CartContext";
+import { ShoppingCart, Menu } from "lucide-react";
+
+import { useCart } from "@features/cart/useCart";
+
 import { useState } from "react";
 
 import { SITE } from "../site-config";
@@ -11,8 +13,9 @@ import { Button } from "@components/ui";
 
 export default function SiteHeader() {
   const navigate = useNavigate();
-  const { cart } = useCart();
-  const cartTotals = getCartTotals(cart);
+
+  //const { cart, totals } = useCart();
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
 

@@ -1,20 +1,23 @@
-import { useCart } from "@contexts/CartContext";
-import { type Product } from "@shared/types/Product";
 import { useNavigate } from "react-router-dom";
 
+import { useCart } from "@features/cart/useCart";
+
 import { TagBox } from "@components/ui";
+import type { CartItem } from "@models/CartItem";
+import type { Product } from "@shared/types/Product";
 
 interface ProductCardProps {
   product: Product;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const { addToCart } = useCart();
   const navigate = useNavigate();
+
+  const { addItem } = useCart();
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
-    addToCart({
+    addItem({
       product: product,
       quantity: 1,
       price: product.price,

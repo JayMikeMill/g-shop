@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { useCart, getCartTotals } from "@contexts/CartContext";
+import { useCart } from "@features/cart/useCart";
+
 import ShoppingCartItem from "./ShoppingCartItem";
 import { Button } from "@components/ui";
 
@@ -12,8 +13,8 @@ export default function ShoppingCart({
   onProceedToCheckout,
 }: ShoppingCartProps) {
   const navigate = useNavigate();
-  const { cart, addToCart, removeFromCart } = useCart();
-  const totals = getCartTotals(cart);
+
+  const { cart, totals, addItem, removeItem, clear } = useCart();
 
   const handleProceedToCheckout = () => {
     if (onProceedToCheckout) onProceedToCheckout();
@@ -38,8 +39,8 @@ export default function ShoppingCart({
           <ShoppingCartItem
             key={item?.variant?.id ?? item?.product?.id ?? i}
             item={item}
-            addToCart={addToCart}
-            removeFromCart={removeFromCart}
+            addToCart={addItem}
+            removeFromCart={removeItem}
           />
         ))}
       </div>

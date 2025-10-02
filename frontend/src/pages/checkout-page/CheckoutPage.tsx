@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
-import { useCart } from "@contexts/CartContext";
+
+// Cart state management
+import { useAppSelector } from "@app/hooks";
+import { selectCart } from "@features/cart/cartSlice";
+
 import { type ShippingInfo } from "@shared/types/Shipping";
 
 import OrderSummary from "./OrderSummary";
@@ -9,7 +13,7 @@ import ShippingForm from "./ShippingForm";
 import PaymentFormStripe from "./payment-forms/PaymentFormStripe";
 
 export default function CheckoutPage() {
-  const { cart: cartItems } = useCart();
+  const cart = useAppSelector(selectCart);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -38,12 +42,12 @@ export default function CheckoutPage() {
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    const subtotal = cartItems.reduce(
+    const subtotal = cart.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0
     );
     setTotal(subtotal + shippingCost);
-  }, [cartItems, shippingCost]);
+  }, [cart, shippingCost]);
 
   useEffect(() => {
     setShippingCost(shippingInfo.address.postalCode ? 5 : 0);
@@ -61,7 +65,7 @@ export default function CheckoutPage() {
 
       <PaymentFormStripe
         total={total}
-        cartItems={cartItems}
+        cartItems={cart}
         shippingInfo={shippingInfo}
         setLoading={setLoading}
         setMessage={setMessage}

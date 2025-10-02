@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 
 import { type Product, type ProductVariant } from "@shared/types/Product";
 
-import { useCart } from "@contexts/CartContext";
+// Cart state management
+import { useCart } from "@features/cart/useCart";
+
 import { useApi } from "@api/useApi";
 
 import ProductOptionSelector from "./ProductOptionsSelector";
@@ -13,7 +15,8 @@ import { Button, TagBox } from "@components/ui";
 const ProductPage = () => {
   const { id } = useParams<{ id: string }>();
   const getProduct = useApi().products.get;
-  const { addToCart } = useCart();
+
+  const { addItem } = useCart();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
@@ -45,7 +48,8 @@ const ProductPage = () => {
         : null;
 
   const handleAddToCart = () => {
-    addToCart({
+    console.log("Adding to cart:", product, selectedVariant);
+    addItem({
       product: product,
       variant: selectedVariant ?? undefined,
       quantity: 1,
