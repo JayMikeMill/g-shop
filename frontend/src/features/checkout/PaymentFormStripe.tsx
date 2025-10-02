@@ -40,6 +40,9 @@ function InnerStripeForm({
   const elements = useElements();
   const { processPayment, orders } = useApi();
 
+  // Mutation for orders
+  const createOrder = orders.create();
+
   const handlePayment = async () => {
     if (!stripe || !elements) return;
 
@@ -89,8 +92,11 @@ function InnerStripeForm({
       });
 
       const payment = (response as any).payment;
-      if (payment?.status === "succeeded") onSuccess(payment);
-      else setMessage("Payment failed: " + payment?.error || "Unknown error");
+      if (payment?.status === "succeeded") {
+        await onSuccess(payment);
+      } else {
+        setMessage("Payment failed: " + (payment?.error || "Unknown error"));
+      }
     } catch (err) {
       console.error("Stripe payment error:", err);
       setMessage("Payment could not be processed");
@@ -100,27 +106,33 @@ function InnerStripeForm({
     }
   };
 
-  const onSuccess = (payment: any) => {
+  const onSuccess = async (payment: any) => {
     setMessage("Payment successful!");
-    orders.create({
-      id: "pending id",
-      items: cartItems.map((item) => ({
-        product: JSON.parse(JSON.stringify(item.product)),
-        quantity: item.quantity,
-        price: item.price,
-      })),
-      total,
-      status: OrderStatuses.PAID,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      transaction: {
-        method: PaymentMethods.STRIPE,
-        amount: payment.amount,
-        currency: payment.currency,
-        status: TransactionStatuses.PAID,
-      },
-      shippingInfo,
-    });
+
+    try {
+      await createOrder.mutateAsync({
+        id: "pending id",
+        items: cartItems.map((item) => ({
+          product: JSON.parse(JSON.stringify(item.product)),
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        total,
+        status: OrderStatuses.PAID,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        transaction: {
+          method: PaymentMethods.STRIPE,
+          amount: payment.amount,
+          currency: payment.currency,
+          status: TransactionStatuses.PAID,
+        },
+        shippingInfo,
+      });
+    } catch (err) {
+      console.error("Order creation failed:", err);
+      setMessage("Order could not be saved");
+    }
   };
 
   return (

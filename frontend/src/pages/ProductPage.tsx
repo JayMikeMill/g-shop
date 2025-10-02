@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import { type Product, type ProductVariant } from "@shared/types/Product";
+import type { Product, ProductVariant } from "@shared/types/Product";
 
 // Cart state management
 import { useCart } from "@features/cart/useCart";
@@ -14,23 +14,25 @@ import { Button, TagBox } from "@components/ui";
 
 const ProductPage = () => {
   const { id } = useParams<{ id: string }>();
-  const getProduct = useApi().products.get;
-
   const { addItem } = useCart();
 
-  const [product, setProduct] = useState<Product | null>(null);
+  // ✅ Correct API hook: products.get(id)
+  const { products } = useApi();
+  const { data: product, isLoading, error } = products.get(id ?? "");
+
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     null
   );
 
-  useEffect(() => {
-    if (id) {
-      getProduct(id).then((p) => setProduct(p));
-    }
-  }, [id]);
-
-  if (!product)
+  if (isLoading || !product)
     return <div className="p-8 text-center text-textSecondary">Loading...</div>;
+
+  if (error)
+    return (
+      <div className="p-8 text-center text-red-500">
+        Failed to load product: {String((error as any).message)}
+      </div>
+    );
 
   const discountedPrice = product.discount
     ? typeof product.discount === "string" && product.discount.includes("%")
@@ -48,9 +50,8 @@ const ProductPage = () => {
         : null;
 
   const handleAddToCart = () => {
-    console.log("Adding to cart:", product, selectedVariant);
     addItem({
-      product: product,
+      product,
       variant: selectedVariant ?? undefined,
       quantity: 1,
       price: selectedVariant?.price ?? discountedPrice,
@@ -89,7 +90,7 @@ const ProductPage = () => {
           <ProductImagesViewer images={product.images ?? []} />
         </div>
 
-        {/* Product Details (md+ layout) */}
+        {/* Product Details */}
         <div className="flex flex-col gap-4 w-full md:w-auto text-left self-start px-4 md:px-0">
           <div className="hidden md:flex flex-col gap-2">
             <h1 className="text-3xl font-bold text-text">{product.name}</h1>
@@ -123,8 +124,8 @@ const ProductPage = () => {
                 <TagBox
                   key={index}
                   text={tag.name}
-                  color={tag.color ? tag.color : "accent"}
-                  textColor={tag.textColor ? tag.textColor : "#fff"}
+                  color={tag.color ?? "accent"}
+                  textColor={tag.textColor ?? "#fff"}
                 />
               ))}
             </div>
