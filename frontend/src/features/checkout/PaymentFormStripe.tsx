@@ -17,6 +17,7 @@ import {
 
 import type { CartItem } from "@features/cart/CartItem";
 import { Button } from "@components/ui";
+import { floatToPrice } from "@shared/types/Product";
 
 interface StripePaymentFormProps {
   total: number;
@@ -111,16 +112,19 @@ function InnerStripeForm({
 
     try {
       await createOrder.mutateAsync({
-        id: "pending id",
         items: cartItems.map((item) => ({
           product: JSON.parse(JSON.stringify(item.product)),
           quantity: item.quantity,
           price: item.price,
         })),
-        total,
+        total: floatToPrice(total),
         status: OrderStatuses.PAID,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        statusHistory: [
+          {
+            status: OrderStatuses.PAID,
+            timestamp: new Date(),
+          },
+        ],
         transaction: {
           method: PaymentMethods.STRIPE,
           amount: payment.amount,
@@ -128,6 +132,9 @@ function InnerStripeForm({
           status: TransactionStatuses.PAID,
         },
         shippingInfo,
+        invoices: [
+          { createdAt: new Date(), invoiceNumber: `INV-${Date.now()}` },
+        ],
       });
     } catch (err) {
       console.error("Order creation failed:", err);

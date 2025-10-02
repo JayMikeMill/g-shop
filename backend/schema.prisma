@@ -268,7 +268,6 @@ model OrderItem {
   variant   Json?    // snapshot: { id, name, options, etc. }, optional
   quantity  Int
   price     Int    // price at the time of purchase
-  total     Int    // quantity * price (optional, precomputed for convenience)
 }
 
 model Transaction {

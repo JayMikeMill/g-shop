@@ -77,8 +77,8 @@ export type PaymentMethod =
   (typeof PaymentMethods)[keyof typeof PaymentMethods];
 
 export interface Invoice {
-  id: string;
-  orderId: string;
+  id?: string;
+  orderId?: string;
   invoiceNumber: string;
   pdfUrl?: string;
   createdAt: Date;
@@ -88,8 +88,8 @@ export interface Invoice {
 }
 
 export interface OrderStatusHistory {
-  id: string;
-  orderId: string;
+  id?: string;
+  orderId?: string;
   status: OrderStatus;
   timestamp: Date;
 
