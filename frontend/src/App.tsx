@@ -1,6 +1,6 @@
 // App.tsx
-import SiteHeader from "@components/site/SiteHeader";
-import SiteFooter from "@components/site/SiteFooter";
+import SiteHeader from "./site/SiteHeader";
+import SiteFooter from "./site/SiteFooter";
 import AppRoutes from "./routes/AppRoutes";
 
 import { applyTheme } from "./styles/theme";

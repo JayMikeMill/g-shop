@@ -118,7 +118,7 @@ export const ProductEditorForm: React.FC<ProductEditorFormProps> = ({
         {/* Main Editor */}
         <div className="flex-1 flex flex-col gap-md overflow-y-auto pb-md sm:border sm:rounded-lg">
           {/* Editors */}
-          <div className="flex flex-col gap-md p-sm">
+          <div className="flex flex-col gap-md p-xs sm:p-sd">
             {/* Info Editor */}
             <AnimatedDropdownBox title="Product Info" openInitially={true}>
               <ProductInfoEditor

@@ -4,9 +4,9 @@ import { ShoppingCart, Menu, X } from "lucide-react";
 import { useCart, getCartTotals } from "@contexts/CartContext";
 import { useState } from "react";
 
-import { SITE } from "../../site-config";
+import { SITE } from "../site-config";
 import SlideOutCart from "@components/shopping-cart/SlideOutCart";
-import SiteMenu from "@components/site/SiteMenu";
+import SiteMenu from "./SiteMenu";
 import { Button } from "@components/ui";
 
 export default function SiteHeader() {
@@ -21,10 +21,14 @@ export default function SiteHeader() {
   return (
     <header className="bg-card shadow sticky top-0 z-30">
       {/* Header row */}
-      <div className="w-full flex items-center justify-between px-md py-sm">
+      <div className="w-full flex items-center h-14 justify-between px-md py-sm">
         {/* Left: Menu button (mobile) */}
-        <Button variant={"flat"} onClick={toggleMenu}>
-          <Menu className="text-text" size={24} />
+        <Button
+          className="w-12 h-full p-0"
+          variant={"flat"}
+          onClick={toggleMenu}
+        >
+          <Menu className="text-text" size={28} />
         </Button>
 
         {/* Center: Logo + label */}
@@ -35,9 +39,13 @@ export default function SiteHeader() {
           <img src={SITE.logo} alt="Logo" className="max-h-10" />
         </div>
 
-        {/* Left: Cart button (mobile) */}
-        <Button variant={"flat"} onClick={() => setIsCartOpen(true)}>
-          <ShoppingCart className="text-text" size={24} />
+        {/* Right: Cart button (mobile) */}
+        <Button
+          variant={"flat"}
+          className="w-12 h-full p-0"
+          onClick={() => setIsCartOpen(true)}
+        >
+          <ShoppingCart className="text-text" size={28} />
         </Button>
       </div>
 
