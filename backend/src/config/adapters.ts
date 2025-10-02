@@ -6,26 +6,53 @@ import { StripePaymentAdapter } from "@adapters/payment/StripePaymentAdapter";
 import { FirebaseStorageAdapter } from "@adapters/storage/FirebaseStorageAdapter";
 import { ImgBBStorageAdapter } from "@adapters/storage/ImgBBStorageAdapter";
 
-import { env } from "@config/envVars";
-import Stripe from "stripe";
+// --- Enums for adapter types ---
+export enum AuthAdapterType {
+  Firebase = "firebase",
+}
+export enum DBAdapterType {
+  Firebase = "firebase",
+  Prisma = "prisma",
+}
+export enum StorageAdapterType {
+  Firebase = "firebase",
+  ImgBB = "imgbb",
+}
+export enum PaymentAdapterType {
+  Stripe = "stripe",
+  Square = "square",
+}
 
-// Create the adapters based on environment variables
-export const auth =
-  env.ADAPTER_AUTH === "firebase"
-    ? new FirebaseAuthAdapter()
-    : new FirebaseAuthAdapter();
+// --- Choose adapters here ---
+export const adapterConfig = {
+  auth: AuthAdapterType.Firebase,
+  db: DBAdapterType.Prisma,
+  storage: StorageAdapterType.ImgBB,
+  payment: PaymentAdapterType.Stripe,
+};
 
-export const db =
-  env.ADAPTER_DB === "firebase"
-    ? new FirebaseDBAdapter()
-    : new PrismaDBAdapter();
+// --- Lazy factories ---
+const authAdapters = {
+  [AuthAdapterType.Firebase]: () => new FirebaseAuthAdapter(),
+};
 
-export const storage =
-  env.ADAPTER_STORAGE === "firebase"
-    ? new FirebaseStorageAdapter()
-    : new ImgBBStorageAdapter();
+const dbAdapters = {
+  [DBAdapterType.Firebase]: () => new FirebaseDBAdapter(),
+  [DBAdapterType.Prisma]: () => new PrismaDBAdapter(),
+};
 
-export const payment =
-  env.ADAPTER_PAYMENT === "square"
-    ? new SquarePaymentAdapter()
-    : new StripePaymentAdapter();
+const storageAdapters = {
+  [StorageAdapterType.Firebase]: () => new FirebaseStorageAdapter(),
+  [StorageAdapterType.ImgBB]: () => new ImgBBStorageAdapter(),
+};
+
+const paymentAdapters = {
+  [PaymentAdapterType.Stripe]: () => new StripePaymentAdapter(),
+  [PaymentAdapterType.Square]: () => new SquarePaymentAdapter(),
+};
+
+// --- Export selected adapters ---
+export const auth = authAdapters[adapterConfig.auth]();
+export const db = dbAdapters[adapterConfig.db]();
+export const storage = storageAdapters[adapterConfig.storage]();
+export const payment = paymentAdapters[adapterConfig.payment]();
