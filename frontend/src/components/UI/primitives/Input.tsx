@@ -38,13 +38,7 @@ const inputVariants = cva(
   }
 );
 
-interface CustomInputProps {}
-
-type InputProps = Omit<
-  React.InputHTMLAttributes<HTMLInputElement>,
-  keyof CustomInputProps
-> &
-  CustomInputProps &
+type InputProps = React.InputHTMLAttributes<HTMLInputElement> &
   VariantProps<typeof inputVariants>;
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -60,6 +54,29 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
   }
 );
 
+const NumberInput = React.forwardRef<
+  HTMLInputElement,
+  InputProps & { symbol?: string }
+>(({ className, variant, size, symbol = "$", ...props }, ref) => {
+  return (
+    <div className="flex flex-1 relative">
+      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-base">
+        {symbol}
+      </span>
+      <Input
+        ref={ref}
+        type="number"
+        min={0}
+        step={0.01}
+        placeholder="-"
+        onFocus={(e) => e.target.select()}
+        className={cn("w-full text-center", className)} // add padding-left for the $ sign
+        {...props}
+      />
+    </div>
+  );
+});
+
 Input.displayName = "Input";
 
-export { Input, inputVariants };
+export { inputVariants, Input, NumberInput as NumberInput };

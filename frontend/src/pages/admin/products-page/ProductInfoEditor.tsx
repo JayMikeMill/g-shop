@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 
 // UI Components
-import { Input, inputVariants, Label, Textarea } from "@components/ui";
+import {
+  Input,
+  inputVariants,
+  Label,
+  NumberInput,
+  Textarea,
+} from "@components/ui";
 
 // Types
 import {
@@ -81,37 +87,31 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
         {/* Price */}
         <Label className="flex-col gap-xs  w-32">
           Price
-          <div className="relative">
-            <Input
-              type="number"
-              className="text-center"
-              min={0}
-              onFocus={(e) => e.target.select()}
-              value={priceToFloat(localProduct.price)}
-              onChange={(e) =>
-                setLocalProduct((prev) => ({
-                  ...prev,
-                  price: floatToPrice(parseFloat(e.target.value)),
-                }))
-              }
-              required
-              step="0.01"
-            />
-          </div>
+          <NumberInput
+            symbol="$"
+            onFocus={(e) => e.target.select()}
+            value={priceToFloat(localProduct.price)}
+            onChange={(e) =>
+              setLocalProduct((prev) => ({
+                ...prev,
+                price: floatToPrice(parseFloat(e.target.value)),
+              }))
+            }
+            required
+          />
         </Label>
 
         {/* Discount */}
         <div className="flex items-end gap-sm">
           <Label className="flex-col gap-xs">
             Discount
-            <Input
+            <NumberInput
+              symbol={discountType}
               className="text-center  w-32"
-              type="number"
-              min={0}
               onFocus={(e) => e.target.select()}
               value={discountValue > 0 ? `${discountValue}` : ""}
               onChange={(e) => setDiscountValue(parseFloat(e.target.value))}
-              step="0.01"
+              step={discountType === "$" ? "0.01" : "1"}
             />
           </Label>
 

@@ -8,7 +8,7 @@ import {
   priceToFloat,
   floatToPrice,
 } from "@shared/types/Product";
-import { Input } from "@components/ui";
+import { Input, NumberInput } from "@components/ui";
 
 interface ProductVariantEditorProps {
   product: Product;
@@ -133,21 +133,14 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
           />
 
           {/* Price in dollars */}
-          <div className="relative w-[30%]">
-            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500">
-              $
-            </span>
-            <Input
-              type="number"
-              min={0}
-              step={0.01}
-              value={variant.price ? priceToFloat(variant.price) : ""}
-              placeholder="-"
-              onChange={(e) => updateVariantPrice(idx, e.target.value)}
-              onFocus={(e) => e.target.select()}
-              className="w-full text-center" // add padding-left for the $ sign
-            />
-          </div>
+
+          <NumberInput
+            symbol="$"
+            value={variant.price ? priceToFloat(variant.price) : ""}
+            placeholder="-"
+            onChange={(e) => updateVariantPrice(idx, e.target.value)}
+            className="w-full text-center" // add padding-left for the $ sign
+          />
         </div>
       ))}
     </div>
