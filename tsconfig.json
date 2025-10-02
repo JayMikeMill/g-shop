@@ -18,6 +18,7 @@
   "include": [
     "backend/src/**/*.ts",
     "frontend/src/**/*.tsx",
+    "shared/**/*.ts",
     "unit-tests/**/*",
     "frontend/src/components/ui/index.ts"
   ],
