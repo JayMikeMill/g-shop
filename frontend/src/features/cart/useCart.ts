@@ -6,7 +6,7 @@ import {
   selectCart,
   getCartTotals,
 } from "./cartSlice";
-import type { CartItem } from "@models/CartItem";
+import type { CartItem } from "@features/cart/CartItem";
 import { useMemo, useCallback } from "react";
 
 export function useCart() {

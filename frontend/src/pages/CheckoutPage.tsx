@@ -6,11 +6,11 @@ import { selectCart } from "@features/cart/cartSlice";
 
 import { type ShippingInfo } from "@shared/types/Shipping";
 
-import OrderSummary from "./OrderSummary";
-import ShippingForm from "./ShippingForm";
+import OrderSummary from "../features/checkout/OrderSummary";
+import ShippingForm from "../features/checkout/ShippingForm";
 
 //import PaymentFormSquare from "./payment-forms/PaymentFormSquare";
-import PaymentFormStripe from "./payment-forms/PaymentFormStripe";
+import PaymentFormStripe from "../features/checkout/PaymentFormStripe";
 
 export default function CheckoutPage() {
   const cart = useAppSelector(selectCart);

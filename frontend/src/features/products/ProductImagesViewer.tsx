@@ -12,11 +12,11 @@ import "yet-another-react-lightbox/styles.css";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import type { ProductImageSet } from "@shared/types/Product";
 
-interface ProductPageImagesProps {
+interface ProductImagesViewerProps {
   images: ProductImageSet[];
 }
 
-export const ProductPageImages: React.FC<ProductPageImagesProps> = ({
+export const ProductImagesViewer: React.FC<ProductImagesViewerProps> = ({
   images,
 }) => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -130,4 +130,4 @@ export const ProductPageImages: React.FC<ProductPageImagesProps> = ({
   );
 };
 
-export default ProductPageImages;
+export default ProductImagesViewer;

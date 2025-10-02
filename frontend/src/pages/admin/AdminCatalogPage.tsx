@@ -2,19 +2,51 @@
 import { useState } from "react";
 
 // Components
-import { Button, DynamicTable } from "@components/ui";
+import { Button, buttonVariants, DynamicTable } from "@components/ui";
 import type { Category, Collection } from "@shared/types/Catalog";
-import { CatalogDialog } from "./CollectionDialog";
+import { CatalogDialog } from "@features/admin-dash/catalog-editor/CollectionDialog";
 
 // API hook
 import { useApi } from "@api/useApi";
+import { NavLink, Outlet } from "react-router-dom";
+
+export default function AdminCatalogPageWrapper() {
+  return (
+    <div className="flex flex-col w-full h-full">
+      {/* Secondary Catalog Navigation */}
+      <nav className="flex gap-2 p-2 py-4 border-b border-border overflow-x-auto whitespace-nowrap">
+        <NavLink
+          to="categories"
+          className={({ isActive }) =>
+            buttonVariants({ variant: isActive ? "raised" : "default" })
+          }
+        >
+          Categories
+        </NavLink>
+        <NavLink
+          to="collections"
+          className={({ isActive }) =>
+            buttonVariants({ variant: isActive ? "raised" : "default" })
+          }
+        >
+          Collections
+        </NavLink>
+      </nav>
+
+      {/* Nested catalog content */}
+      <div className="flex-grow overflow-y-auto p-2">
+        <Outlet />
+      </div>
+    </div>
+  );
+}
 
 interface AdminCatalogPageProps {
   apiKey: "categories" | "collections";
   typeLabel: "Category" | "Collection";
 }
 
-export function AdminCatalogPage({ apiKey, typeLabel }: AdminCatalogPageProps) {
+function AdminCatalogPage({ apiKey, typeLabel }: AdminCatalogPageProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [editingItem, setEditingItem] = useState<Collection | Category | null>(
     null

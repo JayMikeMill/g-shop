@@ -1,6 +1,6 @@
 // frontend/src/components/cart/ShoppingCartItem.tsx
 import { Button, TagBox } from "@components/ui";
-import type { CartItem } from "@models/CartItem";
+import type { CartItem } from "@features/cart/CartItem";
 import { parseVariantOptions } from "@shared/types/Product";
 import { Plus, Minus, Tag } from "lucide-react";
 interface ShoppingCartItemProps {

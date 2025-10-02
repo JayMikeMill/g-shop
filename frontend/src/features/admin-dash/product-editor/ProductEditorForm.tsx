@@ -23,6 +23,7 @@ import {
 
 import ProductDimensionsEditor from "./ProductDimensionsEditor";
 import ProductImageProcessor from "./ProductImagesProcessor";
+
 import { MultiImageEditor } from "@components/ui";
 
 interface ProductEditorFormProps {

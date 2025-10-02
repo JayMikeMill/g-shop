@@ -16,8 +16,8 @@ import {
 
 // Public pages
 import HomePage from "@pages/HomePage";
-import ProductPage from "@pages/product-page/ProductPage";
-import CheckoutPage from "@pages/checkout-page/CheckoutPage";
+import ProductPage from "@pages/ProductPage";
+import CheckoutPage from "@pages/CheckoutPage";
 import AboutPage from "@pages/AboutPage";
 
 // Auth & Roles

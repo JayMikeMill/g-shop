@@ -1,5 +1,5 @@
-import ProductCardList from "@components/product-card/ProductCardList";
-import ProductLoader from "@components/product-card/ProductLoader";
+import ProductCardList from "@features/products/ProductCardList";
+import ProductLoader from "@features/products/ProductLoader";
 import { useEffect, useState } from "react";
 import type { Product } from "@shared/types/Product";
 import { useApi } from "@api/useApi";

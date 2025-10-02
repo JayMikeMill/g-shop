@@ -8,7 +8,7 @@ import {
   CircleSpinner,
   Button,
 } from "@components/ui";
-import { ProductEditorForm } from "./ProductEditorForm";
+import { ProductEditorForm } from "@features/admin-dash/product-editor/ProductEditorForm";
 
 // Types
 import { priceToFloat, type Product } from "@shared/types/Product";

@@ -8,8 +8,8 @@ import { useCart } from "@features/cart/useCart";
 
 import { useApi } from "@api/useApi";
 
-import ProductOptionSelector from "./ProductOptionsSelector";
-import ProductPageImages from "./ProductPageImages";
+import ProductOptionSelector from "@features/products/ProductOptionsSelector";
+import ProductImagesViewer from "@features/products/ProductImagesViewer";
 import { Button, TagBox } from "@components/ui";
 
 const ProductPage = () => {
@@ -86,7 +86,7 @@ const ProductPage = () => {
 
         {/* Product Image */}
         <div className="w-full md:w-auto flex justify-center pb-4">
-          <ProductPageImages images={product.images ?? []} />
+          <ProductImagesViewer images={product.images ?? []} />
         </div>
 
         {/* Product Details (md+ layout) */}

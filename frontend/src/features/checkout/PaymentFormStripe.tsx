@@ -15,7 +15,7 @@ import {
   OrderStatuses,
 } from "@shared/types/Order";
 
-import type { CartItem } from "@models/CartItem";
+import type { CartItem } from "@features/cart/CartItem";
 import { Button } from "@components/ui";
 
 interface StripePaymentFormProps {
