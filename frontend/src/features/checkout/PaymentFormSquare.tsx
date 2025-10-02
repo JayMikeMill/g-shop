@@ -12,7 +12,7 @@ import {
   PaymentMethods,
   OrderStatuses,
 } from "@shared/types/Order";
-import { useAuth } from "@contexts/auth/AuthContext";
+import { useAuth } from "@features/auth/useAuth";
 import { Button } from "@components/ui";
 
 // Square environment variables (from Vite)
