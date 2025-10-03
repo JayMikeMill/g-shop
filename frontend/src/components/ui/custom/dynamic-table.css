@@ -29,7 +29,7 @@
      Table Body Rows
   ========================== */
 .table tbody tr {
-  @apply transition-colors duration-300;
+  @apply transition-colors duration-300 border-b;
 }
 
 .table tbody tr:nth-child(even) {

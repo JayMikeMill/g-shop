@@ -1,3 +1,4 @@
+import { TagBox } from "@components/ui";
 import type { Collection, Order, Product } from "@shared/types";
 import { priceToFloat } from "@utils/priceUtils";
 
@@ -52,10 +53,16 @@ const productTableColumns = [
     label: "Tags",
     width: "120px",
     render: (p: Product) => (
-      <div className="flex items-center justify-center">
-        <span className="font-semibold text-center text-text">
-          {p.tags?.join(", ") || "N/A"}
-        </span>
+      <div className="flex flex-wrap items-center justify-center">
+        {p.tags?.map((tag, index) => (
+          <TagBox
+            key={index}
+            text={tag.name}
+            color={tag.color}
+            textColor={tag.textColor}
+            className="m-1"
+          />
+        ))}
       </div>
     ),
   },
