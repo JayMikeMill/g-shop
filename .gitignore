@@ -29,3 +29,6 @@ dist-ssr
 # Backend environment variables
 backend/.env
 backend/src/config/firebase/NailStoreFirebaseServiceAccount.json
+
+# other
+git-cheatsheet.txt
