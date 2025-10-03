@@ -48,7 +48,8 @@ export default function AdminCatalogPageWrapper() {
 export function AdminCollectionsPage() {
   return (
     <AdminCrudPage<Collection>
-      objectsName="Collection"
+      objectsName="Collections"
+      objectName="Collection"
       apiKey="collections"
       columns={collectionTableColumns}
       Editor={CollectionDialog}
@@ -59,7 +60,8 @@ export function AdminCollectionsPage() {
 export function AdminCategoriesPage() {
   return (
     <AdminCrudPage<Category>
-      objectsName="Category"
+      objectsName="Categories"
+      objectName="Category"
       apiKey="categories"
       columns={collectionTableColumns}
       Editor={CategoryDialog}

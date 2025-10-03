@@ -11,6 +11,7 @@ export default function AdminOrdersPage() {
   return (
     <AdminCrudPage<Order>
       objectsName="Orders"
+      objectName="Order"
       apiKey="orders"
       columns={orderTableColumns}
       Editor={OrderEditorDialog}

@@ -11,6 +11,7 @@ import type { CrudEditorInterface } from "@features/admin-dash/CrudEditorInterfa
 
 interface AdminCrudPageProps<T extends { id?: string }> {
   objectsName: string;
+  objectName: string;
   apiKey: keyof ReturnType<typeof useApi>; // e.g., "collections" | "categories"
   columns: TableColumn<T>[];
   Editor?: React.ComponentType<CrudEditorInterface<T>>;
@@ -20,6 +21,7 @@ interface AdminCrudPageProps<T extends { id?: string }> {
 
 function AdminCrudPage<T extends { id?: string }>({
   objectsName,
+  objectName,
   apiKey,
   columns,
   Editor,
@@ -57,7 +59,7 @@ function AdminCrudPage<T extends { id?: string }>({
       setEditingItem(null);
       setIsCreating(false);
     } catch (err: any) {
-      alert(`Failed to save: ${err.message}`);
+      alert(`Failed to save ${objectName}: ${err.message}`);
     } finally {
       setIsSaving(false);
       refetch();
@@ -71,7 +73,7 @@ function AdminCrudPage<T extends { id?: string }>({
       setEditingItem(null);
       setIsCreating(false);
     } catch (err: any) {
-      alert(`Failed to delete: ${err.message}`);
+      alert(`Failed to delete ${objectName}: ${err.message}`);
     } finally {
       setIsSaving(false);
       refetch();
@@ -128,7 +130,7 @@ function AdminCrudPage<T extends { id?: string }>({
             className="px-4 py-2 border rounded bg-blue-600 text-white"
             onClick={handleAddClick}
           >
-            {`Add ${objectsName}`}
+            {`Add ${objectName}`}
           </Button>
         }
       />

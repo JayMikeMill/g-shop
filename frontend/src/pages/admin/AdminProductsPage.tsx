@@ -9,7 +9,8 @@ import type { Product } from "@shared/types";
 export default function AdminProductsPage() {
   return (
     <AdminCrudPage<Product>
-      objectsName="Product"
+      objectName="Product"
+      objectsName="Products"
       apiKey="products"
       columns={productTableColumns}
       Editor={ProductEditorDialog}
