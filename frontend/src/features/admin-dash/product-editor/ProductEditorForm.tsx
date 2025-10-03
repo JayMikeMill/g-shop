@@ -25,17 +25,10 @@ import ProductDimensionsEditor from "./ProductDimensionsEditor";
 import ProductImageProcessor from "./ProductImagesProcessor";
 
 import { MultiImageEditor } from "@components/ui";
+import type { CrudEditorInterface } from "../CrudEditorInterface";
 
-interface ProductEditorFormProps {
-  product: Product | null;
-  onCreate: (product: Product) => void;
-  onModify: (product: Product & { id: string }) => void;
-  onDelete: (productId: string) => void;
-  onCancel: () => void;
-}
-
-export const ProductEditorForm: React.FC<ProductEditorFormProps> = ({
-  product,
+export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
+  item,
   onCreate,
   onModify,
   onDelete,
@@ -49,10 +42,10 @@ export const ProductEditorForm: React.FC<ProductEditorFormProps> = ({
 
   // Sync local product when dialog opens
   useEffect(() => {
-    console.log("ProductEditorForm - product changed:", product);
+    console.log("ProductEditorForm - product changed:", item);
     // Creating new product
-    if (product) {
-      setLocalProduct(product);
+    if (item) {
+      setLocalProduct(item);
       setIsAdding(false);
       // Editing existing product
     } else {
@@ -60,7 +53,7 @@ export const ProductEditorForm: React.FC<ProductEditorFormProps> = ({
       setIsAdding(true);
       return;
     }
-  }, [product]);
+  }, [item]);
 
   const handleCancel = () => {
     clearProduct();

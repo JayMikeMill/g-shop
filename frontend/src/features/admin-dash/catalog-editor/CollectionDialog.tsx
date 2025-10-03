@@ -12,6 +12,7 @@ import { CircleSpinner } from "@components/ui";
 import CollectionImageProcessor from "./CollectionImagesProcessor";
 
 import { useApi } from "@api/useApi";
+import type { CrudEditorInterface } from "../CrudEditorInterface";
 
 // Types
 export interface CollectionImageSet {
@@ -19,15 +20,10 @@ export interface CollectionImageSet {
   preview: string; // used for both preview & thumbnail
 }
 
-interface CatalogDialogProps<T extends Collection> {
-  open: boolean;
-  item: T | null;
-  onCreate: (collection: T) => void;
-  onModify: (collection: T & { id: string }) => void;
-  onDelete: (collectionId: T) => void;
-  onCancel: () => void;
-  apiKey: "categories" | "collections";
-  typeLabel: "Category" | "Collection";
+interface CatalogDialogProps<T extends Collection>
+  extends CrudEditorInterface<T> {
+  apiKey: "categories" | "collections"; // optional, used internally
+  typeLabel: "Category" | "Collection"; // optional, used for title/spinner
 }
 
 export function CatalogDialog<T extends Collection>({
@@ -134,7 +130,7 @@ export function CatalogDialog<T extends Collection>({
   return (
     <AnimatedDialog
       title={isAdding ? `Add ${type}` : `Edit ${type}`}
-      open={open}
+      open={!!open}
       onClose={handleCancel}
       className="flex flex-col overflow-hidden rounded-none pl-2 w-full h-full 
       sm:rounded-2xl sm:max-w-3xl px-md sm:px-lg"
