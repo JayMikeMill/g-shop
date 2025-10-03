@@ -181,11 +181,17 @@ export class PrismaCRUDAdapter<T> implements CRUDInterface<T> {
 
   async update(updates: Partial<T> & { id?: string }): Promise<T> {
     if (!updates.id) throw new Error("Document id is required for update");
+
+    // make a copy and strip IDs before passing to Prisma
+    const { id, ...rest } = updates;
+    const cleaned = stripIdsRecursively({ ...rest });
+
     const updated = await this.client.update({
-      where: { id: updates.id },
-      data: this.toPrisma(updates, "update"),
+      where: { id },
+      data: this.toPrisma(cleaned, "update"),
       include: this.includeFields,
     });
+
     return this.fromPrisma(updated);
   }
 

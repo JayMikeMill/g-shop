@@ -116,14 +116,12 @@ class OrderCRUD extends PrismaCRUDAdapter<Order> {
     super(prismaClient, {
       model: "order",
       includeFields: {
-        transaction: true,
         items: true,
         invoices: true,
         statusHistory: true,
       },
       nestedFields: {
         items: { type: "upsertNested" },
-        transaction: { type: "upsertNested" },
         invoices: { type: "upsertNested" },
         statusHistory: { type: "upsertNested" },
       },

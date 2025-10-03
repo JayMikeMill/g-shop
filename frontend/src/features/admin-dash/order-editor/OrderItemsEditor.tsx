@@ -1,5 +1,6 @@
-import { Button } from "@components/ui";
+import { Button, Input, Label, NumberInput, XButton } from "@components/ui";
 import type { Order, OrderItem } from "@shared/types";
+import { floatToPrice, priceToFloat } from "@utils/priceUtils";
 
 type OrderItemsEditorProps = {
   order: Order;
@@ -41,12 +42,13 @@ export default function OrderItemsEditor({
 
   return (
     <div className="flex flex-col gap-2">
+      <Label>Order Items:</Label>
       {order.items.map((item, idx) => (
         <div key={idx} className="flex gap-2 items-center">
-          <input
+          <Input
             type="text"
-            placeholder="Product JSON"
-            value={JSON.stringify(item.product)}
+            placeholder="Product"
+            value={item.product.name}
             onChange={(e) =>
               handleItemChange(
                 idx,
@@ -56,25 +58,22 @@ export default function OrderItemsEditor({
             }
             className="border rounded px-2 py-1 flex-1"
           />
-          <input
+          <Input
             type="number"
             value={item.quantity}
             onChange={(e) =>
               handleItemChange(idx, "quantity", Number(e.target.value))
             }
-            className="border rounded px-2 py-1 w-20"
+            className="border rounded px-2 py-1 w-16 text-center"
           />
-          <input
-            type="number"
-            value={item.price}
-            onChange={(e) =>
-              handleItemChange(idx, "price", Number(e.target.value))
+          <NumberInput
+            value={priceToFloat(item.price)}
+            onChange={(value) =>
+              handleItemChange(idx, "price", floatToPrice(Number(value)))
             }
             className="border rounded px-2 py-1 w-24"
           />
-          <Button variant="destructive" onClick={() => handleRemoveItem(idx)}>
-            Remove
-          </Button>
+          <XButton onClick={() => handleRemoveItem(idx)} />
         </div>
       ))}
       <Button onClick={handleAddItem}>Add Item</Button>

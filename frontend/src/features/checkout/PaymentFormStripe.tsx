@@ -115,7 +115,8 @@ function InnerStripeForm({
     try {
       await createOrder.mutateAsync({
         items: cartItems.map((item) => ({
-          product: JSON.parse(JSON.stringify(item.product)),
+          product: item.product,
+          variant: item.variant,
           quantity: item.quantity,
           price: item.price,
         })),

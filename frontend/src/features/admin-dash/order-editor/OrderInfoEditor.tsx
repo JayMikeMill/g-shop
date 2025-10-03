@@ -1,4 +1,6 @@
+import { Input, Label, Textarea } from "@components/ui";
 import type { Order, OrderStatus } from "@shared/types";
+import { OrderStatuses } from "@shared/types/Order";
 
 type OrderInfoEditorProps = {
   order: Order;
@@ -10,21 +12,18 @@ export default function OrderInfoEditor({
   setOrder,
 }: OrderInfoEditorProps) {
   return (
-    <div className="flex flex-col gap-2">
-      <div>
-        <strong>Order ID:</strong> {order.id ?? "New Order"}
-      </div>
-      <div>
-        <strong>User ID:</strong>
-        <input
-          type="text"
-          value={order.userId ?? ""}
-          onChange={(e) => setOrder({ ...order, userId: e.target.value })}
-          className="border rounded px-2 py-1 w-full"
-        />
-      </div>
-      <div>
-        <strong>Status:</strong>
+    <div className="flex flex-col gap-md">
+      <Label className="w-full text-center">
+        Order ID:
+        <Label className="text-lg">{order.id ?? "No order ID"}</Label>
+      </Label>
+      <Label className="w-full text-center">
+        User ID:
+        <Label className="text-lg">{order.userId ?? "No user ID"}</Label>
+      </Label>
+
+      <Label>
+        Status:
         <select
           value={order.status}
           onChange={(e) =>
@@ -32,15 +31,19 @@ export default function OrderInfoEditor({
           }
           className="border rounded px-2 py-1 mt-1 w-full"
         >
-          {["PENDING", "PAID", "SHIPPED", "DELIVERED", "CANCELLED"].map((s) => (
+          {Object.values(OrderStatuses).map((s) => (
             <option key={s} value={s}>
               {s}
             </option>
           ))}
         </select>
-      </div>
+      </Label>
+
       <div>
-        <strong>Total:</strong> ${(order.total ?? 0) / 100}
+        <Label className="text-md">
+          Order Total:
+          <Label className="text-xl">${(order.total ?? 0) / 100}</Label>
+        </Label>
       </div>
     </div>
   );

@@ -68,7 +68,7 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
   return (
     <div className="flex flex-col flex-1 gap-md overflow-hidden p-0.5">
       {/* Name */}
-      <Label className="flex-col gap-xs">
+      <Label>
         Name
         <Input
           type="text"
@@ -83,7 +83,7 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
 
       <div className="flex gap-md justify-left">
         {/* Price */}
-        <Label className="flex-col gap-xs  w-32">
+        <Label className="w-32">
           Price
           <NumberInput
             symbol="$"
@@ -101,7 +101,7 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
 
         {/* Discount */}
         <div className="flex items-end gap-sm">
-          <Label className="flex-col gap-xs">
+          <Label>
             Discount
             <NumberInput
               symbol={discountType}
@@ -130,7 +130,7 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
       </div>
 
       {/* Description */}
-      <Label className="flex-col gap-xs">
+      <Label>
         Description
         <Textarea
           value={localProduct.description}

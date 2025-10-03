@@ -1,4 +1,5 @@
 // shared/types/Order.ts
+import { Product, ProductVariant } from "./Product";
 import type { ShippingInfo, Address } from "./Shipping";
 import type { User } from "./User";
 
@@ -23,8 +24,8 @@ export interface Order {
 export interface OrderItem {
   id?: string;
   orderId?: string;
-  product: JSON;
-  variant?: JSON;
+  product: Product;
+  variant?: ProductVariant;
   quantity: number;
   price: number;
 
