@@ -12,47 +12,19 @@ import type { User } from "@shared/types/User";
 import { verifyToken } from "@api/useApi";
 import "@api/firebase/firebaseAPI";
 import type { AuthProvider } from "./AuthProvider";
+import CryptoJS from "crypto-js";
 
 const STORAGE_KEY = "authToken";
-const SECRET_KEY = "12345678901234567890123456789012"; // exactly 32 chars = 256 bits
+const SECRET_KEY = "12345678901234567890123456789012"; // 32 chars
 
-// Simple encryption/decryption using Web Crypto API
-async function encryptToken(token: string) {
-  const enc = new TextEncoder();
-  const data = enc.encode(token);
-  const key = await crypto.subtle.importKey(
-    "raw",
-    new TextEncoder().encode(SECRET_KEY),
-    { name: "AES-GCM" },
-    false,
-    ["encrypt"]
-  );
-  const iv = crypto.getRandomValues(new Uint8Array(12));
-  const encrypted = await crypto.subtle.encrypt(
-    { name: "AES-GCM", iv },
-    key,
-    data
-  );
-  return `${Array.from(iv).join(",")}:${Array.from(new Uint8Array(encrypted)).join(",")}`;
+// AES encryption/decryption using crypto-js
+function encryptToken(token: string) {
+  return CryptoJS.AES.encrypt(token, SECRET_KEY).toString();
 }
 
-async function decryptToken(encryptedToken: string) {
-  const [ivStr, dataStr] = encryptedToken.split(":");
-  const iv = new Uint8Array(ivStr.split(",").map(Number));
-  const data = new Uint8Array(dataStr.split(",").map(Number));
-  const key = await crypto.subtle.importKey(
-    "raw",
-    new TextEncoder().encode(SECRET_KEY),
-    { name: "AES-GCM" },
-    false,
-    ["decrypt"]
-  );
-  const decrypted = await crypto.subtle.decrypt(
-    { name: "AES-GCM", iv },
-    key,
-    data
-  );
-  return new TextDecoder().decode(decrypted);
+function decryptToken(encryptedToken: string) {
+  const bytes = CryptoJS.AES.decrypt(encryptedToken, SECRET_KEY);
+  return bytes.toString(CryptoJS.enc.Utf8);
 }
 
 // Singleton AuthProvider
@@ -69,7 +41,7 @@ class FirebaseAuth implements AuthProvider {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       try {
-        const decrypted = await decryptToken(stored);
+        const decrypted = decryptToken(stored);
         const verUser = await verifyToken(decrypted);
         this.user = verUser;
         this.token = decrypted;
@@ -78,14 +50,13 @@ class FirebaseAuth implements AuthProvider {
       }
     }
 
-    // Listen for Firebase state changes
     const auth = getAuth();
     onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         const idToken = await firebaseUser.getIdToken();
         this.user = await verifyToken(idToken);
         this.token = idToken;
-        localStorage.setItem(STORAGE_KEY, await encryptToken(idToken));
+        localStorage.setItem(STORAGE_KEY, encryptToken(idToken));
       } else {
         this.user = null;
         this.token = null;
@@ -104,7 +75,7 @@ class FirebaseAuth implements AuthProvider {
     const verUser = await verifyToken(idToken);
     this.user = verUser;
     this.token = idToken;
-    localStorage.setItem(STORAGE_KEY, await encryptToken(idToken));
+    localStorage.setItem(STORAGE_KEY, encryptToken(idToken));
     return verUser;
   }
 
