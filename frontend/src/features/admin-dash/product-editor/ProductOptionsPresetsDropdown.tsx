@@ -51,7 +51,7 @@ const OptionsPresetDropdown: React.FC<OptionsPresetDropdownProps> = ({
     value: preset,
     render: (p: ProductOptionsPreset) => (
       <div className="flex justify-between items-center gap-2">
-        <span className="flex-1 text-text">{p.name}</span>
+        <span className="flex-1 text-foreground font-normal">{p.name}</span>
         <XButton
           className="w-5 h-5"
           onClick={(e) => {

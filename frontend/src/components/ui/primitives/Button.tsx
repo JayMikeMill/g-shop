@@ -32,7 +32,7 @@ const buttonVariants = cva("", {
         baseButton +
         `
         border border-input bg-background shadow-sm 
-        hover:bg-accent hover:text-accent-foreground`,
+        hover:bg-card`,
       secondary:
         baseButton +
         `

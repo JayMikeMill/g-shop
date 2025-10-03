@@ -39,7 +39,6 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
 
   // Sync local product when dialog opens
   useEffect(() => {
-    console.log("ProductEditorForm - product changed:", item);
     // Creating new product
     if (item) {
       setLocalProduct(item);

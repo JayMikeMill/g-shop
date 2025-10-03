@@ -19,11 +19,9 @@ export function ProtectedRoute({
     return null; // or a spinner while auth is being checked
   }
 
-  console.log("ProtectedRoute - user:", user);
   const notAuth = !user || !user.role || !allowedRoles.includes(user.role);
 
   if (notAuth) {
-    console.log("ProtectedRoute - redirecting to login");
     // Redirect to login page, remember where the user tried to go
     return <Navigate to="/admin-login" state={{ from: location }} replace />;
   }

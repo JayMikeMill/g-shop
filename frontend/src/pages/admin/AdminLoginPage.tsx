@@ -1,5 +1,5 @@
 // src/pages/AdminLoginPage.tsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@features/auth/useAuth";
 import { AnimatedDialog, Button, Input } from "@components/ui";
@@ -14,9 +14,11 @@ export default function AdminLoginPage() {
 
   const authorized = user && user.role === "admin";
 
-  if (authorized) {
-    navigate("/admin", { replace: true });
-  }
+  useEffect(() => {
+    if (authorized) {
+      navigate("/admin", { replace: true });
+    }
+  }, [authorized, navigate]);
 
   // Redirect after login (default to home)
   const from = (location.state as any)?.from?.pathname || "/";

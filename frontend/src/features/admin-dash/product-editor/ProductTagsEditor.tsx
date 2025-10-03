@@ -26,8 +26,8 @@ const TagPresetsDropdown: React.FC<TagPresetsDropdownProps> = ({
 
   // Create preset state
   const [creating, setCreating] = useState(false);
-  const [newTagName, setNewTagName] = useState("");
-  const [newTagColor, setNewTagColor] = useState("#000000");
+  const [newTagName, setNewTagName] = useState("Tag");
+  const [newTagColor, setNewTagColor] = useState("#e77919ff");
   const [newTagTextColor, setNewTagTextColor] = useState("#ffffff");
 
   const createPreset = async () => {
@@ -77,7 +77,7 @@ const TagPresetsDropdown: React.FC<TagPresetsDropdownProps> = ({
   }));
 
   return (
-    <div className="relative flex items-center gap-2 w-3/4">
+    <div className="relative flex items-center gap-2 w-full">
       <AnimatedSelect
         items={dropdownItems}
         headerText="Select Tag..."
@@ -133,7 +133,7 @@ const ProductTagsEditor: React.FC<ProductTagsEditorProps> = ({
     setLocalTags((prev) => prev.filter((_, idx) => idx !== i));
 
   return (
-    <div className="flex flex-col px-2">
+    <div className="flex flex-col">
       <TagPresetsDropdown onSelectPreset={addTag} />
 
       <div className="flex flex-wrap gap-2 mt-2">

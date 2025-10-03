@@ -44,9 +44,9 @@ export const AnimatedSelect = <T,>({
       {/* Dropdown button */}
       {
         <Button
-          className={`bg-background text-primaryForeground
+          className={`bg-background text-foreground
             shadow-sm px-2 py-1 w-full text-left flex border border-input
-            justify-between items-center 
+            justify-between items-center font-normal
             hover:translate-none hover:bg-primary-50
             active:translate-none active:bg-primary-100`}
           onClick={toggle}

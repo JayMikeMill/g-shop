@@ -94,10 +94,7 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
   return (
     <div className="flex flex-col gap-2 w-full">
       {/* Preset Dropdown */}
-      <OptionsPresetDropdown
-        setLocalOptions={setLocalOptions}
-        className="w-1/2"
-      />
+      <OptionsPresetDropdown setLocalOptions={setLocalOptions} />
 
       {/* Options List */}
       {localOptions.map((opt, i) => (
@@ -128,9 +125,11 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
 
       {/* Bottom Buttons */}
       <div className="flex flex-wrap gap-2 w-full mt-auto">
-        <Button type="button" onClick={handleSavePreset} disabled={saving}>
-          {saving ? "Saving..." : "Save Preset"}
-        </Button>
+        {localOptions.length > 0 && (
+          <Button type="button" onClick={handleSavePreset} disabled={saving}>
+            {saving ? "Saving..." : "Save Preset"}
+          </Button>
+        )}
         <Button type="button" onClick={addOption}>
           Add Option
         </Button>

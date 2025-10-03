@@ -1,6 +1,9 @@
 // src/components/CatalogDialog.tsx
 import { useState, useEffect } from "react";
 
+import type { CrudEditorInterface } from "../CrudEditorInterface";
+import type { Collection, Category } from "@shared/types";
+
 // UI Components
 import { AnimatedDialog, Button, Input, Textarea } from "@components/ui";
 import { ImageEditor } from "@components/ui";
@@ -9,9 +12,6 @@ import { CircleSpinner } from "@components/ui";
 import CollectionImageProcessor from "./CollectionImagesProcessor";
 
 import { useApi } from "@api/useApi";
-import type { CrudEditorInterface } from "../CrudEditorInterface";
-
-import type { Collection, Category } from "@shared/types";
 
 // Types
 export interface CollectionImageSet {
@@ -19,13 +19,13 @@ export interface CollectionImageSet {
   preview: string; // used for both preview & thumbnail
 }
 
-interface CatalogDialogProps<T extends Collection>
+interface CollectionDialogProps<T extends Collection>
   extends CrudEditorInterface<T> {
   apiKey: "categories" | "collections"; // optional, used internally
   typeLabel: "Category" | "Collection"; // optional, used for title/spinner
 }
 
-function CatalogDialog<T extends Collection>({
+function CollectionDialogBase<T extends Collection>({
   open,
   item,
   onCreate,
@@ -33,7 +33,7 @@ function CatalogDialog<T extends Collection>({
   onDelete,
   onCancel,
   typeLabel: type,
-}: CatalogDialogProps<T>) {
+}: CollectionDialogProps<T>) {
   const emptyItem: T = {
     id: undefined,
     name: "",
@@ -123,8 +123,6 @@ function CatalogDialog<T extends Collection>({
       throw new Error("Error uploading images");
     }
   };
-
-  console.log("Rendering CatalogDialog with localItem:", localItem);
 
   return (
     <AnimatedDialog
@@ -288,12 +286,16 @@ function CatalogDialog<T extends Collection>({
 // Convenience wrappers
 // For collections
 const CollectionDialog = (props: CrudEditorInterface<Collection>) => (
-  <CatalogDialog {...props} typeLabel="Collection" apiKey="collections" />
+  <CollectionDialogBase
+    {...props}
+    typeLabel="Collection"
+    apiKey="collections"
+  />
 );
 
 // For categories
 const CategoryDialog = (props: CrudEditorInterface<Category>) => (
-  <CatalogDialog {...props} typeLabel="Category" apiKey="categories" />
+  <CollectionDialogBase {...props} typeLabel="Category" apiKey="categories" />
 );
 
-export { CatalogDialog, CategoryDialog, CollectionDialog };
+export { CategoryDialog, CollectionDialog };

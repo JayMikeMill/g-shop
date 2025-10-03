@@ -16,7 +16,7 @@ interface ProductTagDialogProps {
 }
 
 export const ProductTagDialog: React.FC<ProductTagDialogProps> = ({
-  name,
+  name = "tag",
   setName,
   color = "#aabbcc",
   textColor = "#ffffff",
@@ -32,11 +32,9 @@ export const ProductTagDialog: React.FC<ProductTagDialogProps> = ({
       open={open}
       onClose={onClose}
       onEnter={onSave} // handle Enter key
-      className="py-4 px-6 text-text rounded-2xl shadow-xl w-80 flex flex-col gap-sm"
+      className="py-4 px-6 text-text rounded-2xl shadow-xl w-80 flex flex-col gap-md"
     >
-      <h3 className="text-lg font-semibold text-center pb-4">
-        Create Tag Preset
-      </h3>
+      <h3 className="text-lg font-semibold text-center">Create Tag Preset</h3>
 
       <div className="flex gap-2">
         <ColorPickerButton
@@ -54,7 +52,7 @@ export const ProductTagDialog: React.FC<ProductTagDialogProps> = ({
           placeholder="Tag Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="px-2 py-1 w-full"
+          className="px-2 py-1 w-full h-8 text-center"
         />
       </div>
 
@@ -62,17 +60,17 @@ export const ProductTagDialog: React.FC<ProductTagDialogProps> = ({
         <Label className="flex-row">Tag Preview: </Label>
         <TagBox
           className="w-1/2 h-8 self-center"
-          text={name || "Tag Preview"}
+          text={name || "Preview"}
           color={color}
           textColor={textColor}
         />
       </div>
 
       <div className="flex gap-2 justify-center">
-        <Button type="button" className="w-1/2" onClick={onClose}>
+        <Button variant="outline" className="w-1/2" onClick={onClose}>
           Cancel
         </Button>
-        <Button type="button" className="w-1/2" onClick={onSave}>
+        <Button className="w-1/2" onClick={onSave}>
           Save
         </Button>
       </div>
