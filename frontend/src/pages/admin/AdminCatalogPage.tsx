@@ -6,6 +6,7 @@ import {
   AdminCrudPage,
   CategoryDialog,
   CollectionDialog,
+  collectionTableColumns,
 } from "@features/admin-dash";
 
 import type { Category, Collection } from "@shared/types/Catalog";
@@ -49,7 +50,7 @@ export function AdminCollectionsPage() {
     <AdminCrudPage<Collection>
       objectsName="Collection"
       apiKey="collections"
-      columns={tableColumns}
+      columns={collectionTableColumns}
       Editor={CollectionDialog}
     />
   );
@@ -60,18 +61,8 @@ export function AdminCategoriesPage() {
     <AdminCrudPage<Category>
       objectsName="Category"
       apiKey="categories"
-      columns={tableColumns}
+      columns={collectionTableColumns}
       Editor={CategoryDialog}
     />
   );
 }
-
-const tableColumns = [
-  { id: "name", label: "Name", render: (row: Collection) => row.name },
-  { id: "slug", label: "Slug", render: (row: Collection) => row.slug },
-  {
-    id: "description",
-    label: "Description",
-    render: (row: Collection) => row.description?.slice(0, 50) + "...",
-  },
-];
