@@ -1,7 +1,7 @@
-import type { Collection } from "@shared/types/Catalog";
-import type { Order } from "@shared/types/Order";
-import { priceToFloat, type Product } from "@shared/types/Product";
+import type { Collection, Order, Product } from "@shared/types";
+import { priceToFloat } from "@utils/priceUtils";
 
+// Table columns for products
 const productTableColumns = [
   {
     id: "image",
@@ -73,6 +73,7 @@ const productTableColumns = [
   },
 ];
 
+// Table columns for orders
 const orderTableColumns = [
   {
     id: "id",
@@ -122,6 +123,7 @@ const orderTableColumns = [
   },
 ];
 
+// Table columns for collections
 const collectionTableColumns = [
   { id: "name", label: "Name", render: (row: Collection) => row.name },
   { id: "slug", label: "Slug", render: (row: Collection) => row.slug },
