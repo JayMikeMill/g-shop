@@ -1,6 +1,7 @@
 import qs from "qs";
 
 export interface QueryObject {
+  searchFields: string[];
   conditions?: QueryCondition[];
   sortBy?: string;
   sortOrder?: "asc" | "desc";
@@ -40,36 +41,44 @@ export function toQueryString(query?: QueryObject): string {
 }
 
 // Parses a query object from a request query (e.g., Express req.query)
-export function parseQueryObject(query: Record<string, any>): QueryObject {
-  const options: QueryObject = {};
+export function parseQueryObject(
+  query: Record<string, any> | Record<string, any>[]
+): QueryObject {
+  // If query is an array, take the first element
+  const q = Array.isArray(query) ? query[0] : query;
 
-  if (query.limit !== undefined) {
-    const n = parseInt(query.limit as string);
+  const options: QueryObject = { searchFields: [] };
+
+  // Numbers
+  if (q.limit !== undefined) {
+    const n = parseInt(q.limit as string, 10);
     if (!isNaN(n) && n > 0) options.limit = n;
   }
 
-  if (query.page !== undefined) {
-    const n = parseInt(query.page as string);
+  if (q.page !== undefined) {
+    const n = parseInt(q.page as string, 10);
     if (!isNaN(n) && n > 0) options.page = n;
   }
 
-  if (query.sortBy !== undefined) {
-    options.sortBy = query.sortBy as string;
+  // Strings
+  if (q.sortBy !== undefined) options.sortBy = String(q.sortBy);
+  if (q.sortOrder !== undefined) {
+    const order = String(q.sortOrder).toLowerCase();
+    if (order === "asc" || order === "desc")
+      options.sortOrder = order as "asc" | "desc";
   }
 
-  if (query.sortOrder !== undefined) {
-    const order = (query.sortOrder as string).toLowerCase();
-    if (order === "asc" || order === "desc") options.sortOrder = order;
-  }
+  if (q.search !== undefined) options.search = String(q.search);
 
-  // Handle conditions array
-  if (query.conditions) {
-    const arr = Array.isArray(query.conditions)
-      ? query.conditions
-      : Object.values(query.conditions);
-    options.conditions = arr.map((c: any) => ({
+  // Conditions
+  if (q.conditions) {
+    const rawConditions = Array.isArray(q.conditions)
+      ? q.conditions
+      : Object.values(q.conditions);
+
+    options.conditions = rawConditions.map((c: any) => ({
       field: String(c.field),
-      operator: String(c.operator) as any,
+      operator: String(c.operator) as QueryCondition["operator"],
       value: c.value,
     }));
   }

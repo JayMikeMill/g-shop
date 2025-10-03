@@ -44,7 +44,16 @@ class ProductCRUD extends PrismaCRUDAdapter<Product> {
     super(prismaClient, {
       model: "product",
 
-      fields: {
+      includeFields: {
+        images: true,
+        tags: true,
+        variants: true,
+        categories: true,
+        collections: true,
+        //reviews: true,
+      },
+
+      nestedFields: {
         images: { type: "upsertNested" },
         variants: { type: "upsertNested" },
         tags: { type: "upsertNested" },
@@ -53,45 +62,52 @@ class ProductCRUD extends PrismaCRUDAdapter<Product> {
         //reviews: { type: "createNested" },
       },
 
-      include: {
-        images: true,
-        tags: true,
-        variants: true,
-        categories: true,
-        collections: true,
-        //reviews: true,
-      },
+      searchFields: ["id", "name", "description"],
     });
   }
 }
 
 class ProductTagPresetCRUD extends PrismaCRUDAdapter<ProductTagPreset> {
   constructor(prismaClient: PrismaClient) {
-    super(prismaClient, { model: "productTagPreset" });
+    super(prismaClient, {
+      model: "productTagPreset",
+      searchFields: ["name"],
+    });
   }
 }
 
 class ProductOptionPresetCRUD extends PrismaCRUDAdapter<ProductOptionsPreset> {
   constructor(prismaClient: PrismaClient) {
-    super(prismaClient, { model: "productOptionsPreset" });
+    super(prismaClient, {
+      model: "productOptionsPreset",
+      searchFields: ["name"],
+    });
   }
 }
 
 class ProductReviewCRUD extends PrismaCRUDAdapter<ProductReview> {
   constructor(prismaClient: PrismaClient) {
-    super(prismaClient, { model: "productReview" });
+    super(prismaClient, {
+      model: "productReview",
+    });
   }
 }
 
 class CategoryCRUD extends PrismaCRUDAdapter<Category> {
   constructor(prismaClient: PrismaClient) {
-    super(prismaClient, { model: "category" });
+    super(prismaClient, {
+      model: "category",
+      searchFields: ["name", "description"],
+    });
   }
 }
 
 class CollectionCRUD extends PrismaCRUDAdapter<Collection> {
   constructor(prismaClient: PrismaClient) {
-    super(prismaClient, { model: "collection" });
+    super(prismaClient, {
+      model: "collection",
+      searchFields: ["name", "description"],
+    });
   }
 }
 
@@ -99,24 +115,28 @@ class OrderCRUD extends PrismaCRUDAdapter<Order> {
   constructor(prismaClient: PrismaClient) {
     super(prismaClient, {
       model: "order",
-      include: {
+      includeFields: {
         transaction: true,
         items: true,
         invoices: true,
         statusHistory: true,
       },
-      fields: {
+      nestedFields: {
         items: { type: "upsertNested" },
         transaction: { type: "upsertNested" },
         invoices: { type: "upsertNested" },
         statusHistory: { type: "upsertNested" },
       },
+      searchFields: ["id", "userId"],
     });
   }
 }
 
 class UserCRUD extends PrismaCRUDAdapter<User> {
   constructor(prismaClient: PrismaClient) {
-    super(prismaClient, { model: "user" });
+    super(prismaClient, {
+      model: "user",
+      searchFields: ["email"],
+    });
   }
 }
