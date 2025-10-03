@@ -16,6 +16,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@my-store/shared": "*",
     "@prisma/client": "^6.16.2",
     "better-sqlite3": "^12.2.0",
     "cors": "^2.8.5",

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { AnimatedDialog, Button, AnimatedDropdownBox } from "@components/ui";
 import type { CrudEditorInterface } from "@features/admin-dash";
-import { type Order } from "@shared/types";
+import { type Order } from "@my-store/shared/types";
 import OrderInfoEditor from "./OrderInfoEditor";
 import OrderItemsEditor from "./OrderItemsEditor";
 import OrderShippingEditor from "./OrderShippingEditor";
@@ -30,7 +30,6 @@ export const OrderEditorDialog: React.FC<CrudEditorInterface<Order>> = ({
         status: "PENDING",
       },
       shippingInfo: {
-        deliveryMethod: "",
         method: "STANDARD",
         carrier: "UPS",
         email: "",

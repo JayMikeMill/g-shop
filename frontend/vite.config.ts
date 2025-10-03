@@ -1,10 +1,21 @@
 // vite.config.ts
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import tsconfigPaths from "vite-tsconfig-paths";
+import { visualizer } from "rollup-plugin-visualizer";
 import path from "path";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    tsconfigPaths(),
+    visualizer({
+      open: true, // auto open report
+      gzipSize: true,
+      brotliSize: true,
+    }),
+  ],
   resolve: {
     alias: {
       "@pages": path.resolve(__dirname, "./src/pages"),
@@ -21,7 +32,6 @@ export default defineConfig({
       "@data": path.resolve(__dirname, "./src/data"),
       "@styles": path.resolve(__dirname, "./src/styles"),
       "@ui": path.resolve(__dirname, "./src/components/"),
-      "@shared": path.resolve(__dirname, "../shared"),
     },
   },
   server: {

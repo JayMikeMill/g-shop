@@ -3,7 +3,7 @@ import {
   ShippingCarriers,
   ShippingMethods,
   type ShippingInfo,
-} from "@shared/types/Shipping";
+} from "@my-store/shared/types/Shipping";
 import { z } from "zod";
 import { useForm, useWatch, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -46,12 +46,7 @@ export default function ShippingForm({
   onChange,
   className,
 }: ShippingFormProps) {
-  const {
-    control,
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<ShippingInfo>({
+  const { control, register, handleSubmit } = useForm<ShippingInfo>({
     defaultValues: {
       name: "",
       email: "",

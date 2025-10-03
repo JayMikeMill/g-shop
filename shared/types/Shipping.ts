@@ -1,6 +1,5 @@
 // shared/types/Shipping.ts
 export type ShippingInfo = {
-  deliveryMethod: string;
   name?: string;
   address: Address;
   email: string;

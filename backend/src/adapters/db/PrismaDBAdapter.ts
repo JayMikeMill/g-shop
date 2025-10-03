@@ -11,7 +11,7 @@ import type {
   Collection,
   Order,
   User,
-} from "@shared/types";
+} from "@my-store/shared/types";
 
 import { DBAdapter } from "./DBAdapter";
 

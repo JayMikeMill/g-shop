@@ -15,7 +15,6 @@ export const CropDialog: React.FC<CropDialogProps> = ({
   file,
   onCropComplete,
   onCancel,
-  ratio = 1,
 }) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);

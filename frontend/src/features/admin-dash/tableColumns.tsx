@@ -1,6 +1,7 @@
-import { TagBox } from "@components/ui";
-import type { Collection, Order, Product } from "@shared/types";
+import type { Collection, Order, Product } from "@my-store/shared/types";
 import { priceToFloat } from "@utils/priceUtils";
+
+import { TagBox } from "@components/ui";
 
 // Table columns for products
 const productTableColumns = [

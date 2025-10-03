@@ -14,7 +14,7 @@ export default function ShoppingCart({
 }: ShoppingCartProps) {
   const navigate = useNavigate();
 
-  const { cart, totals, addItem, removeItem, clear } = useCart();
+  const { cart, totals, addItem, removeItem } = useCart();
 
   const handleProceedToCheckout = () => {
     if (onProceedToCheckout) onProceedToCheckout();

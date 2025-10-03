@@ -6,7 +6,6 @@ import { useState } from "react";
 
 import { SITE } from "../../site-config";
 
-import { useCart } from "@features/cart/useCart";
 import SlideOutCart from "@features/cart/SlideOutCart";
 
 import SiteMenu from "./SiteMenu";

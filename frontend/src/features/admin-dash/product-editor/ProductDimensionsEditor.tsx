@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import type { Product, ProductDimensions } from "@shared/types";
+import type { Product, ProductDimensions } from "@my-store/shared/types";
 import { Input } from "@components/ui";
 
 interface ProductDimensionsEditorProps {

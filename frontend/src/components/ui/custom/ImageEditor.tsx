@@ -114,7 +114,6 @@ function BaseImageEditor<T extends Record<string, any>>({
   const [pendingCropFile, setPendingCropFile] = useState<File | null>(null);
   const [previews, setPreviews] = useState<Record<number, string>>({});
   const [processingIndexes, setProcessingIndexes] = useState<number[]>([]);
-  const [progressMap, setProgressMap] = useState<Record<number, number>>({});
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -166,9 +165,7 @@ function BaseImageEditor<T extends Record<string, any>>({
         type: "image/webp",
       });
 
-      const processedItem = await processor(file, (percent) =>
-        setProgressMap((prev) => ({ ...prev, [index]: percent }))
-      );
+      const processedItem = await processor(file);
 
       let updated = [...images];
       if (single) {
@@ -182,12 +179,6 @@ function BaseImageEditor<T extends Record<string, any>>({
       alert(err?.message || "Error processing cropped image");
     } finally {
       setProcessingIndexes((prev) => prev.filter((i) => i !== index));
-
-      setProgressMap((prev) => {
-        const copy = { ...prev };
-        delete copy[index];
-        return copy;
-      });
 
       // Remove temporary preview
       setPreviews((prev) => {

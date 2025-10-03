@@ -2,7 +2,11 @@ import React, { useState, useEffect } from "react";
 
 import { Button, XButton, TagBox, AnimatedSelect } from "@components/ui";
 
-import type { Product, ProductTag, ProductTagPreset } from "@shared/types";
+import type {
+  Product,
+  ProductTag,
+  ProductTagPreset,
+} from "@my-store/shared/types";
 
 import { ProductTagDialog } from "./ProductTagDialog";
 import { useApi } from "@api/useApi";

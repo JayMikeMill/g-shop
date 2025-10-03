@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from "react";
 
 // Types
-import type { Product, ProductOption } from "@shared/types";
+import type { Product, ProductOption } from "@my-store/shared/types";
 
 // UI Components
 import { Button, Input, XButton } from "@components/ui";
@@ -32,7 +32,6 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
   );
 
   const [saving, setSaving] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0); // <-- trigger refresh
 
   // Sync local options with product
   useEffect(() => {
@@ -83,7 +82,6 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
     try {
       await createPreset().mutateAsync({ name, options: localOptions });
       alert("Preset saved successfully");
-      setRefreshKey((prev) => prev + 1); // <-- refresh dropdown
     } catch (err: any) {
       alert("Error saving preset: " + err.message);
     } finally {

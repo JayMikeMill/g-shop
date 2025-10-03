@@ -12,7 +12,7 @@ import {
   Collection,
   Order,
   User,
-} from "@shared/types";
+} from "@my-store/shared/types";
 
 import type { DBAdapter } from "./DBAdapter";
 

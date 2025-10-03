@@ -1,5 +1,5 @@
 import { Button, Input, Label, NumberInput, XButton } from "@components/ui";
-import type { Order, OrderItem } from "@shared/types";
+import type { Order, OrderItem } from "@my-store/shared/types";
 import { floatToPrice, priceToFloat } from "@utils/priceUtils";
 
 type OrderItemsEditorProps = {

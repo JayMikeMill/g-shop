@@ -1,10 +1,9 @@
 import { useNavigate } from "react-router-dom";
 
-import { useCart } from "@features/cart/useCart";
+// import { useCart } from "@features/cart/useCart";
 
 import { TagBox } from "@components/ui";
-import type { CartItem } from "@features/cart/CartItem";
-import type { Product } from "@shared/types";
+import type { Product } from "@my-store/shared/types";
 
 interface ProductCardProps {
   product: Product;
@@ -13,16 +12,16 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const navigate = useNavigate();
 
-  const { addItem } = useCart();
-
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    addItem({
-      product: product,
-      quantity: 1,
-      price: product.price,
-    });
-  };
+  // const { addItem } = useCart();
+  //
+  // const handleAddToCart = (e: React.MouseEvent) => {
+  //   e.stopPropagation();
+  //   addItem({
+  //     product: product,
+  //     quantity: 1,
+  //     price: product.price,
+  //   });
+  // };
 
   const handleCardClick = () => {
     navigate(`/Product/${product.id}`);

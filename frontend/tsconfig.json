@@ -37,7 +37,6 @@
       "@lib/*": ["src/components/lib/*"],
       "@utils/*": ["src/utils/*"],
       "@models/*": ["src/models/*"],
-      "@shared/*": ["../shared/*"],
       "@data/*": ["src/data/*"],
       "@config/*": ["src/config/*"],
       "@styles/*": ["src/styles/*"],

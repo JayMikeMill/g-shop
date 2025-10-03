@@ -2,13 +2,13 @@
 import { useEffect, useState } from "react";
 
 // Import shared types for shipping address and cart items
-import type { OrderItem, ShippingInfo } from "@shared/types";
+import type { OrderItem, ShippingInfo } from "@my-store/shared/types";
 
 import {
   TransactionStatuses,
   PaymentMethods,
   OrderStatuses,
-} from "@shared/types/Order";
+} from "@my-store/shared/types/Order";
 
 import { useApi } from "@api/useApi";
 

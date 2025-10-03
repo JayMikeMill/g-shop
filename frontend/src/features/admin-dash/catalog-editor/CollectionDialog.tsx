@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 
 import type { CrudEditorInterface } from "../CrudEditorInterface";
-import type { Collection, Category } from "@shared/types";
+import type { Collection, Category } from "@my-store/shared/types";
 
 // UI Components
 import { AnimatedDialog, Button, Input, Textarea } from "@components/ui";
@@ -30,7 +30,6 @@ function CollectionDialogBase<T extends Collection>({
   item,
   onCreate,
   onModify,
-  onDelete,
   onCancel,
   typeLabel: type,
 }: CollectionDialogProps<T>) {

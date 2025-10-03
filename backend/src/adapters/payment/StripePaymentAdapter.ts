@@ -1,5 +1,5 @@
 import { PaymentAdapter } from "./PaymentAdapter";
-import { Address, PaymentRequest } from "@shared/types";
+import { Address, PaymentRequest } from "@my-store/shared/types";
 import Stripe from "stripe";
 import SuperJSON from "superjson";
 import { env } from "@config/envVars";

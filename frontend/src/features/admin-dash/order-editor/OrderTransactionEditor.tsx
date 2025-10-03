@@ -1,4 +1,4 @@
-import type { Order } from "@shared/types";
+import type { Order } from "@my-store/shared/types";
 
 type OrderTransactionEditorProps = {
   order: Order;

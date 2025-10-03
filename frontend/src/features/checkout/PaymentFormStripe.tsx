@@ -7,13 +7,13 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 
-import type { ShippingInfo } from "@shared/types";
+import type { ShippingInfo } from "@my-store/shared/types";
 
 import {
   TransactionStatuses,
   PaymentMethods,
   OrderStatuses,
-} from "@shared/types/Order";
+} from "@my-store/shared/types/Order";
 
 import { useApi } from "@api/useApi";
 

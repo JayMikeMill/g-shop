@@ -13,7 +13,7 @@ import type {
   Category,
   Order,
   User,
-} from "@shared/types";
+} from "@my-store/shared/types";
 
 // Standalone function (outside the hook)
 export async function verifyToken(token: string) {

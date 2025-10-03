@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useAppSelector } from "@app/hooks";
 import { selectCart } from "@features/cart/cartSlice";
 
-import { type ShippingInfo } from "@shared/types/Shipping";
+import { type ShippingInfo } from "@my-store/shared/types/Shipping";
 
 import OrderSummary from "../features/checkout/OrderSummary";
 import ShippingForm from "../features/checkout/ShippingForm";

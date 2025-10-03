@@ -9,9 +9,6 @@
     "skipLibCheck": true,
     "noEmit": true, // don't generate output
     "baseUrl": ".", // root path for imports
-    "paths": {
-      "@shared/*": ["src/shared/*"] // adjust according to your structure
-    },
     "resolveJsonModule": true,
     "allowJs": true
   },
@@ -19,8 +16,7 @@
     "backend/src/**/*.ts",
     "frontend/src/**/*.tsx",
     "shared/**/*.ts",
-    "unit-tests/**/*",
-    "frontend/src/components/ui/index.ts"
+    "unit-tests/**/*"
   ],
   "exclude": ["node_modules", "dist", "build"]
 }

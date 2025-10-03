@@ -1,6 +1,6 @@
-import { Input, Label, Textarea } from "@components/ui";
-import type { Order, OrderStatus } from "@shared/types";
-import { OrderStatuses } from "@shared/types/Order";
+import { Label } from "@components/ui";
+import type { Order, OrderStatus } from "@my-store/shared/types";
+import { OrderStatuses } from "@my-store/shared/types/Order";
 
 type OrderInfoEditorProps = {
   order: Order;

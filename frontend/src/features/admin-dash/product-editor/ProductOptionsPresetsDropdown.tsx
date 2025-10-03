@@ -1,6 +1,9 @@
 import React from "react";
 
-import type { ProductOption, ProductOptionsPreset } from "@shared/types";
+import type {
+  ProductOption,
+  ProductOptionsPreset,
+} from "@my-store/shared/types";
 
 import { XButton, AnimatedSelect } from "@components/ui"; // adjust path
 

@@ -1,5 +1,5 @@
 import { PaymentAdapter } from "./PaymentAdapter";
-import { PaymentRequest, Address } from "@shared/types";
+import { PaymentRequest, Address } from "@my-store/shared/types";
 
 import { SquareClient, SquareEnvironment, Square } from "square";
 

@@ -1,7 +1,7 @@
 import qs from "qs";
 
 export interface QueryObject {
-  searchFields: string[];
+  searchFields?: string[];
   conditions?: QueryCondition[];
   sortBy?: string;
   sortOrder?: "asc" | "desc";

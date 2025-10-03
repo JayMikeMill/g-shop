@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 
-import type { Product, ProductOption, ProductVariant } from "@shared/types";
+import type {
+  Product,
+  ProductOption,
+  ProductVariant,
+} from "@my-store/shared/types";
 
-import { parseVariantOptions } from "@shared/types/Product";
+import { parseVariantOptions } from "@my-store/shared/types/Product";
 
 import { priceToFloat, floatToPrice } from "@utils/priceUtils";
 import { Input, NumberInput } from "@components/ui";

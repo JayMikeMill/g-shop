@@ -1,7 +1,7 @@
 // frontend/src/components/cart/ShoppingCartItem.tsx
 import { Button, TagBox } from "@components/ui";
 import type { CartItem } from "@features/cart/CartItem";
-import { parseVariantOptions } from "@shared/types/Product";
+import { parseVariantOptions } from "@my-store/shared/types/Product";
 import { Plus, Minus } from "lucide-react";
 interface ShoppingCartItemProps {
   item: CartItem;
@@ -14,7 +14,6 @@ export default function ShoppingCartItem({
   addToCart,
   removeFromCart,
 }: ShoppingCartItemProps) {
-  const key = item?.variant?.id ?? item?.product?.id;
   const imgSrc =
     item?.product?.images?.[0]?.thumbnail ||
     item?.product?.images?.[0]?.preview ||

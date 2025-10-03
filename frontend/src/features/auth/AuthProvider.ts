@@ -1,4 +1,4 @@
-import type { User } from "@shared/types";
+import type { User } from "@my-store/shared/types";
 
 // auth-provider.ts
 export interface AuthProvider {

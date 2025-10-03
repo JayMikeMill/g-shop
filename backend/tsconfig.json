@@ -21,8 +21,7 @@
       "@routes/*": ["src/routes/*"],
       "@services/*": ["src/services/*"],
       "@middleware/*": ["src/middleware/*"],
-      "@utils/*": ["src/utils/*"],
-      "@shared/*": ["../shared/*"]
+      "@utils/*": ["src/utils/*"]
     }
   },
 

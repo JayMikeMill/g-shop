@@ -1,9 +1,7 @@
-import type { CollectionImageSet } from "@shared/types/Catalog";
+import type { CollectionImageSet } from "@my-store/shared/types/Catalog";
 import imageCompression from "browser-image-compression";
 
 const MAX_FILE_SIZE_MB = 2; // 2MB
-const MAX_PREVIEW_FILE_SIZE_MB = 0.2; // 200KB
-const MAX_THUMBNAIL_FILE_SIZE_MB = 0.08; // 80KB
 
 export class CollectionImageProcessor {
   // Process banner image

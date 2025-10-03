@@ -1,5 +1,5 @@
 // frontend/src/types/CartItem.ts
-import type { Product, ProductVariant } from "@shared/types";
+import type { Product, ProductVariant } from "@my-store/shared/types";
 
 // Represents an item in the shopping cart
 export interface CartItem {

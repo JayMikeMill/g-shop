@@ -1,5 +1,5 @@
 // shared/types/Order.ts
-import { Product, ProductVariant } from "./Product";
+import type { Product, ProductVariant } from "./Product";
 import type { ShippingInfo, Address } from "./Shipping";
 import type { User } from "./User";
 

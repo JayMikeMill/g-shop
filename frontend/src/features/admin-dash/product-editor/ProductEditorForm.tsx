@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from "react";
 
 // Types
-import { emptyProduct } from "@shared/types/Product";
-import type { Product, ProductImageSet } from "@shared/types";
+import { emptyProduct } from "@my-store/shared/types/Product";
+import type { Product, ProductImageSet } from "@my-store/shared/types";
 
 // UI Components
 import { AnimatedDropdownBox, Button } from "@components/ui";

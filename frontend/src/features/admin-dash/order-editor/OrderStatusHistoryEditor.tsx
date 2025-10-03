@@ -1,5 +1,5 @@
 import { Button } from "@components/ui";
-import type { Order, OrderStatus } from "@shared/types";
+import type { Order, OrderStatus } from "@my-store/shared/types";
 
 type OrderStatusHistoryEditorProps = {
   order: Order;

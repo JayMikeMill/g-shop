@@ -1,5 +1,12 @@
-import type { Order, ShippingCarrier, ShippingMethod } from "@shared/types";
-import { ShippingCarriers, ShippingMethods } from "@shared/types/Shipping";
+import type {
+  Order,
+  ShippingCarrier,
+  ShippingMethod,
+} from "@my-store/shared/types";
+import {
+  ShippingCarriers,
+  ShippingMethods,
+} from "@my-store/shared/types/Shipping";
 
 type OrderShippingEditor = {
   order: Order;
@@ -15,13 +22,13 @@ export default function OrderShippingEditor({
       <input
         type="text"
         placeholder="Delivery Method"
-        value={order.shippingInfo.deliveryMethod}
+        value={order.shippingInfo.method}
         onChange={(e) =>
           setOrder({
             ...order,
             shippingInfo: {
               ...order.shippingInfo,
-              deliveryMethod: e.target.value,
+              method: e.target.value as ShippingMethod,
             },
           })
         }
