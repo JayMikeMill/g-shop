@@ -1,102 +1,137 @@
-import { AnimatedDialog } from "@components/ui";
+import React, { useState, useEffect } from "react";
+import { AnimatedDialog, Button, AnimatedDropdownBox } from "@components/ui";
 import type { CrudEditorInterface } from "@features/admin-dash";
-import type { Order } from "@shared/types";
+import { type Order } from "@shared/types";
+import OrderInfoEditor from "./OrderInfoEditor";
+import OrderItemsEditor from "./OrderItemsEditor";
+import OrderShippingEditor from "./OrderShippingEditor";
+import OrderTransactionEditor from "./OrderTransactionEditor";
+import OrderStatusHistoryEditor from "./OrderStatusHistoryEditor";
 
-// Wrapper to provide a dialog for editing orders
-function OrderEditorDialog({
+// --- Main Dialog ---
+export const OrderEditorDialog: React.FC<CrudEditorInterface<Order>> = ({
   open,
   item,
+  onCreate,
   onModify,
   onDelete,
   onCancel,
-}: CrudEditorInterface<Order>) {
+}) => {
+  const [localOrder, setLocalOrder] = useState<Order>(
+    item ?? {
+      id: undefined,
+      userId: undefined,
+      status: "PENDING",
+      total: 0,
+      transaction: {
+        amount: 0,
+        currency: "USD",
+        method: "CASH",
+        status: "PENDING",
+      },
+      shippingInfo: {
+        deliveryMethod: "",
+        method: "STANDARD",
+        carrier: "UPS",
+        email: "",
+        address: {
+          firstName: "",
+          lastName: "",
+          addressLine1: "",
+          city: "",
+          state: "",
+          postalCode: "",
+          country: "",
+        },
+      },
+      items: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      statusHistory: [],
+    }
+  );
+
+  useEffect(() => {
+    if (item) setLocalOrder(item);
+  }, [item]);
+
+  const handleCancel = () => onCancel();
+  const handleDelete = () => {
+    if (!localOrder.id) return;
+    if (
+      window.confirm(`Are you sure you want to delete order ${localOrder.id}?`)
+    )
+      onDelete(localOrder.id);
+  };
+  const handleSave = () => {
+    if (localOrder.id) onModify(localOrder as Order & { id: string });
+    else onCreate(localOrder);
+  };
+
   return (
     <AnimatedDialog
       open={!!open}
       onClose={onCancel}
-      title={item?.id ? "Edit Order" : "Order Details"}
-      className="flex flex-col overflow-hidden pl-2 w-full h-full sm:rounded-2xl sm:max-w-3xl px-md sm:px-lg"
+      title={item?.id ? "Edit Order" : "Create Order"}
+      className="flex flex-col overflow-hidden pl-2 w-full h-full sm:rounded-2xl sm:max-w-4xl px-md sm:px-lg"
     >
-      {/* You can create a simple form or details view for editing orders */}
-      <div className="flex flex-col gap-4">
-        <div>
-          <strong>Order ID:</strong> {item?.id}
-        </div>
-        <div>
-          <strong>User ID:</strong> {item?.userId}
-        </div>
-        <div>
-          <strong>Status:</strong>
-          <select
-            value={item?.status}
-            onChange={(e) => {
-              if (!item) return;
-              // Ensure all required fields are present and not undefined
-              const {
-                id,
-                userId,
-                status,
-                total,
-                transaction,
-                shippingInfo,
-                items,
-                createdAt,
-                updatedAt,
-                user,
-              } = item;
-              if (
-                id === undefined ||
-                userId === undefined ||
-                transaction === undefined ||
-                shippingInfo === undefined ||
-                items === undefined ||
-                createdAt === undefined ||
-                updatedAt === undefined
-              ) {
-                // Optionally handle missing required fields here
-                return;
-              }
-              onModify({
-                id,
-                userId,
-                status: e.target.value as Order["status"],
-                total: total ?? 0,
-                transaction,
-                shippingInfo,
-                items,
-                createdAt,
-                updatedAt,
-                user,
-              });
-            }}
-            className="border rounded px-2 py-1 mt-1"
-          >
-            <option value="pending">Pending</option>
-            <option value="processing">Processing</option>
-            <option value="completed">Completed</option>
-            <option value="cancelled">Cancelled</option>
-          </select>
-        </div>
-        <div>
-          <strong>Total:</strong> ${(item?.total ?? 0) / 100}
-        </div>
-        <div className="flex gap-2 mt-4">
-          <button
-            className="px-4 py-2 bg-red-600 text-white rounded"
-            onClick={() => item?.id && onDelete(item.id)}
-          >
-            Delete
-          </button>
-          <button
-            className="px-4 py-2 bg-blue-600 text-white rounded"
-            onClick={onCancel}
-          >
-            Cancel
-          </button>
+      <div className="flex flex-col flex-1 overflow-hidden border-t gap-md p-xs sm:p-sd overflow-y-auto">
+        <AnimatedDropdownBox title="Order Info" openInitially={true}>
+          <OrderInfoEditor order={localOrder} setOrder={setLocalOrder} />
+        </AnimatedDropdownBox>
+
+        <AnimatedDropdownBox
+          title={`Items (${localOrder.items.length})`}
+          openInitially={true}
+        >
+          <OrderItemsEditor order={localOrder} setOrder={setLocalOrder} />
+        </AnimatedDropdownBox>
+
+        <AnimatedDropdownBox title="Shipping Info" openInitially={true}>
+          <OrderShippingEditor order={localOrder} setOrder={setLocalOrder} />
+        </AnimatedDropdownBox>
+
+        <AnimatedDropdownBox title="Transaction" openInitially={true}>
+          <OrderTransactionEditor order={localOrder} setOrder={setLocalOrder} />
+        </AnimatedDropdownBox>
+
+        <AnimatedDropdownBox title="Status History" openInitially={true}>
+          <OrderStatusHistoryEditor
+            order={localOrder}
+            setOrder={setLocalOrder}
+          />
+        </AnimatedDropdownBox>
+
+        <AnimatedDropdownBox title="Notes" openInitially={true}>
+          <OrderNotesEditor order={localOrder} setOrder={setLocalOrder} />
+        </AnimatedDropdownBox>
+
+        {/* Action Buttons */}
+        <div className="flex gap-2 mt-4 justify-center">
+          {localOrder.id && (
+            <Button variant="destructive" onClick={handleDelete}>
+              Delete Order
+            </Button>
+          )}
+          <Button onClick={handleCancel}>Cancel</Button>
+          <Button onClick={handleSave}>
+            {localOrder.id ? "Save Changes" : "Create Order"}
+          </Button>
         </div>
       </div>
     </AnimatedDialog>
   );
-}
+};
 
-export { OrderEditorDialog };
+// --- Sub-editors (plain components) ---
+
+const OrderNotesEditor: React.FC<{
+  order: Order;
+  setOrder: (o: Order) => void;
+}> = ({ order, setOrder }) => (
+  <textarea
+    value={order.notes || ""}
+    onChange={(e) => setOrder({ ...order, notes: e.target.value })}
+    className="border rounded px-2 py-1 w-full h-24"
+  />
+);
