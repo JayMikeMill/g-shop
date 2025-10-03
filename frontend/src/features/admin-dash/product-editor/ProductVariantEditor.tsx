@@ -207,7 +207,7 @@ const getProductStock = (product: Product) => {
 };
 
 /** Generate all possible variants */
-export function generateVariants(options?: ProductOption[]): ProductVariant[] {
+function generateVariants(options?: ProductOption[]): ProductVariant[] {
   if (!options || options.length === 0) return [];
 
   const valuesArrays = options.map((opt) => {

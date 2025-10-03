@@ -103,13 +103,12 @@ const XButton = React.forwardRef<HTMLButtonElement, XButtonProps>(
   ({ className, ...props }, ref) => {
     const classes = cn(
       `inline-flex items-center justify-center w-10 h-10 p-0 rounded-full
-       text-foreground border-none shadow-none transition-colors
-       hover:bg-background active:translate-none active:shadow-none`,
+       text-foreground transition-colors duration-200 hover:bg-red-500/70`,
       className
     );
 
     return (
-      <button className={classes} ref={ref} {...props}>
+      <button type="button" className={classes} ref={ref} {...props}>
         <XIcon className="shrink-0" />
       </button>
     );
