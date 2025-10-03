@@ -10,12 +10,10 @@ import {
 } from "@components/ui";
 
 // Types
-import {
-  type Product,
-  emptyProduct,
-  priceToFloat,
-  floatToPrice,
-} from "@shared/types/Product";
+import type { Product } from "@shared/types";
+import { emptyProduct } from "@shared/types/Product";
+
+import { priceToFloat, floatToPrice } from "@utils/priceUtils";
 
 interface ProductInfoEditorProps {
   product: Product;

@@ -1,4 +1,4 @@
-import { PaymentRequest } from "@shared/types/PaymentRequest";
+import { PaymentRequest } from "@shared/types";
 import { payment } from "@config/adapters";
 
 export class PaymentService {

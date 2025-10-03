@@ -1,4 +1,4 @@
-import type { ProductImageSet } from "@shared/types/Product";
+import type { ProductImageSet } from "@shared/types";
 import imageCompression from "browser-image-compression";
 
 const MAX_FILE_SIZE_MB = 2; // 2MB

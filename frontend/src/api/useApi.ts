@@ -9,10 +9,11 @@ import type {
   ProductTagPreset,
   ProductVariant,
   ProductReview,
-} from "@shared/types/Product";
-import type { User } from "@shared/types/User";
-import type { Collection, Category } from "@shared/types/Catalog";
-import type { Order } from "@shared/types/Order";
+  Collection,
+  Category,
+  Order,
+  User,
+} from "@shared/types";
 
 // Standalone function (outside the hook)
 export async function verifyToken(token: string) {

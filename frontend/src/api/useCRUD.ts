@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { CRUDInterface } from "@shared/types/CRUDInterface";
-import { type QueryObject, toQueryString } from "@shared/types/QueryObject";
+import type { CRUDInterface, QueryObject } from "@shared/types";
+import { toQueryString } from "@shared/types/QueryObject";
 import { get, post, put, del } from "./client";
 
 // CRUD factory

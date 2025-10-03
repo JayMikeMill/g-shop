@@ -1,18 +1,19 @@
 // backend/src/adapters/db/FirebaseAdapter.ts
 import { FirebaseCRUDAdapter } from "./CRUD/FireBaseCRUDAdapter";
-import { CRUDInterface } from "@shared/types/CRUDInterface";
 
-import { User } from "@shared/types/User";
 import {
+  CRUDInterface,
   Product,
   ProductOptionsPreset,
   ProductReview,
   ProductTag,
   ProductTagPreset,
-  ProductVariant,
-} from "@shared/types/Product";
-import { Category, Collection } from "@shared/types/Catalog";
-import { Order } from "@shared/types/Order";
+  Category,
+  Collection,
+  Order,
+  User,
+} from "@shared/types";
+
 import type { DBAdapter } from "./DBAdapter";
 
 export class FirebaseDBAdapter implements DBAdapter {

@@ -8,7 +8,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 
-import type { User } from "@shared/types/User";
+import type { User } from "@shared/types";
 import { verifyToken } from "@api/useApi";
 import "@api/firebase/firebaseAPI";
 import type { AuthProvider } from "./AuthProvider";

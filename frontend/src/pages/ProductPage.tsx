@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 
-import type { ProductVariant } from "@shared/types/Product";
+import type { ProductVariant } from "@shared/types";
 
 // Cart state management
 import { useCart } from "@features/cart/useCart";

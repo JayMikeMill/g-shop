@@ -4,7 +4,7 @@ import { useCart } from "@features/cart/useCart";
 
 import { TagBox } from "@components/ui";
 import type { CartItem } from "@features/cart/CartItem";
-import type { Product } from "@shared/types/Product";
+import type { Product } from "@shared/types";
 
 interface ProductCardProps {
   product: Product;

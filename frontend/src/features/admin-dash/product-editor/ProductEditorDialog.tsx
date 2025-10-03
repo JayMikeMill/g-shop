@@ -1,8 +1,8 @@
-import type { Product } from "@shared/types/Product";
+import type { Product } from "@shared/types";
+
 import type { CrudEditorInterface } from "../CrudEditorInterface";
 import { ProductEditorForm } from "./ProductEditorForm";
 import { AnimatedDialog } from "@components/ui";
-import e from "cors";
 
 function ProductEditorDialog({
   open,

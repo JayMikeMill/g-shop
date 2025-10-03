@@ -1,15 +1,14 @@
-import { CRUDInterface } from "@shared/types/CRUDInterface";
-
 import {
+  CRUDInterface,
   Product,
   ProductOptionsPreset,
   ProductReview,
   ProductTagPreset,
-  ProductVariant,
-} from "@shared/types/Product";
-import { Category, Collection } from "@shared/types/Catalog";
-import { Order } from "@shared/types/Order";
-import { User } from "@shared/types/User";
+  Category,
+  Collection,
+  Order,
+  User,
+} from "@shared/types";
 
 export interface DBAdapter {
   products: CRUDInterface<Product>;

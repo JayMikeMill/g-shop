@@ -1,15 +1,12 @@
 // src/components/ProductDialog.tsx
 import React, { useState, useEffect } from "react";
 
-// UI Components
-import { AnimatedDropdownBox, AnimatedSelect, Button } from "@components/ui";
-
 // Types
-import {
-  type Product,
-  type ProductImageSet,
-  emptyProduct,
-} from "@shared/types/Product";
+import { emptyProduct } from "@shared/types/Product";
+import type { Product, ProductImageSet } from "@shared/types";
+
+// UI Components
+import { AnimatedDropdownBox, Button } from "@components/ui";
 
 // Editors
 import ProductInfoEditor from "./ProductInfoEditor";

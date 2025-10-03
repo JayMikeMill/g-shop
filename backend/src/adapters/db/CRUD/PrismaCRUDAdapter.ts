@@ -1,8 +1,7 @@
 // src/crud/GenericCRUD.ts
 import { PrismaClient } from "@prisma/client";
-import type { QueryObject } from "@shared/types/QueryObject";
+import type { CRUDInterface, QueryObject } from "@shared/types";
 type NestedType = "upsertNested" | "createNested" | "set" | "upsert";
-import { CRUDInterface } from "@shared/types/CRUDInterface";
 
 interface NestedFieldOptions {
   type: NestedType;

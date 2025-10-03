@@ -2,9 +2,6 @@
 import { useState, useEffect } from "react";
 
 // UI Components
-
-import type { Collection, Category } from "@shared/types/Catalog";
-
 import { AnimatedDialog, Button, Input, Textarea } from "@components/ui";
 import { ImageEditor } from "@components/ui";
 import { CircleSpinner } from "@components/ui";
@@ -13,6 +10,8 @@ import CollectionImageProcessor from "./CollectionImagesProcessor";
 
 import { useApi } from "@api/useApi";
 import type { CrudEditorInterface } from "../CrudEditorInterface";
+
+import type { Collection, Category } from "@shared/types";
 
 // Types
 export interface CollectionImageSet {

@@ -2,7 +2,9 @@
 
 // React
 import React, { useEffect, useState } from "react";
-import type { Product, ProductOption } from "@shared/types/Product";
+
+// Types
+import type { Product, ProductOption } from "@shared/types";
 
 // UI Components
 import { Button, Input, XButton } from "@components/ui";

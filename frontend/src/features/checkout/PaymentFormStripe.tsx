@@ -7,17 +7,19 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 
-import type { ShippingInfo } from "@shared/types/Shipping";
-import { useApi } from "@api/useApi";
+import type { ShippingInfo } from "@shared/types";
+
 import {
   TransactionStatuses,
   PaymentMethods,
   OrderStatuses,
 } from "@shared/types/Order";
 
+import { useApi } from "@api/useApi";
+
 import type { CartItem } from "@features/cart/CartItem";
 import { Button } from "@components/ui";
-import { floatToPrice } from "@shared/types/Product";
+import { floatToPrice } from "@utils/priceUtils";
 
 interface StripePaymentFormProps {
   total: number;

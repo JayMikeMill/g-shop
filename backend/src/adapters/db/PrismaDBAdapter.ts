@@ -7,12 +7,12 @@ import type {
   ProductOptionsPreset,
   ProductReview,
   ProductTagPreset,
-  ProductVariant,
-} from "@shared/types/Product";
+  Category,
+  Collection,
+  Order,
+  User,
+} from "@shared/types";
 
-import { Category, Collection } from "@shared/types/Catalog";
-import { Order } from "@shared/types/Order";
-import { User } from "@shared/types/User";
 import { DBAdapter } from "./DBAdapter";
 
 export class PrismaDBAdapter implements DBAdapter {

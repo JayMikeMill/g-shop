@@ -4,7 +4,7 @@ import {
   ProductEditorDialog,
   productTableColumns,
 } from "@features/admin-dash";
-import { type Product } from "@shared/types/Product";
+import type { Product } from "@shared/types";
 
 export default function AdminProductsPage() {
   return (

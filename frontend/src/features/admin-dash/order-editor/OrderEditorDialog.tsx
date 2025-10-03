@@ -1,7 +1,6 @@
 import { AnimatedDialog } from "@components/ui";
 import type { CrudEditorInterface } from "@features/admin-dash";
-import type { Order } from "@shared/types/Order";
-import e from "cors";
+import type { Order } from "@shared/types";
 
 // Wrapper to provide a dialog for editing orders
 function OrderEditorDialog({
