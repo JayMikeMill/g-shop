@@ -1,26 +1,17 @@
 // AdminCatalogPage.tsx
-import { useState } from "react";
-
 // Components
+import { buttonVariants } from "@components/ui";
+
 import {
-  Button,
-  buttonVariants,
-  CircleSpinner,
-  DynamicTable,
-} from "@components/ui";
-import {
-  CatalogDialog,
+  AdminCrudPage,
+  CategoryDialog,
   CollectionDialog,
-} from "@features/admin-dash/catalog-editor/CollectionDialog";
+} from "@features/admin-dash";
 
 import type { Category, Collection } from "@shared/types/Catalog";
 
 // API hook
-import { useApi } from "@api/useApi";
 import { NavLink, Outlet } from "react-router-dom";
-import type { QueryObject } from "@shared/types/QueryObject";
-import { AdminCrudPage } from "./AdminCrudPage";
-import type { CrudEditorInterface } from "@features/admin-dash/CrudEditorInterface";
 
 export default function AdminCatalogPageWrapper() {
   return (
@@ -59,7 +50,7 @@ export function AdminCollectionsPage() {
       objectsName="Collection"
       apiKey="collections"
       columns={tableColumns}
-      Editor={CollectionEditor}
+      Editor={CollectionDialog}
     />
   );
 }
@@ -70,20 +61,10 @@ export function AdminCategoriesPage() {
       objectsName="Category"
       apiKey="categories"
       columns={tableColumns}
-      Editor={CategoryEditor}
+      Editor={CategoryDialog}
     />
   );
 }
-
-// For collections
-const CollectionEditor = (props: CrudEditorInterface<Collection>) => (
-  <CatalogDialog {...props} typeLabel="Collection" apiKey="collections" />
-);
-
-// For categories
-const CategoryEditor = (props: CrudEditorInterface<Category>) => (
-  <CatalogDialog {...props} typeLabel="Category" apiKey="categories" />
-);
 
 const tableColumns = [
   { id: "name", label: "Name", render: (row: Collection) => row.name },

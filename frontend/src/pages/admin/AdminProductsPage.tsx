@@ -1,9 +1,11 @@
 // src/features/admin-dash/product-editor/AdminProductsPage.tsx
-import type { CrudEditorInterface } from "@features/admin-dash/CrudEditorInterface";
-import { AdminCrudPage } from "./AdminCrudPage";
-import { ProductEditorForm } from "@features/admin-dash/product-editor/ProductEditorForm";
-import { priceToFloat, type Product } from "@shared/types/Product";
+import {
+  AdminCrudPage,
+  type CrudEditorInterface,
+  ProductEditorForm,
+} from "@features/admin-dash";
 import { AnimatedDialog } from "@components/ui";
+import { priceToFloat, type Product } from "@shared/types/Product";
 
 export default function AdminProductsPage() {
   return (

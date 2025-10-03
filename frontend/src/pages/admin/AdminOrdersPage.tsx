@@ -1,7 +1,6 @@
 // src/features/admin-dash/order-editor/AdminOrdersPage.tsx
-import { AdminCrudPage } from "@pages/admin/AdminCrudPage";
+import { AdminCrudPage, type CrudEditorInterface } from "@features/admin-dash";
 import { AnimatedDialog } from "@components/ui";
-import type { CrudEditorInterface } from "@features/admin-dash/CrudEditorInterface";
 import type { Order } from "@shared/types/Order";
 
 // Orders page using AdminCrudPage

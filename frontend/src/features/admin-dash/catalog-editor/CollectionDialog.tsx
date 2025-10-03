@@ -26,7 +26,7 @@ interface CatalogDialogProps<T extends Collection>
   typeLabel: "Category" | "Collection"; // optional, used for title/spinner
 }
 
-export function CatalogDialog<T extends Collection>({
+function CatalogDialog<T extends Collection>({
   open,
   item,
   onCreate,
@@ -287,10 +287,14 @@ export function CatalogDialog<T extends Collection>({
 }
 
 // Convenience wrappers
-export const CategoryDialog = (
-  props: Omit<CatalogDialogProps<Category>, "type">
-) => <CatalogDialog {...props} typeLabel="Category" />;
+// For collections
+const CollectionDialog = (props: CrudEditorInterface<Collection>) => (
+  <CatalogDialog {...props} typeLabel="Collection" apiKey="collections" />
+);
 
-export const CollectionDialog = (
-  props: Omit<CatalogDialogProps<Collection>, "type">
-) => <CatalogDialog {...props} typeLabel="Collection" />;
+// For categories
+const CategoryDialog = (props: CrudEditorInterface<Category>) => (
+  <CatalogDialog {...props} typeLabel="Category" apiKey="categories" />
+);
+
+export { CatalogDialog, CategoryDialog, CollectionDialog };

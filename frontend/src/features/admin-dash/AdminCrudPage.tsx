@@ -9,7 +9,7 @@ import {
 import { useApi } from "@api/useApi";
 import type { CrudEditorInterface } from "@features/admin-dash/CrudEditorInterface";
 
-export interface AdminCrudPageProps<T extends { id?: string }> {
+interface AdminCrudPageProps<T extends { id?: string }> {
   objectsName: string;
   apiKey: keyof ReturnType<typeof useApi>; // e.g., "collections" | "categories"
   columns: TableColumn<T>[];
@@ -18,7 +18,7 @@ export interface AdminCrudPageProps<T extends { id?: string }> {
   searchable?: boolean;
 }
 
-export function AdminCrudPage<T extends { id?: string }>({
+function AdminCrudPage<T extends { id?: string }>({
   objectsName,
   apiKey,
   columns,
@@ -135,3 +135,5 @@ export function AdminCrudPage<T extends { id?: string }>({
     </div>
   );
 }
+
+export { AdminCrudPage };
