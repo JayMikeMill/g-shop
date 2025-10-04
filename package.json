@@ -16,6 +16,7 @@
     "shared"
   ],
   "scripts": {
+    "build": "npm --prefix frontend run build",
     "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
     "prisma-gen": "npm --prefix backend run prisma:generate",
     "prisma-push": "npm --prefix backend run prisma:push",

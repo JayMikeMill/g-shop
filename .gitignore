@@ -32,3 +32,4 @@ backend/src/config/firebase/NailStoreFirebaseServiceAccount.json
 
 # other
 git-cheatsheet.txt
+.vercel

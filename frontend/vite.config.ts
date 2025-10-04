@@ -7,6 +7,7 @@ import { visualizer } from "rollup-plugin-visualizer";
 import path from "path";
 
 export default defineConfig({
+  base: "/",
   plugins: [
     react(),
     tsconfigPaths(),
