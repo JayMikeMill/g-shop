@@ -34,14 +34,13 @@ const isOptionEnabled = (
   if (!product.variants) return false;
 
   return product.variants.some((variant) => {
-    if (variant.stock && variant.stock <= 0) return false;
+    // null stock = unlimited, 0 stock = disabled
+    if (variant.stock === 0) return false;
 
     const opts = parseVariantOptions(variant);
 
-    // top-level option: only needs to exist in stock
     if (optionIndex === 0) return opts[optionName] === value;
 
-    // must match all previous selections
     const prevSelected = selected.slice(0, optionIndex);
     return (
       prevSelected.every((sel) => opts[sel.name] === sel.value) &&
@@ -99,31 +98,28 @@ const ProductOptionSelector: React.FC<ProductOptionSelectorProps> = ({
   }, [product]);
 
   const handleOptionClick = (optionName: string, value: string) => {
-    const current = selectedOptions.find((o) => o.name === optionName);
-
-    // Do nothing if clicking the already selected option (no deselect)
-    if (current?.value === value) return;
-
-    const optionIndex =
+    const currentIndex =
       product.options?.findIndex((o) => o.name === optionName) ?? -1;
 
-    const updated: SelectedProductOption[] = selectedOptions
-      .slice(0, optionIndex) // keep previous selections
-      .concat({ name: optionName, value });
+    const updated = selectedOptions.slice(0, currentIndex).concat({
+      name: optionName,
+      value,
+    });
 
-    // For subsequent options, select first valid value
+    // Recalculate subsequent selections
     if (product.options) {
-      for (let i = optionIndex + 1; i < product.options.length; i++) {
+      for (let i = currentIndex + 1; i < product.options.length; i++) {
         const opt = product.options[i];
         const values = Array.isArray(opt.values)
           ? opt.values.map((v) =>
               typeof v === "string" ? v.trim() : String(v)
             )
           : [];
-        let validValue = values.find((v) =>
-          isOptionEnabled(product, i, opt.name, v, updated)
-        );
-        if (!validValue) validValue = values[0];
+
+        const validValue =
+          values.find((v) =>
+            isOptionEnabled(product, i, opt.name, v, updated)
+          ) ?? values[0];
         updated.push({ name: opt.name, value: validValue });
       }
     }
@@ -167,7 +163,13 @@ const ProductOptionSelector: React.FC<ProductOptionSelectorProps> = ({
                     key={val}
                     disabled={!enabled}
                     onClick={() => handleOptionClick(opt.name, val)}
-                    className={`${selected ? "bg-primary text-text border-primary" : !enabled ? "opacity-50 cursor-not-allowed bg-surface text-text border-border" : "bg-surface text-text border-border hover:bg-primaryDark"}`}
+                    className={`${
+                      selected
+                        ? "bg-primary text-text border-primary"
+                        : !enabled
+                          ? "opacity-50 cursor-not-allowed bg-surface text-text border-border"
+                          : "bg-surface text-text border-border hover:bg-primaryDark"
+                    }`}
                   >
                     {val}
                   </Button>

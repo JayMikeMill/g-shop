@@ -1,9 +1,8 @@
+// src/components/ProductVariantEditor.tsx
+
 import React, { useEffect, useState } from "react";
-
 import type { Product, ProductOption, ProductVariant } from "@my-store/shared";
-
 import { parseVariantOptions } from "@utils/productUtils";
-
 import { priceToFloat, floatToPrice } from "@utils/productUtils";
 import { Input, NumberInput } from "@components/ui";
 
@@ -30,7 +29,6 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
 
     const newVariants = generateVariants(product.options);
 
-    // Merge with existing product.variants to keep stock values
     setLocalVariants(
       newVariants.map((v) => {
         const existing = product.variants?.find((ex) =>
@@ -38,8 +36,8 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
         );
         return {
           ...v,
-          stock: existing?.stock || null,
-          price: existing?.price || null,
+          stock: existing?.stock ?? null, // preserve 0
+          price: existing?.price ?? null,
         };
       })
     );
@@ -50,7 +48,7 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
     return a.every((val, index) => val === b[index]);
   }
 
-  // Push localVariants back into product whenever they change
+  // Sync localVariants into product
   useEffect(() => {
     const totalStock = getProductStock({ ...product, variants: localVariants });
 
@@ -59,34 +57,32 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
       variants: localVariants,
       stock: totalStock ?? null,
     }));
-  }, [localVariants, hasVariants, setProduct]);
+  }, [localVariants, setProduct]);
 
   // Update stock for a specific variant
   const updateVariantStock = (index: number, stock: string) => {
     setLocalVariants((prev) =>
       prev.map((v, i) =>
-        i === index ? { ...v, stock: stock == "" ? null : parseInt(stock) } : v
+        i === index ? { ...v, stock: stock === "" ? null : parseInt(stock) } : v
       )
     );
   };
 
-  // Update stock for a specific variant
+  // Update price for a specific variant
   const updateVariantPrice = (index: number, price: string) => {
     setLocalVariants((prev) =>
       prev.map((v, i) =>
         i === index
           ? {
               ...v,
-              price: price == "" ? null : floatToPrice(parseFloat(price)),
+              price: price === "" ? null : floatToPrice(parseFloat(price)),
             }
           : v
       )
     );
   };
 
-  if (!hasVariants) {
-    return null; // No variants, no detailed stock editor
-  }
+  if (!hasVariants) return null;
 
   return (
     <div className="flex flex-col">
@@ -117,7 +113,7 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
             ))}
           </div>
 
-          {/* Stock count */}
+          {/* Stock */}
           <Input
             type="number"
             min={0}
@@ -129,14 +125,13 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
             className="w-[30%] text-center"
           />
 
-          {/* Price in dollars */}
-
+          {/* Price */}
           <NumberInput
             symbol="$"
             value={variant.price ? priceToFloat(variant.price) : ""}
             placeholder="-"
             onChange={(e) => updateVariantPrice(idx, e.target.value)}
-            className="w-full text-center" // add padding-left for the $ sign
+            className="w-full text-center"
           />
         </div>
       ))}
@@ -144,6 +139,7 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
   );
 };
 
+// ---------------- Header component ----------------
 interface ProductVariantHeaderProps {
   product: Product;
   setProduct: React.Dispatch<React.SetStateAction<Product>>;
@@ -155,25 +151,18 @@ export const ProductVariantHeader: React.FC<ProductVariantHeaderProps> = ({
 }) => {
   const hasVariants = !!product.options?.length;
   const totalStock = getProductStock(product);
-
   const [localStock, setLocalStock] = useState(totalStock);
 
-  // Push localVariants back into product whenever they change
   useEffect(() => {
     setLocalStock(product.stock);
   }, [product.id, product.variants]);
 
-  // Push localStock back into product whenever it changes
   useEffect(() => {
-    setProduct((prev) => ({
-      ...prev,
-      stock: localStock ?? null,
-    }));
+    setProduct((prev) => ({ ...prev, stock: localStock ?? null }));
   }, [localStock]);
 
-  // Update stock for a specific variant
   const updateStock = (stock: string) => {
-    setLocalStock(stock == "" ? undefined : parseInt(stock));
+    setLocalStock(stock === "" ? undefined : parseInt(stock));
   };
 
   return (
@@ -186,31 +175,30 @@ export const ProductVariantHeader: React.FC<ProductVariantHeaderProps> = ({
         step={1}
         value={localStock ?? ""}
         placeholder="-"
-        onChange={(e) => {
-          updateStock(e.target.value);
-        }}
+        onChange={(e) => updateStock(e.target.value)}
         disabled={hasVariants}
         onFocus={(e) => e.target.select()}
-        className={`w-24 text-center h-6 bg-background disabled:opacity-100`}
+        className="w-24 text-center h-6 bg-background disabled:opacity-100"
       />
     </div>
   );
 };
 
+// ---------------- Utility functions ----------------
 const getProductStock = (product: Product) => {
   if (!product.variants || product.variants.length === 0) return product.stock;
   if (product.variants.every((v) => v.stock === undefined)) return undefined;
-  return product.variants.reduce((sum, v) => sum + (v.stock || 0), 0);
+  return product.variants.reduce((sum, v) => sum + (v.stock ?? 0), 0);
 };
 
-/** Generate all possible variants */
 function generateVariants(options?: ProductOption[]): ProductVariant[] {
-  if (!options || options.length === 0) return [];
+  if (!options?.length) return [];
 
-  const valuesArrays = options.map((opt) => {
-    if (!Array.isArray(opt.values)) return [];
-    return opt.values.map((v) => v.trim()).filter(Boolean);
-  });
+  const valuesArrays = options.map((opt) =>
+    Array.isArray(opt.values)
+      ? opt.values.map((v) => v.trim()).filter(Boolean)
+      : []
+  );
 
   if (valuesArrays.some((arr) => arr.length === 0)) return [];
 
