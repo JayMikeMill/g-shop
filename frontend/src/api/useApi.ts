@@ -1,7 +1,7 @@
 // useApi.ts
 import { useAuth } from "@features/auth/useAuth";
 import { apiClient, setAuthToken, post, del } from "./client";
-import { useCRUD } from "./useCRUD"; // <- generic wrapper
+import { useCrud } from "./useCrud"; // <- generic wrapper
 
 import type {
   Product,
@@ -36,17 +36,17 @@ export function useApi() {
     },
 
     // CRUD resources
-    users: useCRUD<User>("users"),
-    products: useCRUD<Product>("products"),
-    productOptionsPresets: useCRUD<ProductOptionsPreset>(
+    users: useCrud<User>("users"),
+    products: useCrud<Product>("products"),
+    productOptionsPresets: useCrud<ProductOptionsPreset>(
       "products/options-presets"
     ),
-    productTagsPresets: useCRUD<ProductTagPreset>("products/tags-presets"),
-    productVariants: useCRUD<ProductVariant>("products/variants"),
-    productReviews: useCRUD<ProductReview>("products/reviews"),
-    collections: useCRUD<Collection>("catalog/collections"),
-    categories: useCRUD<Category>("catalog/categories"),
-    orders: useCRUD<Order>("orders"),
+    productTagsPresets: useCrud<ProductTagPreset>("products/tags-presets"),
+    productVariants: useCrud<ProductVariant>("products/variants"),
+    productReviews: useCrud<ProductReview>("products/reviews"),
+    collections: useCrud<Collection>("catalog/collections"),
+    categories: useCrud<Category>("catalog/categories"),
+    orders: useCrud<Order>("orders"),
 
     // file uploads
     uploadImage: (file: Blob, filename: string) => {

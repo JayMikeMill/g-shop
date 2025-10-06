@@ -201,6 +201,13 @@ export class PrismaCRUDAdapter<T> implements CRUDInterface<T> {
     });
   }
 
+  async getOneBy(field: keyof T, value: any): Promise<T | null> {
+    return await this.client.findFirst({
+      where: { [field]: value },
+      include: this.includeFields,
+    });
+  }
+
   async getAll(query?: QueryObject<T>): Promise<{ data: T[]; total: number }> {
     const prismaQuery = queryOptionsToPrisma<T>({
       ...query,

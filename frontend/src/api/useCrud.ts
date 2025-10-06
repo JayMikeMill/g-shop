@@ -8,6 +8,8 @@ function CRUD<T extends { id?: string }>(name: string): CRUDInterface<T> {
   return {
     create: (data: Partial<T>) => post<T>(`/${name}`, data),
     getOne: (id: string) => get<T | null>(`/${name}/${id}`),
+    getOneBy: (field: keyof T, value: any) =>
+      get<T | null>(`/${name}/by/${String(field)}/${value}`),
     getAll: (query?: QueryObject<T>) =>
       get<{ data: T[]; total: number }>(`/${name}?${toQueryString(query)}`),
     update: (updates: Partial<T> & { id: string }) =>
@@ -16,7 +18,7 @@ function CRUD<T extends { id?: string }>(name: string): CRUDInterface<T> {
   };
 }
 
-export function useCRUD<T extends { id?: string }>(
+export function useCrud<T extends { id?: string }>(
   resource: CRUDInterface<T> | string
 ) {
   const queryClient = useQueryClient();
@@ -39,6 +41,13 @@ export function useCRUD<T extends { id?: string }>(
         queryKey: [resource, id],
         queryFn: () => crud.getOne(id),
         enabled: !!id,
+      }),
+
+    getOneBy: (field: keyof T, value: any) =>
+      useQuery({
+        queryKey: [resource, "by", field, value],
+        queryFn: () => crud.getOneBy(field, value),
+        enabled: !!value,
       }),
 
     // Mutations

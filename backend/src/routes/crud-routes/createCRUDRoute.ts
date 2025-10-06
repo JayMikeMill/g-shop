@@ -79,6 +79,24 @@ export function createCRUDRoute(
     router.get("/:id", requireRole(options.read), readOneHandler);
   else router.get("/:id", readOneHandler);
 
+  // ---------------- READ ONE BY ----------------
+  const readOneByHandler = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const item = await crud.getOneBy(req.params.field, req.params.value);
+      if (!item) return res.status(404).json({ error: "Not found" });
+      res.json(item);
+    } catch (err) {
+      next(err);
+    }
+  };
+  if (options?.read?.length)
+    router.get("/:field/:value", requireRole(options.read), readOneByHandler);
+  else router.get("/:field/:value", readOneByHandler);
+
   // ---------------- UPDATE ----------------
   const updateHandler = async (
     req: Request,

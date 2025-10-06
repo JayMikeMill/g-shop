@@ -24,6 +24,17 @@ export class FirebaseCRUDAdapter<T extends { id?: string }>
     return doc.exists ? ({ ...doc.data(), id: doc.id } as T) : null;
   }
 
+  async getOneBy(field: keyof T, value: any): Promise<T | null> {
+    const fieldName = String(field);
+    const snapshot = await db
+      .collection(this.collection)
+      .where(fieldName, "==", value)
+      .limit(1)
+      .get();
+    const doc = snapshot.docs[0];
+    return doc ? ({ ...doc.data(), id: doc.id } as T) : null;
+  }
+
   async getAll(): Promise<{ data: T[]; total: number }> {
     const snapshot = await db.collection(this.collection).get();
     interface GetAllResult<T> {
