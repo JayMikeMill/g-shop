@@ -1,23 +1,24 @@
 import qs from "qs";
 
-export interface QueryObject {
-  searchFields?: string[];
-  conditions?: QueryCondition[];
-  sortBy?: string;
+export interface QueryObject<T> {
+  search?: string;
+  searchFields?: (keyof T)[];
+  conditions?: QueryCondition<T>[];
+  sortBy?: keyof T | string;
   sortOrder?: "asc" | "desc";
-  search?: string; // add a global search field
+
   limit?: number;
   page?: number;
 }
 
-export interface QueryCondition {
-  field: string;
+export interface QueryCondition<T = any> {
+  field: keyof T;
   operator: "=" | "!=" | "<" | "<=" | ">" | ">=";
-  value: any;
+  value: T[keyof T];
 }
 
 // Converts a QueryObject into a query string for use in URLs
-export function toQueryString(query?: QueryObject): string {
+export function toQueryString<T>(query?: QueryObject<T>): string {
   if (!query) return "";
 
   const params: Record<string, any> = {};
@@ -29,27 +30,24 @@ export function toQueryString(query?: QueryObject): string {
   if (query.search) params.search = query.search;
 
   if (query.conditions && query.conditions.length) {
-    params.conditions = query.conditions.map((c: QueryCondition) => ({
+    params.conditions = query.conditions.map((c) => ({
       field: c.field,
       operator: c.operator,
       value: c.value,
     }));
   }
 
-  // Use qs to convert nested objects/arrays into a proper query string
   return qs.stringify(params, { encode: true });
 }
 
 // Parses a query object from a request query (e.g., Express req.query)
-export function parseQueryObject(
+export function parseQueryObject<T>(
   query: Record<string, any> | Record<string, any>[]
-): QueryObject {
-  // If query is an array, take the first element
+): QueryObject<T> {
   const q = Array.isArray(query) ? query[0] : query;
 
-  const options: QueryObject = { searchFields: [] };
+  const options: QueryObject<T> = { searchFields: [] };
 
-  // Numbers
   if (q.limit !== undefined) {
     const n = parseInt(q.limit as string, 10);
     if (!isNaN(n) && n > 0) options.limit = n;
@@ -60,8 +58,7 @@ export function parseQueryObject(
     if (!isNaN(n) && n > 0) options.page = n;
   }
 
-  // Strings
-  if (q.sortBy !== undefined) options.sortBy = String(q.sortBy);
+  if (q.sortBy !== undefined) options.sortBy = q.sortBy as keyof T;
   if (q.sortOrder !== undefined) {
     const order = String(q.sortOrder).toLowerCase();
     if (order === "asc" || order === "desc")
@@ -70,16 +67,15 @@ export function parseQueryObject(
 
   if (q.search !== undefined) options.search = String(q.search);
 
-  // Conditions
   if (q.conditions) {
     const rawConditions = Array.isArray(q.conditions)
       ? q.conditions
       : Object.values(q.conditions);
 
     options.conditions = rawConditions.map((c: any) => ({
-      field: String(c.field),
-      operator: String(c.operator) as QueryCondition["operator"],
-      value: c.value,
+      field: c.field as keyof T,
+      operator: c.operator as QueryCondition<T>["operator"],
+      value: c.value as T[keyof T],
     }));
   }
 

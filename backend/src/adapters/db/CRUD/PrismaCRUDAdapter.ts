@@ -201,12 +201,12 @@ export class PrismaCRUDAdapter<T> implements CRUDInterface<T> {
     });
   }
 
-  async getAll(query?: QueryObject): Promise<{ data: T[]; total: number }> {
-    const prismaQuery = queryOptionsToPrisma({
+  async getAll(query?: QueryObject<T>): Promise<{ data: T[]; total: number }> {
+    const prismaQuery = queryOptionsToPrisma<T>({
       ...query,
       searchFields: query?.searchFields?.length
-        ? query.searchFields.map((f) => String(f))
-        : (this.searchFields ?? []).map((f) => String(f)),
+        ? query.searchFields
+        : (this.searchFields ?? []),
     });
 
     const where = (prismaQuery as any).where ?? {};
@@ -253,7 +253,7 @@ function buildNestedWhere(parts: string[], search: string): any {
   return { [head]: { some: buildNestedWhere(rest, search) } };
 }
 
-export function queryOptionsToPrisma(query?: QueryObject) {
+export function queryOptionsToPrisma<T>(query?: QueryObject<T>) {
   let where: any = {};
   const orderBy: any = {};
   let take: number | undefined;

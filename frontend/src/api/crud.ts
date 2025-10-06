@@ -18,7 +18,7 @@ export function CRUD<T extends { id?: string }>(
   return {
     create: (data: Partial<T>) => post<T>(`/${name}`, data),
     getOne: (id: string) => get<T | null>(`/${name}/${id}`),
-    getAll: (query?: QueryObject) => {
+    getAll: (query?: QueryObject<T>) => {
       const qs = query ? `?${toQueryString(query)}` : "";
       return get<{ data: T[]; total: number }>(`/${name}${qs}`);
     },

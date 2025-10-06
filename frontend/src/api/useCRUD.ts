@@ -8,7 +8,7 @@ function CRUD<T extends { id?: string }>(name: string): CRUDInterface<T> {
   return {
     create: (data: Partial<T>) => post<T>(`/${name}`, data),
     getOne: (id: string) => get<T | null>(`/${name}/${id}`),
-    getAll: (query?: QueryObject) =>
+    getAll: (query?: QueryObject<T>) =>
       get<{ data: T[]; total: number }>(`/${name}?${toQueryString(query)}`),
     update: (updates: Partial<T> & { id: string }) =>
       put<T>(`/${name}/${updates.id}`, updates),
@@ -27,7 +27,7 @@ export function useCRUD<T extends { id?: string }>(
 
   return {
     // Queries
-    getAll: (query?: QueryObject) => {
+    getAll: (query?: QueryObject<T>) => {
       return useQuery({
         queryKey: [resource, query],
         queryFn: () => crud.getAll(query),

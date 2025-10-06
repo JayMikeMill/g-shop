@@ -43,7 +43,11 @@ router.use("/orders", adminCRUD(db.orders, { read: ["admin", "owner"] }));
 
 router.use(
   "/users",
-  adminCRUD(db.users, { read: ["admin", "owner"], update: ["admin", "owner"] })
+  adminCRUD(db.users, {
+    create: ["admin"],
+    read: ["admin", "owner"],
+    update: ["admin", "owner"],
+  })
 );
 
 export default router;

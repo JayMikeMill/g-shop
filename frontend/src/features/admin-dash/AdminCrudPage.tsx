@@ -40,9 +40,9 @@ function AdminCrudPage<T extends { id?: string }>({
 
   // Fetch
   const { data, isLoading, refetch } = api.getAll({
+    search,
     page,
     limit: pageSize,
-    search,
   });
 
   const items: T[] = data?.data ?? [];
