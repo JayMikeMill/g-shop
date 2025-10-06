@@ -2,7 +2,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { requireRole } from "@middleware/authorization";
 import type { Role } from "@middleware/authorization";
-import { CRUDInterface } from "@my-store/shared";
+import { CrudInterface } from "@my-store/shared";
 import { parseQueryObject } from "@my-store/shared";
 
 /**
@@ -22,7 +22,7 @@ export type CRUDRouteOptions = {
  * Authorization is applied only if rolesAllowed has roles.
  */
 export function createCRUDRoute(
-  crud: CRUDInterface<any>,
+  crud: CrudInterface<any>,
   options?: CRUDRouteOptions
 ) {
   const router = Router();

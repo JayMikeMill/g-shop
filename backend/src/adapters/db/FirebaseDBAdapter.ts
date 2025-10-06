@@ -1,8 +1,8 @@
 // backend/src/adapters/db/FirebaseAdapter.ts
-import { FirebaseCRUDAdapter } from "./CRUD/FireBaseCRUDAdapter";
+import { FirebaseCrudAdapter } from "./crud/FireBaseCrudAdapter";
 
 import {
-  CRUDInterface,
+  CrudInterface,
   Product,
   ProductOptionsPreset,
   ProductReview,
@@ -17,27 +17,27 @@ import {
 import type { DBAdapter } from "./DBAdapter";
 
 export class FirebaseDBAdapter implements DBAdapter {
-  public users: CRUDInterface<User>;
-  public products: CRUDInterface<Product>;
-  public productTagsPresets: CRUDInterface<ProductTagPreset>;
-  public productOptionsPresets: CRUDInterface<ProductOptionsPreset>;
-  public productReviews: CRUDInterface<ProductReview>;
-  public categories: CRUDInterface<Category>;
-  public collections: CRUDInterface<Collection>;
-  public orders: CRUDInterface<Order>;
+  public users: CrudInterface<User>;
+  public products: CrudInterface<Product>;
+  public productTagsPresets: CrudInterface<ProductTagPreset>;
+  public productOptionsPresets: CrudInterface<ProductOptionsPreset>;
+  public productReviews: CrudInterface<ProductReview>;
+  public categories: CrudInterface<Category>;
+  public collections: CrudInterface<Collection>;
+  public orders: CrudInterface<Order>;
 
   constructor() {
-    this.users = new FirebaseCRUDAdapter<User>("users");
-    this.products = new FirebaseCRUDAdapter<Product>("products");
-    this.productTagsPresets = new FirebaseCRUDAdapter<ProductTag>("tags");
-    this.productOptionsPresets = new FirebaseCRUDAdapter<ProductOptionsPreset>(
+    this.users = new FirebaseCrudAdapter<User>("users");
+    this.products = new FirebaseCrudAdapter<Product>("products");
+    this.productTagsPresets = new FirebaseCrudAdapter<ProductTag>("tags");
+    this.productOptionsPresets = new FirebaseCrudAdapter<ProductOptionsPreset>(
       "product_options_presets"
     );
-    this.productReviews = new FirebaseCRUDAdapter<ProductReview>(
+    this.productReviews = new FirebaseCrudAdapter<ProductReview>(
       "product_reviews"
     );
-    this.categories = new FirebaseCRUDAdapter<Category>("categories");
-    this.collections = new FirebaseCRUDAdapter<Collection>("collections");
-    this.orders = new FirebaseCRUDAdapter<Order>("orders");
+    this.categories = new FirebaseCrudAdapter<Category>("categories");
+    this.collections = new FirebaseCrudAdapter<Collection>("collections");
+    this.orders = new FirebaseCrudAdapter<Order>("orders");
   }
 }

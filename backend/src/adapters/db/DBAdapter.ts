@@ -1,5 +1,5 @@
 import {
-  CRUDInterface,
+  CrudInterface,
   Product,
   ProductOptionsPreset,
   ProductReview,
@@ -11,13 +11,13 @@ import {
 } from "@my-store/shared";
 
 export interface DBAdapter {
-  products: CRUDInterface<Product>;
-  productTagsPresets: CRUDInterface<ProductTagPreset>;
-  productOptionsPresets: CRUDInterface<ProductOptionsPreset>;
-  productReviews: CRUDInterface<ProductReview>;
+  products: CrudInterface<Product>;
+  productTagsPresets: CrudInterface<ProductTagPreset>;
+  productOptionsPresets: CrudInterface<ProductOptionsPreset>;
+  productReviews: CrudInterface<ProductReview>;
 
-  categories: CRUDInterface<Category>;
-  collections: CRUDInterface<Collection>;
-  orders: CRUDInterface<Order>;
-  users: CRUDInterface<User>;
+  categories: CrudInterface<Category>;
+  collections: CrudInterface<Collection>;
+  orders: CrudInterface<Order>;
+  users: CrudInterface<User>;
 }

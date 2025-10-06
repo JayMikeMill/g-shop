@@ -8,7 +8,7 @@
  */
 
 import { PrismaClient } from "@prisma/client";
-import type { CRUDInterface, QueryObject } from "@my-store/shared";
+import type { CrudInterface, QueryObject } from "@my-store/shared";
 
 // ----------------- Nested Config -----------------
 type NestedConfig = {
@@ -153,7 +153,7 @@ export interface PrismaCRUDAdapterOptions<T> {
   nestedMeta?: NestedMetadata<T>;
 }
 
-export class PrismaCRUDAdapter<T> implements CRUDInterface<T> {
+export class PrismaCrudAdapter<T> implements CrudInterface<T> {
   private prisma: PrismaClient;
   private model: keyof PrismaClient;
   private includeFields?: any;

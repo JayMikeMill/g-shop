@@ -1,10 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { CRUDInterface, QueryObject } from "@my-store/shared";
+import type { CrudInterface, QueryObject } from "@my-store/shared";
 import { toQueryString } from "@my-store/shared";
 import { get, post, put, del } from "./client";
 
 // CRUD factory
-function CRUD<T extends { id?: string }>(name: string): CRUDInterface<T> {
+function CRUD<T extends { id?: string }>(name: string): CrudInterface<T> {
   return {
     create: (data: Partial<T>) => post<T>(`/${name}`, data),
     getOne: (id: string) => get<T | null>(`/${name}/${id}`),
@@ -19,12 +19,12 @@ function CRUD<T extends { id?: string }>(name: string): CRUDInterface<T> {
 }
 
 export function useCrud<T extends { id?: string }>(
-  resource: CRUDInterface<T> | string
+  resource: CrudInterface<T> | string
 ) {
   const queryClient = useQueryClient();
 
   // If a string is passed, call the CRUD factory
-  const crud: CRUDInterface<T> =
+  const crud: CrudInterface<T> =
     typeof resource === "string" ? CRUD<T>(resource) : resource;
 
   return {

@@ -1,6 +1,6 @@
-// src/crud/ProductCRUD.ts
+// src/crud/ProductCrud.ts
 import { PrismaClient } from "@prisma/client";
-import { PrismaCRUDAdapter } from "./CRUD/PrismaCRUDAdapter";
+import { PrismaCrudAdapter } from "./crud/PrismaCrudAdapter";
 
 import type {
   Product,
@@ -16,32 +16,32 @@ import type {
 import { DBAdapter } from "./DBAdapter";
 
 export class PrismaDBAdapter implements DBAdapter {
-  public products: ProductCRUD;
-  public productTagsPresets: ProductTagPresetCRUD;
-  public productOptionsPresets: ProductOptionPresetCRUD;
-  public productReviews: ProductReviewCRUD;
+  public products: ProductCrud;
+  public productTagsPresets: ProductTagPresetCrud;
+  public productOptionsPresets: ProductOptionPresetCrud;
+  public productReviews: ProductReviewCrud;
 
-  public categories: CategoryCRUD;
-  public collections: CollectionCRUD;
-  public orders: OrderCRUD;
-  public users: UserCRUD;
+  public categories: CategoryCrud;
+  public collections: CollectionCrud;
+  public orders: OrderCrud;
+  public users: UserCrud;
 
   constructor(prismaClient: PrismaClient = new PrismaClient()) {
-    this.products = new ProductCRUD(prismaClient);
-    this.productTagsPresets = new ProductTagPresetCRUD(prismaClient);
-    this.productOptionsPresets = new ProductOptionPresetCRUD(prismaClient);
-    this.productReviews = new ProductReviewCRUD(prismaClient);
+    this.products = new ProductCrud(prismaClient);
+    this.productTagsPresets = new ProductTagPresetCrud(prismaClient);
+    this.productOptionsPresets = new ProductOptionPresetCrud(prismaClient);
+    this.productReviews = new ProductReviewCrud(prismaClient);
 
-    this.categories = new CategoryCRUD(prismaClient);
-    this.collections = new CollectionCRUD(prismaClient);
-    this.orders = new OrderCRUD(prismaClient);
-    this.users = new UserCRUD(prismaClient);
+    this.categories = new CategoryCrud(prismaClient);
+    this.collections = new CollectionCrud(prismaClient);
+    this.orders = new OrderCrud(prismaClient);
+    this.users = new UserCrud(prismaClient);
   }
 }
 
-// ----------------- CRUD Adapters -----------------
+// ----------------- Crud Adapters -----------------
 
-class ProductCRUD extends PrismaCRUDAdapter<Product> {
+class ProductCrud extends PrismaCrudAdapter<Product> {
   constructor(prismaClient: PrismaClient) {
     super(prismaClient, {
       model: "product",
@@ -73,7 +73,7 @@ class ProductCRUD extends PrismaCRUDAdapter<Product> {
   }
 }
 
-class ProductTagPresetCRUD extends PrismaCRUDAdapter<ProductTagPreset> {
+class ProductTagPresetCrud extends PrismaCrudAdapter<ProductTagPreset> {
   constructor(prismaClient: PrismaClient) {
     super(prismaClient, {
       model: "productTagPreset",
@@ -82,7 +82,7 @@ class ProductTagPresetCRUD extends PrismaCRUDAdapter<ProductTagPreset> {
   }
 }
 
-class ProductOptionPresetCRUD extends PrismaCRUDAdapter<ProductOptionsPreset> {
+class ProductOptionPresetCrud extends PrismaCrudAdapter<ProductOptionsPreset> {
   constructor(prismaClient: PrismaClient) {
     super(prismaClient, {
       model: "productOptionsPreset",
@@ -91,7 +91,7 @@ class ProductOptionPresetCRUD extends PrismaCRUDAdapter<ProductOptionsPreset> {
   }
 }
 
-class ProductReviewCRUD extends PrismaCRUDAdapter<ProductReview> {
+class ProductReviewCrud extends PrismaCrudAdapter<ProductReview> {
   constructor(prismaClient: PrismaClient) {
     super(prismaClient, {
       model: "productReview",
@@ -99,7 +99,7 @@ class ProductReviewCRUD extends PrismaCRUDAdapter<ProductReview> {
   }
 }
 
-class CategoryCRUD extends PrismaCRUDAdapter<Category> {
+class CategoryCrud extends PrismaCrudAdapter<Category> {
   constructor(prismaClient: PrismaClient) {
     super(prismaClient, {
       model: "category",
@@ -108,7 +108,7 @@ class CategoryCRUD extends PrismaCRUDAdapter<Category> {
   }
 }
 
-class CollectionCRUD extends PrismaCRUDAdapter<Collection> {
+class CollectionCrud extends PrismaCrudAdapter<Collection> {
   constructor(prismaClient: PrismaClient) {
     super(prismaClient, {
       model: "collection",
@@ -117,7 +117,7 @@ class CollectionCRUD extends PrismaCRUDAdapter<Collection> {
   }
 }
 
-class OrderCRUD extends PrismaCRUDAdapter<Order> {
+class OrderCrud extends PrismaCrudAdapter<Order> {
   constructor(prismaClient: PrismaClient) {
     super(prismaClient, {
       model: "order",
@@ -136,7 +136,7 @@ class OrderCRUD extends PrismaCRUDAdapter<Order> {
   }
 }
 
-class UserCRUD extends PrismaCRUDAdapter<User> {
+class UserCrud extends PrismaCrudAdapter<User> {
   constructor(prismaClient: PrismaClient) {
     super(prismaClient, {
       model: "user",
