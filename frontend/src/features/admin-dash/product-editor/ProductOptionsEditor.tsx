@@ -36,7 +36,7 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
   // Sync local options with product
   useEffect(() => {
     setLocalOptions(product.options ?? []);
-  }, [product.options]);
+  }, [product.id]);
 
   // Push changes to product
   useEffect(() => {
