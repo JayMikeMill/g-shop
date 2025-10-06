@@ -2,7 +2,12 @@
 import { useState, useEffect } from "react";
 
 import type { CrudEditorInterface } from "../CrudEditorInterface";
-import type { Collection, Category } from "@my-store/shared/types";
+import {
+  type Collection,
+  type Category,
+  type CollectionImageSet,
+  emptyCollection,
+} from "@my-store/shared";
 
 // UI Components
 import { AnimatedDialog, Button, Input, Textarea } from "@components/ui";
@@ -12,12 +17,6 @@ import { CircleSpinner } from "@components/ui";
 import CollectionImageProcessor from "./CollectionImagesProcessor";
 
 import { useApi } from "@api/useApi";
-
-// Types
-export interface CollectionImageSet {
-  banner: string;
-  preview: string; // used for both preview & thumbnail
-}
 
 interface CollectionDialogProps<T extends Collection>
   extends CrudEditorInterface<T> {
@@ -33,16 +32,7 @@ function CollectionDialogBase<T extends Collection>({
   onCancel,
   typeLabel: type,
 }: CollectionDialogProps<T>) {
-  const emptyItem: T = {
-    id: undefined,
-    name: "",
-    slug: "",
-    description: "",
-    seo: {},
-    images: { banner: "", preview: "" },
-  } as T;
-
-  const [localItem, setLocalItem] = useState<T>(emptyItem);
+  const [localItem, setLocalItem] = useState<T>(emptyCollection as T);
   const [isAdding, setIsAdding] = useState(false);
   const [isProcessingImages, setIsProcessingImages] = useState(false);
   const [isSavingCollection, setIsSavingCollection] = useState(false);
@@ -51,12 +41,12 @@ function CollectionDialogBase<T extends Collection>({
 
   useEffect(() => {
     if (!open) {
-      setLocalItem(emptyItem);
+      setLocalItem(emptyCollection as T);
       setIsAdding(false);
       return;
     }
     if (!item) {
-      setLocalItem(emptyItem);
+      setLocalItem(emptyCollection as T);
       setIsAdding(true);
       return;
     }
@@ -65,7 +55,7 @@ function CollectionDialogBase<T extends Collection>({
   }, [open, item]);
 
   const clearItem = () => {
-    setLocalItem(emptyItem);
+    setLocalItem(emptyCollection as T);
     setIsAdding(false);
   };
   const handleCancel = () => {
@@ -199,7 +189,7 @@ function CollectionDialogBase<T extends Collection>({
             <Input
               type="text"
               placeholder="keyword1, keyword2"
-              value={localItem.seo?.keywords?.join(", ") ?? ""}
+              value={localItem.seo?.keywords ?? ""}
               onChange={(e) =>
                 setLocalItem((prev) => ({
                   ...prev,
@@ -230,7 +220,7 @@ function CollectionDialogBase<T extends Collection>({
         <div className="flex flex-row gap-2">
           {/* Preview Image Editor */}
           <ImageEditor<CollectionImageSet>
-            image={localItem.images}
+            image={localItem.images ?? undefined}
             onImageChange={(img: CollectionImageSet | undefined) =>
               setLocalItem((prev) => ({
                 ...prev,
@@ -246,7 +236,7 @@ function CollectionDialogBase<T extends Collection>({
 
           {/* Banner Image Editor */}
           <ImageEditor<CollectionImageSet>
-            image={localItem.images}
+            image={localItem.images ?? undefined}
             onImageChange={(img: CollectionImageSet | undefined) =>
               setLocalItem((prev) => ({
                 ...prev,

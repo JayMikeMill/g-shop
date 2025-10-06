@@ -1,9 +1,17 @@
 // src/store/authSlice.ts
+import type { UserRole } from "@my-store/shared";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { User } from "@my-store/shared/types";
 
-interface AuthState {
-  user: User | null;
+export interface AuthUser {
+  id: string;
+  email: string;
+  name?: string | null;
+  avatarUrl?: string | null;
+  role: UserRole;
+}
+
+export interface AuthState {
+  user: AuthUser | null;
   token: string | null;
   loading: boolean;
 }
@@ -21,7 +29,7 @@ const authSlice = createSlice({
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
-    setUser: (state, action: PayloadAction<User | null>) => {
+    setUser: (state, action: PayloadAction<AuthUser | null>) => {
       state.user = action.payload;
     },
     setToken: (state, action: PayloadAction<string | null>) => {

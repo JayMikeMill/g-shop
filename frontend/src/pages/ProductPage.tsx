@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 
-import type { ProductVariant } from "@my-store/shared/types";
+import type { ProductVariant } from "@my-store/shared";
 
 // Cart state management
 import { useCart } from "@features/cart/useCart";
@@ -11,6 +11,7 @@ import { useApi } from "@api/useApi";
 import ProductOptionSelector from "@features/products/ProductOptionsSelector";
 import ProductImagesViewer from "@features/products/ProductImagesViewer";
 import { Button, TagBox } from "@components/ui";
+import { priceToFloat } from "@utils/productUtils";
 
 const ProductPage = () => {
   // Get product ID from URL params
@@ -40,21 +41,12 @@ const ProductPage = () => {
   }
 
   // Calculate discounted price if applicable
-  const discountedPrice = product.discount
-    ? typeof product.discount === "string" && product.discount.includes("%")
-      ? product.price * (1 - parseFloat(product.discount) / 100)
-      : product.price - parseFloat(product.discount)
-    : product.price;
+  const discountedPrice = product.price - (product.discount ?? 0);
 
   // Format discount label
   const discountLabel =
-    product.discount &&
-    typeof product.discount === "string" &&
-    product.discount.includes("%")
-      ? product.discount
-      : product.discount
-        ? `$${parseFloat(product.discount).toFixed(2)}`
-        : null;
+    (product.discount ? (priceToFloat(product.discount) ?? "0") : "0") +
+    (product.discountType === "PERCENTAGE" ? "%" : "$");
 
   // Handle adding product to cart
   const handleAddToCart = () => {

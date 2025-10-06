@@ -1,14 +1,17 @@
 import type {
   Order,
+  OrderShippingInfo,
   ShippingCarrier,
   ShippingMethod,
-} from "@my-store/shared/types";
-import {
-  ShippingCarriers,
-  ShippingMethods,
-} from "@my-store/shared/types/Shipping";
+} from "@my-store/shared";
 
-type OrderShippingEditor = {
+import {
+  emptyOrderShippingInfo,
+  ShippingCarrier as ShippingCarriers,
+} from "@my-store/shared";
+import { ShippingMethod as ShippingMethods } from "@my-store/shared";
+
+type OrderShippingEditorProps = {
   order: Order;
   setOrder: (o: Order) => void;
 };
@@ -16,73 +19,78 @@ type OrderShippingEditor = {
 export default function OrderShippingEditor({
   order,
   setOrder,
-}: OrderShippingEditor) {
+}: OrderShippingEditorProps) {
+  // Ensure shippingInfo exists
+  const shippingInfo: OrderShippingInfo = order.shippingInfo || {
+    ...emptyOrderShippingInfo,
+    orderId: order.id,
+  };
+
+  const updateShipping = (updates: Partial<OrderShippingInfo>) =>
+    setOrder({
+      ...order,
+      shippingInfo: { ...shippingInfo, ...updates },
+    });
+
   return (
     <div className="flex flex-col gap-2">
       <input
         type="text"
-        placeholder="Delivery Method"
-        value={order.shippingInfo.method}
-        onChange={(e) =>
-          setOrder({
-            ...order,
-            shippingInfo: {
-              ...order.shippingInfo,
-              method: e.target.value as ShippingMethod,
-            },
-          })
-        }
-        className="border rounded px-2 py-1 w-full"
-      />
-      <input
-        type="text"
         placeholder="Name"
-        value={order.shippingInfo.name || ""}
-        onChange={(e) =>
-          setOrder({
-            ...order,
-            shippingInfo: { ...order.shippingInfo, name: e.target.value },
-          })
-        }
-        className="border rounded px-2 py-1 w-full"
-      />
-      <input
-        type="email"
-        placeholder="Email"
-        value={order.shippingInfo.email || ""}
-        onChange={(e) =>
-          setOrder({
-            ...order,
-            shippingInfo: { ...order.shippingInfo, email: e.target.value },
-          })
-        }
+        value={shippingInfo.name}
+        onChange={(e) => updateShipping({ name: e.target.value })}
         className="border rounded px-2 py-1 w-full"
       />
       <input
         type="text"
         placeholder="Phone"
-        value={order.shippingInfo.phone || ""}
-        onChange={(e) =>
-          setOrder({
-            ...order,
-            shippingInfo: { ...order.shippingInfo, phone: e.target.value },
-          })
-        }
+        value={shippingInfo.phone}
+        onChange={(e) => updateShipping({ phone: e.target.value })}
+        className="border rounded px-2 py-1 w-full"
+      />
+      <input
+        type="text"
+        placeholder="Street"
+        value={shippingInfo.line1}
+        onChange={(e) => updateShipping({ line1: e.target.value })}
+        className="border rounded px-2 py-1 w-full"
+      />
+      <input
+        type="text"
+        placeholder="City"
+        value={shippingInfo.city}
+        onChange={(e) => updateShipping({ city: e.target.value })}
+        className="border rounded px-2 py-1 w-full"
+      />
+      <input
+        type="text"
+        placeholder="State"
+        value={shippingInfo.state}
+        onChange={(e) => updateShipping({ state: e.target.value })}
+        className="border rounded px-2 py-1 w-full"
+      />
+      <input
+        type="text"
+        placeholder="Postal Code"
+        value={shippingInfo.postalCode}
+        onChange={(e) => updateShipping({ postalCode: e.target.value })}
+        className="border rounded px-2 py-1 w-full"
+      />
+      <input
+        type="text"
+        placeholder="Country"
+        value={shippingInfo.country}
+        onChange={(e) => updateShipping({ country: e.target.value })}
         className="border rounded px-2 py-1 w-full"
       />
       <select
-        value={order.shippingInfo.carrier}
+        value={shippingInfo.carrier || ""}
         onChange={(e) =>
-          setOrder({
-            ...order,
-            shippingInfo: {
-              ...order.shippingInfo,
-              carrier: e.target.value as ShippingCarrier,
-            },
-          })
+          updateShipping({ carrier: e.target.value as ShippingCarrier })
         }
         className="border rounded px-2 py-1 w-full"
       >
+        <option value="">Select Carrier</option>
         {Object.keys(ShippingCarriers).map((c) => (
           <option key={c} value={c}>
             {c}
@@ -90,18 +98,13 @@ export default function OrderShippingEditor({
         ))}
       </select>
       <select
-        value={order.shippingInfo.method}
+        value={shippingInfo.method || ""}
         onChange={(e) =>
-          setOrder({
-            ...order,
-            shippingInfo: {
-              ...order.shippingInfo,
-              method: e.target.value as ShippingMethod,
-            },
-          })
+          updateShipping({ method: e.target.value as ShippingMethod })
         }
         className="border rounded px-2 py-1 w-full"
       >
+        <option value="">Select Method</option>
         {Object.keys(ShippingMethods).map((m) => (
           <option key={m} value={m}>
             {m}
@@ -111,64 +114,15 @@ export default function OrderShippingEditor({
       <input
         type="text"
         placeholder="Tracking #"
-        value={order.shippingInfo.trackingNumber || ""}
-        onChange={(e) =>
-          setOrder({
-            ...order,
-            shippingInfo: {
-              ...order.shippingInfo,
-              trackingNumber: e.target.value,
-            },
-          })
-        }
+        value={shippingInfo.tracking || ""}
+        onChange={(e) => updateShipping({ tracking: e.target.value })}
         className="border rounded px-2 py-1 w-full"
       />
       <input
         type="number"
         placeholder="Cost (cents)"
-        value={order.shippingInfo.cost || 0}
-        onChange={(e) =>
-          setOrder({
-            ...order,
-            shippingInfo: {
-              ...order.shippingInfo,
-              cost: Number(e.target.value),
-            },
-          })
-        }
-        className="border rounded px-2 py-1 w-full"
-      />
-      <strong>Address</strong>
-      {Object.entries(order.shippingInfo.address).map(([key, value]) => (
-        <input
-          key={key}
-          type="text"
-          placeholder={key}
-          value={value}
-          onChange={(e) =>
-            setOrder({
-              ...order,
-              shippingInfo: {
-                ...order.shippingInfo,
-                address: {
-                  ...order.shippingInfo.address,
-                  [key]: e.target.value,
-                },
-              },
-            })
-          }
-          className="border rounded px-2 py-1 w-full"
-        />
-      ))}
-      <textarea
-        placeholder="Notes"
-        value={order.shippingInfo.notes || ""}
-        onChange={(e) =>
-          setOrder({
-            ...order,
-            shippingInfo: { ...order.shippingInfo, notes: e.target.value },
-          })
-        }
+        value={shippingInfo.cost ?? 0}
+        onChange={(e) => updateShipping({ cost: Number(e.target.value) })}
         className="border rounded px-2 py-1 w-full"
       />
     </div>

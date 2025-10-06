@@ -2,11 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { Button, XButton, TagBox, AnimatedSelect } from "@components/ui";
 
-import type {
-  Product,
-  ProductTag,
-  ProductTagPreset,
-} from "@my-store/shared/types";
+import type { Product, ProductTag, ProductTagPreset } from "@my-store/shared";
 
 import { ProductTagDialog } from "./ProductTagDialog";
 import { useApi } from "@api/useApi";
@@ -65,8 +61,8 @@ const TagPresetsDropdown: React.FC<TagPresetsDropdownProps> = ({
         <TagBox
           className="w-full h-6 self-center"
           text={preset.name}
-          color={preset.color}
-          textColor={preset.textColor}
+          color={preset.color ?? "accent"}
+          textColor={preset.textColor ?? "primary-foreground"}
         />
         <XButton
           className="w-8 h-8"
@@ -117,10 +113,10 @@ const ProductTagsEditor: React.FC<ProductTagsEditorProps> = ({
   product,
   setProduct,
 }) => {
-  const [localTags, setLocalTags] = useState<ProductTag[]>(product.tags);
+  const [localTags, setLocalTags] = useState<ProductTag[]>(product.tags ?? []);
 
   useEffect(() => {
-    setLocalTags(product.tags);
+    setLocalTags(product.tags ?? []);
   }, [product.id]);
 
   useEffect(() => {
@@ -146,7 +142,7 @@ const ProductTagsEditor: React.FC<ProductTagsEditorProps> = ({
             <TagBox
               color={tag.color || "#ccc"}
               text={tag.name}
-              textColor={tag.textColor}
+              textColor={tag.textColor ?? "#fff"}
             >
               <XButton
                 className="w-5 h-5"

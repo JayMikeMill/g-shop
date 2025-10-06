@@ -11,7 +11,7 @@ import type {
   Collection,
   Order,
   User,
-} from "@my-store/shared/types";
+} from "@my-store/shared";
 
 import { DBAdapter } from "./DBAdapter";
 
@@ -56,6 +56,7 @@ class ProductCRUD extends PrismaCRUDAdapter<Product> {
       nestedFields: {
         images: { type: "upsertNested" },
         variants: { type: "upsertNested" },
+        options: { type: "upsertNested" },
         tags: { type: "upsertNested" },
         categories: { type: "set" },
         collections: { type: "set" },

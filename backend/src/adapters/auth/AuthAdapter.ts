@@ -1,4 +1,4 @@
-import { User } from "@my-store/shared/types";
+import { User } from "@my-store/shared";
 
 export interface AuthAdapter {
   register(user: User, password: string): Promise<User>;

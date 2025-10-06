@@ -1,6 +1,6 @@
 // src/crud/GenericCRUD.ts
 import { PrismaClient } from "@prisma/client";
-import type { CRUDInterface, QueryObject } from "@my-store/shared/types";
+import type { CRUDInterface, QueryObject } from "@my-store/shared";
 
 type NestedType = "upsertNested" | "createNested" | "set" | "upsert";
 
@@ -78,15 +78,20 @@ export class PrismaCRUDAdapter<T> implements CRUDInterface<T> {
   }
 
   private toPrisma(data: Partial<T>, action: "create" | "update") {
+    console.log("toPrisma", { data, action });
     if (!this.nestedFields) return data;
     const result: any = { ...data };
 
     for (const key in this.nestedFields) {
+      if (!(key in data)) continue;
+
       const value = data[key as keyof T];
-      if (value === undefined || value === null) {
+
+      if (value == undefined || value == null) {
         result[key] = null;
         continue;
       }
+
       if (Array.isArray(value) && !value.length) {
         delete result[key];
         continue;
@@ -113,6 +118,7 @@ export class PrismaCRUDAdapter<T> implements CRUDInterface<T> {
       }
     }
 
+    console.log("toPrisma result", result);
     return result;
   }
 

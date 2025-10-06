@@ -7,24 +7,22 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 
-import type { ShippingInfo } from "@my-store/shared/types";
-
 import {
-  TransactionStatuses,
-  PaymentMethods,
-  OrderStatuses,
-} from "@my-store/shared/types/Order";
+  type CartItem,
+  type OrderShippingInfo,
+  TransactionStatus as TransactionStatuses,
+  PaymentMethod as PaymentMethods,
+  OrderStatus as OrderStatuses,
+} from "@my-store/shared";
 
 import { useApi } from "@api/useApi";
-
-import type { CartItem } from "@features/cart/CartItem";
 import { Button } from "@components/ui";
-import { floatToPrice } from "@utils/priceUtils";
+import { floatToPrice } from "@utils/productUtils";
 
 interface StripePaymentFormProps {
   total: number;
   cartItems: CartItem[];
-  shippingInfo: ShippingInfo;
+  shippingInfo: OrderShippingInfo;
   setLoading: (loading: boolean) => void;
   setMessage: (msg: string | null) => void;
 }
@@ -34,7 +32,6 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 function InnerStripeForm({
   total,
-  cartItems,
   shippingInfo,
   setLoading,
   setMessage,
@@ -60,14 +57,14 @@ function InnerStripeForm({
         type: "card",
         card: cardElement,
         billing_details: {
-          name: `${shippingInfo.address.firstName} ${shippingInfo.address.lastName}`,
+          name: shippingInfo.name,
           address: {
-            line1: shippingInfo.address.addressLine1,
-            line2: shippingInfo.address.addressLine2,
-            city: shippingInfo.address.city,
-            state: shippingInfo.address.state,
-            postal_code: shippingInfo.address.postalCode,
-            country: shippingInfo.address.country,
+            line1: shippingInfo.line1,
+            line2: shippingInfo.line2,
+            city: shippingInfo.city,
+            state: shippingInfo.state,
+            postal_code: shippingInfo.postalCode,
+            country: shippingInfo.country,
           },
         },
       });
@@ -81,17 +78,8 @@ function InnerStripeForm({
       const response = await processPayment({
         token: paymentMethod!.id,
         amount: total,
-        items: cartItems.map((item) => ({
-          name:
-            typeof item.product === "string"
-              ? item.product
-              : typeof item.product === "object" && "name" in item.product
-                ? (item.product as { name: string }).name
-                : "Unknown Product",
-          price: item.price,
-          quantity: item.quantity,
-        })),
-        address: shippingInfo.address,
+        items: {},
+        address: shippingInfo,
       });
 
       const payment = (response as any).payment;
@@ -114,12 +102,6 @@ function InnerStripeForm({
 
     try {
       await createOrder.mutateAsync({
-        items: cartItems.map((item) => ({
-          product: item.product,
-          variant: item.variant,
-          quantity: item.quantity,
-          price: item.price,
-        })),
         total: floatToPrice(total),
         status: OrderStatuses.PAID,
         statusHistory: [

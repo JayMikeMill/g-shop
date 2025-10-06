@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { AnimatedDialog, Button, AnimatedDropdownBox } from "@components/ui";
 import type { CrudEditorInterface } from "@features/admin-dash";
-import { type Order } from "@my-store/shared/types";
+import { type Order, emptyOrder } from "@my-store/shared";
 import OrderInfoEditor from "./OrderInfoEditor";
 import OrderItemsEditor from "./OrderItemsEditor";
 import OrderShippingEditor from "./OrderShippingEditor";
@@ -17,38 +17,7 @@ export const OrderEditorDialog: React.FC<CrudEditorInterface<Order>> = ({
   onDelete,
   onCancel,
 }) => {
-  const [localOrder, setLocalOrder] = useState<Order>(
-    item ?? {
-      id: undefined,
-      userId: undefined,
-      status: "PENDING",
-      total: 0,
-      transaction: {
-        amount: 0,
-        currency: "USD",
-        method: "CASH",
-        status: "PENDING",
-      },
-      shippingInfo: {
-        method: "STANDARD",
-        carrier: "UPS",
-        email: "",
-        address: {
-          firstName: "",
-          lastName: "",
-          addressLine1: "",
-          city: "",
-          state: "",
-          postalCode: "",
-          country: "",
-        },
-      },
-      items: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      statusHistory: [],
-    }
-  );
+  const [localOrder, setLocalOrder] = useState<Order>(item ?? emptyOrder);
 
   useEffect(() => {
     if (item) setLocalOrder(item);
@@ -80,7 +49,7 @@ export const OrderEditorDialog: React.FC<CrudEditorInterface<Order>> = ({
         </AnimatedDropdownBox>
 
         <AnimatedDropdownBox
-          title={`Items (${localOrder.items.length})`}
+          title={`Items (${localOrder.items?.length})`}
           openInitially={true}
         >
           <OrderItemsEditor order={localOrder} setOrder={setLocalOrder} />

@@ -2,8 +2,8 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { requireRole } from "@middleware/authorization";
 import type { Role } from "@middleware/authorization";
-import { CRUDInterface } from "@my-store/shared/types";
-import { parseQueryObject } from "@my-store/shared/types/QueryObject";
+import { CRUDInterface } from "@my-store/shared";
+import { parseQueryObject } from "@my-store/shared";
 
 /**
  * If rolesAllowed is empty or undefined, route is public.

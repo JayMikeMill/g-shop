@@ -10,7 +10,7 @@ import { Zoom } from "yet-another-react-lightbox/plugins";
 import "yet-another-react-lightbox/styles.css";
 
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import type { ProductImageSet } from "@my-store/shared/types/Product";
+import type { ProductImageSet } from "@my-store/shared";
 
 interface ProductImagesViewerProps {
   images: ProductImageSet[];

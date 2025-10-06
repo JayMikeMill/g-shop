@@ -1,6 +1,6 @@
 // Cart state management
 import { useCart } from "@features/cart/useCart";
-import { parseVariantOptions } from "@my-store/shared/types/Product";
+import { parseVariantOptions } from "@utils/productUtils";
 
 export default function OrderSummary() {
   const { cart, totals } = useCart();
@@ -28,7 +28,9 @@ export default function OrderSummary() {
             "";
 
           const name = item?.product?.name ?? "Unknown Product";
-          const selectedOptions = parseVariantOptions(item?.variant);
+          const selectedOptions = item.variant
+            ? parseVariantOptions(item.variant)
+            : [];
 
           return (
             <div

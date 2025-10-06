@@ -12,7 +12,7 @@ export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const authorized = user && user.role === "admin";
+  const authorized = user && user.role === "ADMIN";
 
   useEffect(() => {
     if (authorized) {

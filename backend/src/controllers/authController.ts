@@ -65,7 +65,7 @@ export const logout = async (
     const user = await AuthService.verify(token);
     if (!user) return res.status(401).json({ error: "Invalid token" });
 
-    await AuthService.logout(user.id);
+    await AuthService.logout(user.id ?? "");
     res.json({ message: "User logged out" });
   } catch (err: any) {
     next(err);

@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import { useAuth } from "@features/auth/useAuth";
 import { Navigate, useLocation } from "react-router-dom";
-import { type UserRole } from "@my-store/shared/types/User";
+import type { UserRole } from "@my-store/shared";
 
 interface ProtectedRouteProps {
   allowedRoles: UserRole[];
@@ -21,10 +21,10 @@ export function ProtectedRoute({
 
   const notAuth = !user || !user.role || !allowedRoles.includes(user.role);
 
-  if (notAuth) {
-    // Redirect to login page, remember where the user tried to go
-    return <Navigate to="/admin-login" state={{ from: location }} replace />;
-  }
+  // if (notAuth) {
+  //   // Redirect to login page, remember where the user tried to go
+  //   return <Navigate to="/admin-login" state={{ from: location }} replace />;
+  // }
 
   return children;
 }

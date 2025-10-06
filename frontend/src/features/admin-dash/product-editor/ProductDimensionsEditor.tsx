@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import type { Product, ProductDimensions } from "@my-store/shared/types";
+import type { Product, ProductDimensions } from "@my-store/shared";
 import { Input } from "@components/ui";
 
 interface ProductDimensionsEditorProps {
@@ -13,12 +13,12 @@ export const ProductDimensionsEditor: React.FC<
   const system = "imperial" as "imperial" | "metric"; // Future: allow user to select
 
   const [localDimensions, setLocalDimensions] = useState<ProductDimensions>(
-    product.dimensions
+    product.dimensions ?? {}
   );
 
   // Generate variants when options change
   useEffect(() => {
-    setLocalDimensions(product.dimensions);
+    setLocalDimensions(product.dimensions ?? {});
   }, [product.id]);
 
   // Push local dimensions back into product whenever they change
@@ -52,8 +52,8 @@ export const ProductDimensionsEditor: React.FC<
             min={0}
             onFocus={(e) => e.target.select()}
             placeholder="-"
-            value={localDimensions?.weight_grams ?? ""}
-            onChange={(e) => setDimension("weight_grams", e.target.value)}
+            value={localDimensions?.weight ?? ""}
+            onChange={(e) => setDimension("weight", e.target.value)}
           />
         </div>
       </label>
@@ -68,8 +68,8 @@ export const ProductDimensionsEditor: React.FC<
             min={0}
             onFocus={(e) => e.target.select()}
             placeholder="-"
-            value={localDimensions?.length_cm ?? ""}
-            onChange={(e) => setDimension("length_cm", e.target.value)}
+            value={localDimensions?.length ?? ""}
+            onChange={(e) => setDimension("length", e.target.value)}
           />
         </div>
       </label>
@@ -84,8 +84,8 @@ export const ProductDimensionsEditor: React.FC<
             min={0}
             onFocus={(e) => e.target.select()}
             placeholder="-"
-            value={localDimensions?.width_cm ?? ""}
-            onChange={(e) => setDimension("width_cm", e.target.value)}
+            value={localDimensions?.width ?? ""}
+            onChange={(e) => setDimension("width", e.target.value)}
           />
         </div>
       </label>
@@ -100,8 +100,8 @@ export const ProductDimensionsEditor: React.FC<
             min={0}
             onFocus={(e) => e.target.select()}
             placeholder="-"
-            value={localDimensions?.height_cm ?? ""}
-            onChange={(e) => setDimension("height_cm", e.target.value)}
+            value={localDimensions?.height ?? ""}
+            onChange={(e) => setDimension("height", e.target.value)}
           />
         </div>
       </label>

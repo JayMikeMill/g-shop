@@ -1,7 +1,7 @@
 // frontend/src/components/cart/ShoppingCartItem.tsx
 import { Button, TagBox } from "@components/ui";
-import type { CartItem } from "@features/cart/CartItem";
-import { parseVariantOptions } from "@my-store/shared/types/Product";
+import type { CartItem } from "@my-store/shared";
+import { parseVariantOptions } from "@utils/productUtils";
 import { Plus, Minus } from "lucide-react";
 interface ShoppingCartItemProps {
   item: CartItem;
@@ -21,7 +21,7 @@ export default function ShoppingCartItem({
     "";
 
   const name = item?.product?.name ?? "Unknown Product";
-  const selectedOptions = parseVariantOptions(item.variant);
+  const selectedOptions = item.variant ? parseVariantOptions(item.variant) : [];
 
   return (
     <div className="flex items-center gap-md border-b border-divider pb-sm">

@@ -5,6 +5,7 @@ import {
   setToken,
   setLoading,
   logout as logoutAction,
+  type AuthUser,
 } from "./authSlice";
 import type { AuthProvider } from "./AuthProvider";
 import FirebaseAuth from "./FirebaseAuth";
@@ -15,7 +16,7 @@ export function useAuth(provider: AuthProvider = FirebaseAuth) {
 
   // Initialize Redux with provider's current state
   useEffect(() => {
-    if (provider.user) dispatch(setUser(provider.user));
+    if (provider.user) dispatch(setUser(provider.user as AuthUser));
     if (provider.token) dispatch(setToken(provider.token));
     dispatch(setLoading(provider.loading));
   }, []);
@@ -24,7 +25,8 @@ export function useAuth(provider: AuthProvider = FirebaseAuth) {
     dispatch(setLoading(true));
     try {
       const user = await provider.login(email, password);
-      dispatch(setUser(user));
+      if (!user.id) throw new Error("User id is missing");
+      dispatch(setUser(user as AuthUser));
       dispatch(setToken(provider.token));
       return user;
     } finally {
