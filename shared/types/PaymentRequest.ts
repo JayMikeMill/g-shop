@@ -1,4 +1,4 @@
-import type { Address } from "./Shipping";
+import type { OrderShippingInfo } from "../";
 
 export type PaymentRequest = {
   token: string;
@@ -10,5 +10,5 @@ export type PaymentRequest = {
     quantity: number;
   }[];
 
-  address: Address;
+  shippingInfo: OrderShippingInfo;
 };

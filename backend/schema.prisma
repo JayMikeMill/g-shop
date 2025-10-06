@@ -2,36 +2,16 @@
 // Prisma schema for a full e-commerce backend
 // =====================================
 
-// Prisma Commands Cheat Sheet
-// --------------------------
-
-// Init Prisma
-// npx prisma init       -> create schema.prisma and .env
-
-// Generate Prisma Client
-// npx prisma generate   -> regenerate client after schema changes
-
-// Migrations
-// npx prisma migrate dev --name <name>   -> create & apply dev migration
-// npx prisma migrate deploy              -> apply migrations in prod
-
-// Database
-// npx prisma db push      -> push schema changes to DB without migration
-// npx prisma db pull      -> pull schema from existing DB
-
-// Studio
-// npx prisma studio       -> open GUI to explore DB
-
-// Format
-// npx prisma format       -> format schema.prisma
-
-
-// =====================================
-// Prisma schema for a full e-commerce backend
-// =====================================
-
 generator client {
   provider = "prisma-client-js"
+}
+
+generator typescriptInterfaces {
+  provider          = "prisma-generator-typescript-interfaces"
+  output            = "../shared/prisma-types.ts"
+  optionalNullables = true
+  enumType          = object
+  prettier          = true
 }
 
 datasource db {
@@ -55,6 +35,7 @@ enum OrderStatus {
   SHIPPED
   DELIVERED
   CANCELLED
+  REFUNDED
 }
 
 enum TransactionStatus {
@@ -96,30 +77,60 @@ enum ShippingMethod {
   OVERNIGHT
 }
 
+enum ProductStatus {
+  ACTIVE
+  INACTIVE
+  DISCONTINUED
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+}
+
+enum StockMovementType {
+  SALE
+  RESTOCK
+  ADJUSTMENT
+}
+
 //////////////////////
-// USERS
+// USERS & AUTH
 //////////////////////
 
+/// User Model
 model User {
-  id             String            @id @default(uuid())
-  email          String            @unique
-  firstName      String
-  lastName       String
-  phone          String?
-  role           UserRole
-  preferences    Json?
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
+  id                  String   @id @default(uuid())
+  email               String   @unique
+  passwordHash        String
+  firstName           String
+  lastName            String
+  phone               String?  @unique
+  role                UserRole @default(USER)
+  isVerified          Boolean  @default(false)
+  lastLogin           DateTime
+  failedLoginAttempts Int      @default(0)
+  preferences         Json?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   addresses      UserAddress[]
   paymentMethods UserPaymentMethod[]
   orders         Order[]
-  reviews        ProductReview[]    // opposite relation for ProductReview
+  reviews        ProductReview[]
+  cart           Cart?
+  sessions       Session[]
 }
 
 model UserAddress {
-  id        String @id @default(uuid())
-  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String  @id @default(uuid())
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   label     String
   street    String
@@ -127,14 +138,14 @@ model UserAddress {
   state     String
   zip       String
   country   String
-  isDefault Boolean
+  isDefault Boolean @default(false)
 }
 
 model UserPaymentMethod {
-  id            String @id @default(uuid())
-  user          User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id            String        @id @default(uuid())
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId        String
-  type          String
+  type          PaymentMethod
   last4         String
   expiry        String
   providerToken String
@@ -149,9 +160,12 @@ model Collection {
   name        String
   slug        String              @unique
   description String?
-  seo         Json?
-  images      Json?
-  products    Product[]           @relation("ProductCollections")
+  seo         CollectionSEO?
+  images      CollectionImageSet?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  products Product[] @relation("ProductCollections")
 }
 
 model Category {
@@ -159,85 +173,153 @@ model Category {
   name        String
   slug        String              @unique
   description String?
-  seo         Json?
-  images      Json?
-  products    Product[]           @relation("ProductCategories")
+  seo         CollectionSEO?
+  images      CollectionImageSet?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  products Product[] @relation("ProductCategories")
 }
 
+model CollectionImageSet {
+  id           String      @id @default(uuid())
+  collection   Collection? @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  collectionId String?     @unique
+  category     Category?   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId   String?     @unique
+  banner       String
+  preview      String
+  thumbnail    String
+}
+
+model CollectionSEO {
+  id           String      @id @default(uuid())
+  collection   Collection? @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  collectionId String?     @unique
+  category     Category?   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId   String?     @unique
+  title        String?
+  keywords     String?
+}
 
 //////////////////////
 // PRODUCTS
 //////////////////////
 
 model Product {
-  id            String            @id @default(uuid())
-  name          String
-  price         Int
-  discount      String?
-  description   String
-  stock         Int?
-  reviewCount   Int?              @map("review_count")
-  averageRating Float?            @map("average_rating")
-
-  dimensions    Json?
-  tags          ProductTag[]
-  images        ProductImageSet[]
-  options       Json?
-  variants      ProductVariant[]
-  categories    Category[]         @relation("ProductCategories")
-  collections   Collection[]       @relation("ProductCollections")
-  reviews       ProductReview[]
+  id             String             @id @default(uuid())
+  name           String
+  sku            String?            @unique
+  price          Int
+  discount       Int?
+  discountType   DiscountType?
+  description    String
+  stock          Int?
+  weight         Float?
+  reviewCount    Int?               @default(0) @map("review_count")
+  averageRating  Float?             @default(0.0) @map("average_rating")
+  status         ProductStatus      @default(ACTIVE)
+  dimensions     ProductDimensions?
+  tags           ProductTag[]
+  images         ProductImageSet[]
+  options        ProductOption[]
+  variants       ProductVariant[]
+  categories     Category[]         @relation("ProductCategories")
+  collections    Collection[]       @relation("ProductCollections")
+  stockMovements StockMovement[]
+  reviews        ProductReview[]
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  CartItem       CartItem?
 }
 
 model ProductImageSet {
-  id        String   @id @default(uuid())
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  id        String  @id @default(uuid())
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
   main      String
   preview   String
   thumbnail String
 }
 
+model ProductOption {
+  id        String  @id @default(uuid())
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+  name      String
+  values    Json
+}
+
+model ProductVariant {
+  id        String    @id @default(uuid())
+  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+  cart      Cart?     @relation(fields: [cartId], references: [id])
+  cartId    String?
+  options   Json
+  price     Int?
+  stock     Int?
+  CartItem  CartItem?
+}
+
+model ProductDimensions {
+  id        String  @id @default(uuid())
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String  @unique
+  weight    Int?
+  length    Int?
+  width     Int?
+  height    Int?
+}
+
 model ProductTag {
-  id        String   @id @default(uuid())
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  id        String  @id @default(uuid())
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
   name      String
   color     String?
   textColor String?
 }
 
-model ProductVariant {
-  id           String   @id @default(uuid())
-  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId    String   
-  options      Json     // or separate VariantOption table
-  price        Int?
-  stock        Int?
-}
-
 model ProductReview {
-  id        String   @id @default(uuid())
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
-  rating    Int
-  comment   String
-  createdAt DateTime @default(now())
+  id           String       @id @default(uuid())
+  product      Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId    String
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+  rating       Int
+  comment      String
+  status       ReviewStatus @default(PENDING)
+  helpfulCount Int          @default(0)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
 }
 
 model ProductTagPreset {
-  id    String @id @default(uuid())
-  name  String
-  color String?
+  id        String  @id @default(uuid())
+  name      String
+  color     String?
   textColor String?
 }
 
 model ProductOptionsPreset {
-  id       String               @id @default(uuid())
-  name     String
-  options  Json
+  id             String @id @default(uuid())
+  name           String
+  productOptions Json
+}
+
+//////////////////////
+// INVENTORY / STOCK
+//////////////////////
+
+model StockMovement {
+  id        String            @id @default(uuid())
+  product   Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+  quantity  Int
+  type      StockMovementType
+  timestamp DateTime          @default(now())
+  notes     String?
 }
 
 //////////////////////
@@ -245,55 +327,141 @@ model ProductOptionsPreset {
 //////////////////////
 
 model Order {
-  id            String             @id @default(uuid())
-  user          User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
+  id            String               @id @default(uuid())
+  user          User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
   userId        String?
-  status        OrderStatus
+  status        OrderStatus          @default(PENDING)
   total         Int
+  tax           Int?
+  shippingCost  Int?
   transaction   Transaction?
-  shippingInfo  Json
+  shippingInfo  OrderShippingInfo?
   items         OrderItem[]
   statusHistory OrderStatusHistory[]
   invoices      Invoice[]
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @updatedAt
   notes         String?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
 }
 
 model OrderItem {
-  id        String   @id @default(uuid())
-  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  orderId   String
-  product   Json     // snapshot: { id, name, description, image, etc. }
-  variant   Json?    // snapshot: { id, name, options, etc. }, optional
-  quantity  Int
-  price     Int    // price at the time of purchase
+  id       String @id @default(uuid())
+  order    Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId  String
+  product  Json
+  variant  Json?
+  quantity Int
+  price    Int
 }
 
 model Transaction {
-  id              String   @id @default(uuid())
-  order           Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  orderId         String   @unique
+  id              String            @id @default(uuid())
+  order           Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId         String            @unique
   amount          Int
   currency        String
   method          PaymentMethod
   status          TransactionStatus
   billingAddress  Json?
+  gatewayResponse Json?
+}
+
+model OrderShippingInfo {
+  id         String           @id @default(uuid())
+  order      Order            @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId    String           @unique
+  name       String
+  email      String
+  phone      String
+  line1      String
+  line2      String
+  city       String
+  state      String
+  postalCode String
+  country    String
+  carrier    ShippingCarrier?
+  method     ShippingMethod?
+  cost       Int?
+  tracking   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model OrderStatusHistory {
-  id           String    @id @default(uuid())
-  order        Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  orderId      String
-  status       OrderStatus
-  timestamp    DateTime  @default(now())
+  id        String      @id @default(uuid())
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId   String
+  status    OrderStatus
+  timestamp DateTime    @default(now())
 }
 
 model Invoice {
-  id              String   @id @default(uuid())
-  order           Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  orderId         String
-  invoiceNumber   String
-  pdfUrl          String?
-  createdAt       DateTime @default(now())
+  id            String   @id @default(uuid())
+  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId       String
+  invoiceNumber String
+  pdfUrl        String?
+  createdAt     DateTime @default(now())
+}
+
+//////////////////////
+// COUPONS
+//////////////////////
+
+model Coupon {
+  id           String       @id @default(uuid())
+  code         String       @unique
+  discountType DiscountType
+  value        Int
+  usageLimit   Int?
+  expiresAt    DateTime
+  createdAt    DateTime     @default(now())
+}
+
+//////////////////////
+// SESSIONS & CARTS
+//////////////////////
+
+model Session {
+  id        String   @id @default(uuid())
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
+  cart      Cart[]
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Cart {
+  id             String           @id @default(uuid())
+  session        Session?         @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId      String?          @unique
+  user           User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String?          @unique
+  items          CartItem[]
+  subtotal       Int              @default(0)
+  total          Int              @default(0)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  ProductVariant ProductVariant[]
+}
+
+model CartItem {
+  id        String          @id @default(uuid())
+  cart      Cart            @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  cartId    String
+  product   Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String          @unique
+  variant   ProductVariant? @relation(fields: [variantId], references: [id])
+  variantId String?         @unique
+  quantity  Int             @default(1)
+  price     Int
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  @@unique([cartId, productId, variantId])
 }

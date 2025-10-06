@@ -4,7 +4,10 @@ import { useState, useEffect } from "react";
 import { useAppSelector } from "@app/hooks";
 import { selectCart } from "@features/cart/cartSlice";
 
-import { type ShippingInfo } from "@my-store/shared/types/Shipping";
+import {
+  type OrderShippingInfo,
+  emptyOrderShippingInfo,
+} from "@my-store/shared";
 
 import OrderSummary from "../features/checkout/OrderSummary";
 import ShippingForm from "../features/checkout/ShippingForm";
@@ -17,26 +20,9 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  const [shippingInfo, setShippingInfo] = useState<ShippingInfo>({
-    name: "",
-    address: {
-      firstName: "",
-      lastName: "",
-      addressLine1: "",
-      addressLine2: "",
-      city: "",
-      state: "",
-      postalCode: "",
-      country: "US",
-    },
-    email: "",
-    phone: "",
-    method: "STANDARD",
-    carrier: "UPS",
-    trackingNumber: null,
-    cost: 0,
-    notes: "",
-  });
+  const [shippingInfo, setShippingInfo] = useState<OrderShippingInfo>(
+    emptyOrderShippingInfo
+  );
 
   const [shippingCost, setShippingCost] = useState(0);
   const [total, setTotal] = useState(0);
@@ -50,8 +36,8 @@ export default function CheckoutPage() {
   }, [cart, shippingCost]);
 
   useEffect(() => {
-    setShippingCost(shippingInfo.address.postalCode ? 5 : 0);
-  }, [shippingInfo.address.postalCode]);
+    setShippingCost(shippingInfo.postalCode ? 5 : 0);
+  }, [shippingInfo.postalCode]);
 
   return (
     <div className="flex flex-col flex-1 gap-lg max-w-[700px] p-sm mx-auto font-sans text-text">

@@ -11,7 +11,7 @@ import type {
   Collection,
   Order,
   User,
-} from "@my-store/shared/types";
+} from "@my-store/shared";
 
 import { DBAdapter } from "./DBAdapter";
 
@@ -39,6 +39,8 @@ export class PrismaDBAdapter implements DBAdapter {
   }
 }
 
+// ----------------- CRUD Adapters -----------------
+
 class ProductCRUD extends PrismaCRUDAdapter<Product> {
   constructor(prismaClient: PrismaClient) {
     super(prismaClient, {
@@ -47,19 +49,23 @@ class ProductCRUD extends PrismaCRUDAdapter<Product> {
       includeFields: {
         images: true,
         tags: true,
+        options: true,
         variants: true,
+        dimensions: true,
         categories: true,
         collections: true,
-        //reviews: true,
+        reviews: true,
       },
 
-      nestedFields: {
-        images: { type: "upsertNested" },
-        variants: { type: "upsertNested" },
-        tags: { type: "upsertNested" },
-        categories: { type: "set" },
-        collections: { type: "set" },
-        //reviews: { type: "createNested" },
+      nestedMeta: {
+        images: { owned: true },
+        tags: { owned: true },
+        options: { owned: true },
+        variants: { owned: true },
+        dimensions: { owned: true },
+        categories: { manyToMany: true },
+        collections: { manyToMany: true },
+        reviews: { owned: true },
       },
 
       searchFields: ["id", "name", "description"],
@@ -120,10 +126,10 @@ class OrderCRUD extends PrismaCRUDAdapter<Order> {
         invoices: true,
         statusHistory: true,
       },
-      nestedFields: {
-        items: { type: "upsertNested" },
-        invoices: { type: "upsertNested" },
-        statusHistory: { type: "upsertNested" },
+      nestedMeta: {
+        items: { owned: true },
+        invoices: { owned: true },
+        statusHistory: { owned: true },
       },
       searchFields: ["id", "userId"],
     });

@@ -1,14 +1,13 @@
 // React hooks for state and lifecycle
 import { useEffect, useState } from "react";
 
-// Import shared types for shipping address and cart items
-import type { OrderItem, ShippingInfo } from "@my-store/shared/types";
-
 import {
-  TransactionStatuses,
-  PaymentMethods,
-  OrderStatuses,
-} from "@my-store/shared/types/Order";
+  type OrderShippingInfo,
+  type OrderItem,
+  TransactionStatus as TransactionStatuses,
+  PaymentMethod as PaymentMethods,
+  OrderStatus as OrderStatuses,
+} from "@my-store/shared";
 
 import { useApi } from "@api/useApi";
 
@@ -29,7 +28,7 @@ declare global {
 interface SquarePaymentFormProps {
   total: number;
   orderItems: OrderItem[];
-  shippingInfo: ShippingInfo;
+  shippingInfo: OrderShippingInfo;
   setLoading: (loading: boolean) => void;
   setMessage: (msg: string | null) => void;
 }
@@ -104,7 +103,7 @@ export default function PaymentFormSquare({
           price: item.price,
           quantity: item.quantity,
         })),
-        address: shippingInfo.address,
+        address: shippingInfo,
       });
 
       const payment = (response as { payment: any }).payment;

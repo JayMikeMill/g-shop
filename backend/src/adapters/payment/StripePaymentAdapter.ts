@@ -1,8 +1,9 @@
 import { PaymentAdapter } from "./PaymentAdapter";
-import { Address, PaymentRequest } from "@my-store/shared/types";
+import { PaymentRequest } from "@my-store/shared";
 import Stripe from "stripe";
 import SuperJSON from "superjson";
 import { env } from "@config/envVars";
+import { OrderShippingInfo } from "@my-store/shared";
 
 // Initialize Stripe client
 const stripe = new Stripe(env.STRIPE_SECRET_KEY as string, {
@@ -11,7 +12,7 @@ const stripe = new Stripe(env.STRIPE_SECRET_KEY as string, {
 
 export class StripePaymentAdapter implements PaymentAdapter {
   async processPayment(data: PaymentRequest) {
-    const { token, amount, items, address } = data;
+    const { token, amount, items, shippingInfo } = data;
 
     console.log("Processing payment with info:", data);
     console.log("Using Stripe secret key:", process.env.STRIPE_SECRET_KEY);
@@ -29,7 +30,7 @@ export class StripePaymentAdapter implements PaymentAdapter {
       metadata: {
         note: `Order with ${items?.length || 0} items`,
       },
-      shipping: address ? mapToStripeShipping(address) : undefined,
+      shipping: shippingInfo ? mapToStripeShipping(shippingInfo) : undefined,
     });
 
     const serialized = SuperJSON.serialize(paymentIntent);
@@ -49,14 +50,14 @@ export class StripePaymentAdapter implements PaymentAdapter {
 }
 
 // Map your custom address type to Stripe shipping
-const mapToStripeShipping = (addr: Address) => ({
-  name: `${addr.firstName} ${addr.lastName}`,
+const mapToStripeShipping = (info: OrderShippingInfo) => ({
+  name: `${info.name}`,
   address: {
-    line1: addr.addressLine1,
-    line2: addr.addressLine2,
-    city: addr.city,
-    state: addr.state,
-    postal_code: addr.postalCode,
-    country: addr.country,
+    line1: info.line1,
+    line2: info.line2,
+    city: info.city,
+    state: info.state,
+    postal_code: info.postalCode,
+    country: info.country,
   },
 });

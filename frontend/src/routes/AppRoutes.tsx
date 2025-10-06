@@ -21,7 +21,7 @@ import CheckoutPage from "@pages/CheckoutPage";
 import AboutPage from "@pages/AboutPage";
 
 // Auth & Roles
-import { Roles } from "@my-store/shared/types/User";
+import { UserRole } from "@my-store/shared";
 import { ProtectedRoute } from "./ProtectedRoute";
 
 // Scroll to top on route change
@@ -39,7 +39,7 @@ export default function AppRoutes() {
         <Route
           path="/admin"
           element={
-            <ProtectedRoute allowedRoles={[Roles.ADMIN]}>
+            <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
               <AdminDashboardPage />
             </ProtectedRoute>
           }

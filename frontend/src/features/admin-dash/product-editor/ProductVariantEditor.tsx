@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from "react";
 
-import type {
-  Product,
-  ProductOption,
-  ProductVariant,
-} from "@my-store/shared/types";
+import type { Product, ProductOption, ProductVariant } from "@my-store/shared";
 
-import { parseVariantOptions } from "@my-store/shared/types/Product";
+import { parseVariantOptions } from "@utils/productUtils";
 
-import { priceToFloat, floatToPrice } from "@utils/priceUtils";
+import { priceToFloat, floatToPrice } from "@utils/productUtils";
 import { Input, NumberInput } from "@components/ui";
 
 interface ProductVariantEditorProps {
@@ -22,7 +18,7 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
 }) => {
   const hasVariants = !!product.options?.length;
   const [localVariants, setLocalVariants] = useState<ProductVariant[]>(
-    product.variants
+    product.variants ?? []
   );
 
   // Generate variants when options change

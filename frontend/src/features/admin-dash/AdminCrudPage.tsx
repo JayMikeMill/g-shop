@@ -15,6 +15,7 @@ interface AdminCrudPageProps<T extends { id?: string }> {
   apiKey: keyof ReturnType<typeof useApi>; // e.g., "collections" | "categories"
   columns: TableColumn<T>[];
   Editor?: React.ComponentType<CrudEditorInterface<T>>;
+  preSaveHook?: (item: T, isNew: boolean) => Promise<T>;
   pageSize?: number;
   searchable?: boolean;
 }
@@ -25,6 +26,7 @@ function AdminCrudPage<T extends { id?: string }>({
   apiKey,
   columns,
   Editor,
+  preSaveHook,
   pageSize = 10,
   searchable = true,
 }: AdminCrudPageProps<T>) {
@@ -52,7 +54,14 @@ function AdminCrudPage<T extends { id?: string }>({
   const deleteItem = api.delete();
 
   const handleSave = async (item: T, isNew: boolean) => {
+    if (preSaveHook) {
+      item = await preSaveHook(item, isNew);
+    }
+
+    console.log("handleSave", { item, isNew });
+
     setIsSaving(true);
+
     try {
       if (isNew) await createItem.mutateAsync(item);
       else await updateItem.mutateAsync(item as any);

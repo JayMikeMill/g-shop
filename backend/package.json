@@ -17,7 +17,7 @@
   "type": "commonjs",
   "dependencies": {
     "@my-store/shared": "*",
-    "@prisma/client": "^6.16.2",
+    "@prisma/client": "^6.16.3",
     "better-sqlite3": "^12.2.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
@@ -37,6 +37,7 @@
     "node-man": "^0.6.15",
     "nodemon": "^3.1.10",
     "prisma": "^6.16.2",
+    "prisma-generator-typescript-interfaces": "^3.1.0",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0"
   }

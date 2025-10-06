@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 // import { useCart } from "@features/cart/useCart";
 
 import { TagBox } from "@components/ui";
-import type { Product } from "@my-store/shared/types";
+import type { Product } from "@my-store/shared";
+import { priceToFloat } from "@utils/productUtils";
 
 interface ProductCardProps {
   product: Product;
@@ -27,20 +28,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     navigate(`/Product/${product.id}`);
   };
 
-  let discountedPrice: number | null = null;
-  if (product.discount) {
-    if (typeof product.discount === "string") {
-      if (product.discount.includes("%")) {
-        const percentage = parseFloat(product.discount.replace("%", ""));
-        discountedPrice = product.price * (1 - percentage / 100);
-      } else {
-        const amount = parseFloat(product.discount);
-        discountedPrice = product.price - amount;
-      }
-    } else if (typeof product.discount === "number") {
-      discountedPrice = product.price * (1 - product.discount);
-    }
-  }
+  // Format discount label
+  const discountLabel =
+    (product.discount ? (priceToFloat(product.discount) ?? "0") : "0") +
+    (product.discountType === "PERCENTAGE" ? "%" : "$");
 
   return (
     <div
@@ -78,20 +69,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           {product.name}
         </h3>
         <div className="flex items-center gap-2 justify-center">
-          {discountedPrice !== null && discountedPrice < product.price ? (
-            <>
-              <p className="text-sm text-textSecondary line-through">
-                ${product.price.toFixed(2)}
-              </p>
-              <p className="text-lg text-primary font-bold">
-                ${discountedPrice.toFixed(2)}
-              </p>
-            </>
-          ) : (
-            <p className="text-lg text-primary font-bold">
-              ${product.price.toFixed(2)}
-            </p>
-          )}
+          {discountLabel}
         </div>
       </div>
     </div>

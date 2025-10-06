@@ -2,8 +2,11 @@
 import React, { useState, useEffect } from "react";
 
 // Types
-import { emptyProduct } from "@my-store/shared/types/Product";
-import type { Product, ProductImageSet } from "@my-store/shared/types";
+import {
+  type Product,
+  type ProductImageSet,
+  emptyProduct,
+} from "@my-store/shared";
 
 // UI Components
 import { AnimatedDropdownBox, Button } from "@components/ui";
@@ -97,7 +100,7 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
     }
 
     setIsSavingProduct(false);
-    clearProduct();
+    //clearProduct();
   };
 
   const hasVariants = !!localProduct.options?.length;

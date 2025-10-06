@@ -9,7 +9,7 @@ import {
   collectionTableColumns,
 } from "@features/admin-dash";
 
-import type { Category, Collection } from "@my-store/shared/types";
+import type { Category, Collection } from "@my-store/shared";
 
 // API hook
 import { NavLink, Outlet } from "react-router-dom";

@@ -1,5 +1,5 @@
 import { PaymentAdapter } from "./PaymentAdapter";
-import { PaymentRequest, Address } from "@my-store/shared/types";
+import { OrderShippingInfo, PaymentRequest } from "@my-store/shared";
 
 import { SquareClient, SquareEnvironment, Square } from "square";
 
@@ -15,7 +15,7 @@ const client = new SquareClient({
 
 export class SquarePaymentAdapter implements PaymentAdapter {
   async processPayment(data: PaymentRequest) {
-    const { token, amount, items, address } = data;
+    const { token, amount, items, shippingInfo } = data;
 
     console.log("Processing payment with info:", data);
     console.log("Using Square access token:", process.env.SQUARE_ACCESS_TOKEN);
@@ -29,7 +29,7 @@ export class SquarePaymentAdapter implements PaymentAdapter {
         currency: "USD",
       },
       note: `Order with ${items?.length || 0} items`,
-      shippingAddress: mapToSquareAddress(address),
+      shippingAddress: mapToSquareAddress(shippingInfo),
     };
 
     // Call Square API
@@ -69,13 +69,13 @@ export class SquarePaymentAdapter implements PaymentAdapter {
 }
 
 // Function to map custom ShippingAddress to Square.Address
-const mapToSquareAddress = (addr: Address): Square.Address => ({
-  firstName: addr.firstName,
-  lastName: addr.lastName,
-  addressLine1: addr.addressLine1,
-  addressLine2: addr.addressLine2,
-  locality: addr.city,
-  administrativeDistrictLevel1: addr.state,
-  postalCode: addr.postalCode,
-  country: addr.country as Square.Country,
+const mapToSquareAddress = (info: OrderShippingInfo): Square.Address => ({
+  firstName: info.name,
+  lastName: info.name,
+  addressLine1: info.line1,
+  addressLine2: info.line1,
+  locality: info.city,
+  administrativeDistrictLevel1: info.state,
+  postalCode: info.postalCode,
+  country: info.country as Square.Country,
 });

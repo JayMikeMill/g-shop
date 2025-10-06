@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from "react";
 
 // Types
-import type { Product, ProductOption } from "@my-store/shared/types";
+import type { Product, ProductOption } from "@my-store/shared";
 
 // UI Components
 import { Button, Input, XButton } from "@components/ui";
@@ -25,18 +25,18 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
   setProduct,
 }) => {
   const { productOptionsPresets } = useApi();
-  const { create: createPreset } = productOptionsPresets;
+  const createPreset = productOptionsPresets.create();
 
   const [localOptions, setLocalOptions] = useState<ProductOption[]>(
-    product.options
+    product.options ?? []
   );
 
   const [saving, setSaving] = useState(false);
 
   // Sync local options with product
   useEffect(() => {
-    setLocalOptions(product.options);
-  }, [product.options]);
+    setLocalOptions(product.options ?? []);
+  }, [product.id]);
 
   // Push changes to product
   useEffect(() => {
@@ -80,7 +80,7 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
 
     setSaving(true);
     try {
-      await createPreset().mutateAsync({ name, options: localOptions });
+      await createPreset.mutateAsync({ name, productOptions: localOptions });
       alert("Preset saved successfully");
     } catch (err: any) {
       alert("Error saving preset: " + err.message);

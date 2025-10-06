@@ -1,6 +1,6 @@
 import { Button, Input, Label, NumberInput, XButton } from "@components/ui";
-import type { Order, OrderItem } from "@my-store/shared/types";
-import { floatToPrice, priceToFloat } from "@utils/priceUtils";
+import type { Order, OrderItem } from "@my-store/shared";
+import { floatToPrice, priceToFloat } from "@utils/productUtils";
 
 type OrderItemsEditorProps = {
   order: Order;
@@ -16,7 +16,7 @@ export default function OrderItemsEditor({
     key: keyof OrderItem,
     value: any
   ) => {
-    const items = [...order.items];
+    const items = [...(order.items ?? [])];
     items[index] = { ...items[index], [key]: value };
     setOrder({ ...order, items });
   };
@@ -25,8 +25,10 @@ export default function OrderItemsEditor({
     setOrder({
       ...order,
       items: [
-        ...order.items,
+        ...(order.items ?? []),
         {
+          id: "",
+          orderId: order.id,
           product: JSON.parse('{ "id": "", "name": "", "price": 0 }'),
           quantity: 1,
           price: 0,
@@ -35,7 +37,7 @@ export default function OrderItemsEditor({
     });
 
   const handleRemoveItem = (index: number) => {
-    const items = [...order.items];
+    const items = [...(order.items ?? [])];
     items.splice(index, 1);
     setOrder({ ...order, items });
   };
@@ -43,7 +45,7 @@ export default function OrderItemsEditor({
   return (
     <div className="flex flex-col gap-2">
       <Label>Order Items:</Label>
-      {order.items.map((item, idx) => (
+      {order.items?.map((item, idx) => (
         <div key={idx} className="flex gap-2 items-center">
           <Input
             type="text"

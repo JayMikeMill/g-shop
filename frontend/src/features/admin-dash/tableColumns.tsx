@@ -1,5 +1,5 @@
-import type { Collection, Order, Product } from "@my-store/shared/types";
-import { priceToFloat } from "@utils/priceUtils";
+import type { Collection, Order, Product } from "@my-store/shared";
+import { getDiscountString, priceToFloat } from "@utils/productUtils";
 
 import { TagBox } from "@components/ui";
 
@@ -44,7 +44,7 @@ const productTableColumns = [
           {priceToFloat(p.price).toFixed(2)}
         </span>
         <span className="font-semibold text-center text-red-400">
-          {`-${p.discount}`}
+          -{getDiscountString(p)}
         </span>
       </div>
     ),
@@ -59,8 +59,8 @@ const productTableColumns = [
           <TagBox
             key={index}
             text={tag.name}
-            color={tag.color}
-            textColor={tag.textColor}
+            color={tag.color ?? "accent"}
+            textColor={tag.textColor ?? "primary-foreground"}
             className="m-1"
           />
         ))}
@@ -115,7 +115,7 @@ const orderTableColumns = [
     width: "180px",
     render: (o: Order) => (
       <span className="font-semibold">
-        {new Date(o.createdAt).toLocaleString()}
+        {new Date(o.createdAt ?? "").toLocaleString()}
       </span>
     ),
   },
@@ -125,7 +125,7 @@ const orderTableColumns = [
     width: "180px",
     render: (o: Order) => (
       <span className="font-semibold">
-        {new Date(o.updatedAt).toLocaleString()}
+        {new Date(o.updatedAt ?? "").toLocaleString()}
       </span>
     ),
   },

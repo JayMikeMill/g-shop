@@ -1,4 +1,4 @@
-import type { ProductImageSet } from "@my-store/shared/types";
+import type { ProductImageSet } from "@my-store/shared";
 import imageCompression from "browser-image-compression";
 
 const MAX_FILE_SIZE_MB = 2; // 2MB
@@ -51,6 +51,13 @@ export class ProductImageProcessor {
       preview: URL.createObjectURL(previewBlob),
       thumbnail: URL.createObjectURL(thumbBlob),
     };
+  }
+
+  static async uploadImages(images: ProductImageSet[]) {
+    // Simulate upload delay
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // In real implementation, upload images to server or cloud storage here
+    return images;
   }
 }
 

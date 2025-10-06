@@ -87,7 +87,7 @@ export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
             </XButton>
 
             {/* Menu links */}
-            {user?.role === "admin" && (
+            {user?.role == "ADMIN" && (
               <Button
                 variant={"flatLink"}
                 onClick={() => handleNavigate("/admin")}

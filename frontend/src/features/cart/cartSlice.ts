@@ -1,15 +1,15 @@
 // src/features/cart/cartSlice.ts
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { CartItem } from "@features/cart/CartItem";
+import type { CartItem } from "@my-store/shared";
 
 // Helper to load/save cart from localStorage
 const loadCart = (): CartItem[] => {
   if (typeof window === "undefined") return [];
   const stored = localStorage.getItem("cart");
-  return stored ? JSON.parse(stored) : [];
+  return stored ? (JSON.parse(stored) as CartItem[]) : [];
 };
 
-const saveCart = (cart: CartItem[]) => {
+const saveCart = (cart: readonly CartItem[]) => {
   localStorage.setItem("cart", JSON.stringify(cart));
 };
 
@@ -29,23 +29,27 @@ const cartSlice = createSlice({
       const item = action.payload;
       const existingIndex = state.cart.findIndex(
         (cartItem) =>
-          cartItem.product.id === item.product.id &&
-          cartItem.variant?.id === item.variant?.id
+          cartItem.productId === item.productId &&
+          cartItem.variantId === item.variantId
       );
 
       if (existingIndex !== -1) {
         state.cart[existingIndex].quantity += item.quantity || 1;
       } else {
-        state.cart.push({ ...item, quantity: item.quantity || 1 });
+        state.cart.push({
+          productId: item.productId,
+          variantId: item.variantId,
+          quantity: item.quantity || 1,
+          price: item.price,
+        });
       }
 
-      saveCart(state.cart);
+      saveCart(state.cart as CartItem[]);
     },
     removeFromCart: (state, action: PayloadAction<CartItem>) => {
       const item = action.payload;
       const existingIndex = state.cart.findIndex(
-        (c) =>
-          c.product.id === item.product.id && c.variant?.id === item.variant?.id
+        (c) => c.productId === item.productId && c.variantId === item.variantId
       );
 
       if (existingIndex === -1) return;
@@ -57,7 +61,7 @@ const cartSlice = createSlice({
         state.cart.splice(existingIndex, 1);
       }
 
-      saveCart(state.cart);
+      saveCart(state.cart as CartItem[]);
     },
     clearCart: (state) => {
       state.cart = [];

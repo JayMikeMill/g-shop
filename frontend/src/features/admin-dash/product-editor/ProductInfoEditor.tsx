@@ -10,10 +10,9 @@ import {
 } from "@components/ui";
 
 // Types
-import type { Product } from "@my-store/shared/types";
-import { emptyProduct } from "@my-store/shared/types/Product";
+import { type Product, emptyProduct } from "@my-store/shared";
 
-import { priceToFloat, floatToPrice } from "@utils/priceUtils";
+import { priceToFloat, floatToPrice } from "@utils/productUtils";
 
 interface ProductInfoEditorProps {
   product: Product;
@@ -26,25 +25,9 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
   setProduct,
 }) => {
   const [localProduct, setLocalProduct] = useState<Product>(emptyProduct);
-  const [discountValue, setDiscountValue] = useState(0);
-  const [discountType, setDiscountType] = useState<"%" | "$">("%");
 
   useEffect(() => {
     setLocalProduct(product);
-
-    // Sync local options with product
-    if (product.discount) {
-      if (product.discount.includes("%")) {
-        setDiscountType("%");
-        setDiscountValue(parseFloat(product.discount.replace("%", "")));
-      } else {
-        setDiscountType("$");
-        setDiscountValue(parseFloat(product.discount));
-      }
-    } else {
-      setDiscountType("%");
-      setDiscountValue(0);
-    }
   }, [product.id]);
 
   // Push changes to product
@@ -53,18 +36,21 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
       ...prev,
       name: localProduct.name,
       price: localProduct.price,
-      discount: discountValue > 0 ? `${discountValue}${discountType}` : "$0",
+      discount: localProduct.discount,
+      discountType: localProduct.discountType,
       description: localProduct.description,
     }));
   }, [
     setProduct,
     localProduct.name,
     localProduct.price,
-    discountValue,
-    discountType,
+    localProduct.discount,
+    localProduct.discountType,
     localProduct.description,
   ]);
 
+  const discountTypeSymbol =
+    localProduct.discountType === "PERCENTAGE" ? "%" : "$";
   return (
     <div className="flex flex-col flex-1 gap-md overflow-hidden p-0.5">
       {/* Name */}
@@ -104,20 +90,33 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
           <Label>
             Discount
             <NumberInput
-              symbol={discountType}
+              symbol={discountTypeSymbol}
               className="text-center  w-32"
               onFocus={(e) => e.target.select()}
-              value={discountValue > 0 ? `${discountValue}` : ""}
-              onChange={(e) => setDiscountValue(parseFloat(e.target.value))}
-              step={discountType === "$" ? "0.01" : "1"}
+              value={
+                localProduct.discount ? priceToFloat(localProduct.discount) : ""
+              }
+              onChange={(e) =>
+                setLocalProduct((prev) => ({
+                  ...prev,
+                  discount: floatToPrice(parseFloat(e.target.value)),
+                }))
+              }
+              step={localProduct.discountType === "PERCENTAGE" ? "0.01" : "1"}
             />
           </Label>
 
           {/* Discount Type */}
           <select
             className={inputVariants({ className: "w-10" })}
-            value={discountType}
-            onChange={(e) => setDiscountType(e.target.value as "%" | "$")}
+            value={discountTypeSymbol}
+            onChange={(e) =>
+              setLocalProduct((prev) => ({
+                ...prev,
+                discountType:
+                  e.target.value === "%" ? "PERCENTAGE" : "FIXED_AMOUNT",
+              }))
+            }
           >
             <option value="%" className="text-center">
               %

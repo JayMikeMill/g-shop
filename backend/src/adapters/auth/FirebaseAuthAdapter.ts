@@ -1,5 +1,5 @@
 import { AuthAdapter } from "./AuthAdapter";
-import { User } from "@my-store/shared/types";
+import { User } from "@my-store/shared";
 import { auth } from "@config/firebase/firebaseAdmin";
 
 export class FirebaseAuthAdapter implements AuthAdapter {

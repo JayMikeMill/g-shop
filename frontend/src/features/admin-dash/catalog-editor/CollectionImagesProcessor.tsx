@@ -1,4 +1,4 @@
-import type { CollectionImageSet } from "@my-store/shared/types/Catalog";
+import type { CollectionImageSet } from "@my-store/shared";
 import imageCompression from "browser-image-compression";
 
 const MAX_FILE_SIZE_MB = 2; // 2MB
@@ -25,6 +25,7 @@ export class CollectionImageProcessor {
 
     const bannerURL = URL.createObjectURL(bannerBlob);
     return {
+      id: "",
       banner: bannerURL,
       preview: "",
       thumbnail: "",
@@ -52,6 +53,7 @@ export class CollectionImageProcessor {
 
     const previewURL = URL.createObjectURL(previewBlob);
     return {
+      id: "",
       banner: "",
       preview: previewURL,
       thumbnail: "",

@@ -1,9 +1,6 @@
 import React from "react";
 
-import type {
-  ProductOption,
-  ProductOptionsPreset,
-} from "@my-store/shared/types";
+import type { ProductOption, ProductOptionsPreset } from "@my-store/shared";
 
 import { XButton, AnimatedSelect } from "@components/ui"; // adjust path
 
@@ -29,8 +26,8 @@ const OptionsPresetDropdown: React.FC<OptionsPresetDropdownProps> = ({
 
   // 3️⃣ Apply preset
   const handleApplyPreset = (preset: ProductOptionsPreset) => {
-    if (!preset.options || preset.options.length === 0) return;
-    setLocalOptions(preset.options);
+    if (!preset.productOptions || preset.productOptions.length === 0) return;
+    setLocalOptions(preset.productOptions);
   };
 
   // 4️⃣ Delete preset

@@ -8,7 +8,7 @@ import {
   Collection,
   Order,
   User,
-} from "@my-store/shared/types";
+} from "@my-store/shared";
 
 export interface DBAdapter {
   products: CRUDInterface<Product>;

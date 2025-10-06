@@ -1,5 +1,5 @@
 import { Button } from "@components/ui";
-import type { Order, OrderStatus } from "@my-store/shared/types";
+import type { Order, OrderStatus } from "@my-store/shared";
 
 type OrderStatusHistoryEditorProps = {
   order: Order;
@@ -15,7 +15,12 @@ export default function OrderStatusHistoryEditor({
       ...order,
       statusHistory: [
         ...(order.statusHistory ?? []),
-        { status: "PENDING", timestamp: new Date() },
+        {
+          id: "",
+          orderId: order.id,
+          status: "PENDING",
+          timestamp: new Date(),
+        },
       ],
     });
 

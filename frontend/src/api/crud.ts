@@ -1,6 +1,6 @@
 import { apiClient } from "./client";
-import type { CRUDInterface, QueryObject } from "@my-store/shared/types";
-import { toQueryString } from "@my-store/shared/types/QueryObject";
+import type { CRUDInterface, QueryObject } from "@my-store/shared";
+import { toQueryString } from "@my-store/shared";
 
 // Generic HTTP helpers
 const get = async <T>(url: string, params?: any) =>

@@ -1,167 +1,204 @@
 // src/crud/GenericCRUD.ts
+
+/**
+ * GENERIC ATOMIC NESTED CRUD HELPER
+ *
+ * Fully generic create/update/delete helper for Prisma models,
+ * with support for nested relations of any depth.
+ */
+
 import { PrismaClient } from "@prisma/client";
-import type { CRUDInterface, QueryObject } from "@my-store/shared/types";
+import type { CRUDInterface, QueryObject } from "@my-store/shared";
 
-type NestedType = "upsertNested" | "createNested" | "set" | "upsert";
+// ----------------- Nested Config -----------------
+type NestedConfig = {
+  owned?: boolean; // owned nested object or array
+  manyToMany?: boolean; // many-to-many relation (array of IDs)
+};
 
-interface NestedFieldOptions {
-  type: NestedType;
-  path?: string; // nested path for nested inside nested
-}
+type NestedMetadata<T> = Partial<Record<keyof T, NestedConfig>>;
 
-export type FieldMetadata<T> = Partial<Record<keyof T, NestedFieldOptions>>;
+// ----------------- Generic Nested Update/Create -----------------
+function genericNestedUpdate<T>(
+  existing: T | null,
+  incoming: Partial<T>,
+  meta: NestedMetadata<T> = {},
+  action: "create" | "update" = "update"
+): any {
+  if (!incoming) return incoming;
 
-// ---------------- Nested Helpers ----------------
-function stripIdsRecursively(obj: any): any {
-  if (obj && typeof obj === "object") {
-    if (Array.isArray(obj)) {
-      return obj.map(stripIdsRecursively);
-    } else {
-      for (const key in obj) {
-        if (key === "id" || key.endsWith("Id")) delete obj[key];
-        else obj[key] = stripIdsRecursively(obj[key]);
-      }
+  const result: any = {};
+
+  for (const key in incoming) {
+    const value = incoming[key];
+    const current = existing ? (existing as any)[key] : undefined;
+    const config = meta[key as keyof T] || {};
+
+    // ------------------ Many-to-many (array of IDs) ------------------
+    if (config.manyToMany && Array.isArray(value)) {
+      const existingIds = current?.map((c: any) => c.id) ?? [];
+      const incomingIds = value.map((v: any) => v.id);
+
+      const toConnect = value.filter((v: any) => !existingIds.includes(v.id));
+      const toDisconnect =
+        current?.filter((c: any) => !incomingIds.includes(c.id)) ?? [];
+
+      if (toConnect.length)
+        result[key] = {
+          ...(result[key] ?? {}),
+          connect: toConnect.map((i) => ({ id: i.id })),
+        };
+      if (toDisconnect.length)
+        result[key] = {
+          ...(result[key] ?? {}),
+          disconnect: toDisconnect.map((i: any) => ({ id: i.id })),
+        };
+
+      continue;
     }
-  }
-  return obj;
-}
 
-function createNested<T extends object>(items?: T[]) {
-  if (!items?.length) return undefined;
-  return {
-    create: items.map((item) => {
-      const copy = { ...item };
-      stripIdsRecursively(copy);
-      return copy;
-    }),
-  };
-}
+    // ------------------ Owned nested arrays ------------------
+    if (Array.isArray(value) && config.owned) {
+      const toCreate = value.filter((v: any) => !v.id).map(stripIdsAndFKs);
+      const toUpdate = value.filter(
+        (v) => v.id && current?.some((c: any) => c.id === v.id)
+      );
+      const toDelete =
+        current?.filter((c: any) => !value.some((v: any) => v.id === c.id)) ??
+        [];
 
-function replaceNested<T extends object>(items?: T[], path?: string) {
-  const result: any = { deleteMany: {} };
-  if (items?.length) {
-    result.create = items.map((item) => {
-      const copy: any = { ...item };
-      stripIdsRecursively(copy);
-      if (path && copy[path]) copy[path] = createNested(copy[path]);
-      return copy;
-    });
+      if (toCreate.length)
+        result[key] = { ...(result[key] ?? {}), create: toCreate };
+      if (toUpdate.length) {
+        result[key] = {
+          ...(result[key] ?? {}),
+          update: toUpdate.map((v: any) => ({
+            where: { id: v.id },
+            data: genericNestedUpdate(
+              current.find((c: any) => c.id === v.id),
+              stripIdsAndFKs(v),
+              meta[key as keyof T] as any,
+              "update"
+            ),
+          })),
+        };
+      }
+      if (toDelete.length)
+        result[key] = {
+          ...(result[key] ?? {}),
+          delete: toDelete.map((d: any) => ({ id: d.id })),
+        };
+
+      continue;
+    }
+
+    // ------------------ Owned or optional 1:1 object ------------------
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      const valueWithId = value as { id?: any };
+
+      if (config.owned) {
+        // owned 1:1
+        const data = genericNestedUpdate(
+          current || {},
+          stripIdsAndFKs(value),
+          meta[key as keyof T] as any,
+          action
+        );
+        if (current) result[key] = { update: data };
+        else result[key] = { create: data };
+        continue;
+      }
+
+      // connect/disconnect optional relation
+      if (valueWithId.id != null)
+        result[key] = { connect: { id: valueWithId.id } };
+      else if (valueWithId.id === null) result[key] = { disconnect: true };
+
+      continue;
+    }
+
+    // ------------------ Primitive field ------------------
+    if (value !== undefined) result[key] = value;
   }
+
   return result;
 }
 
-// ---------------- CRUD Class ----------------
-export interface PrismaCRUDAdpaterOptions<T> {
+// ----------------- Helper: Strip IDs and foreign keys for create -----------------
+function stripIdsAndFKs(obj: any) {
+  if (!obj || typeof obj !== "object") return obj;
+  const copy = { ...obj };
+  delete copy.id;
+  for (const key in copy) if (key.endsWith("Id")) delete copy[key];
+  return copy;
+}
+
+// ----------------- Helper: Remove empty arrays for Prisma -----------------
+function removeEmptyArrays(obj: any): any {
+  if (!obj || typeof obj !== "object") return obj;
+  const copy: any = {};
+  for (const key in obj) {
+    const val = obj[key];
+    if (Array.isArray(val) && val.length === 0) continue;
+    copy[key] = val;
+  }
+  return copy;
+}
+
+// ----------------- PrismaCRUDAdapter -----------------
+export interface PrismaCRUDAdapterOptions<T> {
   model: keyof PrismaClient;
   includeFields?: any;
-  nestedFields?: FieldMetadata<T>;
   searchFields?: (keyof T)[];
+  nestedMeta?: NestedMetadata<T>;
 }
 
 export class PrismaCRUDAdapter<T> implements CRUDInterface<T> {
   private prisma: PrismaClient;
   private model: keyof PrismaClient;
   private includeFields?: any;
-  private nestedFields?: FieldMetadata<T>;
   private searchFields?: (keyof T)[];
+  private nestedMeta?: NestedMetadata<T>;
 
-  constructor(prisma: PrismaClient, opts: PrismaCRUDAdpaterOptions<T>) {
+  constructor(prisma: PrismaClient, opts: PrismaCRUDAdapterOptions<T>) {
     this.prisma = prisma;
     this.model = opts.model;
     this.includeFields = opts.includeFields ?? {};
-    this.nestedFields = opts.nestedFields ?? {};
     this.searchFields = opts.searchFields;
+    this.nestedMeta = opts.nestedMeta;
   }
 
   private get client() {
     return this.prisma[this.model] as any;
   }
 
-  private toPrisma(data: Partial<T>, action: "create" | "update") {
-    if (!this.nestedFields) return data;
-    const result: any = { ...data };
-
-    for (const key in this.nestedFields) {
-      const value = data[key as keyof T];
-      if (value === undefined || value === null) {
-        result[key] = null;
-        continue;
-      }
-      if (Array.isArray(value) && !value.length) {
-        delete result[key];
-        continue;
-      }
-
-      let { type, path } = this.nestedFields[key as keyof T]!;
-
-      if (action === "create" && type === "upsertNested") type = "createNested";
-
-      switch (type) {
-        case "createNested":
-          result[key] = createNested(value as any[]);
-          break;
-        case "upsertNested":
-          result[key] = replaceNested(value as any[], path);
-          break;
-        case "set":
-          if (Array.isArray(value) && value.length) {
-            result[key] = {
-              set: (value as any[]).map((i: any) => ({ id: i.id })),
-            };
-          } else delete result[key];
-          break;
-      }
+  private async toPrisma(
+    data: Partial<T>,
+    action: "create" | "update",
+    existing?: T
+  ) {
+    if (existing && action === "update") {
+      return genericNestedUpdate(existing, data, this.nestedMeta, "update");
     }
-
-    return result;
-  }
-
-  private fromPrisma(data: any) {
-    if (!this.nestedFields) return data;
-    const result: any = { ...data };
-
-    for (const key in this.nestedFields) {
-      const value = data[key];
-      if (value === undefined || value === null) continue;
-
-      const { type, path } = this.nestedFields[key as keyof T]!;
-
-      switch (type) {
-        case "upsertNested":
-        case "createNested":
-          result[key] =
-            value.map?.((item: any) => {
-              if (path && item[path]?.create) item[path] = item[path].create;
-              return item;
-            }) ?? [];
-          break;
-        case "set":
-          result[key] = value ?? [];
-          break;
-        case "upsert":
-          result[key] = value ?? undefined;
-          break;
-      }
-    }
-
-    return result;
+    const created = genericNestedUpdate(null, data, this.nestedMeta, "create");
+    return removeEmptyArrays(created);
   }
 
   // -------------------- CRUD --------------------
   async create(data: Partial<T>): Promise<T> {
+    const prismaData = await this.toPrisma(data, "create");
     const created = await this.client.create({
-      data: this.toPrisma(data, "create"),
+      data: prismaData,
       include: this.includeFields,
     });
-    return this.fromPrisma(created);
+    return created;
   }
 
   async getOne(id: string): Promise<T | null> {
-    const found = await this.client.findUnique({
+    return await this.client.findUnique({
       where: { id },
       include: this.includeFields,
     });
-    return found ? this.fromPrisma(found) : null;
   }
 
   async getAll(query?: QueryObject): Promise<{ data: T[]; total: number }> {
@@ -171,49 +208,48 @@ export class PrismaCRUDAdapter<T> implements CRUDInterface<T> {
         ? query.searchFields.map((f) => String(f))
         : (this.searchFields ?? []).map((f) => String(f)),
     });
+
     const where = (prismaQuery as any).where ?? {};
     const [results, total] = await this.prisma.$transaction([
       this.client.findMany({ ...prismaQuery, include: this.includeFields }),
       this.client.count({ where }),
     ]);
-    return { data: results.map(this.fromPrisma.bind(this)), total };
+    return { data: results, total };
   }
 
   async update(updates: Partial<T> & { id?: string }): Promise<T> {
     if (!updates.id) throw new Error("Document id is required for update");
 
-    // make a copy and strip IDs before passing to Prisma
+    const existing = await this.getOne(updates.id);
+    if (!existing) throw new Error("Document not found");
+
     const { id, ...rest } = updates;
-    const cleaned = stripIdsRecursively({ ...rest });
+    const prismaData = await this.toPrisma(
+      rest as Partial<T>,
+      "update",
+      existing
+    );
 
     const updated = await this.client.update({
       where: { id },
-      data: this.toPrisma(cleaned, "update"),
+      data: prismaData,
       include: this.includeFields,
     });
-
-    return this.fromPrisma(updated);
+    return updated;
   }
 
   async delete(id: string): Promise<T> {
-    const deleted = await this.client.delete({
+    return await this.client.delete({
       where: { id },
       include: this.includeFields,
     });
-    return this.fromPrisma(deleted);
   }
 }
 
 // ----------------- Nested search helpers -----------------
 function buildNestedWhere(parts: string[], search: string): any {
   const [head, ...rest] = parts;
-
-  if (rest.length === 0) {
-    // last field, simple contains
-    return { [head]: { contains: search } };
-  }
-
-  // assume relation is array, use 'some'
+  if (rest.length === 0) return { [head]: { contains: search } };
   return { [head]: { some: buildNestedWhere(rest, search) } };
 }
 
@@ -223,7 +259,6 @@ export function queryOptionsToPrisma(query?: QueryObject) {
   let take: number | undefined;
   let skip: number | undefined;
 
-  // Conditions
   if (query?.conditions?.length) {
     for (const cond of query.conditions) {
       switch (cond.operator) {
@@ -249,7 +284,6 @@ export function queryOptionsToPrisma(query?: QueryObject) {
     }
   }
 
-  // Nested / dotted search
   if (
     query?.search &&
     Array.isArray(query.searchFields) &&
@@ -264,11 +298,9 @@ export function queryOptionsToPrisma(query?: QueryObject) {
       });
   }
 
-  // Sorting
   if (query?.sortBy)
     orderBy[query.sortBy] = query.sortOrder === "desc" ? "desc" : "asc";
 
-  // Pagination
   if (query?.limit) {
     take = query.limit;
     skip = query.page && query.page > 1 ? query.limit * (query.page - 1) : 0;

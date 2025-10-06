@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import type { Product, ProductVariant } from "@my-store/shared/types";
+import type { Product, ProductVariant } from "@my-store/shared";
 import { Button } from "@components/ui";
 
 interface SelectedProductOption {
@@ -14,10 +14,12 @@ interface ProductOptionSelectorProps {
 
 const parseVariantOptions = (variant: ProductVariant) => {
   const obj: Record<string, string> = {};
-  variant.options.forEach((opt) => {
-    const [name, value] = opt.split(":");
-    if (name && value) obj[name] = value;
-  });
+  if (Array.isArray(variant.options)) {
+    variant.options.forEach((opt) => {
+      const [name, value] = typeof opt === "string" ? opt.split(":") : ["", ""];
+      if (name && value) obj[name] = value;
+    });
+  }
   return obj;
 };
 
@@ -77,7 +79,9 @@ const ProductOptionSelector: React.FC<ProductOptionSelectorProps> = ({
     const initial: SelectedProductOption[] = [];
 
     product.options.forEach((opt, index) => {
-      const values = opt.values.map((v) => v.trim());
+      const values = Array.isArray(opt.values)
+        ? opt.values.map((v) => (typeof v === "string" ? v.trim() : String(v)))
+        : [];
       let selectedValue = values[0];
 
       for (const val of values) {
@@ -111,7 +115,11 @@ const ProductOptionSelector: React.FC<ProductOptionSelectorProps> = ({
     if (product.options) {
       for (let i = optionIndex + 1; i < product.options.length; i++) {
         const opt = product.options[i];
-        const values = opt.values.map((v) => v.trim());
+        const values = Array.isArray(opt.values)
+          ? opt.values.map((v) =>
+              typeof v === "string" ? v.trim() : String(v)
+            )
+          : [];
         let validValue = values.find((v) =>
           isOptionEnabled(product, i, opt.name, v, updated)
         );
@@ -127,7 +135,11 @@ const ProductOptionSelector: React.FC<ProductOptionSelectorProps> = ({
   return (
     <>
       {product.options?.map((opt, index) => {
-        const values = opt.values.map((v) => v.trim());
+        const values = Array.isArray(opt.values)
+          ? opt.values.map((v) =>
+              typeof v === "string" ? v.trim() : String(v)
+            )
+          : [];
 
         return (
           <div

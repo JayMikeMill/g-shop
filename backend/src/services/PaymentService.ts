@@ -1,4 +1,4 @@
-import { PaymentRequest } from "@my-store/shared/types";
+import { PaymentRequest } from "@my-store/shared";
 import { payment } from "@config/adapters";
 
 export class PaymentService {
