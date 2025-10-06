@@ -17,10 +17,7 @@ export default function AdminProductsPage() {
     const uploaded = await uploadImage(blob, name);
     return uploaded.url;
   };
-  const preSaveHook = async (
-    item: Product,
-    isNew: boolean
-  ): Promise<Product> => {
+  const preSaveHook = async (item: Product): Promise<Product> => {
     if (!item.images || item.images.length === 0) return item;
 
     try {
