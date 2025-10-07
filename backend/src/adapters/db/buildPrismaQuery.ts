@@ -2,6 +2,7 @@ import { DeepDotKeyof, QueryCondition, QueryObject } from "@my-store/shared";
 
 type PrismaFindParams = {
   where?: any;
+  select?: any;
   include?: any;
   orderBy?: any;
   take?: number;
@@ -36,9 +37,30 @@ export function buildPrismaQuery<T>(
     });
   }
 
-  const include = queryObj.includeFields?.length
-    ? dotToInclude(queryObj.includeFields.map(String))
-    : includeFields;
+  let select: any = undefined;
+  let include: any = includeFields;
+
+  // Split top-level vs nested for select/include
+  if (queryObj.includeFields?.length) {
+    select = {};
+    include = {};
+
+    for (const f of queryObj.includeFields.map(String)) {
+      if (!f.includes(".")) {
+        // top-level scalar → select
+        select[f] = true;
+      } else {
+        // nested → include
+        const parts = f.split(".");
+        let current = include;
+        for (let i = 0; i < parts.length; i++) {
+          if (i === parts.length - 1) current[parts[i]] = true;
+          else current[parts[i]] = current[parts[i]] || {};
+          current = current[parts[i]];
+        }
+      }
+    }
+  }
 
   // Pagination & Sorting
   const orderBy = queryObj.sortBy
@@ -50,7 +72,11 @@ export function buildPrismaQuery<T>(
       ? (queryObj.limit ?? 0) * (queryObj.page - 1)
       : undefined;
 
-  return { where, include, orderBy, take, skip };
+  const result: PrismaFindParams = { where, orderBy, take, skip };
+  if (Object.keys(include || {}).length) result.include = include;
+  if (select && Object.keys(select).length) result.select = select;
+
+  return result;
 }
 
 // -------------------- Prisma Where Builder --------------------
@@ -159,6 +185,8 @@ function mapOperator(op: QueryCondition["operator"]): string {
       return "gte";
     case "like":
       return "contains";
+    case "in":
+      return "in";
     default:
       return "equals";
   }

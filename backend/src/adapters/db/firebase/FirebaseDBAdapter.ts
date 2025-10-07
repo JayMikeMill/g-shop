@@ -12,6 +12,7 @@ import {
   Collection,
   Order,
   User,
+  ProductVariant,
 } from "@my-store/shared";
 
 import type { DBAdapter } from "../DBAdapter";
@@ -19,6 +20,7 @@ import type { DBAdapter } from "../DBAdapter";
 export class FirebaseDBAdapter implements DBAdapter {
   public users: CrudInterface<User>;
   public products: CrudInterface<Product>;
+  public productVariants: CrudInterface<ProductVariant>;
   public productTagsPresets: CrudInterface<ProductTagPreset>;
   public productOptionsPresets: CrudInterface<ProductOptionsPreset>;
   public productReviews: CrudInterface<ProductReview>;
@@ -29,6 +31,9 @@ export class FirebaseDBAdapter implements DBAdapter {
   constructor() {
     this.users = new FirebaseCrudAdapter<User>("users");
     this.products = new FirebaseCrudAdapter<Product>("products");
+    this.productVariants = new FirebaseCrudAdapter<ProductVariant>(
+      "product_variants"
+    );
     this.productTagsPresets = new FirebaseCrudAdapter<ProductTag>("tags");
     this.productOptionsPresets = new FirebaseCrudAdapter<ProductOptionsPreset>(
       "product_options_presets"

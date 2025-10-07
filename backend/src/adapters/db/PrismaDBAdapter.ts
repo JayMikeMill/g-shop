@@ -11,12 +11,14 @@ import type {
   Collection,
   Order,
   User,
+  ProductVariant,
 } from "@my-store/shared";
 
 import { DBAdapter } from "./DBAdapter";
 
 export class PrismaDBAdapter implements DBAdapter {
   public products: ProductCrud;
+  public productVariants: ProductVariantCrud;
   public productTagsPresets: ProductTagPresetCrud;
   public productOptionsPresets: ProductOptionPresetCrud;
   public productReviews: ProductReviewCrud;
@@ -28,6 +30,7 @@ export class PrismaDBAdapter implements DBAdapter {
 
   constructor(prismaClient: PrismaClient = new PrismaClient()) {
     this.products = new ProductCrud(prismaClient);
+    this.productVariants = new ProductVariantCrud(prismaClient);
     this.productTagsPresets = new ProductTagPresetCrud(prismaClient);
     this.productOptionsPresets = new ProductOptionPresetCrud(prismaClient);
     this.productReviews = new ProductReviewCrud(prismaClient);
@@ -78,6 +81,15 @@ class ProductCrud extends PrismaCrudAdapter<Product> {
       },
 
       searchFields: ["id", "name", "description"],
+    });
+  }
+}
+
+class ProductVariantCrud extends PrismaCrudAdapter<ProductVariant> {
+  constructor(prismaClient: PrismaClient) {
+    super(prismaClient, {
+      model: "productVariant",
+      searchFields: ["id"],
     });
   }
 }

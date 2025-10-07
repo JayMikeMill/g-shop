@@ -121,7 +121,7 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
 
     // -------------------- QueryObject (Multiple) --------------------
     const queryObj: QueryObject<T> = (query as QueryObject<T>) ?? {};
-    const { where, orderBy, take, skip, include } = buildPrismaQuery(
+    const queryParams = buildPrismaQuery(
       queryObj,
       this.includeFields,
       this.searchFields || []
@@ -129,8 +129,8 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
 
     // Execute
     const [data, total] = await this.prisma.$transaction([
-      this.client.findMany({ where, orderBy, take, skip, include }),
-      this.client.count({ where }),
+      this.client.findMany(queryParams),
+      this.client.count({ where: queryParams.where }),
     ]);
 
     return { data, total };

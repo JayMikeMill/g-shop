@@ -8,12 +8,12 @@ import {
 } from "@stripe/react-stripe-js";
 
 import {
-  type CartItem,
   type OrderShippingInfo,
   TransactionStatus as TransactionStatuses,
   PaymentMethod as PaymentMethods,
   OrderStatus as OrderStatuses,
   type Order,
+  type Cart,
 } from "@my-store/shared";
 
 import { useApi } from "@api/useApi";
@@ -21,8 +21,7 @@ import { Button } from "@components/ui";
 import { floatToPrice } from "@utils/productUtils";
 
 interface StripePaymentFormProps {
-  total: number;
-  cartItems: CartItem[];
+  cart: Cart;
   shippingInfo: OrderShippingInfo;
   setLoading: (loading: boolean) => void;
   setMessage: (msg: string | null) => void;
@@ -32,7 +31,7 @@ interface StripePaymentFormProps {
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 function InnerStripeForm({
-  total,
+  cart,
   shippingInfo,
   setLoading,
   setMessage,
@@ -76,8 +75,15 @@ function InnerStripeForm({
       }
 
       const order: Order = {
-        total: floatToPrice(total),
+        total: floatToPrice(cart.total),
         status: OrderStatuses.PAID,
+        items: cart.items
+          ?.filter((item) => item.product !== undefined)
+          .map((item) => ({
+            product: item.product as NonNullable<typeof item.product>,
+            quantity: item.quantity,
+            price: floatToPrice(item.price),
+          })),
         statusHistory: [
           {
             status: OrderStatuses.PAID,
@@ -86,7 +92,7 @@ function InnerStripeForm({
         ],
         transaction: {
           method: PaymentMethods.STRIPE,
-          amount: total,
+          amount: cart.total,
           currency: "USD",
           status: TransactionStatuses.PAID,
         },
@@ -119,7 +125,7 @@ function InnerStripeForm({
 
     try {
       await createOrder.mutateAsync({
-        total: floatToPrice(total),
+        total: floatToPrice(cart.total),
         status: OrderStatuses.PAID,
         statusHistory: [
           {
@@ -148,7 +154,7 @@ function InnerStripeForm({
     <div className="surface-box p-lg flex flex-col gap-md text-text font-sans">
       <h3 className="text-xl mb-lg text-center font-bold">Payment Info</h3>
       <p className="text-lg font-semibold text-text text-right md:text-left">
-        Total: ${total.toFixed(2)}
+        Total: ${cart.total.toFixed(2)}
       </p>
 
       <div className="w-full h-auto mb-md border border-border rounded-md bg-background p-4">

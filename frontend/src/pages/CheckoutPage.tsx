@@ -38,8 +38,7 @@ export default function CheckoutPage() {
       />
 
       <PaymentFormStripe
-        total={totals.total + shippingCost}
-        cartItems={cart.items || []}
+        cart={cart}
         shippingInfo={shippingInfo}
         setLoading={setLoading}
         setMessage={setMessage}

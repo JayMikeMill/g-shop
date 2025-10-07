@@ -1,6 +1,7 @@
 import {
   CrudInterface,
   Product,
+  ProductVariant,
   ProductOptionsPreset,
   ProductReview,
   ProductTagPreset,
@@ -12,6 +13,7 @@ import {
 
 export interface DBAdapter {
   products: CrudInterface<Product>;
+  productVariants: CrudInterface<ProductVariant>;
   productTagsPresets: CrudInterface<ProductTagPreset>;
   productOptionsPresets: CrudInterface<ProductOptionsPreset>;
   productReviews: CrudInterface<ProductReview>;

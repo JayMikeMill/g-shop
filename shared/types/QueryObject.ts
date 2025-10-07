@@ -25,7 +25,7 @@ export type DeepDotKeyof<T> = T extends object
 // -------------------- Query Types --------------------
 export interface QueryCondition<T = any> {
   field: DeepDotKeyof<T>; // dot-notation key
-  operator: "=" | "!=" | "<" | "<=" | ">" | ">=" | "like";
+  operator: "=" | "!=" | "<" | "<=" | ">" | ">=" | "like" | "in";
   value: any;
 }
 
