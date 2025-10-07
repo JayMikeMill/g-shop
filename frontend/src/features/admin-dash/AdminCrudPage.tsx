@@ -39,7 +39,7 @@ function AdminCrudPage<T extends { id?: string }>({
   const api = useApi()[apiKey] as any;
 
   // Fetch
-  const { data, isLoading, refetch } = api.getAll({
+  const { data, isLoading, refetch } = api.getMany({
     search,
     page,
     limit: pageSize,

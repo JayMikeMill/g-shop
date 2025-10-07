@@ -17,7 +17,7 @@ const TagPresetsDropdown: React.FC<TagPresetsDropdownProps> = ({
   const { productTagsPresets } = useApi();
 
   // Queries
-  const { data: presetsData, refetch } = productTagsPresets.getAll();
+  const { data: presetsData, refetch } = productTagsPresets.getMany();
   const presets = presetsData?.data ?? [];
 
   // Mutations

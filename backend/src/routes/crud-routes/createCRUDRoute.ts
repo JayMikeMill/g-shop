@@ -44,14 +44,14 @@ export function createCRUDRoute(
     router.post("/", requireRole(options.create), createHandler);
   else router.post("/", createHandler);
 
-  // ---------------- READ ALL ----------------
+  // ---------------- READ ----------------
   const readAllHandler = async (
     req: Request,
     res: Response,
     next: NextFunction
   ) => {
     try {
-      const result = await crud.getAll(parseQueryObject(req.query));
+      const result = await crud.get(parseQueryObject(req.query));
       res.json(result);
     } catch (err) {
       next(err);
@@ -60,42 +60,6 @@ export function createCRUDRoute(
   if (options?.read?.length)
     router.get("/", requireRole(options.read), readAllHandler);
   else router.get("/", readAllHandler);
-
-  // ---------------- READ ONE ----------------
-  const readOneHandler = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
-      const item = await crud.getOne(req.params.id);
-      if (!item) return res.status(404).json({ error: "Not found" });
-      res.json(item);
-    } catch (err) {
-      next(err);
-    }
-  };
-  if (options?.read?.length)
-    router.get("/:id", requireRole(options.read), readOneHandler);
-  else router.get("/:id", readOneHandler);
-
-  // ---------------- READ ONE BY ----------------
-  const readOneByHandler = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
-      const item = await crud.getOneBy(req.params.field, req.params.value);
-      if (!item) return res.status(404).json({ error: "Not found" });
-      res.json(item);
-    } catch (err) {
-      next(err);
-    }
-  };
-  if (options?.read?.length)
-    router.get("/:field/:value", requireRole(options.read), readOneByHandler);
-  else router.get("/:field/:value", readOneByHandler);
 
   // ---------------- UPDATE ----------------
   const updateHandler = async (

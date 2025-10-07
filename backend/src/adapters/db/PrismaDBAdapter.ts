@@ -1,6 +1,6 @@
 // src/crud/ProductCrud.ts
 import { PrismaClient } from "@prisma/client";
-import { PrismaCrudAdapter } from "./crud/PrismaCrudAdapter";
+import { PrismaCrudAdapter } from "./PrismaCrudAdapter";
 
 import type {
   Product,

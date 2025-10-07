@@ -6,7 +6,7 @@ export default function HomePage() {
   const { products: apiProducts } = useApi();
 
   // Call the query hook directly
-  const { data, isLoading, error } = apiProducts.getAll({ limit: 20 });
+  const { data, isLoading, error } = apiProducts.getMany({ limit: 20 });
 
   // Use default value if data is undefined
   const products = data?.data ?? [];

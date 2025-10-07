@@ -1,17 +1,39 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { CrudInterface, QueryObject } from "@my-store/shared";
-import { toQueryString } from "@my-store/shared";
+import { isQueryObject, toQueryString } from "@my-store/shared";
 import { get, post, put, del } from "./client";
 
-// CRUD factory
-function CRUD<T extends { id?: string }>(name: string): CrudInterface<T> {
+export function CRUD<T extends { id?: string }>(
+  name: string
+): CrudInterface<T> {
+  // -------------------- get Implementation --------------------
+  const getImpl = async (
+    query?: Partial<T> | QueryObject<T>
+  ): Promise<T | { data: T[]; total: number } | null> => {
+    // Partial<T> query (single)
+    if (query && !isQueryObject(query)) {
+      const queryString = Object.entries(query)
+        .map(
+          ([key, value]) =>
+            `${encodeURIComponent(key)}=${encodeURIComponent(value as any)}`
+        )
+        .join("&");
+
+      return await get<T | null>(`/${name}?${queryString}`);
+    }
+
+    // No query (all)
+    if (!query) return await get<{ data: T[]; total: number }>(`/${name}`);
+
+    // QueryObject<T> (multi)
+    return await get<{ data: T[]; total: number }>(
+      `/${name}?${toQueryString(query)}`
+    );
+  };
+
   return {
     create: (data: Partial<T>) => post<T>(`/${name}`, data),
-    getOne: (id: string) => get<T | null>(`/${name}/${id}`),
-    getOneBy: (field: keyof T, value: any) =>
-      get<T | null>(`/${name}/by/${String(field)}/${value}`),
-    getAll: (query?: QueryObject<T>) =>
-      get<{ data: T[]; total: number }>(`/${name}?${toQueryString(query)}`),
+    get: getImpl as CrudInterface<T>["get"], // cast to satisfy overloads
     update: (updates: Partial<T> & { id: string }) =>
       put<T>(`/${name}/${updates.id}`, updates),
     delete: (id: string) => del<T>(`/${name}/${id}`),
@@ -29,26 +51,19 @@ export function useCrudApi<T extends { id?: string }>(
 
   return {
     // Queries
-    getAll: (query?: QueryObject<T>) => {
+    getMany: (query?: QueryObject<T>) => {
       return useQuery({
         queryKey: [resource, query],
-        queryFn: () => crud.getAll(query),
+        queryFn: () => crud.get(query),
       });
     },
 
-    getOne: (id: string) =>
-      useQuery({
-        queryKey: [resource, id],
-        queryFn: () => crud.getOne(id),
-        enabled: !!id,
-      }),
-
-    getOneBy: (field: keyof T, value: any) =>
-      useQuery({
-        queryKey: [resource, "by", field, value],
-        queryFn: () => crud.getOneBy(field, value),
-        enabled: !!value,
-      }),
+    getOne: (query: Partial<T>) => {
+      return useQuery({
+        queryKey: [resource, query],
+        queryFn: () => crud.get(query),
+      });
+    },
 
     // Mutations
     create: () =>

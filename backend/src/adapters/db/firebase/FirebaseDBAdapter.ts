@@ -1,5 +1,5 @@
 // backend/src/adapters/db/FirebaseAdapter.ts
-import { FirebaseCrudAdapter } from "./crud/FireBaseCrudAdapter";
+import { FirebaseCrudAdapter } from "./FireBaseCrudAdapter";
 
 import {
   CrudInterface,
@@ -14,7 +14,7 @@ import {
   User,
 } from "@my-store/shared";
 
-import type { DBAdapter } from "./DBAdapter";
+import type { DBAdapter } from "../DBAdapter";
 
 export class FirebaseDBAdapter implements DBAdapter {
   public users: CrudInterface<User>;

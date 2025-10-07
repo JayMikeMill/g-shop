@@ -1,6 +1,6 @@
 import { FirebaseAuthAdapter } from "@adapters/auth/FirebaseAuthAdapter";
 import { JwtAuthAdapter } from "@adapters/auth/JwtAuthAdapter";
-import { FirebaseDBAdapter } from "@adapters/db/FirebaseDBAdapter";
+import { FirebaseDBAdapter } from "@adapters/db/firebase/FirebaseDBAdapter";
 import { PrismaDBAdapter } from "@adapters/db/PrismaDBAdapter";
 import { SquarePaymentAdapter } from "@adapters/payment/SquarePaymentAdapter";
 import { StripePaymentAdapter } from "@adapters/payment/StripePaymentAdapter";

@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 
-import type { ProductVariant } from "@my-store/shared";
+import type { Product, ProductVariant } from "@my-store/shared";
 
 // Cart state management
 import { useCart } from "@features/cart/useCart";
@@ -22,7 +22,9 @@ const ProductPage = () => {
   const { products } = useApi();
 
   // Fetch product data
-  const { data: product, isLoading, error } = products.getOne(id ?? "");
+  const { data: product, isLoading, error } = products.getOne({ id: id ?? "" });
+
+  console.log("ProductPage product data:", product);
 
   // Local state for selected variant
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(

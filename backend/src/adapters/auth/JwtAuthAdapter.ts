@@ -10,7 +10,7 @@ const JWT_EXPIRES_IN = "1d";
 export class JwtAuthAdapter implements AuthAdapter {
   // Register a new user
   async register(user: User, password: string): Promise<User> {
-    const existingUser = await db.users.getOneBy("email", user.email);
+    const existingUser = await db.users.get({ email: user.email });
 
     if (existingUser) throw new Error("User already exists");
 
@@ -27,7 +27,7 @@ export class JwtAuthAdapter implements AuthAdapter {
     email: string,
     password: string
   ): Promise<{ token: string; user: User }> {
-    const userRecord = await db.users.getOneBy("email", email);
+    const userRecord = await db.users.get({ email });
     if (!userRecord) throw new Error("Invalid credentials");
 
     const valid = await bcrypt.compare(password, userRecord.passwordHash);
@@ -53,7 +53,7 @@ export class JwtAuthAdapter implements AuthAdapter {
         userId: string;
         email: string;
       };
-      const userRecord = await db.users.getOne(payload.userId);
+      const userRecord = await db.users.get({ id: payload.userId });
 
       if (!userRecord) return null;
 

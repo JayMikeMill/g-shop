@@ -18,7 +18,7 @@ const OptionsPresetDropdown: React.FC<OptionsPresetDropdownProps> = ({
   const { productOptionsPresets } = useApi();
 
   // 1️⃣ Fetch presets via useQuery (hook must be top-level)
-  const { data: presetsData, refetch } = productOptionsPresets.getAll();
+  const { data: presetsData, refetch } = productOptionsPresets.getMany();
   const presets = presetsData?.data ?? [];
 
   // 2️⃣ Delete mutation hook
@@ -40,7 +40,7 @@ const OptionsPresetDropdown: React.FC<OptionsPresetDropdownProps> = ({
       await deletePreset.mutateAsync(id);
       alert("Preset deleted successfully");
       refetch(); // <-- trigger refresh
-      // No need to manually remove from state; useCRUD invalidates the getAll query
+      // No need to manually remove from state; useCRUD invalidates the getMany query
     } catch (err: any) {
       alert("Failed to delete preset: " + err.message);
     }
