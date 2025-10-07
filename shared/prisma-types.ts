@@ -255,6 +255,18 @@ export interface ProductOption {
   values: string[];
 }
 
+export interface ProductVariant {
+  id?: string;
+  product?: Product;
+  productId?: string;
+  cart?: Cart | null;
+  cartId?: string | null;
+  options: string[];
+  price?: number | null;
+  stock?: number | null;
+  CartItem?: CartItem | null;
+}
+
 export interface ProductDimensions {
   id?: string;
   product?: Product;
@@ -272,18 +284,6 @@ export interface ProductTag {
   name: string;
   color?: string | null;
   textColor?: string | null;
-}
-
-export interface ProductVariant {
-  id?: string;
-  product?: Product;
-  productId?: string;
-  cart?: Cart | null;
-  cartId?: string | null;
-  options: string[];
-  price?: number | null;
-  stock?: number | null;
-  CartItem?: CartItem | null;
 }
 
 export interface ProductReview {

@@ -5,16 +5,8 @@ const API_BASE = import.meta.env.VITE_API_URL;
 
 export const apiClient = axios.create({
   baseURL: API_BASE,
+  withCredentials: true, // ✅ automatically send cookies with requests
 });
-
-// attach token dynamically
-export function setAuthToken(token?: string | null) {
-  if (token) {
-    apiClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  } else {
-    delete apiClient.defaults.headers.common["Authorization"];
-  }
-}
 
 // Generic helpers
 export const get = async <T>(url: string, params?: any): Promise<T> => {

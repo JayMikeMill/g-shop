@@ -1,11 +1,13 @@
 // src/pages/AdminLoginPage.tsx
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "@features/auth/useAuth";
+import { useUser } from "@features/user/useUser";
 import { AnimatedDialog, Button, Input } from "@components/ui";
+import { emptyUser } from "@my-store/shared";
 
 export default function AdminLoginPage() {
-  const { user, login } = useAuth();
+  const { user, loginUser, registerUser } = useUser();
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -26,9 +28,20 @@ export default function AdminLoginPage() {
   const handleLogin = async (email: string, password: string) => {
     setError(null);
     setLoading(true);
-    console.log("Logging in with", email, password);
     try {
-      await login(email, password);
+      // await registerUser(
+      //   {
+      //     ...emptyUser,
+      //     email,
+      //     role: "ADMIN",
+      //     firstName: "Aptotek",
+      //     lastName: "Admin",
+      //   },
+      //   password
+      // );
+
+      await loginUser(email, password);
+
       navigate(from, { replace: true });
     } catch (err: any) {
       setError(err.message || "Failed to login");

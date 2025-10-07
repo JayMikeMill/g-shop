@@ -1,10 +1,22 @@
 import type {
+  User,
   Order,
   Product,
   Collection,
   Category,
   OrderShippingInfo,
 } from "./prisma-types";
+
+export const emptyUser: User = {
+  email: "",
+  passwordHash: "",
+  role: "USER", // or whichever default makes sense
+  firstName: "new",
+  lastName: "user",
+  isVerified: false,
+  lastLogin: new Date(0),
+  failedLoginAttempts: 0,
+};
 
 export const emptyProduct: Product = {
   name: "",

@@ -13,15 +13,15 @@ const upload = multer({ storage: multer.memoryStorage() });
 // POST /storage/image - upload image
 router.post(
   "/image",
-  requireRole(["admin"]),
+  requireRole(["ADMIN"]),
   upload.single("file"),
   uploadImage
 );
 
 // POST /storage/file - upload generic file
-router.post("/file", requireRole(["admin"]), upload.single("file"), uploadFile);
+router.post("/file", requireRole(["ADMIN"]), upload.single("file"), uploadFile);
 
 // DELETE /storage - delete file/image by URL
-router.delete("/", requireRole(["admin"]), deleteFile);
+router.delete("/", requireRole(["ADMIN"]), deleteFile);
 
 export default router;

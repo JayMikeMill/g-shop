@@ -8,6 +8,6 @@ const router = express.Router();
 router.post("/process", processPayment);
 
 // POST /payments/refund - refund a payment (admin or owner only)
-router.post("/refund", requireRole(["admin", "owner"]), refundPayment);
+router.post("/refund", requireRole(["ADMIN", "OWNER"]), refundPayment);
 
 export default router;

@@ -18,7 +18,7 @@ function CRUD<T extends { id?: string }>(name: string): CrudInterface<T> {
   };
 }
 
-export function useCrud<T extends { id?: string }>(
+export function useCrudApi<T extends { id?: string }>(
   resource: CrudInterface<T> | string
 ) {
   const queryClient = useQueryClient();

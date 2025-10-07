@@ -41,6 +41,15 @@ export class PrismaDBAdapter implements DBAdapter {
 
 // ----------------- Crud Adapters -----------------
 
+class UserCrud extends PrismaCrudAdapter<User> {
+  constructor(prismaClient: PrismaClient) {
+    super(prismaClient, {
+      model: "user",
+      searchFields: ["email"],
+    });
+  }
+}
+
 class ProductCrud extends PrismaCrudAdapter<Product> {
   constructor(prismaClient: PrismaClient) {
     super(prismaClient, {
@@ -132,15 +141,6 @@ class OrderCrud extends PrismaCrudAdapter<Order> {
         statusHistory: { owned: true },
       },
       searchFields: ["id", "userId"],
-    });
-  }
-}
-
-class UserCrud extends PrismaCrudAdapter<User> {
-  constructor(prismaClient: PrismaClient) {
-    super(prismaClient, {
-      model: "user",
-      searchFields: ["email"],
     });
   }
 }

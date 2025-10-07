@@ -1,16 +1,16 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { useAuth } from "@features/auth/useAuth";
+import { useUser } from "@features/user/useUser";
 import { Button, buttonVariants } from "@components/ui";
 
 export default function AdminDashboardPage() {
-  const { logout } = useAuth();
+  const { logoutUser } = useUser();
 
   return (
     <div className="flex flex-col w-full max-w-full font-sans bg-background">
       {/* Header */}
       <header className="flex justify-between items-center border-b border-border flex-shrink-0 px-2 py-3">
         <h1 className="text-3xl text-text ">Dashboard</h1>
-        <Button variant={"destructive"} onClick={logout}>
+        <Button variant={"destructive"} onClick={logoutUser}>
           Logout
         </Button>
       </header>
