@@ -10,9 +10,9 @@ const router = Router();
 // ---------- Helper ----------
 function adminCRUD(crud: any, extraOptions: any = {}) {
   return createCRUDRoute(crud, {
-    create: ["admin"],
-    update: ["admin"],
-    delete: ["admin"],
+    create: ["ADMIN"],
+    update: ["ADMIN"],
+    delete: ["ADMIN"],
     ...extraOptions,
   });
 }
@@ -28,7 +28,7 @@ router.use("/products/options-presets", adminCRUD(db.productOptionsPresets));
 
 router.use(
   "/products/reviews",
-  adminCRUD(db.productReviews, { create: ["user", "admin"] })
+  adminCRUD(db.productReviews, { create: ["USER", "ADMIN"] })
 );
 
 // Products must come last as it has nested routes
@@ -39,14 +39,14 @@ router.use("/catalog/categories", adminCRUD(db.categories));
 router.use("/catalog/collections", adminCRUD(db.collections));
 
 // Orders and Users have custom read/update rules
-router.use("/orders", adminCRUD(db.orders, { read: ["admin", "owner"] }));
+router.use("/orders", adminCRUD(db.orders, { read: ["ADMIN", "OWNER"] }));
 
 router.use(
   "/users",
   adminCRUD(db.users, {
-    create: ["admin"],
-    read: ["admin", "owner"],
-    update: ["admin", "owner"],
+    create: ["ADMIN"],
+    read: ["ADMIN", "OWNER"],
+    update: ["ADMIN", "OWNER"],
   })
 );
 

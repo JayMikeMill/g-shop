@@ -7,15 +7,9 @@ export const register = async (
   next: NextFunction
 ) => {
   try {
-    const { password } = req.body;
-    const user = await AuthService.register(
-      {
-        id: crypto.randomUUID(),
-        ...req.body,
-      },
-      password
-    );
-    res.json(user);
+    const { user, password } = req.body;
+    const newUser = await AuthService.register(user, password);
+    res.json(newUser);
   } catch (err: any) {
     next(err);
   }
@@ -28,8 +22,16 @@ export const login = async (
 ) => {
   try {
     const { email, password } = req.body;
-    const user = await AuthService.login(email, password);
+    const { user, token } = await AuthService.login(email, password);
     if (!user) return res.status(401).json({ error: "Invalid credentials" });
+
+    res.cookie("auth_token", token, {
+      httpOnly: true,
+      secure: false, // set true in production (HTTPS)
+      sameSite: "lax",
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+    });
+
     res.json(user);
   } catch (err: any) {
     next(err);

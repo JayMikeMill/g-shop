@@ -1,4 +1,5 @@
 import { FirebaseAuthAdapter } from "@adapters/auth/FirebaseAuthAdapter";
+import { JwtAuthAdapter } from "@adapters/auth/JwtAuthAdapter";
 import { FirebaseDBAdapter } from "@adapters/db/FirebaseDBAdapter";
 import { PrismaDBAdapter } from "@adapters/db/PrismaDBAdapter";
 import { SquarePaymentAdapter } from "@adapters/payment/SquarePaymentAdapter";
@@ -9,6 +10,7 @@ import { ImgBBStorageAdapter } from "@adapters/storage/ImgBBStorageAdapter";
 // --- Enums for adapter types ---
 export enum AuthAdapterType {
   Firebase = "firebase",
+  JWT = "jwt",
 }
 export enum DBAdapterType {
   Firebase = "firebase",
@@ -25,7 +27,7 @@ export enum PaymentAdapterType {
 
 // --- Choose adapters here ---
 export const adapterConfig = {
-  auth: AuthAdapterType.Firebase,
+  auth: AuthAdapterType.JWT,
   db: DBAdapterType.Prisma,
   storage: StorageAdapterType.ImgBB,
   payment: PaymentAdapterType.Stripe,
@@ -34,6 +36,7 @@ export const adapterConfig = {
 // --- Lazy factories ---
 const authAdapters = {
   [AuthAdapterType.Firebase]: () => new FirebaseAuthAdapter(),
+  [AuthAdapterType.JWT]: () => new JwtAuthAdapter(),
 };
 
 const dbAdapters = {

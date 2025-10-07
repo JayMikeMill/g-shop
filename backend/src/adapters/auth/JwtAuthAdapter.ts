@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { AuthAdapter } from "./AuthAdapter";
 import { db } from "@config/adapters";
-
 import { User } from "@my-store/shared";
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
@@ -17,7 +16,8 @@ export class JwtAuthAdapter implements AuthAdapter {
 
     const passwordHash = await bcrypt.hash(password, 10);
 
-    const createdUser = await db.users.create({ ...user, passwordHash });
+    const newUser = { ...user, passwordHash };
+    const createdUser = await db.users.create(newUser);
 
     return createdUser;
   }

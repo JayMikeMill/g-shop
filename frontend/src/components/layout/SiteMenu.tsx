@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@features/auth/useAuth";
+import { useUser } from "@features/user/useUser";
 import { Button, XButton } from "@components/ui";
 
 interface SiteMenuProps {
@@ -11,7 +11,7 @@ interface SiteMenuProps {
 }
 
 export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
-  const { user } = useAuth();
+  const { user } = useUser();
   const navigate = useNavigate();
 
   // Local state controls visibility for exit animation

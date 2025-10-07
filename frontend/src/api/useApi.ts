@@ -1,7 +1,6 @@
 // useApi.ts
-import { useAuth } from "@features/auth/useAuth";
-import { apiClient, setAuthToken, post, del } from "./client";
-import { useCrud } from "./useCrud"; // <- generic wrapper
+import { post, del } from "./client";
+import { useCrudApi } from "./useCrudApi"; // <- generic wrapper
 
 import type {
   Product,
@@ -15,20 +14,8 @@ import type {
   User,
 } from "@my-store/shared";
 
-// Standalone function (outside the hook)
-export async function verifyToken(token: string) {
-  const r = await apiClient.get("/auth/verify", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return r.data;
-}
-
 // Hook
 export function useApi() {
-  const { token } = useAuth();
-
-  setAuthToken(token);
-
   return {
     auth: {
       register: (payload: any) => post(`/auth/register`, payload),
@@ -36,17 +23,17 @@ export function useApi() {
     },
 
     // CRUD resources
-    users: useCrud<User>("users"),
-    products: useCrud<Product>("products"),
-    productOptionsPresets: useCrud<ProductOptionsPreset>(
+    users: useCrudApi<User>("users"),
+    products: useCrudApi<Product>("products"),
+    productOptionsPresets: useCrudApi<ProductOptionsPreset>(
       "products/options-presets"
     ),
-    productTagsPresets: useCrud<ProductTagPreset>("products/tags-presets"),
-    productVariants: useCrud<ProductVariant>("products/variants"),
-    productReviews: useCrud<ProductReview>("products/reviews"),
-    collections: useCrud<Collection>("catalog/collections"),
-    categories: useCrud<Category>("catalog/categories"),
-    orders: useCrud<Order>("orders"),
+    productTagsPresets: useCrudApi<ProductTagPreset>("products/tags-presets"),
+    productVariants: useCrudApi<ProductVariant>("products/variants"),
+    productReviews: useCrudApi<ProductReview>("products/reviews"),
+    collections: useCrudApi<Collection>("catalog/collections"),
+    categories: useCrudApi<Category>("catalog/categories"),
+    orders: useCrudApi<Order>("orders"),
 
     // file uploads
     uploadImage: (file: Blob, filename: string) => {
@@ -65,5 +52,12 @@ export function useApi() {
     processPayment: (payment: any) => post(`/payments/process`, payment),
     refundPayment: (paymentId: string) =>
       post(`/payments/refund`, { paymentId }),
+
+    // ... add more as needed
+    login: (email: string, password: string) =>
+      post(`/auth/login`, { email, password }),
+    logout: () => post(`/auth/logout`),
+    register: (user: User, password: string): Promise<User | null> =>
+      post(`/auth/register`, { user, password }),
   };
 }
