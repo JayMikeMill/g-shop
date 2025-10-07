@@ -3,4 +3,4 @@ export * from "./empties";
 
 export * from "./types/CrudInterface";
 export * from "./types/QueryObject";
-export * from "./types/PaymentRequest";
+export * from "./types/PaymentTypes";

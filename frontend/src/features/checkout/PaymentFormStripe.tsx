@@ -74,6 +74,12 @@ function InnerStripeForm({
         return;
       }
 
+      if (!paymentMethod) {
+        setMessage("Payment method is undefined");
+        return;
+      }
+
+      // Create order object
       const order: Order = {
         total: floatToPrice(cart.total),
         status: OrderStatuses.PAID,
@@ -105,11 +111,11 @@ function InnerStripeForm({
       // Send paymentMethod.id to backend
       const response = await placeOrder(paymentMethod, order);
 
-      const payment = (response as any).payment;
-      if (payment?.status === "succeeded") {
-        await onSuccess(payment);
+      if (response?.success === true) {
+        await onSuccess(response);
+        console.log("Payment and order successful:", response);
       } else {
-        setMessage("Payment failed: " + (payment?.error || "Unknown error"));
+        setMessage("Payment failed: " + (response?.error || "Unknown error"));
       }
     } catch (err) {
       console.error("Stripe payment error:", err);

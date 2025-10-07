@@ -12,7 +12,10 @@ export interface CrudInterface<T> {
   get(query?: QueryObject<T>): Promise<{ data: T[]; total: number } | null>;
 
   // Update requires an id in the updates
-  update(updates: Partial<T> & { id: string }): Promise<T>;
+  update(
+    updates: Partial<T> & { id: string },
+    options?: { increment: boolean }
+  ): Promise<T>;
 
   // Delete by id
   delete(id: string): Promise<T>;

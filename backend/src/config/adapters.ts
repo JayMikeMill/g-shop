@@ -2,7 +2,6 @@ import { FirebaseAuthAdapter } from "@adapters/auth/FirebaseAuthAdapter";
 import { JwtAuthAdapter } from "@adapters/auth/JwtAuthAdapter";
 import { FirebaseDBAdapter } from "@adapters/db/firebase/FirebaseDBAdapter";
 import { PrismaDBAdapter } from "@adapters/db/PrismaDBAdapter";
-import { SquarePaymentAdapter } from "@adapters/payment/SquarePaymentAdapter";
 import { StripePaymentAdapter } from "@adapters/payment/StripePaymentAdapter";
 import { FirebaseStorageAdapter } from "@adapters/storage/FirebaseStorageAdapter";
 import { ImgBBStorageAdapter } from "@adapters/storage/ImgBBStorageAdapter";
@@ -22,7 +21,6 @@ export enum StorageAdapterType {
 }
 export enum PaymentAdapterType {
   Stripe = "stripe",
-  Square = "square",
 }
 
 // --- Choose adapters here ---
@@ -51,7 +49,6 @@ const storageAdapters = {
 
 const paymentAdapters = {
   [PaymentAdapterType.Stripe]: () => new StripePaymentAdapter(),
-  [PaymentAdapterType.Square]: () => new SquarePaymentAdapter(),
 };
 
 // --- Export selected adapters ---

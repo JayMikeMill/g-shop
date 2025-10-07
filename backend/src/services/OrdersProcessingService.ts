@@ -1,17 +1,63 @@
 import { Order, Product, ProductVariant, QueryObject } from "@my-store/shared";
-import { db, payment } from "@config/adapters";
-
-//-checkout flow - check stock, authorize payment,
-// check stock/place order/update stock, capture payment. all in backend.
+import { db, payment as paymentAdapter } from "@config/adapters";
 
 export class OrderProcessingService {
   static async placeOrder(payment: any, order: Order) {
     // implement order placement logic
     console.log("Placing order:", order, "with payment:", payment);
+    try {
+      // 1. Check stock for all items in the order
+      if (!(await stockAvailable(order))) {
+        throw new Error("One or more items are out of stock");
+      }
 
-    const hasStock = await checkStock(order);
+      // 2. Authorize payment
+      const paymentResult = await paymentAdapter.authorizePayment({
+        token: payment.id,
+        amount: order.total,
+        currency: order.transaction?.currency || "USD",
+        metadata: { orderId: order.id ?? "" },
+      });
 
-    return { success: true, orderId: "order_12345" };
+      if (paymentResult.status !== "AUTHORIZED") {
+        throw new Error(
+          "Payment authorization failed: " + paymentResult.status
+        );
+      }
+
+      // 3. Check stock for all items in the order, again to avoid race conditions
+      if (!(await stockAvailable(order))) {
+        throw new Error("One or more items are out of stock");
+      }
+
+      // 4a. Place order
+      const orderId = await db.orders.create(order);
+      if (!orderId) {
+        throw new Error("Failed to create order");
+      }
+
+      // 4b. Update stock
+      await updateStock(order);
+
+      // 5. Capture payment
+      const captureResult = await paymentAdapter.capturePayment(
+        paymentResult.id
+      );
+      if (captureResult.status !== "CAPTURED") {
+        throw new Error("Payment capture failed");
+      }
+
+      return { success: true, data: { orderId, payment: captureResult } };
+    } catch (error) {
+      console.error("Error placing order:", error);
+      return {
+        success: false,
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? (error as any).message
+            : String(error),
+      };
+    }
   }
 
   static async refundOrder(id: string) {
@@ -19,7 +65,7 @@ export class OrderProcessingService {
   }
 }
 
-async function checkStock(order: Order): Promise<boolean> {
+async function stockAvailable(order: Order): Promise<boolean> {
   try {
     if (!order.items || order.items.length === 0)
       throw new Error("Order has no items");
@@ -99,11 +145,49 @@ async function checkStock(order: Order): Promise<boolean> {
       }
     }
 
-    console.log("Stock check passed for order:", order.id);
-
     return true;
   } catch (error) {
     console.error("Error checking stock:", error);
     return false;
   }
+}
+
+// ------------------ Update Stock ------------------
+// ------------------ Update Stock ------------------
+async function updateStock(order: Order) {
+  if (!order.items || order.items.length === 0)
+    throw new Error("Order has no items");
+
+  const prismaTx: Promise<any>[] = [];
+
+  for (const item of order.items) {
+    const quantity = item.quantity || 1;
+
+    // Variant stock decrement
+    if (item.variant?.id) {
+      prismaTx.push(
+        db.productVariants.update(
+          {
+            id: item.variant.id,
+            stock: -quantity,
+          },
+          { increment: true }
+        )
+      );
+    } else if (item.product?.id) {
+      // Product stock decrement
+      prismaTx.push(
+        db.products.update(
+          {
+            id: item.product.id,
+            stock: -quantity,
+          },
+          { increment: true }
+        )
+      );
+    }
+  }
+
+  // Execute all updates in parallel
+  await Promise.all(prismaTx);
 }

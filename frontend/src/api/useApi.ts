@@ -49,7 +49,10 @@ export function useApi() {
     deleteFile: (url: string) => del<{ success: boolean }>(`/storage`, { url }),
 
     // custom endpoints
-    placeOrder: (payment: any, order: Order) =>
+    placeOrder: (
+      payment: any,
+      order: Order
+    ): Promise<{ success: boolean; error?: string; data?: any }> =>
       post(`/orders/place`, { payment, order }),
 
     refundPayment: (paymentId: string) =>

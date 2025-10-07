@@ -60,11 +60,11 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
 
   private async toPrisma(
     data: Partial<T>,
-    action: "create" | "update",
+    action: "create" | "update" | "increment",
     existing?: T
   ) {
-    if (existing && action === "update") {
-      return prismaNestedUpdate(existing, data, this.nestedMeta, "update");
+    if (existing && (action === "update" || action === "increment")) {
+      return prismaNestedUpdate(existing, data, this.nestedMeta, action);
     }
     const created = prismaNestedUpdate(null, data, this.nestedMeta, "create");
     return removeEmptyArrays(created);
@@ -136,24 +136,51 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
     return { data, total };
   }
 
-  async update(updates: Partial<T> & { id?: string }): Promise<T> {
+  async update(
+    updates: Partial<T> & { id?: string },
+    options?: { increment: boolean }
+  ): Promise<T> {
     if (!updates.id) throw new Error("Document id is required for update");
 
-    const existing = await this.get({ id: updates.id } as any);
+    const { id, ...rest } = updates;
+    const restData = rest as Partial<T>; // <- type assertion fix
+
+    // -------------------- Delegate to increment if detected --------------------
+    if (options?.increment) {
+      return this.increment(id, restData);
+    }
+
+    // -------------------- Normal update --------------------
+    const existing = await this.get({ id } as any);
     if (!existing) throw new Error("Document not found");
 
-    const { id, ...rest } = updates;
-    const prismaData = await this.toPrisma(
-      rest as Partial<T>,
-      "update",
-      existing
-    );
+    const prismaData = await this.toPrisma(restData, "update", existing);
 
     const updated = await this.client.update({
       where: { id },
       data: prismaData,
       include: this.includeFields,
     });
+
+    return updated;
+  }
+
+  /**
+   * ATOMIC INCREMENT
+   * Supports deeply nested numeric increments using Prisma's increment operator
+   */
+  async increment(id: string, updates: Partial<T>): Promise<T> {
+    const existing = await this.get({ id } as any);
+    if (!existing) throw new Error("Document not found");
+
+    const prismaData = await this.toPrisma(updates, "increment", existing);
+
+    const updated = await this.client.update({
+      where: { id },
+      data: prismaData,
+      include: this.includeFields,
+    });
+
     return updated;
   }
 

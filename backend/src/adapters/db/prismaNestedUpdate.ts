@@ -1,7 +1,10 @@
 /**
- * Utility to handle nested updates/creates for Prisma ORM
- * Supports owned relations, many-to-many, and optional relations
- * with deep nesting of any depth
+ * Utility to handle nested updates/creates/increments for Prisma ORM
+ * Supports:
+ * - Owned relations (1:1, 1:n)
+ * - Many-to-many relations
+ * - Optional relations
+ * - Deeply nested increments of numeric fields
  */
 
 // ----------------- Nested Config -----------------
@@ -12,12 +15,12 @@ type NestedConfig = {
 
 export type NestedMetadata<T> = Partial<Record<keyof T, NestedConfig>>;
 
-// ----------------- Generic Nested Update/Create -----------------
+// ----------------- Generic Nested Update/Create/Increment -----------------
 export function prismaNestedUpdate<T>(
   existing: T | null,
   incoming: Partial<T>,
   meta: NestedMetadata<T> = {},
-  action: "create" | "update" = "update"
+  action: "create" | "update" | "increment" = "update"
 ): any {
   if (!incoming) return incoming;
 
@@ -53,6 +56,30 @@ export function prismaNestedUpdate<T>(
 
     // ------------------ Owned nested arrays ------------------
     if (Array.isArray(value) && config.owned) {
+      if (action === "increment") {
+        // Increment numeric fields for existing items only
+        result[key] = {
+          update: value
+            .filter(
+              (v: any) => v.id && current?.some((c: any) => c.id === v.id)
+            )
+            .map((v: any) => {
+              const target = current.find((c: any) => c.id === v.id);
+              return {
+                where: { id: v.id },
+                data: prismaNestedUpdate(
+                  target,
+                  v,
+                  meta[key as keyof T] as any,
+                  "increment"
+                ),
+              };
+            }),
+        };
+        continue;
+      }
+
+      // Normal create/update logic
       const toCreate = value.filter((v: any) => !v.id).map(stripIdsAndFKs);
       const toUpdate = value.filter(
         (v) => v.id && current?.some((c: any) => c.id === v.id)
@@ -91,7 +118,7 @@ export function prismaNestedUpdate<T>(
       const valueWithId = value as { id?: any };
 
       if (config.owned) {
-        // owned 1:1
+        // Owned 1:1
         const data = prismaNestedUpdate(
           current || {},
           stripIdsAndFKs(value),
@@ -112,7 +139,13 @@ export function prismaNestedUpdate<T>(
     }
 
     // ------------------ Primitive field ------------------
-    if (value !== undefined) result[key] = value;
+    if (value !== undefined) {
+      if (action === "increment" && typeof value === "number") {
+        result[key] = { increment: value };
+      } else {
+        result[key] = value;
+      }
+    }
   }
 
   return result;
