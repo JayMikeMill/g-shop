@@ -345,7 +345,7 @@ export interface OrderItem {
   id?: string;
   order?: Order;
   orderId?: string;
-  product: Product
+  product: Product;
   variant?: ProductVariant;
   quantity: number;
   price: number;

@@ -15,13 +15,14 @@ export default function ShoppingCart({
   const navigate = useNavigate();
 
   const { cart, totals, addItem, removeItem } = useCart();
+  const cartItems = cart.items || [];
 
   const handleProceedToCheckout = () => {
     if (onProceedToCheckout) onProceedToCheckout();
     navigate("/checkout");
   };
 
-  if (cart.length === 0) {
+  if (cartItems.length === 0) {
     return (
       <div className="flex flex-col flex-1">
         <div className="flex flex-1 items-center justify-center text-center">
@@ -35,9 +36,9 @@ export default function ShoppingCart({
     <div className="flex flex-col flex-1">
       {/* Items */}
       <div className="flex flex-col gap-sm mb-lg flex-1">
-        {cart.map((item, i) => (
+        {cartItems.map((item, i) => (
           <ShoppingCartItem
-            key={item?.variant?.id ?? item?.product?.id ?? i}
+            key={item.variant?.id ?? item?.product?.id ?? i}
             item={item}
             addToCart={addItem}
             removeFromCart={removeItem}
@@ -49,7 +50,7 @@ export default function ShoppingCart({
       <div className="mt-auto border-t border-divider pt-md flex flex-col gap-sm">
         <div className="flex justify-between font-semibold text-text">
           <span>Subtotal</span>
-          <span>${totals.totalPrice.toFixed(2)}</span>
+          <span>${totals.subtotal.toFixed(2)}</span>
         </div>
         <div className="flex justify-between font-semibold text-textSecondary">
           <span>Shipping</span>
@@ -57,7 +58,7 @@ export default function ShoppingCart({
         </div>
         <div className="flex justify-between font-bold text-lg text-text">
           <span>Total</span>
-          <span>${totals.totalPrice.toFixed(2)}</span>
+          <span>${totals.total.toFixed(2)}</span>
         </div>
 
         {/* Checkout button */}

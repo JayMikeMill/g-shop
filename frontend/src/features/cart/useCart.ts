@@ -4,7 +4,7 @@ import {
   removeFromCart,
   clearCart,
   selectCart,
-  getCartTotals,
+  calculateTotals,
 } from "./cartSlice";
 import type { CartItem } from "@my-store/shared";
 import { useMemo, useCallback } from "react";
@@ -14,7 +14,7 @@ export function useCart() {
   const cart = useAppSelector(selectCart);
 
   // Memoize totals to avoid recalculating on every render
-  const totals = useMemo(() => getCartTotals(cart), [cart]);
+  const totals = useMemo(() => calculateTotals(cart.items ?? []), [cart.items]);
 
   // Wrap dispatch calls with useCallback for stable references
   const addItem = useCallback(

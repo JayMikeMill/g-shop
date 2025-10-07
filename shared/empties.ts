@@ -5,6 +5,7 @@ import type {
   Collection,
   Category,
   OrderShippingInfo,
+  Cart,
 } from "./prisma-types";
 
 export const emptyUser: User = {
@@ -56,4 +57,10 @@ export const emptyOrderShippingInfo: OrderShippingInfo = {
   tracking: null,
   createdAt: undefined,
   updatedAt: undefined,
+};
+
+export const emptyCart: Cart = {
+  items: [],
+  total: 0,
+  subtotal: 0,
 };

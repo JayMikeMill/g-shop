@@ -1,20 +1,45 @@
 // src/features/cart/cartSlice.ts
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { CartItem } from "@my-store/shared";
+import type { Cart, CartItem } from "@my-store/shared";
 
-// Helper to load/save cart from localStorage
-const loadCart = (): CartItem[] => {
-  if (typeof window === "undefined") return [];
+// -------------------- Helpers --------------------
+
+// Load cart from localStorage
+const loadCart = (): Cart => {
+  if (typeof window === "undefined")
+    return { items: [], subtotal: 0, total: 0 };
+
   const stored = localStorage.getItem("cart");
-  return stored ? (JSON.parse(stored) as CartItem[]) : [];
+  if (!stored) return { items: [], subtotal: 0, total: 0 };
+
+  const parsed = JSON.parse(stored) as Cart;
+
+  return {
+    items: parsed.items ?? [],
+    subtotal: parsed.subtotal ?? 0,
+    total: parsed.total ?? 0,
+  };
 };
 
-const saveCart = (cart: readonly CartItem[]) => {
+// Save cart to localStorage
+const saveCart = (cart: Cart) => {
   localStorage.setItem("cart", JSON.stringify(cart));
 };
 
+// Calculate subtotal & total
+export const calculateTotals = (items: CartItem[]) => {
+  const subtotal = items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+  const total = subtotal; // add taxes/shipping/discounts here if needed
+  return { subtotal, total };
+};
+
+// -------------------- Slice --------------------
+
 interface CartState {
-  cart: CartItem[];
+  cart: Cart;
 }
 
 const initialState: CartState = {
@@ -27,60 +52,88 @@ const cartSlice = createSlice({
   reducers: {
     addToCart: (state, action: PayloadAction<CartItem>) => {
       const item = action.payload;
-      const existingIndex = state.cart.findIndex(
+
+      // Work on a local items array (never null)
+      const items: CartItem[] = state.cart.items
+        ? [...state.cart.items]
+        : ([] as any);
+
+      const existingIndex = items.findIndex(
         (cartItem) =>
           cartItem.productId === item.productId &&
-          cartItem.variantId === item.variantId
+          (cartItem.variantId ?? null) === (item.variantId ?? null)
       );
 
       if (existingIndex !== -1) {
-        state.cart[existingIndex].quantity += item.quantity || 1;
+        items[existingIndex].quantity += item.quantity ?? 1;
       } else {
-        state.cart.push({
+        items.push({
+          id: item.id,
+          cartId: item.cartId,
           productId: item.productId,
-          variantId: item.variantId,
-          quantity: item.quantity || 1,
+          variantId: item.variantId ?? null,
+          quantity: item.quantity ?? 1,
           price: item.price,
+          product: item.product,
+          variant: item.variant ?? null,
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt,
         });
       }
 
-      saveCart(state.cart as CartItem[]);
+      // Recalculate totals
+      const totals = calculateTotals(items);
+      state.cart.items = items as any;
+      state.cart.subtotal = totals.subtotal;
+      state.cart.total = totals.total;
+
+      saveCart(state.cart as any);
     },
+
     removeFromCart: (state, action: PayloadAction<CartItem>) => {
       const item = action.payload;
-      const existingIndex = state.cart.findIndex(
+
+      // Work on a local items array
+      const items: CartItem[] = state.cart.items
+        ? [...state.cart.items]
+        : ([] as any);
+
+      const existingIndex = items.findIndex(
         (c) => c.productId === item.productId && c.variantId === item.variantId
       );
 
       if (existingIndex === -1) return;
 
-      const quantityToRemove = item.quantity || 1;
-      if (state.cart[existingIndex].quantity > quantityToRemove) {
-        state.cart[existingIndex].quantity -= quantityToRemove;
+      const quantityToRemove = item.quantity ?? 1;
+      if (items[existingIndex].quantity > quantityToRemove) {
+        items[existingIndex].quantity -= quantityToRemove;
       } else {
-        state.cart.splice(existingIndex, 1);
+        items.splice(existingIndex, 1);
       }
 
-      saveCart(state.cart as CartItem[]);
+      // Recalculate totals
+      const totals = calculateTotals(items);
+      state.cart.items = items as any;
+      state.cart.subtotal = totals.subtotal;
+      state.cart.total = totals.total;
+
+      saveCart(state.cart as any);
     },
+
     clearCart: (state) => {
-      state.cart = [];
+      state.cart = { items: [], subtotal: 0, total: 0 };
       localStorage.removeItem("cart");
     },
   },
 });
 
-// Selectors
-export const selectCart = (state: { cart: CartState }) => state.cart.cart;
+// -------------------- Selectors --------------------
 
-export const getCartTotals = (cart: CartItem[]) => {
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
-  return { totalItems, totalPrice };
-};
+export const selectCart = (state: { cart: CartState }) => state.cart.cart;
+export const selectCartItems = (state: { cart: CartState }) =>
+  state.cart.cart.items;
+
+// -------------------- Exports --------------------
 
 export const { addToCart, removeFromCart, clearCart } = cartSlice.actions;
 export default cartSlice.reducer;

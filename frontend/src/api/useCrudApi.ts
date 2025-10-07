@@ -10,8 +10,10 @@ export function CRUD<T extends { id?: string }>(
   const getImpl = async (
     query?: Partial<T> | QueryObject<T>
   ): Promise<T | { data: T[]; total: number } | null> => {
-    // Partial<T> query (single)
-    if (query && !isQueryObject(query)) {
+    const isQueryObj = isQueryObject(query);
+
+    // Partial<T> query (getOne)
+    if (!isQueryObj && query) {
       const queryString = Object.entries(query)
         .map(
           ([key, value]) =>
@@ -22,13 +24,20 @@ export function CRUD<T extends { id?: string }>(
       return await get<T | null>(`/${name}?${queryString}`);
     }
 
-    // No query (all)
-    if (!query) return await get<{ data: T[]; total: number }>(`/${name}`);
+    // QueryObject<T> (getMany)
+    if (isQueryObj) {
+      return await get<{ data: T[]; total: number }>(
+        `/${name}?${toQueryString(query)}`
+      );
+    }
 
-    // QueryObject<T> (multi)
-    return await get<{ data: T[]; total: number }>(
-      `/${name}?${toQueryString(query)}`
-    );
+    // No query (getAll)
+    if (!query) {
+      return await get<{ data: T[]; total: number }>(`/${name}`);
+    }
+
+    // Fallback
+    return null;
   };
 
   return {
@@ -51,14 +60,14 @@ export function useCrudApi<T extends { id?: string }>(
 
   return {
     // Queries
-    getMany: (query?: QueryObject<T>) => {
+    getOne: (query: Partial<T>) => {
       return useQuery({
         queryKey: [resource, query],
         queryFn: () => crud.get(query),
       });
     },
 
-    getOne: (query: Partial<T>) => {
+    getMany: (query?: QueryObject<T>) => {
       return useQuery({
         queryKey: [resource, query],
         queryFn: () => crud.get(query),

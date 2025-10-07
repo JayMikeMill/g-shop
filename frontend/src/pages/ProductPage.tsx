@@ -24,8 +24,6 @@ const ProductPage = () => {
   // Fetch product data
   const { data: product, isLoading, error } = products.getOne({ id: id ?? "" });
 
-  console.log("ProductPage product data:", product);
-
   // Local state for selected variant
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     null
@@ -53,7 +51,9 @@ const ProductPage = () => {
   // Handle adding product to cart
   const handleAddToCart = () => {
     addItem({
+      productId: product.id!,
       product,
+      variantId: selectedVariant?.id ?? undefined,
       variant: selectedVariant ?? undefined,
       quantity: 1,
       price: selectedVariant?.price ?? discountedPrice,
@@ -145,7 +145,10 @@ const ProductPage = () => {
 
           {/* Add to Cart Button */}
           <div className="flex items-center justify-center gap-4 mt-4">
-            <Button onClick={handleAddToCart} disabled={!selectedVariant}>
+            <Button
+              onClick={handleAddToCart}
+              disabled={!selectedVariant && product.stock === 0}
+            >
               Add to Cart
             </Button>
           </div>
