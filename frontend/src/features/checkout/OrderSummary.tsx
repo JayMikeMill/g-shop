@@ -5,7 +5,7 @@ import { parseVariantOptions } from "@utils/productUtils";
 export default function OrderSummary() {
   const { cart, totals } = useCart();
 
-  if (cart.length === 0) {
+  if (cart.items?.length === 0) {
     return (
       <div className="surface-box mx-auto p-6 text-center">
         <p>Your order is empty.</p>
@@ -18,7 +18,7 @@ export default function OrderSummary() {
       <h3 className="text-center text-xl font-semibold mb-4">Order Summary</h3>
 
       <div className="flex flex-col gap-3">
-        {cart.map((item, index) => {
+        {cart.items?.map((item, index) => {
           const key = item?.variant?.id ?? item?.product?.id ?? index;
 
           const imgSrc =
@@ -67,8 +67,8 @@ export default function OrderSummary() {
       </div>
 
       <div className="mt-4 border-t border-divider pt-md flex flex-col gap-sm text-right font-semibold text-text">
-        <p>Total Items: {totals.totalItems}</p>
-        <p>Subtotal: ${totals.totalPrice.toFixed(2)}</p>
+        <p>Total Items: {totals.items}</p>
+        <p>Subtotal: ${totals.subtotal.toFixed(2)}</p>
       </div>
     </div>
   );

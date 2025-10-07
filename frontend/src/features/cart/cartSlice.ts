@@ -27,13 +27,13 @@ const saveCart = (cart: Cart) => {
 };
 
 // Calculate subtotal & total
-export const calculateTotals = (items: CartItem[]) => {
+export const calculateCartTotals = (items: CartItem[]) => {
   const subtotal = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
   const total = subtotal; // add taxes/shipping/discounts here if needed
-  return { subtotal, total };
+  return { subtotal, total, items: items.length };
 };
 
 // -------------------- Slice --------------------
@@ -82,7 +82,7 @@ const cartSlice = createSlice({
       }
 
       // Recalculate totals
-      const totals = calculateTotals(items);
+      const totals = calculateCartTotals(items);
       state.cart.items = items as any;
       state.cart.subtotal = totals.subtotal;
       state.cart.total = totals.total;
@@ -112,7 +112,7 @@ const cartSlice = createSlice({
       }
 
       // Recalculate totals
-      const totals = calculateTotals(items);
+      const totals = calculateCartTotals(items);
       state.cart.items = items as any;
       state.cart.subtotal = totals.subtotal;
       state.cart.total = totals.total;
