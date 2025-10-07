@@ -41,7 +41,7 @@ export default function PaymentFormSquare({
   setMessage,
 }: SquarePaymentFormProps) {
   const [cardInstance, setCardInstance] = useState<any>(null);
-  const { processPayment, orders } = useApi();
+  const { placeOrder: processPayment, orders } = useApi();
 
   // Setup mutation hook for creating orders
   const createOrder = orders.create();

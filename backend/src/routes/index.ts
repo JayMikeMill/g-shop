@@ -1,15 +1,26 @@
 import { Router } from "express";
-import { createCRUDRoute } from "@routes/crud-routes/createCRUDRoute";
+
+// Modular routes
 import authRoutes from "@routes/auth";
-import paymentRoutes from "@routes/payments";
 import storageRoutes from "@routes/storage";
+import orderRoutes from "@routes/orders";
+
+// CRUD route factory
+import { createCrudRoute } from "@routes/createCrudRoute";
+
+// Database for CRUD routes
 import { db } from "@config/adapters";
 
 const router = Router();
 
-// ---------- Helper ----------
-function adminCRUD(crud: any, extraOptions: any = {}) {
-  return createCRUDRoute(crud, {
+// ---------- Modular routes ----------
+router.use("/auth", authRoutes);
+router.use("/storage", storageRoutes);
+router.use("/orders", orderRoutes);
+
+// ---------- CRUD Routes ----------
+function adminCrud(crud: any, extraOptions: any = {}) {
+  return createCrudRoute(crud, {
     create: ["ADMIN"],
     update: ["ADMIN"],
     delete: ["ADMIN"],
@@ -17,33 +28,29 @@ function adminCRUD(crud: any, extraOptions: any = {}) {
   });
 }
 
-// ---------- Modular routes ----------
-router.use("/auth", authRoutes);
-router.use("/payments", paymentRoutes);
-router.use("/storage", storageRoutes);
-
-// ---------- CRUD Routes ----------
-router.use("/products/tags-presets", adminCRUD(db.productTagsPresets));
-router.use("/products/options-presets", adminCRUD(db.productOptionsPresets));
-
+// Product sub-resources
+router.use("/products/tags-presets", adminCrud(db.productTagsPresets));
+router.use("/products/options-presets", adminCrud(db.productOptionsPresets));
 router.use(
   "/products/reviews",
-  adminCRUD(db.productReviews, { create: ["USER", "ADMIN"] })
+  adminCrud(db.productReviews, { create: ["USER", "ADMIN"] })
 );
 
 // Products must come last as it has nested routes
-router.use("/products", adminCRUD(db.products));
+router.use("/products", adminCrud(db.products));
 
 // Product reviews can be created by any authenticated user
-router.use("/catalog/categories", adminCRUD(db.categories));
-router.use("/catalog/collections", adminCRUD(db.collections));
+router.use("/catalog/categories", adminCrud(db.categories));
+router.use("/catalog/collections", adminCrud(db.collections));
 
-// Orders and Users have custom read/update rules
-router.use("/orders", adminCRUD(db.orders, { read: ["ADMIN", "OWNER"] }));
+// Orders and Users have custom read/update rules,
+// Orders are separate from order processing
+router.use("/orders", adminCrud(db.orders, { read: ["ADMIN", "OWNER"] }));
 
+// Users can be created by admin only, but read and updated by owner as well
 router.use(
   "/users",
-  adminCRUD(db.users, {
+  adminCrud(db.users, {
     create: ["ADMIN"],
     read: ["ADMIN", "OWNER"],
     update: ["ADMIN", "OWNER"],

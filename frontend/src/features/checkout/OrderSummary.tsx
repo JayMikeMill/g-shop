@@ -66,7 +66,7 @@ export default function OrderSummary() {
         })}
       </div>
 
-      <div className="mt-4 border-t border-divider pt-md flex flex-col gap-sm text-right font-semibold text-text">
+      <div className="mt-4 pt-md flex flex-col gap-sm text-right font-semibold text-text">
         <p>Total Items: {totals.items}</p>
         <p>Subtotal: ${totals.subtotal.toFixed(2)}</p>
       </div>

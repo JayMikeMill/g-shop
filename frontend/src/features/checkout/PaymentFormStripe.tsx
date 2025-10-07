@@ -13,6 +13,7 @@ import {
   TransactionStatus as TransactionStatuses,
   PaymentMethod as PaymentMethods,
   OrderStatus as OrderStatuses,
+  type Order,
 } from "@my-store/shared";
 
 import { useApi } from "@api/useApi";
@@ -38,7 +39,7 @@ function InnerStripeForm({
 }: StripePaymentFormProps) {
   const stripe = useStripe();
   const elements = useElements();
-  const { processPayment, orders } = useApi();
+  const { placeOrder, orders } = useApi();
 
   // Mutation for orders
   const createOrder = orders.create();
@@ -74,13 +75,29 @@ function InnerStripeForm({
         return;
       }
 
+      const order: Order = {
+        total: floatToPrice(total),
+        status: OrderStatuses.PAID,
+        statusHistory: [
+          {
+            status: OrderStatuses.PAID,
+            timestamp: new Date(),
+          },
+        ],
+        transaction: {
+          method: PaymentMethods.STRIPE,
+          amount: total,
+          currency: "USD",
+          status: TransactionStatuses.PAID,
+        },
+        shippingInfo,
+        invoices: [
+          { createdAt: new Date(), invoiceNumber: `INV-${Date.now()}` },
+        ],
+      };
+
       // Send paymentMethod.id to backend
-      const response = await processPayment({
-        token: paymentMethod!.id,
-        amount: total,
-        items: {},
-        address: shippingInfo,
-      });
+      const response = await placeOrder(paymentMethod, order);
 
       const payment = (response as any).payment;
       if (payment?.status === "succeeded") {

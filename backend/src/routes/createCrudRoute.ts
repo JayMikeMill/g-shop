@@ -21,7 +21,7 @@ export type CRUDRouteOptions = {
  * Creates a full CRUD router for a given CRUDAdapter.
  * Authorization is applied only if rolesAllowed has roles.
  */
-export function createCRUDRoute(
+export function createCrudRoute(
   crud: CrudInterface<any>,
   options?: CRUDRouteOptions
 ) {
