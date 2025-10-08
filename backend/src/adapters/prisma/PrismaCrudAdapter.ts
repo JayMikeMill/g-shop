@@ -15,9 +15,17 @@ import {
   type QueryObject,
 } from "@my-store/shared";
 
-import { prismaNestedUpdate, NestedMetadata } from "./prismaNestedUpdate";
+import {
+  prismaNestedUpdate,
+  NestedMetadata,
+  DotNestedMetadata, // ADDED
+} from "./prismaNestedUpdate";
 
-import { buildPrismaQuery } from "./buildPrismaQuery";
+import {
+  buildPrismaQuery,
+  deepMerge,
+  normalizeIncludeConfig,
+} from "./buildPrismaQuery";
 
 // ----------------- Helper: Remove empty arrays for Prisma -----------------
 function removeEmptyArrays(obj: any): any {
@@ -34,9 +42,11 @@ function removeEmptyArrays(obj: any): any {
 // ----------------- PrismaCRUDAdapter -----------------
 export interface PrismaCRUDAdapterOptions<T> {
   model: keyof PrismaClient;
-  includeFields?: any;
+  // Accept dot-notation include paths or a map of path -> { select/include }
+  includeFields?: string[] | Record<string, any>;
   searchFields?: (keyof T)[];
-  nestedMeta?: NestedMetadata<T>;
+  // Accept nested field metadata with dot-notation keys
+  nestedMeta?: NestedMetadata<T> | DotNestedMetadata; // CHANGED
   isTx?: boolean;
 }
 
@@ -44,22 +54,27 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
   private prisma: PrismaClient;
 
   private model: keyof PrismaClient;
-  private includeFields?: any;
+  private includeFieldsCfg?: string[] | Record<string, any>;
   private searchFields?: (keyof T)[];
-  private nestedMeta?: NestedMetadata<T>;
+  private nestedMeta?: NestedMetadata<T> | DotNestedMetadata; // CHANGED
   private isTx: boolean;
 
   constructor(prisma: PrismaClient, opts: PrismaCRUDAdapterOptions<T>) {
     this.prisma = prisma;
     this.model = opts.model;
-    this.includeFields = opts.includeFields ?? {};
+    this.includeFieldsCfg = opts.includeFields;
     this.searchFields = opts.searchFields;
-    this.nestedMeta = opts.nestedMeta;
+    this.nestedMeta = opts.nestedMeta; // can be dot-notation
     this.isTx = opts.isTx ?? false;
   }
 
   private get client() {
     return this.prisma[this.model] as any;
+  }
+
+  // Expand dot-notation include config into Prisma include shape
+  private get baseInclude() {
+    return normalizeIncludeConfig(this.includeFieldsCfg);
   }
 
   private async toPrisma(
@@ -68,9 +83,14 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
     existing?: T
   ) {
     if (existing && (action === "update" || action === "increment")) {
-      return prismaNestedUpdate(existing, data, this.nestedMeta, action);
+      return prismaNestedUpdate(existing, data, this.nestedMeta as any, action);
     }
-    const created = prismaNestedUpdate(null, data, this.nestedMeta, "create");
+    const created = prismaNestedUpdate(
+      null,
+      data,
+      this.nestedMeta as any,
+      "create"
+    );
     return removeEmptyArrays(created);
   }
 
@@ -79,7 +99,7 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
     const prismaData = await this.toPrisma(data, "create");
     const created = await this.client.create({
       data: prismaData,
-      include: this.includeFields,
+      include: this.baseInclude,
     });
     return created;
   }
@@ -97,16 +117,15 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
   async get(
     query?: Partial<T> | QueryObject<T>
   ): Promise<T | { data: T[]; total: number } | null> {
-    console.log("PrismaCrudAdapter.get called with query:", query);
     // -------------------- NO QUERY: return all --------------------
     if (!query) {
       const [data, total] = this.isTx
         ? await this.prisma.$transaction([
-            this.client.findMany({ include: this.includeFields }),
+            this.client.findMany({ include: this.baseInclude }),
             this.client.count(),
           ])
         : await Promise.all([
-            this.client.findMany({ include: this.includeFields }),
+            this.client.findMany({ include: this.baseInclude }),
             this.client.count(),
           ]);
 
@@ -119,7 +138,7 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
       const where: any = {};
 
       for (const key in partialQuery) {
-        const val = partialQuery[key];
+        const val = (partialQuery as any)[key];
         if (val === undefined) continue;
         where[key] = val;
       }
@@ -128,14 +147,14 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
       if ((partialQuery as any).id) {
         return await this.client.findUnique({
           where: { id: (partialQuery as any).id },
-          include: this.includeFields,
+          include: this.baseInclude,
         });
       }
 
       // Otherwise, use findFirst
       return await this.client.findFirst({
         where,
-        include: this.includeFields,
+        include: this.baseInclude,
       });
     }
 
@@ -143,19 +162,16 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
     const queryObj: QueryObject<T> = (query as QueryObject<T>) ?? {};
     const queryParams = buildPrismaQuery(
       queryObj,
-      this.includeFields,
+      this.includeFieldsCfg,
       this.searchFields || []
     );
 
-    // Determine if we are already inside a transaction
     let data: T[], total: number;
 
     if (this.isTx) {
-      // Already in a transaction, run sequentially
       data = await this.client.findMany(queryParams);
       total = await this.client.count({ where: queryParams.where });
     } else {
-      // Not in a transaction, run atomically
       [data, total] = await this.prisma.$transaction([
         this.client.findMany(queryParams),
         this.client.count({ where: queryParams.where }),
@@ -172,14 +188,12 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
     if (!updates.id) throw new Error("Document id is required for update");
 
     const { id, ...rest } = updates;
-    const restData = rest as Partial<T>; // <- type assertion fix
+    const restData = rest as Partial<T>;
 
-    // -------------------- Delegate to increment if detected --------------------
     if (options?.increment) {
       return this.increment(id, restData);
     }
 
-    // -------------------- Normal update --------------------
     const existing = await this.get({ id } as any);
     if (!existing) throw new Error("Document not found");
 
@@ -188,16 +202,12 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
     const updated = await this.client.update({
       where: { id },
       data: prismaData,
-      include: this.includeFields,
+      include: this.baseInclude,
     });
 
     return updated;
   }
 
-  /**
-   * ATOMIC INCREMENT
-   * Supports deeply nested numeric increments using Prisma's increment operator
-   */
   async increment(id: string, updates: Partial<T>): Promise<T> {
     const existing = await this.get({ id } as any);
     if (!existing) throw new Error("Document not found");
@@ -207,7 +217,7 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
     const updated = await this.client.update({
       where: { id },
       data: prismaData,
-      include: this.includeFields,
+      include: this.baseInclude,
     });
 
     return updated;
@@ -216,7 +226,7 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
   async delete(id: string): Promise<T> {
     return await this.client.delete({
       where: { id },
-      include: this.includeFields,
+      include: this.baseInclude,
     });
   }
 }

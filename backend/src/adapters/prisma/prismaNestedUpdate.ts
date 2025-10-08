@@ -15,21 +15,49 @@ type NestedConfig = {
 
 export type NestedMetadata<T> = Partial<Record<keyof T, NestedConfig>>;
 
+// NEW: dot-notation metadata shape
+export type DotNestedMetadata = Record<string, NestedConfig>;
+
+function normalizeMeta<T>(
+  meta?: NestedMetadata<T> | DotNestedMetadata
+): DotNestedMetadata {
+  if (!meta) return {};
+  const out: DotNestedMetadata = {};
+  for (const k in meta as any) {
+    if (!Object.prototype.hasOwnProperty.call(meta, k)) continue;
+    out[String(k)] = (meta as any)[k] || {};
+  }
+  return out;
+}
+
+function childMeta(metaMap: DotNestedMetadata, key: string): DotNestedMetadata {
+  const prefix = key + ".";
+  const out: DotNestedMetadata = {};
+  for (const k in metaMap) {
+    if (k.startsWith(prefix)) {
+      out[k.slice(prefix.length)] = metaMap[k];
+    }
+  }
+  return out;
+}
+
 // ----------------- Generic Nested Update/Create/Increment -----------------
 export function prismaNestedUpdate<T>(
   existing: T | null,
   incoming: Partial<T>,
-  meta: NestedMetadata<T> = {},
+  meta: NestedMetadata<T> | DotNestedMetadata = {},
   action: "create" | "update" | "increment" = "update"
 ): any {
   if (!incoming) return incoming;
 
+  const metaMap = normalizeMeta(meta);
   const result: any = {};
 
-  for (const key in incoming) {
-    const value = incoming[key];
+  for (const key in incoming as any) {
+    const value = (incoming as any)[key];
     const current = existing ? (existing as any)[key] : undefined;
-    const config = meta[key as keyof T] || {};
+    const config = metaMap[key] || {};
+    const nextMeta = childMeta(metaMap, key);
 
     // ------------------ Many-to-many (array of IDs) ------------------
     if (config.manyToMany && Array.isArray(value)) {
@@ -67,12 +95,7 @@ export function prismaNestedUpdate<T>(
               const target = current.find((c: any) => c.id === v.id);
               return {
                 where: { id: v.id },
-                data: prismaNestedUpdate(
-                  target,
-                  v,
-                  meta[key as keyof T] as any,
-                  "increment"
-                ),
+                data: prismaNestedUpdate(target, v, nextMeta, "increment"),
               };
             }),
         };
@@ -98,7 +121,7 @@ export function prismaNestedUpdate<T>(
             data: prismaNestedUpdate(
               current.find((c: any) => c.id === v.id),
               stripIdsAndFKs(v),
-              meta[key as keyof T] as any,
+              nextMeta,
               "update"
             ),
           })),
@@ -122,7 +145,7 @@ export function prismaNestedUpdate<T>(
         const data = prismaNestedUpdate(
           current || {},
           stripIdsAndFKs(value),
-          meta[key as keyof T] as any,
+          nextMeta,
           action
         );
         if (current) result[key] = { update: data };

@@ -83,17 +83,19 @@ class ProductCrud extends PrismaCrudAdapter<Product> {
     super(prismaClient, {
       model: "product",
 
-      includeFields: {
-        images: true,
-        tags: true,
-        options: true,
-        variants: true,
-        dimensions: true,
-        categories: true,
-        collections: true,
-        reviews: true,
-      },
+      // CHANGED: dot-notation array
+      includeFields: [
+        "images",
+        "tags",
+        "options",
+        "variants",
+        "dimensions",
+        "categories",
+        "collections",
+        "reviews",
+      ],
 
+      // CHANGED: dot-notation keys
       nestedMeta: {
         images: { owned: true },
         tags: { owned: true },
@@ -174,24 +176,29 @@ class OrderCrud extends PrismaCrudAdapter<Order> {
   constructor(prismaClient: PrismaClient, isTx?: boolean) {
     super(prismaClient, {
       model: "order",
-      includeFields: {
-        transaction: true,
-        shippingInfo: {
-          include: {
-            address: true,
-          },
-        },
-        items: true,
-        statusHistory: true,
-        invoices: true,
-      },
+
+      // CHANGED: dot-notation array
+      includeFields: [
+        "transaction",
+        "transaction.billingAddress",
+        "shippingInfo",
+        "shippingInfo.address",
+        "items",
+        "statusHistory",
+        "invoices",
+      ],
+
+      // CHANGED: dot-notation keys
       nestedMeta: {
         transaction: { owned: true },
+        "transaction.billingAddress": { owned: true },
         shippingInfo: { owned: true },
+        "shippingInfo.address": { owned: true },
         items: { owned: true },
         statusHistory: { owned: true },
         invoices: { owned: true },
       },
+
       searchFields: ["id", "userId"],
       isTx,
     });
