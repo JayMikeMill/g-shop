@@ -3,10 +3,9 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "@features/user/useUser";
 import { AnimatedDialog, Button, Input } from "@components/ui";
-import { emptyUser } from "@my-store/shared";
 
 export default function AdminLoginPage() {
-  const { user, loginUser, registerUser } = useUser();
+  const { user, loginUser } = useUser();
 
   const navigate = useNavigate();
   const location = useLocation();

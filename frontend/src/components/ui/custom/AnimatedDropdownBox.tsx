@@ -22,8 +22,6 @@ export const AnimatedDropdownBox: React.FC<AnimatedDropdownBoxProps> = ({
   disabled = false,
 }) => {
   const [internalOpen, setInternalOpen] = useState(openInitially);
-
-  // Use external prop if provided, otherwise internal state
   const open = externalOpen !== undefined ? externalOpen : internalOpen;
 
   const [overflow, setOverflow] = useState(open);
@@ -45,21 +43,15 @@ export const AnimatedDropdownBox: React.FC<AnimatedDropdownBoxProps> = ({
         {!disabled && <span>{open ? "▲" : "▼"}</span>}
       </Button>
 
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            onAnimationStart={() => setOverflow(false)}
-            onAnimationComplete={() => setOverflow(open)}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className={`${overflow ? "overflow-visible" : "overflow-hidden"}`}
-          >
-            <div className={`p-4 flex flex-col ${className}`}>{children}</div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Always render the children, just animate height */}
+      <motion.div
+        initial={false}
+        animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className={`overflow-hidden`}
+      >
+        <div className={`p-4 flex flex-col ${className}`}>{children}</div>
+      </motion.div>
     </div>
   );
 };

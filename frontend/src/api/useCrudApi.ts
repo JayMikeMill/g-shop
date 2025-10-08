@@ -10,6 +10,11 @@ export function CRUD<T extends { id?: string }>(
   const getImpl = async (
     query?: Partial<T> | QueryObject<T>
   ): Promise<T | { data: T[]; total: number } | null> => {
+    // No query (getAll)
+    if (!query) {
+      return await get<{ data: T[]; total: number }>(`/${name}`);
+    }
+
     const isQueryObj = isQueryObject(query);
 
     // Partial<T> query (getOne)
@@ -29,11 +34,6 @@ export function CRUD<T extends { id?: string }>(
       return await get<{ data: T[]; total: number }>(
         `/${name}?${toQueryString(query)}`
       );
-    }
-
-    // No query (getAll)
-    if (!query) {
-      return await get<{ data: T[]; total: number }>(`/${name}`);
     }
 
     // Fallback

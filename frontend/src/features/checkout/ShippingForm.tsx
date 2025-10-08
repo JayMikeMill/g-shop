@@ -1,74 +1,114 @@
 import { useEffect } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { Input, Label } from "@components/ui";
 import {
   ShippingCarrier,
   ShippingMethod,
-  type OrderShippingInfo,
+  type ShippingInfo,
 } from "@my-store/shared";
-import { z } from "zod";
-import { useForm, useWatch, type Resolver } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input, Label } from "@components/ui";
 
-// helper to convert enum objects to Zod enums
-const zEnum = <T extends Record<string, string>>(obj: T) =>
-  z.enum(Object.values(obj) as [string, ...string[]]);
+// ----- Safe form types -----
+export type ShippingFormSafe = {
+  id?: string;
+  address: {
+    name: string;
+    email: string;
+    phone?: string;
+    street1: string;
+    street2?: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+  };
+  method: ShippingMethod;
+  carrier: ShippingCarrier;
+  cost?: number;
+  tracking?: string;
+};
 
+// ----- Zod schema -----
 const shippingSchema = z.object({
-  name: z.string(),
-  email: z.string().email("Invalid email"),
-  phone: z.string().optional(),
-  method: zEnum(ShippingMethod).optional(),
-  carrier: zEnum(ShippingCarrier).optional(),
+  address: z.object({
+    name: z.string().min(1),
+    email: z.string().email(),
+    phone: z.string().optional(),
+    street1: z.string().min(1),
+    street2: z.string().optional(),
+    city: z.string().min(1),
+    state: z.string().min(1),
+    postalCode: z.string().min(1),
+    country: z.string().min(1),
+  }),
+  method: z.nativeEnum(ShippingMethod),
+  carrier: z.nativeEnum(ShippingCarrier),
   cost: z.number().optional(),
-  tracking: z.string().nullable().optional(),
-  notes: z.string().optional(),
-  street: z.string().min(1),
-  city: z.string().min(1),
-  state: z.string().min(1),
-  postalCode: z.string().min(1),
-  country: z.string().min(1),
+  tracking: z.string().optional(),
 });
 
+// ----- Props -----
 interface ShippingFormProps {
-  defaultValues?: OrderShippingInfo;
-  onChange: (data: OrderShippingInfo) => void;
+  defaultValues?: ShippingInfo;
+  onChange: (data: ShippingFormSafe) => void;
   className?: string;
 }
 
+// ----- Component -----
 export default function ShippingForm({
   defaultValues,
   onChange,
   className,
 }: ShippingFormProps) {
-  const { control, register, handleSubmit } = useForm<OrderShippingInfo>({
+  const { control, register, handleSubmit } = useForm<ShippingFormSafe>({
     defaultValues: {
-      name: defaultValues?.name ?? "",
-      email: defaultValues?.email ?? "",
-      phone: defaultValues?.phone ?? "",
-      method: defaultValues?.method ?? Object.values(ShippingMethod)[0],
-      carrier: defaultValues?.carrier ?? Object.values(ShippingCarrier)[0],
-      cost: defaultValues?.cost ?? 0,
-      tracking: defaultValues?.tracking ?? null,
-      line1: defaultValues?.line1 ?? "",
-      line2: defaultValues?.line2 ?? "",
-      city: defaultValues?.city ?? "",
-      state: defaultValues?.state ?? "",
-      postalCode: defaultValues?.postalCode ?? "",
-      country: defaultValues?.country ?? "US",
+      ...defaultValues,
+      address: {
+        name: defaultValues?.address?.name ?? "",
+        email: defaultValues?.address?.email ?? "",
+        phone: defaultValues?.address?.phone ?? undefined,
+        street1: defaultValues?.address?.street1 ?? "",
+        street2: defaultValues?.address?.street2 ?? undefined,
+        city: defaultValues?.address?.city ?? "",
+        state: defaultValues?.address?.state ?? "",
+        postalCode: defaultValues?.address?.postalCode ?? "",
+        country: defaultValues?.address?.country ?? "US",
+      },
+      method: defaultValues?.method ?? ShippingMethod.STANDARD,
+      carrier: defaultValues?.carrier ?? ShippingCarrier.UPS,
+      cost: defaultValues?.cost ?? undefined,
+      tracking: defaultValues?.tracking ?? undefined,
     },
-    resolver: zodResolver(
-      shippingSchema
-    ) as unknown as Resolver<OrderShippingInfo>,
+    resolver: zodResolver(shippingSchema),
     mode: "onChange",
   });
 
   const values = useWatch({ control });
 
   useEffect(() => {
-    onChange({ ...values } as OrderShippingInfo);
+    if (values.address) {
+      onChange({
+        ...values,
+        method: values.method ?? ShippingMethod.STANDARD,
+        carrier: values.carrier ?? ShippingCarrier.UPS,
+        address: {
+          name: values.address.name ?? "",
+          email: values.address.email ?? "",
+          phone: values.address.phone,
+          street1: values.address.street1 ?? "",
+          street2: values.address.street2,
+          city: values.address.city ?? "",
+          state: values.address.state ?? "",
+          postalCode: values.address.postalCode ?? "",
+          country: values.address.country ?? "",
+        },
+      });
+    }
   }, [values, onChange]);
 
-  const submitForm = (data: OrderShippingInfo) => {
+  const submitForm = (data: ShippingFormSafe) => {
     console.log("Shipping info submitted:", data);
   };
 
@@ -83,41 +123,52 @@ export default function ShippingForm({
 
       <div className="flex gap-4">
         <div className="flex-1">
-          <Label>Address Line 1</Label>
-          <Input {...register("line1")} />
+          <Label>Name</Label>
+          <Input {...register("address.name")} />
+        </div>
+        <div className="flex-1">
+          <Label>Email</Label>
+          <Input {...register("address.email")} />
+        </div>
+      </div>
+
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <Label>Phone</Label>
+          <Input {...register("address.phone")} />
+        </div>
+      </div>
+
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <Label>Street 1</Label>
+          <Input {...register("address.street1")} />
+        </div>
+        <div className="flex-1">
+          <Label>Street 2</Label>
+          <Input {...register("address.street2")} />
         </div>
       </div>
 
       <div className="flex gap-4">
         <div className="flex-1">
           <Label>City</Label>
-          <Input {...register("city")} />
+          <Input {...register("address.city")} />
         </div>
         <div className="flex-1">
           <Label>State</Label>
-          <Input {...register("state")} />
+          <Input {...register("address.state")} />
         </div>
       </div>
 
       <div className="flex gap-4">
         <div className="flex-1">
           <Label>Postal Code</Label>
-          <Input {...register("postalCode")} />
+          <Input {...register("address.postalCode")} />
         </div>
         <div className="flex-1">
           <Label>Country</Label>
-          <Input {...register("country")} />
-        </div>
-      </div>
-
-      <div className="flex gap-4">
-        <div className="flex-1">
-          <Label>Email</Label>
-          <Input {...register("email")} />
-        </div>
-        <div className="flex-1">
-          <Label>Phone</Label>
-          <Input {...register("phone")} />
+          <Input {...register("address.country")} />
         </div>
       </div>
 

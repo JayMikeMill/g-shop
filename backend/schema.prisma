@@ -38,6 +38,14 @@ enum OrderStatus {
   REFUNDED
 }
 
+enum ShippingStatus {
+  LABEL_CREATED
+  IN_TRANSIT
+  OUT_FOR_DELIVERY
+  DELIVERED
+  EXCEPTION
+}
+
 enum TransactionStatus {
   PENDING
   PAID
@@ -106,21 +114,21 @@ enum StockMovementType {
 
 /// User Model
 model User {
-  id                  String   @id @default(uuid())
-  email               String   @unique
+  id                  String    @id @default(uuid())
+  email               String    @unique
   passwordHash        String
   firstName           String
   lastName            String
-  phone               String?  @unique
-  role                UserRole @default(USER)
-  isVerified          Boolean  @default(false)
-  lastLogin           DateTime
-  failedLoginAttempts Int      @default(0)
+  phone               String?   @unique
+  role                UserRole  @default(USER)
+  isVerified          Boolean   @default(false)
+  lastLogin           DateTime?
+  failedLoginAttempts Int       @default(0)
   preferences         Json?
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
 
-  addresses      UserAddress[]
+  addresses      Address[]
   paymentMethods UserPaymentMethod[]
   orders         Order[]
   reviews        ProductReview[]
@@ -128,27 +136,15 @@ model User {
   sessions       Session[]
 }
 
-model UserAddress {
-  id        String  @id @default(uuid())
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
-  label     String
-  street    String
-  city      String
-  state     String
-  zip       String
-  country   String
-  isDefault Boolean @default(false)
-}
-
 model UserPaymentMethod {
   id            String        @id @default(uuid())
-  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId        String
   type          PaymentMethod
   last4         String
   expiry        String
   providerToken String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
 }
 
 //////////////////////
@@ -160,7 +156,8 @@ model Collection {
   name        String
   slug        String              @unique
   description String?
-  seo         CollectionSEO?
+  seoTitle    String?
+  seoKeywords String?
   images      CollectionImageSet?
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
@@ -173,7 +170,8 @@ model Category {
   name        String
   slug        String              @unique
   description String?
-  seo         CollectionSEO?
+  seoTitle    String?
+  seoKeywords String?
   images      CollectionImageSet?
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
@@ -182,24 +180,15 @@ model Category {
 }
 
 model CollectionImageSet {
-  id           String      @id @default(uuid())
-  collection   Collection? @relation(fields: [collectionId], references: [id], onDelete: Cascade)
-  collectionId String?     @unique
-  category     Category?   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  categoryId   String?     @unique
-  banner       String
-  preview      String
-  thumbnail    String
-}
+  id        String @id @default(uuid())
+  banner    String
+  preview   String
+  thumbnail String
 
-model CollectionSEO {
-  id           String      @id @default(uuid())
   collection   Collection? @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   collectionId String?     @unique
   category     Category?   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId   String?     @unique
-  title        String?
-  keywords     String?
 }
 
 //////////////////////
@@ -215,7 +204,6 @@ model Product {
   discountType   DiscountType?
   description    String
   stock          Int?
-  weight         Float?
   reviewCount    Int?               @default(0) @map("review_count")
   averageRating  Float?             @default(0.0) @map("average_rating")
   status         ProductStatus      @default(ACTIVE)
@@ -234,65 +222,69 @@ model Product {
 }
 
 model ProductImageSet {
-  id        String  @id @default(uuid())
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String
+  id        String @id @default(uuid())
   main      String
   preview   String
   thumbnail String
+
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
 }
 
 model ProductOption {
-  id        String  @id @default(uuid())
+  id     String @id @default(uuid())
+  name   String
+  values Json
+
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
-  name      String
-  values    Json
 }
 
 model ProductVariant {
-  id        String    @id @default(uuid())
-  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  id      String @id @default(uuid())
+  options Json
+  price   Int?
+  stock   Int?
+
+  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
-  cart      Cart?     @relation(fields: [cartId], references: [id])
-  cartId    String?
-  options   Json
-  price     Int?
-  stock     Int?
-  CartItem  CartItem?
+  CartItem  CartItem[]
 }
 
 model ProductDimensions {
-  id        String  @id @default(uuid())
+  id     String @id @default(uuid())
+  weight Int?
+  length Int?
+  width  Int?
+  height Int?
+
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String  @unique
-  weight    Int?
-  length    Int?
-  width     Int?
-  height    Int?
 }
 
 model ProductTag {
   id        String  @id @default(uuid())
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String
   name      String
   color     String?
   textColor String?
+
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
 }
 
 model ProductReview {
   id           String       @id @default(uuid())
-  product      Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId    String
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId       String
   rating       Int
   comment      String
   status       ReviewStatus @default(PENDING)
   helpfulCount Int          @default(0)
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
+
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
 }
 
 model ProductTagPreset {
@@ -323,25 +315,76 @@ model StockMovement {
 }
 
 //////////////////////
+// ADDRESS & SHIPPING
+//////////////////////
+
+model Address {
+  id             String        @id @default(uuid())
+  name           String
+  email          String
+  phone          String?
+  street1        String
+  street2        String?
+  city           String
+  state          String
+  postalCode     String
+  country        String
+  label          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  User           User?         @relation(fields: [userId], references: [id])
+  userId         String?       @unique
+  ShippingInfo   ShippingInfo? @relation(fields: [ShippingInfoId], references: [id], onDelete: Cascade)
+  ShippingInfoId String?       @unique
+  Transaction    Transaction?  @relation(fields: [TransactionId], references: [id], onDelete: Cascade)
+  TransactionId  String?       @unique
+}
+
+model ShippingInfo {
+  id            String                  @id @default(uuid())
+  order         Order                   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId       String                  @unique
+  address       Address?
+  carrier       ShippingCarrier?
+  method        ShippingMethod?
+  cost          Int?
+  tracking      String?
+  labelUrl      String?
+  status        ShippingStatus?
+  statusHistory ShippingStatusHistory[]
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
+}
+
+model ShippingStatusHistory {
+  id             String         @id @default(uuid())
+  shippingInfo   ShippingInfo   @relation(fields: [shippingInfoId], references: [id], onDelete: Cascade)
+  shippingInfoId String
+  status         ShippingStatus
+  timestamp      DateTime       @default(now())
+}
+
+//////////////////////
 // ORDERS & TRANSACTIONS
 //////////////////////
 
 model Order {
-  id            String               @id @default(uuid())
-  user          User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
-  userId        String?
-  status        OrderStatus          @default(PENDING)
-  total         Int
-  tax           Int?
-  shippingCost  Int?
-  transaction   Transaction?
-  shippingInfo  OrderShippingInfo?
-  items         OrderItem[]
-  statusHistory OrderStatusHistory[]
-  invoices      Invoice[]
-  notes         String?
-  createdAt     DateTime             @default(now())
-  updatedAt     DateTime             @updatedAt
+  id             String               @id @default(uuid())
+  user           User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId         String?
+  status         OrderStatus          @default(PENDING)
+  total          Int
+  tax            Int?
+  shippingCost   Int?
+  transaction    Transaction?
+  shippingInfo   ShippingInfo?
+  items          OrderItem[]
+  statusHistory  OrderStatusHistory[]
+  invoices       Invoice[]
+  notes          String?
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  shippingInfoId String?
 }
 
 model OrderItem {
@@ -358,34 +401,12 @@ model Transaction {
   id              String            @id @default(uuid())
   order           Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId         String            @unique
+  billingAddress  Address?
   amount          Int
   currency        String
   method          PaymentMethod
   status          TransactionStatus
-  billingAddress  Json?
   gatewayResponse Json?
-}
-
-model OrderShippingInfo {
-  id         String           @id @default(uuid())
-  order      Order            @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  orderId    String           @unique
-  name       String
-  email      String
-  phone      String
-  line1      String
-  line2      String
-  city       String
-  state      String
-  postalCode String
-  country    String
-  carrier    ShippingCarrier?
-  method     ShippingMethod?
-  cost       Int?
-  tracking   String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model OrderStatusHistory {
@@ -430,24 +451,23 @@ model Session {
   token     String   @unique
   ipAddress String?
   userAgent String?
-  cart      Cart[]
+  cart      Cart?
   expiresAt DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Cart {
-  id             String           @id @default(uuid())
-  session        Session?         @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  sessionId      String?          @unique
-  user           User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId         String?          @unique
-  items          CartItem[]
-  subtotal       Int              @default(0)
-  total          Int              @default(0)
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  ProductVariant ProductVariant[]
+  id        String     @id @default(uuid())
+  session   Session?   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId String?    @unique
+  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String?    @unique
+  items     CartItem[]
+  subtotal  Int        @default(0)
+  total     Int        @default(0)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
 
 model CartItem {
@@ -457,11 +477,9 @@ model CartItem {
   product   Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String          @unique
   variant   ProductVariant? @relation(fields: [variantId], references: [id])
-  variantId String?         @unique
+  variantId String?
   quantity  Int             @default(1)
   price     Int
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
-
-  @@unique([cartId, productId, variantId])
 }

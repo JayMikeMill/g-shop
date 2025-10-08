@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { AuthAdapter } from "./AuthAdapter";
+import { AuthAdapter } from "../AuthAdapter";
 import { db } from "@config/adapters";
 import { User } from "@my-store/shared";
 

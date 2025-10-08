@@ -1,15 +1,15 @@
 import type {
   Order,
-  OrderShippingInfo,
+  ShippingInfo,
   ShippingCarrier,
   ShippingMethod,
+  Address,
 } from "@my-store/shared";
-
 import {
-  emptyOrderShippingInfo,
   ShippingCarrier as ShippingCarriers,
+  ShippingMethod as ShippingMethods,
+  emptyAddress,
 } from "@my-store/shared";
-import { ShippingMethod as ShippingMethods } from "@my-store/shared";
 
 type OrderShippingEditorProps = {
   order: Order;
@@ -20,67 +20,97 @@ export default function OrderShippingEditor({
   order,
   setOrder,
 }: OrderShippingEditorProps) {
+  console.log("Rendering OrderShippingEditor", order);
+
   // Ensure shippingInfo exists
-  const shippingInfo: OrderShippingInfo = order.shippingInfo || {
-    ...emptyOrderShippingInfo,
+  const shippingInfo: ShippingInfo = order.shippingInfo || {
     orderId: order.id,
+    address: emptyAddress,
   };
 
-  const updateShipping = (updates: Partial<OrderShippingInfo>) =>
+  const updateShipping = (
+    updates: Partial<ShippingInfo>,
+    addressUpdates?: Partial<Address>
+  ) => {
     setOrder({
       ...order,
-      shippingInfo: { ...shippingInfo, ...updates },
+      shippingInfo: {
+        ...shippingInfo,
+        ...updates,
+        address: {
+          ...emptyAddress,
+          ...shippingInfo.address,
+          ...addressUpdates,
+        },
+      },
     });
+  };
+
+  const address = shippingInfo.address || emptyAddress;
 
   return (
     <div className="flex flex-col gap-2">
       <input
         type="text"
         placeholder="Name"
-        value={shippingInfo.name}
-        onChange={(e) => updateShipping({ name: e.target.value })}
+        value={address.name}
+        onChange={(e) => updateShipping({}, { name: e.target.value })}
+        className="border rounded px-2 py-1 w-full"
+      />
+      <input
+        type="text"
+        placeholder="Email"
+        value={address.email}
+        onChange={(e) => updateShipping({}, { email: e.target.value })}
         className="border rounded px-2 py-1 w-full"
       />
       <input
         type="text"
         placeholder="Phone"
-        value={shippingInfo.phone}
-        onChange={(e) => updateShipping({ phone: e.target.value })}
+        value={address.phone || ""}
+        onChange={(e) => updateShipping({}, { phone: e.target.value })}
         className="border rounded px-2 py-1 w-full"
       />
       <input
         type="text"
-        placeholder="Street"
-        value={shippingInfo.line1}
-        onChange={(e) => updateShipping({ line1: e.target.value })}
+        placeholder="Street 1"
+        value={address.street1}
+        onChange={(e) => updateShipping({}, { street1: e.target.value })}
+        className="border rounded px-2 py-1 w-full"
+      />
+      <input
+        type="text"
+        placeholder="Street 2"
+        value={address.street2 || ""}
+        onChange={(e) => updateShipping({}, { street2: e.target.value })}
         className="border rounded px-2 py-1 w-full"
       />
       <input
         type="text"
         placeholder="City"
-        value={shippingInfo.city}
-        onChange={(e) => updateShipping({ city: e.target.value })}
+        value={address.city}
+        onChange={(e) => updateShipping({}, { city: e.target.value })}
         className="border rounded px-2 py-1 w-full"
       />
       <input
         type="text"
         placeholder="State"
-        value={shippingInfo.state}
-        onChange={(e) => updateShipping({ state: e.target.value })}
+        value={address.state}
+        onChange={(e) => updateShipping({}, { state: e.target.value })}
         className="border rounded px-2 py-1 w-full"
       />
       <input
         type="text"
         placeholder="Postal Code"
-        value={shippingInfo.postalCode}
-        onChange={(e) => updateShipping({ postalCode: e.target.value })}
+        value={address.postalCode}
+        onChange={(e) => updateShipping({}, { postalCode: e.target.value })}
         className="border rounded px-2 py-1 w-full"
       />
       <input
         type="text"
         placeholder="Country"
-        value={shippingInfo.country}
-        onChange={(e) => updateShipping({ country: e.target.value })}
+        value={address.country}
+        onChange={(e) => updateShipping({}, { country: e.target.value })}
         className="border rounded px-2 py-1 w-full"
       />
       <select

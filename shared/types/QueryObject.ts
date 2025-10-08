@@ -74,7 +74,11 @@ export function toQueryString<T>(query?: QueryObject<T>): string {
 // Parse query string / object into strongly-typed QueryObject
 export function parseQueryObject<T>(
   query: Record<string, any> | Record<string, any>[]
-): QueryObject<T> | Partial<T> {
+): QueryObject<T> | Partial<T> | undefined {
+  // No query = undefined (used to fetch all)
+  if (!query || Object.keys(query).length === 0) return undefined;
+
+  // If an array is passed, use the first item
   const q = Array.isArray(query) ? query[0] : query;
 
   // If the object doesn't have any query-related keys, assume it's a Partial<T>

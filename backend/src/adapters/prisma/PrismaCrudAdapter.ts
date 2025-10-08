@@ -97,8 +97,24 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
   async get(
     query?: Partial<T> | QueryObject<T>
   ): Promise<T | { data: T[]; total: number } | null> {
+    console.log("PrismaCrudAdapter.get called with query:", query);
+    // -------------------- NO QUERY: return all --------------------
+    if (!query) {
+      const [data, total] = this.isTx
+        ? await this.prisma.$transaction([
+            this.client.findMany({ include: this.includeFields }),
+            this.client.count(),
+          ])
+        : await Promise.all([
+            this.client.findMany({ include: this.includeFields }),
+            this.client.count(),
+          ]);
+
+      return { data, total };
+    }
+
     // -------------------- Partial (Single) --------------------
-    if (query && !isQueryObject(query)) {
+    if (!isQueryObject(query)) {
       const partialQuery = query as Partial<T>;
       const where: any = {};
 

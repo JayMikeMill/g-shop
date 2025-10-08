@@ -1,4 +1,4 @@
-import { StorageAdapter } from "./StorageAdapter";
+import { StorageAdapter } from "../StorageAdapter";
 import { getStorage } from "firebase-admin/storage";
 import { initializeApp, cert, App } from "firebase-admin/app";
 import path from "path";

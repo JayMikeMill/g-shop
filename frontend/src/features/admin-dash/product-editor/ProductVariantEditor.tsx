@@ -50,6 +50,7 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
 
   // Sync localVariants into product
   useEffect(() => {
+    console.log("Updating product variants:", localVariants);
     const totalStock = getProductStock({ ...product, variants: localVariants });
 
     setProduct((prev) => ({

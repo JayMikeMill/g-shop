@@ -174,11 +174,11 @@ function CollectionDialogBase<T extends Collection>({
             <Input
               type="text"
               placeholder="SEO Title"
-              value={localItem.seo?.title ?? ""}
+              value={localItem.seoTitle ?? ""}
               onChange={(e) =>
                 setLocalItem((prev) => ({
                   ...prev,
-                  seo: { ...prev.seo, title: e.target.value },
+                  seoTitle: e.target.value,
                 }))
               }
             />
@@ -189,19 +189,28 @@ function CollectionDialogBase<T extends Collection>({
             <Input
               type="text"
               placeholder="keyword1, keyword2"
-              value={localItem.seo?.keywords ?? ""}
+              value={localItem.seoKeywords ?? ""}
               onChange={(e) =>
                 setLocalItem((prev) => ({
                   ...prev,
-                  seo: {
-                    ...prev.seo,
-                    keywords: e.target.value.split(",").map((k) => k.trim()),
-                  },
+                  seoKeywords: e.target.value.split(",").map((k) => k.trim()),
                 }))
               }
             />
           </label>
         </div>
+
+        {/* Description */}
+        <label className="flex flex-col gap-1 text-sm font-semibold text-text">
+          Description
+          <Textarea
+            placeholder="Description"
+            value={localItem.description ?? ""}
+            onChange={(e) =>
+              setLocalItem((prev) => ({ ...prev, description: e.target.value }))
+            }
+          />
+        </label>
 
         {/* Description */}
         <label className="flex flex-col gap-1 text-sm font-semibold text-text">

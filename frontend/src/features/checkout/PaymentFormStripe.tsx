@@ -7,22 +7,16 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 
-import {
-  type OrderShippingInfo,
-  TransactionStatus as TransactionStatuses,
-  PaymentMethod as PaymentMethods,
-  OrderStatus as OrderStatuses,
-  type Order,
-  type Cart,
-} from "@my-store/shared";
+import { type ShippingInfo, type Cart } from "@my-store/shared";
 
-import { useApi } from "@api/useApi";
 import { Button } from "@components/ui";
-import { floatToPrice } from "@utils/productUtils";
+import { useApi } from "@api/useApi";
+
+import { createOrder } from "./createOrder";
 
 interface StripePaymentFormProps {
   cart: Cart;
-  shippingInfo: OrderShippingInfo;
+  shippingInfo: ShippingInfo;
   setLoading: (loading: boolean) => void;
   setMessage: (msg: string | null) => void;
 }
@@ -38,15 +32,13 @@ function InnerStripeForm({
 }: StripePaymentFormProps) {
   const stripe = useStripe();
   const elements = useElements();
-  const { placeOrder, orders } = useApi();
-
-  // Mutation for orders
-  const createOrder = orders.create();
+  const { placeOrder } = useApi();
 
   const handlePayment = async () => {
     if (!stripe || !elements) return;
 
     const cardElement = elements.getElement(CardElement);
+
     if (!cardElement) return;
 
     try {
@@ -57,14 +49,16 @@ function InnerStripeForm({
         type: "card",
         card: cardElement,
         billing_details: {
-          name: shippingInfo.name,
+          name: shippingInfo.address?.name,
+          email: shippingInfo.address?.email,
+          phone: shippingInfo.address?.phone,
           address: {
-            line1: shippingInfo.line1,
-            line2: shippingInfo.line2,
-            city: shippingInfo.city,
-            state: shippingInfo.state,
-            postal_code: shippingInfo.postalCode,
-            country: shippingInfo.country,
+            line1: shippingInfo.address?.street1,
+            line2: shippingInfo.address?.street2,
+            city: shippingInfo.address?.city,
+            state: shippingInfo.address?.state,
+            postal_code: shippingInfo.address?.postalCode,
+            country: shippingInfo.address?.country,
           },
         },
       });
@@ -79,40 +73,13 @@ function InnerStripeForm({
         return;
       }
 
-      // Create order object
-      const order: Order = {
-        total: floatToPrice(cart.total),
-        status: OrderStatuses.PAID,
-        items: cart.items
-          ?.filter((item) => item.product !== undefined)
-          .map((item) => ({
-            product: item.product as NonNullable<typeof item.product>,
-            quantity: item.quantity,
-            price: floatToPrice(item.price),
-          })),
-        statusHistory: [
-          {
-            status: OrderStatuses.PAID,
-            timestamp: new Date(),
-          },
-        ],
-        transaction: {
-          method: PaymentMethods.STRIPE,
-          amount: cart.total,
-          currency: "USD",
-          status: TransactionStatuses.PAID,
-        },
-        shippingInfo,
-        invoices: [
-          { createdAt: new Date(), invoiceNumber: `INV-${Date.now()}` },
-        ],
-      };
+      const order = createOrder(cart, shippingInfo);
 
       // Send paymentMethod.id to backend
       const response = await placeOrder(paymentMethod, order);
 
       if (response?.success === true) {
-        await onSuccess(response);
+        await onSuccess();
         console.log("Payment and order successful:", response);
       } else {
         setMessage("Payment failed: " + (response?.error || "Unknown error"));
@@ -126,34 +93,8 @@ function InnerStripeForm({
     }
   };
 
-  const onSuccess = async (payment: any) => {
+  const onSuccess = async () => {
     setMessage("Payment successful!");
-
-    try {
-      await createOrder.mutateAsync({
-        total: floatToPrice(cart.total),
-        status: OrderStatuses.PAID,
-        statusHistory: [
-          {
-            status: OrderStatuses.PAID,
-            timestamp: new Date(),
-          },
-        ],
-        transaction: {
-          method: PaymentMethods.STRIPE,
-          amount: payment.amount,
-          currency: payment.currency,
-          status: TransactionStatuses.PAID,
-        },
-        shippingInfo,
-        invoices: [
-          { createdAt: new Date(), invoiceNumber: `INV-${Date.now()}` },
-        ],
-      });
-    } catch (err) {
-      console.error("Order creation failed:", err);
-      setMessage("Order could not be saved");
-    }
   };
 
   return (

@@ -25,6 +25,21 @@ export const OrderStatus = {
   REFUNDED: "REFUNDED",
 } satisfies Record<string, OrderStatus>;
 
+export type ShippingStatus =
+  | "LABEL_CREATED"
+  | "IN_TRANSIT"
+  | "OUT_FOR_DELIVERY"
+  | "DELIVERED"
+  | "EXCEPTION";
+
+export const ShippingStatus = {
+  LABEL_CREATED: "LABEL_CREATED",
+  IN_TRANSIT: "IN_TRANSIT",
+  OUT_FOR_DELIVERY: "OUT_FOR_DELIVERY",
+  DELIVERED: "DELIVERED",
+  EXCEPTION: "EXCEPTION",
+} satisfies Record<string, ShippingStatus>;
+
 export type TransactionStatus = "PENDING" | "PAID" | "REFUNDED" | "FAILED";
 
 export const TransactionStatus = {
@@ -130,12 +145,12 @@ export interface User {
   phone?: string | null;
   role: UserRole;
   isVerified: boolean;
-  lastLogin: Date;
+  lastLogin?: Date | null;
   failedLoginAttempts: number;
   preferences?: JsonValue | null;
   createdAt?: Date;
   updatedAt?: Date;
-  addresses?: UserAddress[];
+  addresses?: Address[];
   paymentMethods?: UserPaymentMethod[];
   orders?: Order[];
   reviews?: ProductReview[];
@@ -143,27 +158,14 @@ export interface User {
   sessions?: Session[];
 }
 
-export interface UserAddress {
-  id?: string;
-  user?: User;
-  userId?: string;
-  label: string;
-  street: string;
-  city: string;
-  state: string;
-  zip: string;
-  country: string;
-  isDefault: boolean;
-}
-
 export interface UserPaymentMethod {
   id?: string;
-  user?: User;
-  userId?: string;
   type: PaymentMethod;
   last4: string;
   expiry: string;
   providerToken: string;
+  user?: User;
+  userId?: string;
 }
 
 export interface Collection {
@@ -171,7 +173,8 @@ export interface Collection {
   name: string;
   slug: string;
   description?: string | null;
-  seo?: CollectionSEO | null;
+  seoTitle?: string | null;
+  seoKeywords?: string | null;
   images?: CollectionImageSet | null;
   createdAt?: Date;
   updatedAt?: Date;
@@ -183,7 +186,8 @@ export interface Category {
   name: string;
   slug: string;
   description?: string | null;
-  seo?: CollectionSEO | null;
+  seoTitle?: string | null;
+  seoKeywords?: string | null;
   images?: CollectionImageSet | null;
   createdAt?: Date;
   updatedAt?: Date;
@@ -192,23 +196,13 @@ export interface Category {
 
 export interface CollectionImageSet {
   id?: string;
-  collection?: Collection | null;
-  collectionId?: string | null;
-  category?: Category | null;
-  categoryId?: string | null;
   banner: string;
   preview: string;
   thumbnail: string;
-}
-
-export interface CollectionSEO {
-  id?: string;
   collection?: Collection | null;
   collectionId?: string | null;
   category?: Category | null;
   categoryId?: string | null;
-  title?: string | null;
-  keywords?: string | null;
 }
 
 export interface Product {
@@ -220,7 +214,6 @@ export interface Product {
   discountType?: DiscountType | null;
   description: string;
   stock?: number | null;
-  weight?: number | null;
   reviewCount?: number | null;
   averageRating?: number | null;
   status: ProductStatus;
@@ -240,64 +233,62 @@ export interface Product {
 
 export interface ProductImageSet {
   id?: string;
-  product?: Product;
-  productId?: string;
   main: string;
   preview: string;
   thumbnail: string;
+  product?: Product;
+  productId?: string;
 }
 
 export interface ProductOption {
   id?: string;
-  product?: Product;
-  productId?: string;
   name: string;
   values: string[];
+  product?: Product;
+  productId?: string;
 }
 
 export interface ProductVariant {
   id?: string;
-  product?: Product;
-  productId?: string;
-  cart?: Cart | null;
-  cartId?: string | null;
   options: string[];
   price?: number | null;
   stock?: number | null;
-  CartItem?: CartItem | null;
+  product?: Product;
+  productId?: string;
+  CartItem?: CartItem[];
 }
 
 export interface ProductDimensions {
   id?: string;
-  product?: Product;
-  productId?: string;
   weight?: number | null;
   length?: number | null;
   width?: number | null;
   height?: number | null;
+  product?: Product;
+  productId?: string;
 }
 
 export interface ProductTag {
   id?: string;
-  product?: Product;
-  productId?: string;
   name: string;
   color?: string | null;
   textColor?: string | null;
+  product?: Product;
+  productId?: string;
 }
 
 export interface ProductReview {
   id?: string;
-  product?: Product;
-  productId?: string;
-  user?: User;
-  userId?: string;
   rating: number;
   comment: string;
   status: ReviewStatus;
   helpfulCount: number;
   createdAt?: Date;
   updatedAt?: Date;
+  product?: Product;
+  productId?: string;
+  user?: User;
+  userId?: string;
 }
 
 export interface ProductTagPreset {
@@ -323,6 +314,52 @@ export interface StockMovement {
   notes?: string | null;
 }
 
+export interface Address {
+  id?: string;
+  name: string;
+  email: string;
+  phone?: string | null;
+  street1: string;
+  street2?: string | null;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  label?: string | null;
+  createdAt?: Date;
+  updatedAt?: Date;
+  User?: User | null;
+  userId?: string | null;
+  ShippingInfo?: ShippingInfo | null;
+  ShippingInfoId?: string | null;
+  Transaction?: Transaction | null;
+  TransactionId?: string | null;
+}
+
+export interface ShippingInfo {
+  id?: string;
+  order?: Order;
+  orderId?: string;
+  address?: Address | null;
+  carrier?: ShippingCarrier | null;
+  method?: ShippingMethod | null;
+  cost?: number | null;
+  tracking?: string | null;
+  labelUrl?: string | null;
+  status?: ShippingStatus | null;
+  statusHistory?: ShippingStatusHistory[];
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface ShippingStatusHistory {
+  id?: string;
+  shippingInfo?: ShippingInfo;
+  shippingInfoId?: string;
+  status: ShippingStatus;
+  timestamp: Date;
+}
+
 export interface Order {
   id?: string;
   user?: User | null;
@@ -332,20 +369,21 @@ export interface Order {
   tax?: number | null;
   shippingCost?: number | null;
   transaction?: Transaction | null;
-  shippingInfo?: OrderShippingInfo | null;
+  shippingInfo?: ShippingInfo | null;
   items?: OrderItem[];
   statusHistory?: OrderStatusHistory[];
   invoices?: Invoice[];
   notes?: string | null;
   createdAt?: Date;
   updatedAt?: Date;
+  shippingInfoId?: string | null;
 }
 
 export interface OrderItem {
   id?: string;
   order?: Order;
   orderId?: string;
-  product: Product;
+  product: Product
   variant?: ProductVariant;
   quantity: number;
   price: number;
@@ -355,33 +393,12 @@ export interface Transaction {
   id?: string;
   order?: Order;
   orderId?: string;
+  billingAddress?: Address | null;
   amount: number;
   currency: string;
   method: PaymentMethod;
   status: TransactionStatus;
-  billingAddress?: JsonValue | null;
   gatewayResponse?: JsonValue | null;
-}
-
-export interface OrderShippingInfo {
-  id?: string;
-  order?: Order;
-  orderId?: string;
-  name: string;
-  email: string;
-  phone: string;
-  line1: string;
-  line2: string;
-  city: string;
-  state: string;
-  postalCode: string;
-  country: string;
-  carrier?: ShippingCarrier | null;
-  method?: ShippingMethod | null;
-  cost?: number | null;
-  tracking?: string | null;
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
 export interface OrderStatusHistory {
@@ -418,7 +435,7 @@ export interface Session {
   token: string;
   ipAddress?: string | null;
   userAgent?: string | null;
-  cart?: Cart[];
+  cart?: Cart | null;
   expiresAt: Date;
   createdAt?: Date;
   updatedAt?: Date;
@@ -435,7 +452,6 @@ export interface Cart {
   total: number;
   createdAt?: Date;
   updatedAt?: Date;
-  ProductVariant?: ProductVariant[];
 }
 
 export interface CartItem {

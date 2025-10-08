@@ -1,11 +1,10 @@
 import { Order, Product, ProductVariant, QueryObject } from "@my-store/shared";
 import { db, payment as paymentAdapter } from "@config/adapters";
-import { DBAdapter } from "@adapters/db/DBAdapter";
+import { DBAdapter } from "@adapters/DBAdapter";
 
 export class OrderProcessingService {
   static async placeOrder(payment: any, order: Order) {
     // implement order placement logic
-    console.log("Placing order:", order, "with payment:", payment);
     try {
       // 1. Check stock for all items in the order
       if (!(await stockAvailable(order, db))) {
@@ -46,6 +45,7 @@ export class OrderProcessingService {
           throw new Error("Out of stock");
         }
 
+        console.log("Stock verified, creating order...", order);
         // 3b. Create order and update stock
         newOrder = await tx.orders.create(order);
 
@@ -147,6 +147,8 @@ async function updateStock(order: Order, dbAdapter: DBAdapter) {
 
   const updatePromises: Promise<any>[] = [];
 
+  console.log("Updating stock for order items:", order.items);
+
   for (const item of order.items) {
     const quantity = item.quantity || 1;
 
@@ -158,6 +160,13 @@ async function updateStock(order: Order, dbAdapter: DBAdapter) {
         updatePromises.push(
           dbAdapter.productVariants.update(
             { id: item.variant.id, stock: -quantity },
+            { increment: true }
+          )
+        );
+
+        updatePromises.push(
+          dbAdapter.products.update(
+            { id: item.product.id!, stock: -quantity },
             { increment: true }
           )
         );

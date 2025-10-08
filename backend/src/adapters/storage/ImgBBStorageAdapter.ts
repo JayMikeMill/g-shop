@@ -1,4 +1,4 @@
-import { StorageAdapter } from "./StorageAdapter";
+import { StorageAdapter } from "../StorageAdapter";
 import axios from "axios";
 
 const IMGBB_API_KEY = process.env.IMGBB_API_KEY;

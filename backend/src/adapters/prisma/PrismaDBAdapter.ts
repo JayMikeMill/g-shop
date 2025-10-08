@@ -14,7 +14,7 @@ import type {
   ProductVariant,
 } from "@my-store/shared";
 
-import { DBAdapter } from "./DBAdapter";
+import { DBAdapter } from "../DBAdapter";
 
 export class PrismaDBAdapter implements DBAdapter {
   private prisma: PrismaClient;
@@ -175,14 +175,22 @@ class OrderCrud extends PrismaCrudAdapter<Order> {
     super(prismaClient, {
       model: "order",
       includeFields: {
+        transaction: true,
+        shippingInfo: {
+          include: {
+            address: true,
+          },
+        },
         items: true,
-        invoices: true,
         statusHistory: true,
+        invoices: true,
       },
       nestedMeta: {
+        transaction: { owned: true },
+        shippingInfo: { owned: true },
         items: { owned: true },
-        invoices: { owned: true },
         statusHistory: { owned: true },
+        invoices: { owned: true },
       },
       searchFields: ["id", "userId"],
       isTx,

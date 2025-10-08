@@ -8,6 +8,8 @@ import {
 } from "@components/ui";
 import { useApi } from "@api/useApi";
 import type { CrudEditorInterface } from "@features/admin-dash/CrudEditorInterface";
+import type { Query } from "@tanstack/react-query";
+import type { QueryObject } from "@my-store/shared";
 
 interface AdminCrudPageProps<T extends { id?: string }> {
   objectsName: string;
@@ -43,7 +45,9 @@ function AdminCrudPage<T extends { id?: string }>({
     search,
     page,
     limit: pageSize,
-  });
+    sortBy: "createdAt",
+    sortOrder: "desc",
+  } as QueryObject<T>);
 
   const items: T[] = data?.data ?? [];
   const totalPages = data?.total ? Math.ceil(data.total / pageSize) : 1;

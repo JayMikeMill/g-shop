@@ -4,8 +4,9 @@ import type {
   Product,
   Collection,
   Category,
-  OrderShippingInfo,
   Cart,
+  ShippingInfo,
+  Address,
 } from "./prisma-types";
 
 export const emptyUser: User = {
@@ -31,6 +32,25 @@ export const emptyOrder: Order = {
   total: 0,
 };
 
+// Default empty address to satisfy required fields
+export const emptyAddress: Address = {
+  name: "",
+  email: "",
+  street1: "",
+  city: "",
+  state: "",
+  postalCode: "",
+  country: "",
+};
+
+export const emptyShippingInfo: ShippingInfo = {
+  address: emptyAddress,
+  carrier: "UPS",
+  method: "STANDARD",
+  tracking: "",
+  cost: 0,
+};
+
 export const emptyCollection: Collection = {
   name: "",
   slug: "",
@@ -39,24 +59,6 @@ export const emptyCollection: Collection = {
 export const emptyCategory: Category = {
   name: "",
   slug: "",
-};
-
-export const emptyOrderShippingInfo: OrderShippingInfo = {
-  name: "",
-  email: "",
-  phone: "",
-  line1: "",
-  line2: "",
-  city: "",
-  state: "",
-  postalCode: "",
-  country: "",
-  carrier: null,
-  method: null,
-  cost: null,
-  tracking: null,
-  createdAt: undefined,
-  updatedAt: undefined,
 };
 
 export const emptyCart: Cart = {

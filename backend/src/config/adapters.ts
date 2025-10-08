@@ -1,7 +1,7 @@
 import { FirebaseAuthAdapter } from "@adapters/auth/FirebaseAuthAdapter";
 import { JwtAuthAdapter } from "@adapters/auth/JwtAuthAdapter";
-import { FirebaseDBAdapter } from "@adapters/db/firebase/FirebaseDBAdapter";
-import { PrismaDBAdapter } from "@adapters/db/PrismaDBAdapter";
+import { FirebaseDBAdapter } from "@adapters/firebase/FirebaseDBAdapter";
+import { PrismaDBAdapter } from "@adapters/prisma/PrismaDBAdapter";
 import { StripePaymentAdapter } from "@adapters/payment/StripePaymentAdapter";
 import { FirebaseStorageAdapter } from "@adapters/storage/FirebaseStorageAdapter";
 import { ImgBBStorageAdapter } from "@adapters/storage/ImgBBStorageAdapter";

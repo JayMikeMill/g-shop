@@ -1,8 +1,13 @@
-import { PaymentAdapter } from "./PaymentAdapter";
-import { PaymentRequest, PaymentResult, PaymentStatus } from "@my-store/shared";
+import { PaymentAdapter } from "../PaymentAdapter";
+import {
+  Address,
+  PaymentRequest,
+  PaymentResult,
+  PaymentStatus,
+} from "@my-store/shared";
 import Stripe from "stripe";
 import { env } from "@config/envVars";
-import { OrderShippingInfo } from "@my-store/shared";
+import { ShippingInfo } from "@my-store/shared";
 
 // Initialize Stripe client
 const stripe = new Stripe(env.STRIPE_SECRET_KEY as string, {
@@ -23,7 +28,7 @@ export class StripePaymentAdapter implements PaymentAdapter {
         automatic_payment_methods: { enabled: true },
         metadata: data.metadata,
         shipping: data.shippingInfo
-          ? mapToStripeShipping(data.shippingInfo)
+          ? mapToStripeShipping(data.shippingInfo.address!)
           : undefined,
       });
 
@@ -50,7 +55,7 @@ export class StripePaymentAdapter implements PaymentAdapter {
         },
         metadata: data.metadata,
         shipping: data.shippingInfo
-          ? mapToStripeShipping(data.shippingInfo)
+          ? mapToStripeShipping(data.shippingInfo.address!)
           : undefined,
       });
 
@@ -156,16 +161,16 @@ export class StripePaymentAdapter implements PaymentAdapter {
 
 // Map your custom address type to Stripe shipping
 const mapToStripeShipping = (
-  info: OrderShippingInfo
+  address: Address
 ): Stripe.PaymentIntentCreateParams.Shipping => ({
-  name: info.name,
+  name: address.name,
   address: {
-    line1: info.line1,
-    line2: info.line2,
-    city: info.city,
-    state: info.state,
-    postal_code: info.postalCode,
-    country: info.country,
+    line1: address.street1,
+    line2: address.street2 ?? "",
+    city: address.city,
+    state: address.state,
+    postal_code: address.postalCode,
+    country: address.country,
   },
-  phone: info.phone, // optional, if you have it
+  phone: address.phone ?? "", // optional, if you have it
 });

@@ -34,7 +34,9 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
   onDelete,
   onCancel,
 }) => {
-  const [localProduct, setLocalProduct] = useState<Product>(emptyProduct);
+  const [localProduct, setLocalProduct] = useState<Product>(
+    item ?? emptyProduct
+  );
 
   const [isAdding, setIsAdding] = useState(false);
   const [isProcessingImages, setIsProcessingImages] = useState(false);
@@ -105,6 +107,7 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
 
   const hasVariants = !!localProduct.options?.length;
 
+  console.log("Rendering ProductEditorForm with product:", hasVariants);
   return (
     <div className="flex flex-col flex-1 overflow-hidden border-t">
       <div className="flex flex-1 flex-col sm:flex-row sm:gap-md sm:py-md overflow-hidden min-h-0">

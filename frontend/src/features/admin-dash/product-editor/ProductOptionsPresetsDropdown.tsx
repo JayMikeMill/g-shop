@@ -19,6 +19,7 @@ const OptionsPresetDropdown: React.FC<OptionsPresetDropdownProps> = ({
 
   // 1️⃣ Fetch presets via useQuery (hook must be top-level)
   const { data: presetsData, refetch } = productOptionsPresets.getMany();
+
   const presets = presetsData?.data ?? [];
 
   // 2️⃣ Delete mutation hook

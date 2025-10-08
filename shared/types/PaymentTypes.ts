@@ -1,11 +1,11 @@
-import { OrderShippingInfo } from "@my-store/shared";
+import { ShippingInfo } from "@my-store/shared";
 
 // -------------------- Payment Request --------------------
 export interface PaymentRequest {
   token: string; // Payment method token / ID from frontend
   amount: number; // Amount in dollars
   currency?: string; // Optional currency, default could be 'USD'
-  shippingInfo?: OrderShippingInfo; // Optional shipping info
+  shippingInfo?: ShippingInfo; // Optional shipping info
   metadata?: Record<string, string>; // Arbitrary metadata (e.g., note, items count)
 }
 

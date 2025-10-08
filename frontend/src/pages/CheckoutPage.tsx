@@ -1,31 +1,23 @@
 import { useState, useEffect } from "react";
 
-import {
-  type OrderShippingInfo,
-  emptyOrderShippingInfo,
-} from "@my-store/shared";
-
 import OrderSummary from "../features/checkout/OrderSummary";
 import ShippingForm from "../features/checkout/ShippingForm";
-
-//import PaymentFormSquare from "./payment-forms/PaymentFormSquare";
 import PaymentFormStripe from "../features/checkout/PaymentFormStripe";
 import { useCart } from "@features/cart/useCart";
+import { emptyShippingInfo } from "@my-store/shared";
 
 export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  const [shippingInfo, setShippingInfo] = useState<OrderShippingInfo>(
-    emptyOrderShippingInfo
-  );
+  const [shippingInfo, setShippingInfo] = useState(emptyShippingInfo);
 
   const [shippingCost, setShippingCost] = useState(0);
   const { cart, totals } = useCart();
 
   useEffect(() => {
-    setShippingCost(shippingInfo.postalCode ? 5 : 0);
-  }, [shippingInfo.postalCode]);
+    setShippingCost(shippingInfo.address?.postalCode ? 5 : 0);
+  }, [shippingInfo.address?.postalCode]);
 
   return (
     <div className="flex flex-col flex-1 gap-lg max-w-[700px] p-sm mx-auto font-sans text-text">

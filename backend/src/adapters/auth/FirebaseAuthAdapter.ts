@@ -1,4 +1,4 @@
-import { AuthAdapter } from "./AuthAdapter";
+import { AuthAdapter } from "../AuthAdapter";
 import { User } from "@my-store/shared";
 import { auth } from "@config/firebase/firebaseAdmin";
 
