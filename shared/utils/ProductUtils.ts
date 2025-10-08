@@ -1,5 +1,5 @@
 import { Product, ProductVariant } from "../types";
-import { priceToFloat } from "./PriceUtils";
+import { toMajorUnit } from "./PriceUtils";
 
 // Parse serialized variant options like "Color:Red|Size:M" into objects
 export const parseVariantOptions = (variant?: ProductVariant) => {
@@ -16,7 +16,7 @@ export const getDiscountString = (product: Product) => {
   const isPercentage = product.discountType === "PERCENTAGE";
   return (
     (isPercentage ? "" : "$") +
-    `${priceToFloat(product.discount).toFixed(isPercentage ? 0 : 2)}` +
+    `${toMajorUnit(product.discount).toFixed(isPercentage ? 0 : 2)}` +
     (isPercentage ? "%" : "")
   );
 };

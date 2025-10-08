@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { TagBox } from "@components/ui";
 import type { Product } from "@shared/types";
-import { priceToFloat } from "@shared/utils";
+import { toMajorUnit } from "@shared/utils";
 
 interface ProductCardProps {
   product: Product;
@@ -30,7 +30,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   // Format discount label
   const discountLabel =
-    (product.discount ? (priceToFloat(product.discount) ?? "0") : "0") +
+    (product.discount ? (toMajorUnit(product.discount) ?? "0") : "0") +
     (product.discountType === "PERCENTAGE" ? "%" : "$");
 
   return (

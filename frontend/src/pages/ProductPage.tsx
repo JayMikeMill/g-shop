@@ -11,7 +11,7 @@ import { useApi } from "@api/useApi";
 import ProductOptionSelector from "@features/products/ProductOptionsSelector";
 import ProductImagesViewer from "@features/products/ProductImagesViewer";
 import { Button, TagBox } from "@components/ui";
-import { priceToFloat } from "@shared/utils";
+import { toMajorUnit } from "@shared/utils";
 
 const ProductPage = () => {
   // Get product ID from URL params
@@ -45,7 +45,7 @@ const ProductPage = () => {
 
   // Format discount label
   const discountLabel =
-    (product.discount ? (priceToFloat(product.discount) ?? "0") : "0") +
+    (product.discount ? (toMajorUnit(product.discount) ?? "0") : "0") +
     (product.discountType === "PERCENTAGE" ? "%" : "$");
 
   // Handle adding product to cart

@@ -7,7 +7,7 @@ import {
   type Cart,
 } from "@shared/types";
 
-import { floatToPrice } from "@shared/utils";
+import { toMinorUnit } from "@shared/utils";
 
 export function createOrder(cart: Cart, shippingInfo: ShippingInfo): Order {
   // Create order object
@@ -20,7 +20,7 @@ export function createOrder(cart: Cart, shippingInfo: ShippingInfo): Order {
         product: item.product as NonNullable<typeof item.product>,
         variant: item.variant as NonNullable<typeof item.variant>,
         quantity: item.quantity,
-        price: floatToPrice(item.price),
+        price: toMinorUnit(item.price),
       })),
     statusHistory: [
       {

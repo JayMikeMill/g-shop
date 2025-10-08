@@ -1,6 +1,6 @@
 import { Button, Input, Label, NumberInput, XButton } from "@components/ui";
 import type { Order, OrderItem } from "@shared/types";
-import { floatToPrice, priceToFloat } from "@shared/utils";
+import { toMinorUnit, toMajorUnit } from "@shared/utils";
 
 type OrderItemsEditorProps = {
   order: Order;
@@ -69,9 +69,9 @@ export default function OrderItemsEditor({
             className="border rounded px-2 py-1 w-16 text-center"
           />
           <NumberInput
-            value={priceToFloat(item.price)}
+            value={toMajorUnit(item.price)}
             onChange={(value) =>
-              handleItemChange(idx, "price", floatToPrice(Number(value)))
+              handleItemChange(idx, "price", toMinorUnit(Number(value)))
             }
             className="border rounded px-2 py-1 w-24"
           />

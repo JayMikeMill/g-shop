@@ -11,7 +11,7 @@ import {
 
 // Types
 import { type Product, emptyProduct } from "@shared/types";
-import { priceToFloat, floatToPrice } from "@shared/utils";
+import { toMajorUnit, toMinorUnit } from "@shared/utils";
 
 interface ProductInfoEditorProps {
   product: Product;
@@ -73,11 +73,11 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
           <NumberInput
             symbol="$"
             onFocus={(e) => e.target.select()}
-            value={priceToFloat(localProduct.price)}
+            value={toMajorUnit(localProduct.price)}
             onChange={(e) =>
               setLocalProduct((prev) => ({
                 ...prev,
-                price: floatToPrice(parseFloat(e.target.value)),
+                price: toMinorUnit(parseFloat(e.target.value)),
               }))
             }
             required
@@ -93,12 +93,12 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
               className="text-center  w-32"
               onFocus={(e) => e.target.select()}
               value={
-                localProduct.discount ? priceToFloat(localProduct.discount) : ""
+                localProduct.discount ? toMajorUnit(localProduct.discount) : ""
               }
               onChange={(e) =>
                 setLocalProduct((prev) => ({
                   ...prev,
-                  discount: floatToPrice(parseFloat(e.target.value)),
+                  discount: toMinorUnit(parseFloat(e.target.value)),
                 }))
               }
               step={localProduct.discountType === "PERCENTAGE" ? "0.01" : "1"}

@@ -1,5 +1,5 @@
 import type { Collection, Order, Product } from "@shared/types";
-import { getDiscountString, priceToFloat } from "@shared/utils";
+import { getDiscountString, toMajorUnit } from "@shared/utils";
 
 import { TagBox } from "@components/ui";
 
@@ -41,7 +41,7 @@ const productTableColumns = [
     render: (p: Product) => (
       <div className="flex flex-col items-center justify-center">
         <span className="font-semibold text-center text-text">
-          {priceToFloat(p.price).toFixed(2)}
+          {toMajorUnit(p.price).toFixed(2)}
         </span>
         <span className="font-semibold text-center text-red-400">
           -{getDiscountString(p)}

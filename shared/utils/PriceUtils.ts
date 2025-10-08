@@ -1,13 +1,13 @@
-import type { Product, ProductVariant } from "../types";
+// shared/utils/PriceUtils.ts
 
 // -------------------------
-// Product utility functions
+// price utility functions
 // -------------------------
 
-export const priceToFloat = (cents: number) => {
-  return cents / 100;
+export const toMajorUnit = (minorUnits: number) => {
+  return minorUnits / 100;
 };
 
-export const floatToPrice = (price: number) => {
-  return Math.round(price * 100);
+export const toMinorUnit = (majorUnits: number) => {
+  return Math.round(majorUnits * 100);
 };

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import type { Product, ProductOption, ProductVariant } from "@shared/types";
 import { parseVariantOptions } from "@shared/utils";
-import { priceToFloat, floatToPrice } from "@shared/utils";
+import { toMajorUnit, toMinorUnit } from "@shared/utils";
 import { Input, NumberInput } from "@components/ui";
 
 interface ProductVariantEditorProps {
@@ -76,7 +76,7 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
         i === index
           ? {
               ...v,
-              price: price === "" ? null : floatToPrice(parseFloat(price)),
+              price: price === "" ? null : toMinorUnit(parseFloat(price)),
             }
           : v
       )
@@ -129,7 +129,7 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
           {/* Price */}
           <NumberInput
             symbol="$"
-            value={variant.price ? priceToFloat(variant.price) : ""}
+            value={variant.price ? toMajorUnit(variant.price) : ""}
             placeholder="-"
             onChange={(e) => updateVariantPrice(idx, e.target.value)}
             className="w-full text-center"
