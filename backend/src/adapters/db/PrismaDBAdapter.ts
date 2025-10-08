@@ -17,6 +17,8 @@ import type {
 import { DBAdapter } from "./DBAdapter";
 
 export class PrismaDBAdapter implements DBAdapter {
+  private prisma: PrismaClient;
+
   public products: ProductCrud;
   public productVariants: ProductVariantCrud;
   public productTagsPresets: ProductTagPresetCrud;
@@ -29,6 +31,8 @@ export class PrismaDBAdapter implements DBAdapter {
   public users: UserCrud;
 
   constructor(prismaClient: PrismaClient = new PrismaClient()) {
+    this.prisma = prismaClient;
+
     this.products = new ProductCrud(prismaClient);
     this.productVariants = new ProductVariantCrud(prismaClient);
     this.productTagsPresets = new ProductTagPresetCrud(prismaClient);
@@ -39,6 +43,21 @@ export class PrismaDBAdapter implements DBAdapter {
     this.collections = new CollectionCrud(prismaClient);
     this.orders = new OrderCrud(prismaClient);
     this.users = new UserCrud(prismaClient);
+  }
+
+  /**
+   * Execute multiple DB operations atomically within a single transaction.
+   */
+  async transaction<T>(
+    callback: (tx: PrismaDBAdapter) => Promise<T>
+  ): Promise<T> {
+    return await this.prisma.$transaction(async (txClient) => {
+      // Explicit cast: txClient behaves like PrismaClient for all query operations
+      const txAdapter = new PrismaDBAdapter(
+        txClient as unknown as PrismaClient
+      );
+      return await callback(txAdapter);
+    });
   }
 }
 

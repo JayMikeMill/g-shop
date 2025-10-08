@@ -22,4 +22,6 @@ export interface DBAdapter {
   collections: CrudInterface<Collection>;
   orders: CrudInterface<Order>;
   users: CrudInterface<User>;
+
+  transaction<T>(callback: (tx: DBAdapter) => Promise<T>): Promise<T>;
 }
