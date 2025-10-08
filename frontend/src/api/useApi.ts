@@ -12,7 +12,7 @@ import type {
   Category,
   Order,
   User,
-} from "@my-store/shared";
+} from "@shared/types";
 
 // Hook
 export function useApi() {

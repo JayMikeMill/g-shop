@@ -7,7 +7,7 @@ import {
   type Category,
   type CollectionImageSet,
   emptyCollection,
-} from "@my-store/shared";
+} from "@shared/types";
 
 // UI Components
 import { AnimatedDialog, Button, Input, Textarea } from "@components/ui";

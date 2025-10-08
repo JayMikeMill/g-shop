@@ -2,7 +2,7 @@ import { useAppDispatch, useAppSelector } from "@app/hooks";
 import { setLoading, setUser, clearUser, type UserData } from "./userSlice";
 import { useCallback, useEffect } from "react";
 import { useApi } from "@api/useApi";
-import type { User } from "@my-store/shared";
+import type { User } from "@shared/types";
 
 const USER_STORAGE_KEY = "userData";
 

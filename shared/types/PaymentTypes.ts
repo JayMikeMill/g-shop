@@ -1,4 +1,4 @@
-import { ShippingInfo } from "@my-store/shared";
+import type { ShippingInfo } from "./";
 
 // -------------------- Payment Request --------------------
 export interface PaymentRequest {

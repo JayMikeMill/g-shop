@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Button } from "../primitives/Button";
 
 interface AnimatedDropdownBoxProps {
@@ -28,6 +28,7 @@ export const AnimatedDropdownBox: React.FC<AnimatedDropdownBoxProps> = ({
 
   useEffect(() => {
     setOverflow(open);
+    overflow;
   }, [open]);
 
   return (

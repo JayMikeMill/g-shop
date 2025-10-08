@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { AuthAdapter } from "../AuthAdapter";
 import { db } from "@config/adapters";
-import { User } from "@my-store/shared";
+import { User } from "@shared/types";
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 const JWT_EXPIRES_IN = "1d";

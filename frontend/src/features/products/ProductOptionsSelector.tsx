@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import type { Product, ProductVariant } from "@my-store/shared";
+import type { Product, ProductVariant } from "@shared/types";
 import { Button } from "@components/ui";
 
 interface SelectedProductOption {

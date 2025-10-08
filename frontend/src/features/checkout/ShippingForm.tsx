@@ -8,7 +8,7 @@ import {
   ShippingCarrier,
   ShippingMethod,
   type ShippingInfo,
-} from "@my-store/shared";
+} from "@shared/types";
 
 // ----- Safe form types -----
 export type ShippingFormSafe = {

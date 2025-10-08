@@ -7,7 +7,7 @@ import type {
   Cart,
   ShippingInfo,
   Address,
-} from "./prisma-types";
+} from "./";
 
 export const emptyUser: User = {
   email: "",

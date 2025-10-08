@@ -6,7 +6,7 @@ import {
   productTableColumns,
 } from "@features/admin-dash";
 
-import type { Product } from "@my-store/shared";
+import type { Product } from "@shared/types";
 import { useApi } from "@api/useApi";
 
 export default function AdminProductsPage() {

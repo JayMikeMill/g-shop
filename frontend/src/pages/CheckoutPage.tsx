@@ -4,7 +4,7 @@ import OrderSummary from "../features/checkout/OrderSummary";
 import ShippingForm from "../features/checkout/ShippingForm";
 import PaymentFormStripe from "../features/checkout/PaymentFormStripe";
 import { useCart } from "@features/cart/useCart";
-import { emptyShippingInfo } from "@my-store/shared";
+import { emptyShippingInfo } from "@shared/types";
 
 export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
@@ -13,10 +13,11 @@ export default function CheckoutPage() {
   const [shippingInfo, setShippingInfo] = useState(emptyShippingInfo);
 
   const [shippingCost, setShippingCost] = useState(0);
-  const { cart, totals } = useCart();
+  const { cart } = useCart();
 
   useEffect(() => {
     setShippingCost(shippingInfo.address?.postalCode ? 5 : 0);
+    shippingCost;
   }, [shippingInfo.address?.postalCode]);
 
   return (

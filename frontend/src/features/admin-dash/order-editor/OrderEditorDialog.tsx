@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { AnimatedDialog, Button, AnimatedDropdownBox } from "@components/ui";
 import type { CrudEditorInterface } from "@features/admin-dash";
-import { type Order, emptyOrder } from "@my-store/shared";
+import { type Order, emptyOrder } from "@shared/types";
 import OrderInfoEditor from "./OrderInfoEditor";
 import OrderItemsEditor from "./OrderItemsEditor";
 import OrderShippingEditor from "./OrderShippingEditor";

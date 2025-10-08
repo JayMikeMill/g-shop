@@ -1,4 +1,4 @@
-import { Order, Product, ProductVariant, QueryObject } from "@my-store/shared";
+import { Order, Product, ProductVariant, QueryObject } from "@shared/types";
 import { db, payment as paymentAdapter } from "@config/adapters";
 import { DBAdapter } from "@adapters/DBAdapter";
 

@@ -15,6 +15,7 @@
     "baseUrl": "./", // base path for imports
     "paths": {
       // path aliases
+      "@shared/*": ["../shared/*"],
       "@adapters/*": ["src/adapters/*"],
       "@config/*": ["src/config/*"],
       "@controllers/*": ["src/controllers/*"],

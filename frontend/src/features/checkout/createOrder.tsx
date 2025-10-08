@@ -5,9 +5,9 @@ import {
   OrderStatus as OrderStatuses,
   type Order,
   type Cart,
-} from "@my-store/shared";
+} from "@shared/types";
 
-import { floatToPrice } from "@utils/productUtils";
+import { floatToPrice } from "@shared/utils";
 
 export function createOrder(cart: Cart, shippingInfo: ShippingInfo): Order {
   // Create order object

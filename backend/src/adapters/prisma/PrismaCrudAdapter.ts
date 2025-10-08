@@ -9,23 +9,22 @@
 
 import { PrismaClient } from "@prisma/client";
 
+// Shared utilities and types
 import {
   isQueryObject,
   type CrudInterface,
   type QueryObject,
-} from "@my-store/shared";
+} from "@shared/types";
 
+// Utility to convert nested data into Prisma create/update shape
 import {
   prismaNestedUpdate,
   NestedMetadata,
   DotNestedMetadata, // ADDED
 } from "./prismaNestedUpdate";
 
-import {
-  buildPrismaQuery,
-  deepMerge,
-  normalizeIncludeConfig,
-} from "./buildPrismaQuery";
+// Utility to build Prisma queries from QueryObject
+import { buildPrismaQuery, normalizeIncludeConfig } from "./buildPrismaQuery";
 
 // ----------------- Helper: Remove empty arrays for Prisma -----------------
 function removeEmptyArrays(obj: any): any {
@@ -41,9 +40,11 @@ function removeEmptyArrays(obj: any): any {
 
 // ----------------- PrismaCRUDAdapter -----------------
 export interface PrismaCRUDAdapterOptions<T> {
+  // The Prisma model name, e.g. 'user' (must match a model in your PrismaClient)
   model: keyof PrismaClient;
   // Accept dot-notation include paths or a map of path -> { select/include }
   includeFields?: string[] | Record<string, any>;
+  // Fields to search in full-text search queries
   searchFields?: (keyof T)[];
   // Accept nested field metadata with dot-notation keys
   nestedMeta?: NestedMetadata<T> | DotNestedMetadata; // CHANGED

@@ -1,4 +1,4 @@
-import type { QueryObject } from "./QueryObject";
+import type { QueryObject } from "./";
 
 export interface CrudInterface<T> {
   // Create a new item

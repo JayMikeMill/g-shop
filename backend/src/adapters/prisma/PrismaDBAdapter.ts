@@ -12,7 +12,7 @@ import type {
   Order,
   User,
   ProductVariant,
-} from "@my-store/shared";
+} from "@shared/types";
 
 import { DBAdapter } from "../DBAdapter";
 
@@ -55,7 +55,7 @@ export class PrismaDBAdapter implements DBAdapter {
   async transaction<T>(
     callback: (tx: PrismaDBAdapter) => Promise<T>
   ): Promise<T> {
-    return await this.prisma.$transaction(async (txClient) => {
+    return await this.prisma.$transaction(async (txClient: unknown) => {
       // Explicit cast: txClient behaves like PrismaClient for all query operations
       const txAdapter = new PrismaDBAdapter(
         txClient as unknown as PrismaClient,

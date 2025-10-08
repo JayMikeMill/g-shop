@@ -7,7 +7,7 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 
-import { type ShippingInfo, type Cart } from "@my-store/shared";
+import { type ShippingInfo, type Cart } from "@shared/types";
 
 import { Button } from "@components/ui";
 import { useApi } from "@api/useApi";

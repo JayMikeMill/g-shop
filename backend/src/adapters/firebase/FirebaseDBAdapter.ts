@@ -13,7 +13,7 @@ import {
   Order,
   User,
   ProductVariant,
-} from "@my-store/shared";
+} from "@shared/types";
 
 import type { DBAdapter } from "../DBAdapter";
 

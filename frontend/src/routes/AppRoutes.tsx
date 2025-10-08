@@ -21,7 +21,7 @@ import CheckoutPage from "@pages/CheckoutPage";
 import AboutPage from "@pages/AboutPage";
 
 // Auth & Roles
-import { UserRole } from "@my-store/shared";
+import { UserRole } from "@shared/types";
 import { ProtectedRoute } from "./ProtectedRoute";
 
 // Scroll to top on route change

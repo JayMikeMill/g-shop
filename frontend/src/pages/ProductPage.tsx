@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 
-import type { ProductVariant } from "@my-store/shared";
+import type { ProductVariant } from "@shared/types";
 
 // Cart state management
 import { useCart } from "@features/cart/useCart";
@@ -11,7 +11,7 @@ import { useApi } from "@api/useApi";
 import ProductOptionSelector from "@features/products/ProductOptionsSelector";
 import ProductImagesViewer from "@features/products/ProductImagesViewer";
 import { Button, TagBox } from "@components/ui";
-import { priceToFloat } from "@utils/productUtils";
+import { priceToFloat } from "@shared/utils";
 
 const ProductPage = () => {
   // Get product ID from URL params

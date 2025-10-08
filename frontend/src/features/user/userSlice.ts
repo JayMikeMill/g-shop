@@ -1,5 +1,5 @@
 // src/store/userSlice.ts
-import type { UserRole } from "@my-store/shared";
+import type { UserRole } from "@shared/types";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export interface UserData {

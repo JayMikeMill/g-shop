@@ -6,7 +6,7 @@ import storageRoutes from "@routes/storage";
 import orderRoutes from "@routes/orders";
 
 // CRUD route factory
-import { createCrudRoute } from "@routes/createCrudRoute";
+import { createCrudRoute } from "@utils/createCrudRoute";
 
 // Database for CRUD routes
 import { db } from "@config/adapters";

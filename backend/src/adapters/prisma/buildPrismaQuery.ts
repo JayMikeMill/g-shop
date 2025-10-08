@@ -1,4 +1,4 @@
-import { DeepDotKeyof, QueryCondition, QueryObject } from "@my-store/shared";
+import { DeepDotKeyof, QueryCondition, QueryObject } from "@shared/types";
 
 type PrismaFindParams = {
   where?: any;

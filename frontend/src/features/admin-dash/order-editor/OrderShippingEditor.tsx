@@ -4,12 +4,12 @@ import type {
   ShippingCarrier,
   ShippingMethod,
   Address,
-} from "@my-store/shared";
+} from "@shared/types";
 import {
   ShippingCarrier as ShippingCarriers,
   ShippingMethod as ShippingMethods,
   emptyAddress,
-} from "@my-store/shared";
+} from "@shared/types";
 
 type OrderShippingEditorProps = {
   order: Order;

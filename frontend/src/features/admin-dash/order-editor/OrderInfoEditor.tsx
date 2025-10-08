@@ -1,6 +1,6 @@
 import { Label } from "@components/ui";
-import type { Order, OrderStatus } from "@my-store/shared";
-import { OrderStatus as OrderStatuses } from "@my-store/shared";
+import type { Order, OrderStatus } from "@shared/types";
+import { OrderStatus as OrderStatuses } from "@shared/types";
 
 type OrderInfoEditorProps = {
   order: Order;

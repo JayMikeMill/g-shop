@@ -1,4 +1,4 @@
-import type { Order, PaymentMethod, TransactionStatus } from "@my-store/shared";
+import type { Order, PaymentMethod, TransactionStatus } from "@shared/types";
 
 type OrderTransactionEditorProps = {
   order: Order;

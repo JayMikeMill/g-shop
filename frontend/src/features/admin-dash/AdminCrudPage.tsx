@@ -1,15 +1,18 @@
 // AdminCrudPage.tsx
 import { useState } from "react";
+
+import type { QueryObject } from "@shared/types";
+
 import {
   Button,
   CircleSpinner,
   DynamicTable,
   type TableColumn,
 } from "@components/ui";
-import { useApi } from "@api/useApi";
+
 import type { CrudEditorInterface } from "@features/admin-dash/CrudEditorInterface";
-import type { Query } from "@tanstack/react-query";
-import type { QueryObject } from "@my-store/shared";
+
+import { useApi } from "@api/useApi";
 
 interface AdminCrudPageProps<T extends { id?: string }> {
   objectsName: string;

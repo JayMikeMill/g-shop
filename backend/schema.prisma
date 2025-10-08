@@ -8,7 +8,7 @@ generator client {
 
 generator typescriptInterfaces {
   provider          = "prisma-generator-typescript-interfaces"
-  output            = "../shared/prisma-types.ts"
+  output            = "../shared/types/PrismaTypes.ts"
   optionalNullables = true
   enumType          = object
   prettier          = true

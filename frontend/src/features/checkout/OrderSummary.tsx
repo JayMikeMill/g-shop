@@ -1,6 +1,6 @@
 // Cart state management
 import { useCart } from "@features/cart/useCart";
-import { parseVariantOptions } from "@utils/productUtils";
+import { parseVariantOptions } from "@shared/utils";
 
 export default function OrderSummary() {
   const { cart, totals } = useCart();

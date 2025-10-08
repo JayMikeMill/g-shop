@@ -1,16 +1,5 @@
-import type { Product, ProductVariant } from "@shared/types";
-
-// -------------------------
-// Product utility functions
-// -------------------------
-
-export const priceToFloat = (cents: number) => {
-  return cents / 100;
-};
-
-export const floatToPrice = (price: number) => {
-  return Math.round(price * 100);
-};
+import { Product, ProductVariant } from "../types";
+import { priceToFloat } from "./PriceUtils";
 
 // Parse serialized variant options like "Color:Red|Size:M" into objects
 export const parseVariantOptions = (variant?: ProductVariant) => {

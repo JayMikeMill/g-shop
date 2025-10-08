@@ -27,6 +27,7 @@
     "baseUrl": "./", // root for imports
     "paths": {
       // aliases
+      "@shared/*": ["../shared/*"],
       "@pages/*": ["src/pages/*"],
       "@components/*": ["src/components/*"],
       "@contexts/*": ["src/contexts/*"],

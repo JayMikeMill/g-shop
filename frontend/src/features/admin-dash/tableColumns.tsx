@@ -1,5 +1,5 @@
-import type { Collection, Order, Product } from "@my-store/shared";
-import { getDiscountString, priceToFloat } from "@utils/productUtils";
+import type { Collection, Order, Product } from "@shared/types";
+import { getDiscountString, priceToFloat } from "@shared/utils";
 
 import { TagBox } from "@components/ui";
 

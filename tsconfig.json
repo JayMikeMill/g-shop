@@ -12,11 +12,13 @@
     "resolveJsonModule": true,
     "allowJs": true
   },
+
   "include": [
     "backend/src/**/*.ts",
     "frontend/src/**/*.tsx",
     "shared/**/*.ts",
     "unit-tests/**/*"
   ],
+
   "exclude": ["node_modules", "dist", "build"]
 }

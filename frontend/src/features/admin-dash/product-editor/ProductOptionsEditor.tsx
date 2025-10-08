@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from "react";
 
 // Types
-import type { Product, ProductOption } from "@my-store/shared";
+import type { Product, ProductOption } from "@shared/types";
 
 // UI Components
 import { Button, Input, XButton } from "@components/ui";

@@ -4,10 +4,10 @@ import {
   PaymentRequest,
   PaymentResult,
   PaymentStatus,
-} from "@my-store/shared";
+} from "@shared/types";
 import Stripe from "stripe";
 import { env } from "@config/envVars";
-import { ShippingInfo } from "@my-store/shared";
+import { ShippingInfo } from "@shared/types";
 
 // Initialize Stripe client
 const stripe = new Stripe(env.STRIPE_SECRET_KEY as string, {

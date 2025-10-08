@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 // import { useCart } from "@features/cart/useCart";
 
 import { TagBox } from "@components/ui";
-import type { Product } from "@my-store/shared";
-import { priceToFloat } from "@utils/productUtils";
+import type { Product } from "@shared/types";
+import { priceToFloat } from "@shared/utils";
 
 interface ProductCardProps {
   product: Product;

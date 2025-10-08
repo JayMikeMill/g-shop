@@ -6,7 +6,7 @@ import {
   type Product,
   type ProductImageSet,
   emptyProduct,
-} from "@my-store/shared";
+} from "@shared/types";
 
 // UI Components
 import { AnimatedDropdownBox, Button } from "@components/ui";
