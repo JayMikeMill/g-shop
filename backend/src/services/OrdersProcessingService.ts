@@ -27,7 +27,7 @@ export class OrderProcessingService {
       // 2b. Authorize payment
       const paymentResult = await paymentAdapter.authorizePayment({
         token: payment.id,
-        amount: order.total,
+        amount: order.total / 100, // amount is in cents
         currency: order.transaction?.currency || "USD",
         metadata,
       });
