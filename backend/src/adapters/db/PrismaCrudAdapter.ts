@@ -37,14 +37,17 @@ export interface PrismaCRUDAdapterOptions<T> {
   includeFields?: any;
   searchFields?: (keyof T)[];
   nestedMeta?: NestedMetadata<T>;
+  isTx?: boolean;
 }
 
 export class PrismaCrudAdapter<T> implements CrudInterface<T> {
   private prisma: PrismaClient;
+
   private model: keyof PrismaClient;
   private includeFields?: any;
   private searchFields?: (keyof T)[];
   private nestedMeta?: NestedMetadata<T>;
+  private isTx: boolean;
 
   constructor(prisma: PrismaClient, opts: PrismaCRUDAdapterOptions<T>) {
     this.prisma = prisma;
@@ -52,6 +55,7 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
     this.includeFields = opts.includeFields ?? {};
     this.searchFields = opts.searchFields;
     this.nestedMeta = opts.nestedMeta;
+    this.isTx = opts.isTx ?? false;
   }
 
   private get client() {
@@ -127,11 +131,20 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
       this.searchFields || []
     );
 
-    // Execute
-    const [data, total] = await this.prisma.$transaction([
-      this.client.findMany(queryParams),
-      this.client.count({ where: queryParams.where }),
-    ]);
+    // Determine if we are already inside a transaction
+    let data: T[], total: number;
+
+    if (this.isTx) {
+      // Already in a transaction, run sequentially
+      data = await this.client.findMany(queryParams);
+      total = await this.client.count({ where: queryParams.where });
+    } else {
+      // Not in a transaction, run atomically
+      [data, total] = await this.prisma.$transaction([
+        this.client.findMany(queryParams),
+        this.client.count({ where: queryParams.where }),
+      ]);
+    }
 
     return { data, total };
   }

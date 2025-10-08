@@ -18,6 +18,7 @@ import { DBAdapter } from "./DBAdapter";
 
 export class PrismaDBAdapter implements DBAdapter {
   private prisma: PrismaClient;
+  public isTx?: boolean = false;
 
   public products: ProductCrud;
   public productVariants: ProductVariantCrud;
@@ -30,19 +31,22 @@ export class PrismaDBAdapter implements DBAdapter {
   public orders: OrderCrud;
   public users: UserCrud;
 
-  constructor(prismaClient: PrismaClient = new PrismaClient()) {
+  constructor(prismaClient: PrismaClient = new PrismaClient(), isTx?: boolean) {
     this.prisma = prismaClient;
+    this.isTx = isTx ?? false;
 
-    this.products = new ProductCrud(prismaClient);
-    this.productVariants = new ProductVariantCrud(prismaClient);
-    this.productTagsPresets = new ProductTagPresetCrud(prismaClient);
-    this.productOptionsPresets = new ProductOptionPresetCrud(prismaClient);
-    this.productReviews = new ProductReviewCrud(prismaClient);
-
-    this.categories = new CategoryCrud(prismaClient);
-    this.collections = new CollectionCrud(prismaClient);
-    this.orders = new OrderCrud(prismaClient);
-    this.users = new UserCrud(prismaClient);
+    this.products = new ProductCrud(prismaClient, isTx);
+    this.productVariants = new ProductVariantCrud(prismaClient, isTx);
+    this.productTagsPresets = new ProductTagPresetCrud(prismaClient, isTx);
+    this.productOptionsPresets = new ProductOptionPresetCrud(
+      prismaClient,
+      isTx
+    );
+    this.productReviews = new ProductReviewCrud(prismaClient, isTx);
+    this.categories = new CategoryCrud(prismaClient, isTx);
+    this.collections = new CollectionCrud(prismaClient, isTx);
+    this.orders = new OrderCrud(prismaClient, isTx);
+    this.users = new UserCrud(prismaClient, isTx);
   }
 
   /**
@@ -54,7 +58,8 @@ export class PrismaDBAdapter implements DBAdapter {
     return await this.prisma.$transaction(async (txClient) => {
       // Explicit cast: txClient behaves like PrismaClient for all query operations
       const txAdapter = new PrismaDBAdapter(
-        txClient as unknown as PrismaClient
+        txClient as unknown as PrismaClient,
+        true
       );
       return await callback(txAdapter);
     });
@@ -64,16 +69,17 @@ export class PrismaDBAdapter implements DBAdapter {
 // ----------------- Crud Adapters -----------------
 
 class UserCrud extends PrismaCrudAdapter<User> {
-  constructor(prismaClient: PrismaClient) {
+  constructor(prismaClient: PrismaClient, isTx?: boolean) {
     super(prismaClient, {
       model: "user",
       searchFields: ["email"],
+      isTx,
     });
   }
 }
 
 class ProductCrud extends PrismaCrudAdapter<Product> {
-  constructor(prismaClient: PrismaClient) {
+  constructor(prismaClient: PrismaClient, isTx?: boolean) {
     super(prismaClient, {
       model: "product",
 
@@ -100,65 +106,72 @@ class ProductCrud extends PrismaCrudAdapter<Product> {
       },
 
       searchFields: ["id", "name", "description"],
+      isTx,
     });
   }
 }
 
 class ProductVariantCrud extends PrismaCrudAdapter<ProductVariant> {
-  constructor(prismaClient: PrismaClient) {
+  constructor(prismaClient: PrismaClient, isTx?: boolean) {
     super(prismaClient, {
       model: "productVariant",
       searchFields: ["id"],
+      isTx,
     });
   }
 }
 
 class ProductTagPresetCrud extends PrismaCrudAdapter<ProductTagPreset> {
-  constructor(prismaClient: PrismaClient) {
+  constructor(prismaClient: PrismaClient, isTx?: boolean) {
     super(prismaClient, {
       model: "productTagPreset",
       searchFields: ["name"],
+      isTx,
     });
   }
 }
 
 class ProductOptionPresetCrud extends PrismaCrudAdapter<ProductOptionsPreset> {
-  constructor(prismaClient: PrismaClient) {
+  constructor(prismaClient: PrismaClient, isTx?: boolean) {
     super(prismaClient, {
       model: "productOptionsPreset",
       searchFields: ["name"],
+      isTx,
     });
   }
 }
 
 class ProductReviewCrud extends PrismaCrudAdapter<ProductReview> {
-  constructor(prismaClient: PrismaClient) {
+  constructor(prismaClient: PrismaClient, isTx?: boolean) {
     super(prismaClient, {
       model: "productReview",
+      isTx,
     });
   }
 }
 
 class CategoryCrud extends PrismaCrudAdapter<Category> {
-  constructor(prismaClient: PrismaClient) {
+  constructor(prismaClient: PrismaClient, isTx?: boolean) {
     super(prismaClient, {
       model: "category",
       searchFields: ["name", "description"],
+      isTx,
     });
   }
 }
 
 class CollectionCrud extends PrismaCrudAdapter<Collection> {
-  constructor(prismaClient: PrismaClient) {
+  constructor(prismaClient: PrismaClient, isTx?: boolean) {
     super(prismaClient, {
       model: "collection",
       searchFields: ["name", "description"],
+      isTx,
     });
   }
 }
 
 class OrderCrud extends PrismaCrudAdapter<Order> {
-  constructor(prismaClient: PrismaClient) {
+  constructor(prismaClient: PrismaClient, isTx?: boolean) {
     super(prismaClient, {
       model: "order",
       includeFields: {
@@ -172,6 +185,7 @@ class OrderCrud extends PrismaCrudAdapter<Order> {
         statusHistory: { owned: true },
       },
       searchFields: ["id", "userId"],
+      isTx,
     });
   }
 }

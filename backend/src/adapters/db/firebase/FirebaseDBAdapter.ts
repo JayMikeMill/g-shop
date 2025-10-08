@@ -46,6 +46,7 @@ export class FirebaseDBAdapter implements DBAdapter {
     this.orders = new FirebaseCrudAdapter<Order>("orders");
   }
 
+  public isTx: boolean = false;
   async transaction<T>(callback: (tx: DBAdapter) => Promise<T>): Promise<T> {
     // Firebase doesn’t have multi-collection transactions easily
     return callback(this);

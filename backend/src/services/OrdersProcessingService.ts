@@ -12,17 +12,24 @@ export class OrderProcessingService {
         throw new Error("One or more items are out of stock");
       }
 
-      // 2. Authorize payment
+      // 2a Create metadata for payment
+      const metadata: Record<string, string> = {};
+
+      order.items?.forEach((item, index) => {
+        const prefix = `item_${index}_`;
+        metadata[`${prefix}productId`] = item.product.id ?? "unknown";
+        metadata[`${prefix}variantId`] = item.variant?.id ?? "unknown";
+        metadata[`${prefix}name`] = item.product.name ?? "unknown";
+        metadata[`${prefix}quantity`] = String(item.quantity || 1);
+        metadata[`${prefix}price`] = String(item.price);
+      });
+
+      // 2b. Authorize payment
       const paymentResult = await paymentAdapter.authorizePayment({
         token: payment.id,
         amount: order.total,
         currency: order.transaction?.currency || "USD",
-        metadata: Object.fromEntries(
-          Object.entries(order).map(([key, value]) => [
-            key,
-            typeof value === "object" ? JSON.stringify(value) : String(value),
-          ])
-        ) as Record<string, string>,
+        metadata,
       });
 
       if (paymentResult.status !== "AUTHORIZED") {
@@ -76,89 +83,61 @@ async function stockAvailable(
   order: Order,
   dbAdapter: DBAdapter
 ): Promise<boolean> {
-  try {
-    if (!order.items || order.items.length === 0)
-      throw new Error("Order has no items");
+  if (!order.items || order.items.length === 0)
+    throw new Error("Order has no items");
 
-    const productIds = order.items.map((item) => item.product.id);
-    if (productIds.some((id) => !id)) throw new Error("Invalid product ID");
+  const productIds = order.items.map((item) => item.product.id);
+  if (productIds.some((id) => !id)) throw new Error("Invalid product ID");
 
-    // Fetch all products first
-    const productQuery: QueryObject<Product> = {
-      conditions: [
-        {
-          field: "id",
-          operator: "in",
-          value: productIds,
-        },
-      ],
-      includeFields: ["id", "name", "stock"],
+  const productQuery: QueryObject<Product> = {
+    conditions: [{ field: "id", operator: "in", value: productIds }],
+    includeFields: ["id", "name", "stock"],
+  };
+  const productResult = await dbAdapter.products.get(productQuery);
+  if (!productResult?.data?.length)
+    throw new Error("No products found for this order");
+
+  const variantIds = order.items
+    .map((item) => item.variant?.id)
+    .filter(Boolean) as string[];
+
+  const variantMap: Record<string, ProductVariant> = {};
+  if (variantIds.length > 0) {
+    const variantQuery: QueryObject<ProductVariant> = {
+      conditions: [{ field: "id", operator: "in", value: variantIds }],
+      includeFields: ["id", "productId", "stock"],
     };
-    const productResult = await dbAdapter.products.get(productQuery);
-    if (!productResult?.data?.length)
-      throw new Error("No products found for this order");
-
-    // Gather all variant IDs from order items
-    const variantIds = order.items
-      .map((item) => item.variant?.id)
-      .filter(Boolean) as string[];
-
-    let variantMap: Record<string, ProductVariant> = {};
-    if (variantIds.length > 0) {
-      const variantQuery: QueryObject<ProductVariant> = {
-        conditions: [
-          {
-            field: "id",
-            operator: "in",
-            value: variantIds,
-          },
-        ],
-        includeFields: ["id", "productId", "stock"],
-      };
-      const variantResult = await dbAdapter.productVariants.get(variantQuery);
-      if (variantResult?.data?.length) {
-        for (const v of variantResult.data) {
-          if (v.id) variantMap[v.id] = v;
-        }
+    const variantResult = await dbAdapter.productVariants.get(variantQuery);
+    if (variantResult?.data?.length) {
+      for (const v of variantResult.data) {
+        if (v.id) variantMap[v.id] = v;
       }
     }
-
-    // Check stock
-    for (const item of order.items) {
-      if (item.variant?.id) {
-        const variant = variantMap[item.variant.id];
-        if (!variant) throw new Error(`Variant not found: ${item.variant.id}`);
-
-        if (
-          variant.stock !== undefined &&
-          variant.stock !== null &&
-          variant.stock < item.quantity
-        ) {
-          throw new Error(
-            `Insufficient stock for variant ${variant.id} of product ${item.product.id}`
-          );
-        }
-      } else {
-        const product = productResult.data.find(
-          (p) => p.id === item.product.id
-        );
-        if (!product) throw new Error(`Product not found: ${item.product.id}`);
-
-        if (
-          product.stock !== undefined &&
-          product.stock !== null &&
-          product.stock < item.quantity
-        ) {
-          throw new Error(`Insufficient stock for product ${product.id}`);
-        }
-      }
-    }
-
-    return true;
-  } catch (error) {
-    console.error("Error checking stock:", error);
-    return false;
   }
+
+  for (const item of order.items) {
+    if (item.variant?.id) {
+      const variant = variantMap[item.variant.id];
+      if (!variant) throw new Error(`Variant not found: ${item.variant.id}`);
+
+      // Only check stock if defined
+      if (variant.stock != null && variant.stock < item.quantity) {
+        throw new Error(
+          `Insufficient stock for variant ${variant.id} of product ${item.product.id}`
+        );
+      }
+    } else {
+      const product = productResult.data.find((p) => p.id === item.product.id);
+      if (!product) throw new Error(`Product not found: ${item.product.id}`);
+
+      // Only check stock if defined
+      if (product.stock != null && product.stock < item.quantity) {
+        throw new Error(`Insufficient stock for product ${product.id}`);
+      }
+    }
+  }
+
+  return true;
 }
 
 // ------------------ Update Stock ------------------
@@ -172,21 +151,29 @@ async function updateStock(order: Order, dbAdapter: DBAdapter) {
     const quantity = item.quantity || 1;
 
     if (item.variant?.id) {
-      // Variant stock decrement
-      updatePromises.push(
-        dbAdapter.productVariants.update(
-          { id: item.variant.id, stock: -quantity },
-          { increment: true }
-        )
-      );
+      const variant = await dbAdapter.productVariants.get({
+        conditions: [{ field: "id", operator: "=", value: item.variant.id }],
+      });
+      if (variant?.data?.[0]?.stock != null) {
+        updatePromises.push(
+          dbAdapter.productVariants.update(
+            { id: item.variant.id, stock: -quantity },
+            { increment: true }
+          )
+        );
+      }
     } else if (item.product?.id) {
-      // Product stock decrement
-      updatePromises.push(
-        dbAdapter.products.update(
-          { id: item.product.id, stock: -quantity },
-          { increment: true }
-        )
-      );
+      const product = await dbAdapter.products.get({
+        conditions: [{ field: "id", operator: "=", value: item.product.id }],
+      });
+      if (product?.data?.[0]?.stock != null) {
+        updatePromises.push(
+          dbAdapter.products.update(
+            { id: item.product.id, stock: -quantity },
+            { increment: true }
+          )
+        );
+      }
     }
   }
 

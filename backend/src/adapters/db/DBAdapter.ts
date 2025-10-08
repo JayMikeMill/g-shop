@@ -23,5 +23,6 @@ export interface DBAdapter {
   orders: CrudInterface<Order>;
   users: CrudInterface<User>;
 
+  isTx?: boolean;
   transaction<T>(callback: (tx: DBAdapter) => Promise<T>): Promise<T>;
 }
