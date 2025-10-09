@@ -1,10 +1,10 @@
 import { Order, Product, ProductVariant, QueryObject } from "@shared/types";
-import { db, payment as paymentAdapter } from "@adapters/services";
+import { db, payment } from "@adapters/services";
 import { DBAdapter } from "@adapters/types/DBAdapter";
 import { toMajorPriceString } from "@shared/utils/PriceUtils";
 
 export class OrderProcessingService {
-  static async placeOrder(payment: any, order: Order) {
+  static async placeOrder(paymentMethod: any, order: Order) {
     // implement order placement logic
     try {
       // 1. Check stock for all items in the order
@@ -25,8 +25,8 @@ export class OrderProcessingService {
       });
 
       // 2b. Authorize payment
-      const paymentResult = await paymentAdapter.authorizePayment({
-        token: payment.id,
+      const paymentResult = await payment.authorizePayment({
+        token: paymentMethod.id,
         amount: order.total / 100, // amount is in cents
         currency: order.transaction?.currency || "USD",
         metadata,
@@ -55,9 +55,7 @@ export class OrderProcessingService {
       });
 
       // 5. Capture payment
-      const captureResult = await paymentAdapter.capturePayment(
-        paymentResult.id
-      );
+      const captureResult = await payment.capturePayment(paymentResult.id);
       if (captureResult.status !== "CAPTURED") {
         throw new Error("Payment capture failed");
       }

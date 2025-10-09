@@ -1,9 +1,7 @@
 // useApi.ts
 import { post, del } from "./client";
-
 import type { Order, User } from "@shared/types";
 
-// Hook
 export function useApi() {
   return {
     auth: {
@@ -24,12 +22,12 @@ export function useApi() {
     },
     deleteFile: (url: string) => del<{ success: boolean }>(`/storage`, { url }),
 
-    // custom endpoints
+    // payments
     placeOrder: (
-      payment: any,
+      paymentMethod: any,
       order: Order
     ): Promise<{ success: boolean; error?: string; data?: any }> =>
-      post(`/orders/place`, { payment, order }),
+      post(`/orders/place`, { paymentMethod, order }),
 
     refundPayment: (paymentId: string) =>
       post(`/payments/refund`, { paymentId }),
