@@ -2,7 +2,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { requireRole } from "@middleware/authorization";
 import type { Role } from "@middleware/authorization";
-import { CrudInterface } from "@shared/types";
+import { CrudInterface } from "@shared/interfaces";
 import { parseQueryObject } from "@shared/types";
 
 /**

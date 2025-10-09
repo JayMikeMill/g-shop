@@ -1,8 +1,9 @@
 // backend/src/adapters/db/FirebaseAdapter.ts
 import { FirebaseCrudAdapter } from "./FireBaseCrudAdapter";
 
+import type { CrudInterface } from "@shared/interfaces";
+
 import {
-  CrudInterface,
   Product,
   ProductOptionsPreset,
   ProductReview,

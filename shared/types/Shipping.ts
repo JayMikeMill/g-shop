@@ -1,4 +1,4 @@
-import { Address } from "./";
+import type { Address } from "./";
 
 export interface Parcel {
   length: number; // in inches or cm

@@ -1,6 +1,6 @@
 // backend/src/crud/FirebaseCRUD.ts
 import { useFirebase } from "./config/firebaseAdmin";
-import type { CrudInterface } from "@shared/types";
+import type { CrudInterface } from "@shared/interfaces";
 
 export class FirebaseCrudAdapter<T extends { id?: string }>
   implements CrudInterface<T>

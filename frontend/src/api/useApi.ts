@@ -1,4 +1,5 @@
 // useApi.ts
+import type { Address } from "cluster";
 import { post, del } from "./client";
 import type { Order, User } from "@shared/types";
 
@@ -48,7 +49,8 @@ export function useApi() {
     // Shipping
     //////////////////////////////////
     shipping: {
-      verifyAddress: (address: any) => post(`/shipping/verify`, { address }),
+      verifyAddress: (address: Address) =>
+        post(`/shipping/verify`, { address }),
       getRates: (shipmentDetails: any) =>
         post(`/shipping/rates`, { shipmentDetails }),
       trackShipment: (trackingNumber: string, carrier: string) =>
