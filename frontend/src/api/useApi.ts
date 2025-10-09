@@ -43,5 +43,16 @@ export function useApi() {
       ): Promise<{ success: boolean; error?: string; data?: any }> =>
         post(`/orders/place`, { paymentMethod, order }),
     },
+
+    //////////////////////////////////
+    // Shipping
+    //////////////////////////////////
+    shipping: {
+      verifyAddress: (address: any) => post(`/shipping/verify`, { address }),
+      getRates: (shipmentDetails: any) =>
+        post(`/shipping/rates`, { shipmentDetails }),
+      trackShipment: (trackingNumber: string, carrier: string) =>
+        post(`/shipping/track`, { trackingNumber, carrier }),
+    },
   };
 }

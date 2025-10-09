@@ -2,13 +2,14 @@
 
 import { shipping } from "@adapters/services";
 import { Address } from "@shared/types";
+
 import {
   Parcel,
   ShipmentRate,
   Shipment,
   AddressVerificationResult,
   ShipmentTrackingResult,
-} from "@adapters/types/ShippingAdapter";
+} from "@shared/types";
 
 export class ShippingService {
   // -------------------------------
