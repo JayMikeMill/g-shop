@@ -80,7 +80,7 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
 
     setSaving(true);
     try {
-      await createPreset.mutateAsync({ name, productOptions: localOptions });
+      await createPreset.mutateAsync({ name, options: localOptions });
       alert("Preset saved successfully");
     } catch (err: any) {
       alert("Error saving preset: " + err.message);

@@ -58,7 +58,7 @@ function InnerStripeForm({
             city: shippingInfo.address?.city,
             state: shippingInfo.address?.state,
             postal_code: shippingInfo.address?.postalCode,
-            country: shippingInfo.address?.country,
+            country: "US",
           },
         },
       });

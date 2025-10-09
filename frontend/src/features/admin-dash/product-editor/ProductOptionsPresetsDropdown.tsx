@@ -28,8 +28,8 @@ const OptionsPresetDropdown: React.FC<OptionsPresetDropdownProps> = ({
 
   // Apply preset
   const handleApplyPreset = (preset: ProductOptionsPreset) => {
-    if (!preset.productOptions?.length) return;
-    setLocalOptions(preset.productOptions);
+    if (!preset.options?.length) return;
+    setLocalOptions(preset.options);
     setSelectedPreset(preset);
   };
 

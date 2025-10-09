@@ -19,10 +19,9 @@ datasource db {
   url      = "file:./dev.db"
 }
 
-//////////////////////
-// ENUMS
-//////////////////////
-
+//////////////////////////////////////////////////////////////////
+/// ENUMS
+//////////////////////////////////////////////////////////////////
 enum UserRole {
   USER
   STAFF
@@ -108,11 +107,9 @@ enum StockMovementType {
   ADJUSTMENT
 }
 
-//////////////////////
-// USERS & AUTH
-//////////////////////
-
-/// User Model
+//////////////////////////////////////////////////////////////////
+/// USERS & AUTH
+//////////////////////////////////////////////////////////////////
 model User {
   id                  String    @id @default(uuid())
   email               String    @unique
@@ -147,10 +144,9 @@ model UserPaymentMethod {
   userId String
 }
 
-//////////////////////
-// COLLECTIONS & CATEGORIES
-//////////////////////
-
+//////////////////////////////////////////////////////////////////
+/// COLLECTIONS & CATEGORIES
+//////////////////////////////////////////////////////////////////
 model Collection {
   id          String              @id @default(uuid())
   name        String
@@ -191,10 +187,9 @@ model CollectionImageSet {
   categoryId   String?     @unique
 }
 
-//////////////////////
-// PRODUCTS
-//////////////////////
-
+//////////////////////////////////////////////////////////////////
+/// PRODUCTS
+//////////////////////////////////////////////////////////////////
 model Product {
   id             String             @id @default(uuid())
   name           String
@@ -234,7 +229,7 @@ model ProductImageSet {
 model ProductOption {
   id     String @id @default(uuid())
   name   String
-  values Json
+  values Json ///is*string[]*
 
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
@@ -242,7 +237,7 @@ model ProductOption {
 
 model ProductVariant {
   id      String @id @default(uuid())
-  options Json
+  options Json  ///is*string[]*
   price   Int?
   stock   Int?
 
@@ -295,15 +290,14 @@ model ProductTagPreset {
 }
 
 model ProductOptionsPreset {
-  id             String @id @default(uuid())
-  name           String
-  productOptions Json
+  id       String @id @default(uuid())
+  name     String
+  options  Json ///is*string[]*
 }
 
-//////////////////////
-// INVENTORY / STOCK
-//////////////////////
-
+//////////////////////////////////////////////////////////////////
+/// INVENTORY / STOCK
+//////////////////////////////////////////////////////////////////
 model StockMovement {
   id        String            @id @default(uuid())
   product   Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
@@ -314,13 +308,13 @@ model StockMovement {
   notes     String?
 }
 
-//////////////////////
-// ADDRESS & SHIPPING
-//////////////////////
-
+//////////////////////////////////////////////////////////////////
+/// ADDRESS & SHIPPING
+//////////////////////////////////////////////////////////////////
 model Address {
   id             String        @id @default(uuid())
   name           String
+  company        String?
   email          String
   phone          String?
   street1        String
@@ -364,10 +358,9 @@ model ShippingStatusHistory {
   timestamp      DateTime       @default(now())
 }
 
-//////////////////////
-// ORDERS & TRANSACTIONS
-//////////////////////
-
+//////////////////////////////////////////////////////////////////
+/// ORDERS & TRANSACTIONS
+//////////////////////////////////////////////////////////////////
 model Order {
   id             String               @id @default(uuid())
   user           User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
@@ -391,8 +384,8 @@ model OrderItem {
   id       String @id @default(uuid())
   order    Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId  String
-  product  Json
-  variant  Json?
+  product  Json ///is*Product*
+  variant  Json? ///is*ProductVariant*
   quantity Int
   price    Int
 }
@@ -426,10 +419,9 @@ model Invoice {
   createdAt     DateTime @default(now())
 }
 
-//////////////////////
-// COUPONS
-//////////////////////
-
+//////////////////////////////////////////////////////////////////
+/// COUPONS
+//////////////////////////////////////////////////////////////////
 model Coupon {
   id           String       @id @default(uuid())
   code         String       @unique
@@ -440,10 +432,9 @@ model Coupon {
   createdAt    DateTime     @default(now())
 }
 
-//////////////////////
-// SESSIONS & CARTS
-//////////////////////
-
+//////////////////////////////////////////////////////////////////
+/// SESSIONS & CARTS
+//////////////////////////////////////////////////////////////////
 model Session {
   id        String   @id @default(uuid())
   user      User?    @relation(fields: [userId], references: [id])
