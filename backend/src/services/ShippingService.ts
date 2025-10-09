@@ -1,6 +1,6 @@
 // src/services/ShippingService.ts
 
-import { shipping } from "@config/adapters";
+import { shipping } from "@adapters/services";
 import {
   Address,
   Parcel,
@@ -8,7 +8,7 @@ import {
   Shipment,
   AddressVerificationResult,
   ShipmentTrackingResult,
-} from "@adapters/ShippingAdapter";
+} from "@adapters/types/ShippingAdapter";
 
 class ShippingService {
   // -------------------------------

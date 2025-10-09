@@ -1,6 +1,6 @@
 import { Order, Product, ProductVariant, QueryObject } from "@shared/types";
-import { db, payment as paymentAdapter } from "@config/adapters";
-import { DBAdapter } from "@adapters/DBAdapter";
+import { db, payment as paymentAdapter } from "@adapters/services";
+import { DBAdapter } from "@adapters/types/DBAdapter";
 import { toMajorPriceString } from "@shared/utils/PriceUtils";
 
 export class OrderProcessingService {

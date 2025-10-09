@@ -1,5 +1,5 @@
 // @services/authService.ts
-import { auth } from "@config/adapters";
+import { auth } from "@adapters/services";
 import { User } from "@shared/types";
 
 export class AuthService {

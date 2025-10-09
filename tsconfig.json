@@ -17,7 +17,8 @@
     "backend/src/**/*.ts",
     "frontend/src/**/*.tsx",
     "shared/**/*.ts",
-    "unit-tests/**/*"
+    "unit-tests/**/*",
+    "backend/src/services/index"
   ],
 
   "exclude": ["node_modules", "dist", "build"]

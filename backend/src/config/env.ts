@@ -7,4 +7,6 @@ import path from "path";
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
 // Export environment variables with defaults
-export const env = process.env;
+const env = process.env;
+
+export { env };

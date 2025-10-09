@@ -1,6 +1,5 @@
 // src/crud/ProductCrud.ts
 import { PrismaClient } from "@prisma/client";
-import { PrismaCrudAdapter } from "./PrismaCrudAdapter";
 
 import type {
   Product,
@@ -14,7 +13,8 @@ import type {
   ProductVariant,
 } from "@shared/types";
 
-import { DBAdapter } from "../DBAdapter";
+import { DBAdapter } from "@adapters/types";
+import { PrismaCrudAdapter } from "./PrismaCrudAdapter";
 
 export class PrismaDBAdapter implements DBAdapter {
   private prisma: PrismaClient;

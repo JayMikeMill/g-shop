@@ -1,4 +1,4 @@
-import { StorageAdapter } from "../StorageAdapter";
+import { StorageAdapter } from "@adapters/types";
 import { getStorage } from "firebase-admin/storage";
 import { initializeApp, cert, App } from "firebase-admin/app";
 import path from "path";
@@ -15,7 +15,7 @@ try {
         fs.readFileSync(
           path.resolve(
             __dirname,
-            "../../config/firebase/NailStoreFirebaseServiceAccount.json"
+            "config/NailStoreFirebaseServiceAccount.json"
           ),
           "utf8"
         )

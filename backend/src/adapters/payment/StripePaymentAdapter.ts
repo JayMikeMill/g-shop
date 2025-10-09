@@ -1,4 +1,4 @@
-import { PaymentAdapter } from "../PaymentAdapter";
+import { PaymentAdapter } from "@adapters/types";
 import {
   Address,
   PaymentRequest,
@@ -6,8 +6,7 @@ import {
   PaymentStatus,
 } from "@shared/types";
 import Stripe from "stripe";
-import { env } from "@config/EnvVars";
-import { ShippingInfo } from "@shared/types";
+import { env } from "@config";
 
 // Initialize Stripe client
 const stripe = new Stripe(env.STRIPE_SECRET_KEY as string, {

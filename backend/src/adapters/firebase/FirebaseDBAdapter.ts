@@ -15,7 +15,7 @@ import {
   ProductVariant,
 } from "@shared/types";
 
-import type { DBAdapter } from "../DBAdapter";
+import type { DBAdapter } from "../types/DBAdapter";
 
 export class FirebaseDBAdapter implements DBAdapter {
   public users: CrudInterface<User>;

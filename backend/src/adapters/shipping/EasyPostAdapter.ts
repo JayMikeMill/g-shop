@@ -9,9 +9,9 @@ import {
   ShippingAdapter,
   AddressVerificationResult,
   ShipmentTrackingResult,
-} from "../ShippingAdapter";
+} from "@adapters/types";
 
-import { env } from "@config/EnvVars";
+import { env } from "@config";
 
 // Helper: convert EasyPost rate string to number in cents
 const dollarsToCents = (amount: string | number) =>

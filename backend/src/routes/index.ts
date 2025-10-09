@@ -9,7 +9,7 @@ import orderRoutes from "@routes/orders";
 import { createCrudRoute } from "@utils/createCrudRoute";
 
 // Database for CRUD routes
-import { db } from "@config/adapters";
+import { db } from "@adapters/services";
 
 const router = Router();
 
