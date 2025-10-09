@@ -56,29 +56,11 @@ export function useApi(): {
     //////////////////////////////////
     shipping: {
       verifyAddress: (address: Address) =>
-        post<AddressVerificationResult>(`/shipping/verify`, { address }),
+        post<AddressVerificationResult>(`/shipping/verify`, address),
       getRates: (from: Address, to: Address, parcel: Parcel) =>
         post<ShipmentRate[]>(`/shipping/rates`, { from, to, parcel }),
-      createShipment: (
-        from: Address,
-        to: Address,
-        parcel: Parcel,
-        carrier?: string,
-        service?: string
-      ) =>
-        post<Shipment>(`/shipping/create`, {
-          from,
-          to,
-          parcel,
-          carrier,
-          service,
-        }),
-      buyShipment: (shipmentId: string, rate?: ShipmentRate) =>
-        post<Shipment>(`/shipping/buy`, { shipmentId, rate }),
       trackShipment: (trackingNumber: string) =>
         post<ShipmentTrackingResult>(`/shipping/track`, { trackingNumber }),
-      cancelShipment: (shipmentId: string) =>
-        post<boolean>(`/shipping/cancel`, { shipmentId }),
     },
 
     //////////////////////////////////

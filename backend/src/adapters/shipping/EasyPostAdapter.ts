@@ -20,6 +20,29 @@ const dollarsToCents = (amount: string | number) =>
 
 const apiKey = env.EASYPOST_API_KEY || "YOUR_EASYPOST_KEY";
 
+/**
+ * Maps your internal Address type to EasyPost's expected address format.
+ * Automatically splits apartment/unit from street1 to street2.
+ */
+export function mapToEasyPostAddress(address: Address) {
+  const streetParts = (address.street1 || "").split(/\s+APT\s+/i); // split on "APT"
+  const street1 = streetParts[0].trim();
+  const street2 = (streetParts[1] || address.street2 || "").trim();
+
+  return {
+    name: address.name || "",
+    company: address.company || undefined,
+    street1,
+    street2: street2 || undefined,
+    city: address.city || "",
+    state: address.state || "",
+    zip: address.postalCode || "", // EasyPost expects "zip"
+    country: address.country || "US",
+    phone: address.phone || undefined,
+    email: address.email || undefined,
+  };
+}
+
 export class EasyPostAdapter implements ShippingAdapter {
   private api: InstanceType<typeof EasyPost>;
 
@@ -33,9 +56,12 @@ export class EasyPostAdapter implements ShippingAdapter {
   async verifyAddress(address: Address): Promise<AddressVerificationResult> {
     try {
       const epAddress = await this.api.Address.create({
-        ...address,
+        ...mapToEasyPostAddress(address),
         verify: true,
       });
+
+      const suggestions = epAddress.verifications?.delivery?.details ?? [];
+      console.log("EasyPost verification result:", suggestions);
 
       const verified = epAddress.verifications?.delivery?.success ?? false;
       const errors: string[] | undefined =
@@ -190,14 +216,6 @@ export class EasyPostAdapter implements ShippingAdapter {
     } catch {
       return false;
     }
-  }
-
-  // -------------------------------
-  // Auto-complete Address
-  // -------------------------------
-  async autoCompleteAddress(partial: Partial<Address>): Promise<Address[]> {
-    const suggestions: Address[] = [];
-    return suggestions;
   }
 
   // -------------------------------

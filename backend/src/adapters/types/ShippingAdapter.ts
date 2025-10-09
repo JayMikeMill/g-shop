@@ -48,6 +48,4 @@ export interface ShippingAdapter {
    * Cancel a shipment
    */
   cancelShipment(shipmentId: string): Promise<boolean>;
-
-  autoCompleteAddress(partial: Partial<Address>): Promise<Address[]>;
 }

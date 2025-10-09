@@ -1,3 +1,4 @@
+import { useApi } from "@api";
 import {
   type ShippingInfo,
   TransactionStatus as TransactionStatuses,
@@ -9,7 +10,17 @@ import {
 
 import { toMinorUnit } from "@shared/utils";
 
-export function createOrder(cart: Cart, shippingInfo: ShippingInfo): Order {
+export async function createOrder(
+  cart: Cart,
+  shippingInfo: ShippingInfo
+): Promise<Order | null> {
+  try {
+    shippingInfo = await verifyAddress(shippingInfo);
+  } catch (error) {
+    console.error("Error verifying address:", error);
+    return null;
+  }
+
   // Create order object
   return {
     total: cart.total + (shippingInfo.cost ?? 0),
@@ -37,5 +48,31 @@ export function createOrder(cart: Cart, shippingInfo: ShippingInfo): Order {
       status: TransactionStatuses.PENDING,
     },
     invoices: [{ createdAt: new Date(), invoiceNumber: `INV-${Date.now()}` }],
+  };
+}
+
+async function verifyAddress(
+  shippingInfo: ShippingInfo
+): Promise<ShippingInfo> {
+  if (!shippingInfo.address) {
+    throw new Error("Shipping address is missing");
+  }
+
+  const { verifyAddress } = useApi().shipping;
+
+  const result = await verifyAddress({
+    ...shippingInfo.address,
+    country: "US",
+  });
+
+  if (!result.valid) {
+    throw new Error(
+      "Address verification failed: " + (result.errors ?? []).join(", ")
+    );
+  }
+
+  return {
+    ...shippingInfo,
+    address: result.normalizedAddress ?? shippingInfo.address,
   };
 }

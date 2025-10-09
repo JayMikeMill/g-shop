@@ -49,14 +49,5 @@ export interface OrderProcessingApi {
 export interface ShippingApi {
   verifyAddress(address: Address): Promise<AddressVerificationResult>;
   getRates(from: Address, to: Address, parcel: Parcel): Promise<ShipmentRate[]>;
-  createShipment(
-    from: Address,
-    to: Address,
-    parcel: Parcel,
-    carrier?: string,
-    service?: string
-  ): Promise<Shipment>;
-  buyShipment(shipmentId: string, rate?: ShipmentRate): Promise<Shipment>;
   trackShipment(trackingNumber: string): Promise<ShipmentTrackingResult>;
-  cancelShipment(shipmentId: string): Promise<boolean>;
 }

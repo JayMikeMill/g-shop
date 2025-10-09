@@ -1,7 +1,9 @@
 import { controllerHandler } from "@utils/controllerHandler";
 import S from "@services/ShippingService";
 
-export const verifyAddress = controllerHandler({ handler: S.verifyAddress });
+export const verifyAddress = controllerHandler({
+  handler: S.verifyAddress,
+});
 
 export const getRates = controllerHandler({
   handler: ({ from, to, parcel }) => S.getRates(from, to, parcel),

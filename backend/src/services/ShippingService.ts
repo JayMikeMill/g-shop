@@ -23,6 +23,10 @@ export class ShippingService implements ShippingApi {
     return shipping.getRates(from, to, parcel);
   }
 
+  async trackShipment(trackingNumber: string): Promise<ShipmentTrackingResult> {
+    return shipping.trackShipment(trackingNumber);
+  }
+
   async createShipment(
     from: Address,
     to: Address,
@@ -38,10 +42,6 @@ export class ShippingService implements ShippingApi {
     rate?: ShipmentRate
   ): Promise<Shipment> {
     return shipping.buyShipment(shipmentId, rate);
-  }
-
-  async trackShipment(trackingNumber: string): Promise<ShipmentTrackingResult> {
-    return shipping.trackShipment(trackingNumber);
   }
 
   async cancelShipment(shipmentId: string): Promise<boolean> {

@@ -35,13 +35,20 @@ function InnerStripeForm({
   const { placeOrder } = useApi().orders;
 
   const handlePayment = async () => {
-    if (!stripe || !elements) return;
-
-    const cardElement = elements.getElement(CardElement);
-
-    if (!cardElement) return;
-
     try {
+      const order = await createOrder(cart, shippingInfo);
+
+      if (!order) {
+        setMessage("Order creation failed");
+        return;
+      }
+
+      console.log("Created order:", order);
+
+      if (!stripe || !elements) return;
+      const cardElement = elements.getElement(CardElement);
+      if (!cardElement) return;
+
       setLoading(true);
 
       // Create payment method on Stripe
@@ -72,8 +79,6 @@ function InnerStripeForm({
         setMessage("Payment method is undefined");
         return;
       }
-
-      const order = createOrder(cart, shippingInfo);
 
       // Send paymentMethod.id to backend
       const response = await placeOrder(paymentMethod, order);
