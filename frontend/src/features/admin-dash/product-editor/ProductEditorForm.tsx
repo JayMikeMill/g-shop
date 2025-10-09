@@ -105,9 +105,6 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
     //clearProduct();
   };
 
-  const hasVariants = !!localProduct.options?.length;
-
-  console.log("Rendering ProductEditorForm with product:", hasVariants);
   return (
     <div className="flex flex-col flex-1 overflow-hidden border-t">
       <div className="flex flex-1 flex-col sm:flex-row sm:gap-md sm:py-md overflow-hidden min-h-0">
@@ -204,12 +201,13 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
               Cancel
             </Button>
             <Button
-              className="w-full h-12"
+              className={`w-full h-12  ${isProcessingImages || isSavingProduct ? "justify-between" : ""}`}
               disabled={isProcessingImages || isSavingProduct}
               onClick={handleSave}
+              loadingIcon={isProcessingImages || isSavingProduct}
             >
               {isSavingProduct
-                ? "Saving..."
+                ? "Saving Product..."
                 : isProcessingImages
                   ? "Processing Images..."
                   : localProduct.id
