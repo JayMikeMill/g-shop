@@ -1,0 +1,237 @@
+import EasyPost from "@easypost/api";
+import {
+  Address,
+  Parcel,
+  ShipmentRate,
+  Shipment,
+  ShippingAdapter,
+  AddressVerificationResult,
+  ShipmentTrackingResult,
+} from "../ShippingAdapter";
+
+// Helper: convert EasyPost rate string to number in cents
+const dollarsToCents = (amount: string | number) =>
+  Math.round(parseFloat(String(amount)) * 100);
+
+export class EasyPostAdapter implements ShippingAdapter {
+  private api: InstanceType<typeof EasyPost>;
+
+  constructor(apiKey: string) {
+    this.api = new EasyPost(apiKey);
+  }
+
+  // -------------------------------
+  // Verify Address
+  // -------------------------------
+  async verifyAddress(address: Address): Promise<AddressVerificationResult> {
+    try {
+      const epAddress = await this.api.Address.create({
+        ...address,
+        verify: true,
+      });
+
+      const verified = epAddress.verifications?.delivery?.success ?? false;
+      const errors: string[] | undefined =
+        epAddress.verifications?.delivery?.errors?.map((e: any) => e.message) ??
+        undefined;
+
+      return {
+        valid: verified,
+        normalizedAddress: verified
+          ? {
+              street1: epAddress.street1 || "",
+              street2: epAddress.street2 || undefined,
+              city: epAddress.city || "",
+              state: epAddress.state || "",
+              zip: epAddress.zip || "",
+              country: epAddress.country || "",
+              company: epAddress.company || undefined,
+              phone: epAddress.phone || undefined,
+              email: epAddress.email || undefined,
+            }
+          : undefined,
+        errors,
+      };
+    } catch (err: any) {
+      return { valid: false, errors: [err.message] };
+    }
+  }
+
+  // -------------------------------
+  // Get Rates
+  // -------------------------------
+  async getRates(fromAddress: Address, toAddress: Address, parcel: Parcel) {
+    const shipment = await this.api.Shipment.create({
+      from_address: fromAddress,
+      to_address: toAddress,
+      parcel,
+    });
+
+    return shipment.rates.map(
+      (r: any): ShipmentRate => ({
+        carrier: r.carrier,
+        service: r.service,
+        rate: dollarsToCents(r.rate), // convert string to number
+        currency: r.currency,
+        deliveryDays: r.delivery_days ?? undefined,
+      })
+    );
+  }
+
+  // -------------------------------
+  // Create Shipment (optionally buy)
+  // -------------------------------
+  async createShipment(
+    fromAddress: Address,
+    toAddress: Address,
+    parcel: Parcel,
+    carrier?: string,
+    service?: string
+  ): Promise<Shipment> {
+    // 1️⃣ Create the shipment in EasyPost
+    const epShipment = await this.api.Shipment.create({
+      from_address: fromAddress,
+      to_address: toAddress,
+      parcel,
+    });
+
+    let finalShipment = epShipment;
+
+    // 2️⃣ If carrier + service specified, attempt to buy the shipment
+    if (carrier && service) {
+      const chosenRate = epShipment.rates?.find(
+        (r) => r.carrier === carrier && r.service === service
+      );
+      if (!chosenRate) {
+        throw new Error(`Rate not found for ${carrier} ${service}`);
+      }
+
+      finalShipment = await this.api.Shipment.buy(epShipment.id, chosenRate);
+    }
+
+    return this.mapShipment(finalShipment);
+  }
+
+  // -------------------------------
+  // Buy Shipment (already created)
+  // -------------------------------
+  async buyShipment(
+    shipmentId: string,
+    rate?: ShipmentRate
+  ): Promise<Shipment> {
+    // 1️⃣ Retrieve the shipment
+    const epShipment = await this.api.Shipment.retrieve(shipmentId);
+
+    if (!epShipment) throw new Error(`Shipment ${shipmentId} not found`);
+
+    // 2️⃣ Determine which rate to use
+    let chosenRate;
+    if (!rate) {
+      // If no rate provided, pick the lowest available rate
+      if (!epShipment.rates || epShipment.rates.length === 0) {
+        throw new Error("No rates available to buy shipment");
+      }
+      // Using EasyPost's built-in lowestRate() if available
+      chosenRate = epShipment.lowestRate?.() ?? epShipment.rates[0];
+    } else {
+      chosenRate = epShipment.rates.find(
+        (r) => r.carrier === rate.carrier && r.service === rate.service
+      );
+      if (!chosenRate) {
+        throw new Error(`Rate not found for ${rate.carrier} ${rate.service}`);
+      }
+    }
+
+    // 3️⃣ Buy the shipment using the static method
+    const boughtShipment = await this.api.Shipment.buy(
+      epShipment.id,
+      chosenRate
+    );
+
+    return this.mapShipment(boughtShipment);
+  }
+
+  // -------------------------------
+  // Track Shipment
+  // -------------------------------
+  async trackShipment(trackingNumber: string): Promise<ShipmentTrackingResult> {
+    const tracker = await this.api.Tracker.create({
+      tracking_code: trackingNumber,
+    });
+    return {
+      status: tracker.status,
+      events: tracker.tracking_details ?? [],
+      estimatedDelivery: tracker.est_delivery_date ?? undefined,
+    };
+  }
+
+  // -------------------------------
+  // Cancel Shipment
+  // -------------------------------
+  async cancelShipment(shipmentId: string): Promise<boolean> {
+    try {
+      const shipment = await this.api.Shipment.retrieve(shipmentId);
+      if (!shipment) return false;
+
+      if (shipment.selected_rate?.carrier === "USPS") {
+        await this.api.Refund.create({ shipment: shipment.id });
+        return true;
+      }
+
+      return false;
+    } catch {
+      return false;
+    }
+  }
+
+  // -------------------------------
+  // Helper: Map EasyPost shipment to our Shipment interface
+  // -------------------------------
+  private mapShipment(epShipment: any): Shipment {
+    return {
+      id: epShipment.id,
+      trackingNumber: epShipment.tracking_code,
+      labelUrl: epShipment.postage_label?.label_url ?? "",
+      status: epShipment.status ?? undefined,
+      fromAddress: {
+        street1: epShipment.from_address?.street1 || "",
+        street2: epShipment.from_address?.street2 || undefined,
+        city: epShipment.from_address?.city || "",
+        state: epShipment.from_address?.state || "",
+        zip: epShipment.from_address?.zip || "",
+        country: epShipment.from_address?.country || "",
+        company: epShipment.from_address?.company || undefined,
+        phone: epShipment.from_address?.phone || undefined,
+        email: epShipment.from_address?.email || undefined,
+      },
+      toAddress: {
+        street1: epShipment.to_address?.street1 || "",
+        street2: epShipment.to_address?.street2 || undefined,
+        city: epShipment.to_address?.city || "",
+        state: epShipment.to_address?.state || "",
+        zip: epShipment.to_address?.zip || "",
+        country: epShipment.to_address?.country || "",
+        company: epShipment.to_address?.company || undefined,
+        phone: epShipment.to_address?.phone || undefined,
+        email: epShipment.to_address?.email || undefined,
+      },
+      parcel: {
+        length: epShipment.parcel?.length,
+        width: epShipment.parcel?.width,
+        height: epShipment.parcel?.height,
+        weight: epShipment.parcel?.weight,
+      },
+      rates: epShipment.rates?.map(
+        (r: any): ShipmentRate => ({
+          carrier: r.carrier,
+          service: r.service,
+          rate: dollarsToCents(r.rate), // FIX: string → number
+          currency: r.currency,
+          deliveryDays: r.delivery_days ?? undefined,
+        })
+      ),
+      carrier: epShipment.selected_rate?.carrier,
+      service: epShipment.selected_rate?.service,
+    };
+  }
+}

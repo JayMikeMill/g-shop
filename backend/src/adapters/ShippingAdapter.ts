@@ -1,5 +1,3 @@
-// src/adapters/ShippingAdapter.ts
-
 export interface Address {
   street1: string;
   street2?: string;
@@ -40,17 +38,23 @@ export interface Shipment {
   service?: string;
 }
 
+export interface AddressVerificationResult {
+  valid: boolean;
+  normalizedAddress?: Address;
+  errors?: string[];
+}
+
+export interface ShipmentTrackingResult {
+  status: string;
+  events: unknown[];
+  estimatedDelivery?: string;
+}
+
 export interface ShippingAdapter {
   /**
    * Verify an address
    */
-  verifyAddress(
-    address: Address
-  ): Promise<{
-    valid: boolean;
-    normalizedAddress?: Address;
-    errors?: string[];
-  }>;
+  verifyAddress(address: Address): Promise<AddressVerificationResult>;
 
   /**
    * Get shipping rates for a given shipment
@@ -80,9 +84,7 @@ export interface ShippingAdapter {
   /**
    * Track a shipment by its tracking number
    */
-  trackShipment(
-    trackingNumber: string
-  ): Promise<{ status: string; events: any[]; estimatedDelivery?: string }>;
+  trackShipment(trackingNumber: string): Promise<ShipmentTrackingResult>;
 
   /**
    * Cancel a shipment
