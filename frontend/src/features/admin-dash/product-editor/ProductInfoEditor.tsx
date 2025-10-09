@@ -48,8 +48,9 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
     localProduct.description,
   ]);
 
-  const discountTypeSymbol =
-    localProduct.discountType === "PERCENTAGE" ? "%" : "$";
+  const isPercentage = localProduct.discountType === "PERCENTAGE";
+  const discountTypeSymbol = isPercentage ? "%" : "$";
+
   return (
     <div className="flex flex-col flex-1 gap-md overflow-hidden p-0.5">
       {/* Name */}
@@ -72,8 +73,7 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
           Price
           <NumberInput
             symbol="$"
-            onFocus={(e) => e.target.select()}
-            value={toMajorPriceString(localProduct.price)}
+            value={toMajorUnit(localProduct.price)}
             onChange={(e) =>
               setLocalProduct((prev) => ({
                 ...prev,
@@ -92,20 +92,22 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
               symbol={discountTypeSymbol}
               className="text-center  w-32"
               onFocus={(e) => e.target.select()}
+              decimals={isPercentage ? 0 : 2}
               value={
                 localProduct.discount
-                  ? toMajorUnit(localProduct.discount).toFixed(
-                      localProduct.discountType === "PERCENTAGE" ? 0 : 2
-                    )
+                  ? isPercentage
+                    ? localProduct.discount
+                    : toMajorUnit(localProduct.discount)
                   : ""
               }
               onChange={(e) =>
                 setLocalProduct((prev) => ({
                   ...prev,
-                  discount: toMinorUnit(parseFloat(e.target.value)),
+                  discount: isPercentage
+                    ? parseInt(e.target.value)
+                    : toMinorUnit(parseFloat(e.target.value)),
                 }))
               }
-              step={localProduct.discountType === "PERCENTAGE" ? "0.01" : "1"}
             />
           </Label>
 
