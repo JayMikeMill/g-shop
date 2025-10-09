@@ -1,6 +1,8 @@
 import EasyPost from "@easypost/api";
+
+import { Address } from "@shared/types";
+
 import {
-  Address,
   Parcel,
   ShipmentRate,
   Shipment,
@@ -43,15 +45,16 @@ export class EasyPostAdapter implements ShippingAdapter {
         valid: verified,
         normalizedAddress: verified
           ? {
+              name: epAddress.name || "",
               street1: epAddress.street1 || "",
               street2: epAddress.street2 || undefined,
               city: epAddress.city || "",
               state: epAddress.state || "",
-              zip: epAddress.zip || "",
+              postalCode: epAddress.zip || "",
               country: epAddress.country || "",
               company: epAddress.company || undefined,
               phone: epAddress.phone || undefined,
-              email: epAddress.email || undefined,
+              email: epAddress.email || "",
             }
           : undefined,
         errors,
@@ -189,6 +192,14 @@ export class EasyPostAdapter implements ShippingAdapter {
   }
 
   // -------------------------------
+  // Auto-complete Address
+  // -------------------------------
+  async autoCompleteAddress(partial: Partial<Address>): Promise<Address[]> {
+    const suggestions: Address[] = [];
+    return suggestions;
+  }
+
+  // -------------------------------
   // Helper: Map EasyPost shipment to our Shipment interface
   // -------------------------------
   private mapShipment(epShipment: any): Shipment {
@@ -198,22 +209,24 @@ export class EasyPostAdapter implements ShippingAdapter {
       labelUrl: epShipment.postage_label?.label_url ?? "",
       status: epShipment.status ?? undefined,
       fromAddress: {
+        name: epShipment.from_address?.name || "",
         street1: epShipment.from_address?.street1 || "",
         street2: epShipment.from_address?.street2 || undefined,
         city: epShipment.from_address?.city || "",
         state: epShipment.from_address?.state || "",
-        zip: epShipment.from_address?.zip || "",
+        postalCode: epShipment.from_address?.zip || "",
         country: epShipment.from_address?.country || "",
         company: epShipment.from_address?.company || undefined,
         phone: epShipment.from_address?.phone || undefined,
         email: epShipment.from_address?.email || undefined,
       },
       toAddress: {
+        name: epShipment.to_address?.name || "",
         street1: epShipment.to_address?.street1 || "",
         street2: epShipment.to_address?.street2 || undefined,
         city: epShipment.to_address?.city || "",
         state: epShipment.to_address?.state || "",
-        zip: epShipment.to_address?.zip || "",
+        postalCode: epShipment.to_address?.zip || "",
         country: epShipment.to_address?.country || "",
         company: epShipment.to_address?.company || undefined,
         phone: epShipment.to_address?.phone || undefined,

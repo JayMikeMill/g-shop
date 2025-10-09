@@ -1,14 +1,4 @@
-export interface Address {
-  street1: string;
-  street2?: string;
-  city: string;
-  state: string;
-  zip: string;
-  country: string;
-  company?: string;
-  phone?: string;
-  email?: string;
-}
+import { Address } from "@shared/types";
 
 export interface Parcel {
   length: number; // in inches or cm
@@ -90,4 +80,6 @@ export interface ShippingAdapter {
    * Cancel a shipment
    */
   cancelShipment(shipmentId: string): Promise<boolean>;
+
+  autoCompleteAddress(partial: Partial<Address>): Promise<Address[]>;
 }
