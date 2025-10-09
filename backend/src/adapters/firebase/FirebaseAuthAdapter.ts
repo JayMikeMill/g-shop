@@ -1,16 +1,19 @@
 // backend/src/adapters/firebase/FirebaseAuthAdapter.ts
 
 import { User } from "@shared/types";
-import { auth } from "./config/firebaseAdmin";
+import { useFirebase } from "./config/firebaseAdmin";
 import { AuthAdapter } from "@adapters/types";
 
 export class FirebaseAuthAdapter implements AuthAdapter {
+  private auth = useFirebase().auth;
+
   async register(user: User, password: string): Promise<User> {
     // Create user in Firebase Authentication
-    const record = await auth.createUser({ email: user.email, password });
-
+    const record = await this.auth.createUser({ email: user.email, password });
     // Set custom claims for role-based access
-    await auth.setCustomUserClaims(record.uid, { role: user.role || "user" });
+    await this.auth.setCustomUserClaims(record.uid, {
+      role: user.role || "user",
+    });
 
     // Store user info in your database here
     return { ...user, id: record.uid } as User;
@@ -29,7 +32,7 @@ export class FirebaseAuthAdapter implements AuthAdapter {
   }
 
   async verifyToken(token: string): Promise<User | null> {
-    const decoded = await auth.verifyIdToken(token);
+    const decoded = await this.auth.verifyIdToken(token);
     return {
       id: decoded.uid,
       email: decoded.email,
@@ -39,6 +42,6 @@ export class FirebaseAuthAdapter implements AuthAdapter {
 
   async logout(userId: string) {
     // Revoke all refresh tokens for this user
-    await auth.revokeRefreshTokens(userId);
+    await this.auth.revokeRefreshTokens(userId);
   }
 }

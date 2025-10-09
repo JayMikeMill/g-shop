@@ -1,10 +1,11 @@
 // backend/src/crud/FirebaseCRUD.ts
-import { db } from "./config/firebaseAdmin";
+import { useFirebase } from "./config/firebaseAdmin";
 import type { CrudInterface } from "@shared/types";
 
 export class FirebaseCrudAdapter<T extends { id?: string }>
   implements CrudInterface<T>
 {
+  private db = useFirebase().db;
   private collection: string;
 
   constructor(collection: string) {
@@ -13,8 +14,8 @@ export class FirebaseCrudAdapter<T extends { id?: string }>
 
   async create(data: T): Promise<T> {
     const docRef = data.id
-      ? db.collection(this.collection).doc(data.id)
-      : db.collection(this.collection).doc();
+      ? this.db.collection(this.collection).doc(data.id)
+      : this.db.collection(this.collection).doc();
     await docRef.set(data);
     return { ...data, id: docRef.id };
   }
@@ -36,7 +37,7 @@ export class FirebaseCrudAdapter<T extends { id?: string }>
     idOrQuery?: string | Partial<T>,
     options?: { multiple?: boolean }
   ): Promise<T | { data: T[]; total: number } | null> {
-    const collectionRef = db.collection(this.collection);
+    const collectionRef = this.db.collection(this.collection);
 
     // 1️⃣ By ID
     if (typeof idOrQuery === "string") {
@@ -72,7 +73,7 @@ export class FirebaseCrudAdapter<T extends { id?: string }>
 
   async update(updates: Partial<T> & { id?: string }): Promise<T> {
     if (!updates.id) throw new Error("Document id is required for update");
-    const docRef = db.collection(this.collection).doc(updates.id);
+    const docRef = this.db.collection(this.collection).doc(updates.id);
     const doc = await docRef.get();
     if (!doc.exists)
       throw new Error(`Document with id ${updates.id} does not exist`);
@@ -81,7 +82,7 @@ export class FirebaseCrudAdapter<T extends { id?: string }>
   }
 
   async delete(id: string): Promise<T> {
-    const docRef = db.collection(this.collection).doc(id);
+    const docRef = this.db.collection(this.collection).doc(id);
     const doc = await docRef.get();
     if (!doc.exists) throw new Error(`Document with id ${id} does not exist`);
     await docRef.delete();
