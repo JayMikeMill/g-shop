@@ -16,7 +16,7 @@ import { CircleSpinner } from "@components/ui";
 
 import CollectionImageProcessor from "./CollectionImagesProcessor";
 
-import { useApi } from "@api/useApi";
+import { useApi } from "@api";
 
 interface CollectionDialogProps<T extends Collection>
   extends CrudEditorInterface<T> {

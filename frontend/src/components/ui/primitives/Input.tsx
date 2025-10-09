@@ -2,8 +2,6 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@components/lib/utils";
 import { useState } from "react";
-import { is } from "zod/v4/locales";
-import { steps } from "framer-motion";
 
 export const inputBorder = `bg-background text-base shadow-sm
 	transition-all placeholder:text-muted-foreground rounded-md border

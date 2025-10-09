@@ -314,7 +314,7 @@ export interface ProductTagPreset {
 export interface ProductOptionsPreset {
   id?: string;
   name: string;
-  options: string[];
+  options: ProductOption[];
 }
 
 //////////////////////////////////////////////////////////////

@@ -11,7 +11,7 @@ import {
 
 // Types
 import { type Product, emptyProduct } from "@shared/types";
-import { toMajorPriceString, toMajorUnit, toMinorUnit } from "@shared/utils";
+import { toMajorUnit, toMinorUnit } from "@shared/utils";
 
 interface ProductInfoEditorProps {
   product: Product;

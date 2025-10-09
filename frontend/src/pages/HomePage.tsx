@@ -1,9 +1,9 @@
 import ProductCardList from "@features/products/ProductCardList";
 import ProductLoader from "@features/products/ProductLoader";
-import { useApi } from "@api/useApi";
+import { useDataApi } from "@api";
 
 export default function HomePage() {
-  const { products: apiProducts } = useApi();
+  const { products: apiProducts } = useDataApi();
 
   // Call the query hook directly
   const { data, isLoading, error } = apiProducts.getMany({ limit: 20 });

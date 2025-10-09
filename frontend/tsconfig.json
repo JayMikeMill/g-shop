@@ -33,7 +33,6 @@
       "@contexts/*": ["src/contexts/*"],
       "@app/*": ["src/app/*"],
       "@features/*": ["src/features/*"],
-      "@api/*": ["src/api/*"],
       "@hooks/*": ["src/hooks/*"],
       "@lib/*": ["src/components/lib/*"],
       "@utils/*": ["src/utils/*"],
@@ -41,6 +40,7 @@
       "@data/*": ["src/data/*"],
       "@config/*": ["src/config/*"],
       "@styles/*": ["src/styles/*"],
+      "@api": ["src/api"],
       "@ui": ["src/components/ui"]
     }
   },

@@ -1,4 +1,4 @@
-import { Product, ProductVariant } from "../types";
+import type { Product, ProductVariant } from "../types";
 import { toMajorPriceString, toMajorUnit } from "./PriceUtils";
 
 // Parse serialized variant options like "Color:Red|Size:M" into objects

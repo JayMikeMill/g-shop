@@ -292,7 +292,7 @@ model ProductTagPreset {
 model ProductOptionsPreset {
   id       String @id @default(uuid())
   name     String
-  options  Json ///is*string[]*
+  options  Json ///is*ProductOption[]*
 }
 
 //////////////////////////////////////////////////////////////////

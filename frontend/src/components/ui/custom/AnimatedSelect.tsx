@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button, inputBorder } from "@components/ui";
 
 interface SelectItem<T> {
   value: T;
@@ -67,9 +66,9 @@ export const AnimatedSelect = <T,>({
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: -40 }} // start slightly above
+            initial={{ opacity: 0, y: -30 }} // start slightly above
             animate={{ opacity: 1, y: 0 }} // slide to normal position
-            exit={{ opacity: 0, y: -40 }} // slide back up when exiting
+            exit={{ opacity: 0, y: -30 }} // slide back up when exiting
             transition={{ duration: 0.25, ease: "easeInOut" }}
             className={`
               absolute top-full left-0 z-10 mt-1 w-full 

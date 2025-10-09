@@ -10,7 +10,7 @@ import {
 import { type ShippingInfo, type Cart } from "@shared/types";
 
 import { Button } from "@components/ui";
-import { useApi } from "@api/useApi";
+import { useApi } from "@api";
 
 import { createOrder } from "./createOrder";
 

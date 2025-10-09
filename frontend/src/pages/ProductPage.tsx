@@ -6,7 +6,7 @@ import type { ProductVariant } from "@shared/types";
 // Cart state management
 import { useCart } from "@features/cart/useCart";
 
-import { useApi } from "@api/useApi";
+import { useDataApi } from "@api";
 
 import ProductOptionSelector from "@features/products/ProductOptionsSelector";
 import ProductImagesViewer from "@features/products/ProductImagesViewer";
@@ -19,7 +19,7 @@ const ProductPage = () => {
 
   // Cart context, API hooks
   const { addItem } = useCart();
-  const { products } = useApi();
+  const { products } = useDataApi();
 
   // Fetch product data
   const { data: product, isLoading, error } = products.getOne({ id: id ?? "" });

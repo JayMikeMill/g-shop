@@ -1,18 +1,7 @@
 // useApi.ts
 import { post, del } from "./client";
-import { useCrudApi } from "./useCrudApi"; // <- generic wrapper
 
-import type {
-  Product,
-  ProductOptionsPreset,
-  ProductTagPreset,
-  ProductVariant,
-  ProductReview,
-  Collection,
-  Category,
-  Order,
-  User,
-} from "@shared/types";
+import type { Order, User } from "@shared/types";
 
 // Hook
 export function useApi() {
@@ -21,19 +10,6 @@ export function useApi() {
       register: (payload: any) => post(`/auth/register`, payload),
       login: (payload: any) => post(`/auth/login`, payload),
     },
-
-    // CRUD resources
-    users: useCrudApi<User>("users"),
-    products: useCrudApi<Product>("products"),
-    productOptionsPresets: useCrudApi<ProductOptionsPreset>(
-      "products/options-presets"
-    ),
-    productTagsPresets: useCrudApi<ProductTagPreset>("products/tags-presets"),
-    productVariants: useCrudApi<ProductVariant>("products/variants"),
-    productReviews: useCrudApi<ProductReview>("products/reviews"),
-    collections: useCrudApi<Collection>("catalog/collections"),
-    categories: useCrudApi<Category>("catalog/categories"),
-    orders: useCrudApi<Order>("orders"),
 
     // file uploads
     uploadImage: (file: Blob, filename: string) => {

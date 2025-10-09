@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, XButton, TagBox, AnimatedSelect } from "@components/ui";
 import type { Product, ProductTag, ProductTagPreset } from "@shared/types";
 import { ProductTagDialog } from "./ProductTagDialog";
-import { useApi } from "@api/useApi";
+import { useDataApi } from "@api";
 
 /* -------------------- TagPresetsDropdown -------------------- */
 interface TagPresetsDropdownProps {
@@ -12,7 +12,7 @@ interface TagPresetsDropdownProps {
 const TagPresetsDropdown: React.FC<TagPresetsDropdownProps> = ({
   onSelectPreset,
 }) => {
-  const { productTagsPresets } = useApi();
+  const { productTagsPresets } = useDataApi();
 
   // Queries
   const { data: presetsData, refetch } = productTagsPresets.getMany();

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import type { ProductOption, ProductOptionsPreset } from "@shared/types";
 import { XButton, AnimatedSelect } from "@components/ui"; // adjust path if needed
-import { useApi } from "@api/useApi";
+import { useDataApi } from "@api";
 
 interface OptionsPresetDropdownProps {
   setLocalOptions: React.Dispatch<React.SetStateAction<ProductOption[]>>;
@@ -12,7 +12,7 @@ const OptionsPresetDropdown: React.FC<OptionsPresetDropdownProps> = ({
   setLocalOptions,
   className,
 }) => {
-  const { productOptionsPresets } = useApi();
+  const { productOptionsPresets } = useDataApi();
 
   // Query presets
   const { data: presetsData, refetch } = productOptionsPresets.getMany();

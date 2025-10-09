@@ -12,12 +12,12 @@ import {
 
 import type { CrudEditorInterface } from "@features/admin-dash/CrudEditorInterface";
 
-import { useApi } from "@api/useApi";
+import { useDataApi } from "@api";
 
 interface AdminCrudPageProps<T extends { id?: string }> {
   objectsName: string;
   objectName: string;
-  apiKey: keyof ReturnType<typeof useApi>; // e.g., "collections" | "categories"
+  apiKey: keyof ReturnType<typeof useDataApi>; // e.g., "collections" | "categories"
   columns: TableColumn<T>[];
   Editor?: React.ComponentType<CrudEditorInterface<T>>;
   preSaveHook?: (item: T, isNew: boolean) => Promise<T>;
@@ -41,7 +41,7 @@ function AdminCrudPage<T extends { id?: string }>({
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
 
-  const api = useApi()[apiKey] as any;
+  const api = useDataApi()[apiKey] as any;
 
   // Fetch
   const { data, isLoading, refetch } = api.getMany({

@@ -10,7 +10,7 @@ import type { Product, ProductOption } from "@shared/types";
 import { Button, Input, XButton } from "@components/ui";
 
 // Api
-import { useApi } from "@api/useApi";
+import { useDataApi } from "@api";
 
 // Components
 import OptionsPresetDropdown from "./ProductOptionsPresetsDropdown";
@@ -24,7 +24,7 @@ const ProductOptionsEditor: React.FC<ProductOptionsEditorProps> = ({
   product,
   setProduct,
 }) => {
-  const { productOptionsPresets } = useApi();
+  const { productOptionsPresets } = useDataApi();
   const createPreset = productOptionsPresets.create();
 
   const [localOptions, setLocalOptions] = useState<ProductOption[]>(

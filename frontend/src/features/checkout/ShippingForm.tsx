@@ -62,29 +62,28 @@ export default function ShippingForm({
   onChange,
   className,
 }: ShippingFormProps) {
-  const { control, register, handleSubmit, setValue } =
-    useForm<ShippingFormSafe>({
-      defaultValues: {
-        ...defaultValues,
-        address: {
-          name: defaultValues?.address?.name ?? "",
-          email: defaultValues?.address?.email ?? "",
-          phone: defaultValues?.address?.phone ?? undefined,
-          street1: defaultValues?.address?.street1 ?? "",
-          street2: defaultValues?.address?.street2 ?? undefined,
-          city: defaultValues?.address?.city ?? "",
-          state: defaultValues?.address?.state ?? "",
-          postalCode: defaultValues?.address?.postalCode ?? "",
-          country: defaultValues?.address?.country ?? "US",
-        },
-        method: defaultValues?.method ?? ShippingMethod.STANDARD,
-        carrier: defaultValues?.carrier ?? ShippingCarrier.UPS,
-        cost: defaultValues?.cost ?? undefined,
-        tracking: defaultValues?.tracking ?? undefined,
+  const { control, register, handleSubmit } = useForm<ShippingFormSafe>({
+    defaultValues: {
+      ...defaultValues,
+      address: {
+        name: defaultValues?.address?.name ?? "",
+        email: defaultValues?.address?.email ?? "",
+        phone: defaultValues?.address?.phone ?? undefined,
+        street1: defaultValues?.address?.street1 ?? "",
+        street2: defaultValues?.address?.street2 ?? undefined,
+        city: defaultValues?.address?.city ?? "",
+        state: defaultValues?.address?.state ?? "",
+        postalCode: defaultValues?.address?.postalCode ?? "",
+        country: defaultValues?.address?.country ?? "US",
       },
-      resolver: zodResolver(shippingSchema),
-      mode: "onChange",
-    });
+      method: defaultValues?.method ?? ShippingMethod.STANDARD,
+      carrier: defaultValues?.carrier ?? ShippingCarrier.UPS,
+      cost: defaultValues?.cost ?? undefined,
+      tracking: defaultValues?.tracking ?? undefined,
+    },
+    resolver: zodResolver(shippingSchema),
+    mode: "onChange",
+  });
 
   const values = useWatch({ control });
 

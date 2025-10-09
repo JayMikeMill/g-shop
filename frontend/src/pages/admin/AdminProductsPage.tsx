@@ -7,7 +7,7 @@ import {
 } from "@features/admin-dash";
 
 import type { Product } from "@shared/types";
-import { useApi } from "@api/useApi";
+import { useApi } from "@api";
 
 export default function AdminProductsPage() {
   const { uploadImage } = useApi();
