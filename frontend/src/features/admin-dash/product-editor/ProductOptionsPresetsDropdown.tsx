@@ -1,9 +1,6 @@
-import React from "react";
-
+import React, { useState } from "react";
 import type { ProductOption, ProductOptionsPreset } from "@shared/types";
-
-import { XButton, AnimatedSelect } from "@components/ui"; // adjust path
-
+import { XButton, AnimatedSelect } from "@components/ui"; // adjust path if needed
 import { useApi } from "@api/useApi";
 
 interface OptionsPresetDropdownProps {
@@ -17,39 +14,44 @@ const OptionsPresetDropdown: React.FC<OptionsPresetDropdownProps> = ({
 }) => {
   const { productOptionsPresets } = useApi();
 
-  // 1️⃣ Fetch presets via useQuery (hook must be top-level)
+  // Query presets
   const { data: presetsData, refetch } = productOptionsPresets.getMany();
-
   const presets = presetsData?.data ?? [];
 
-  // 2️⃣ Delete mutation hook
+  // Delete mutation
   const deletePreset = productOptionsPresets.delete();
 
-  // 3️⃣ Apply preset
+  // Track currently selected preset
+  const [selectedPreset, setSelectedPreset] = useState<
+    ProductOptionsPreset | undefined
+  >(undefined);
+
+  // Apply preset
   const handleApplyPreset = (preset: ProductOptionsPreset) => {
-    if (!preset.productOptions || preset.productOptions.length === 0) return;
+    if (!preset.productOptions?.length) return;
     setLocalOptions(preset.productOptions);
+    setSelectedPreset(preset);
   };
 
-  // 4️⃣ Delete preset
+  // Delete preset
   const handleDeletePreset = async (id?: string) => {
     if (!id) return;
     if (!confirm("Are you sure you want to delete this preset?")) return;
 
     try {
-      // ✅ use mutateAsync from the mutation hook
       await deletePreset.mutateAsync(id);
       alert("Preset deleted successfully");
-      refetch(); // <-- trigger refresh
-      // No need to manually remove from state; useCRUD invalidates the getMany query
+      refetch();
+      if (selectedPreset?.id === id) setSelectedPreset(undefined);
     } catch (err: any) {
       alert("Failed to delete preset: " + err.message);
     }
   };
 
-  // 5️⃣ Map presets to dropdown items
+  // Map to AnimatedSelect format
   const dropdownItems = presets.map((preset) => ({
     value: preset,
+    label: preset.name,
     render: (p: ProductOptionsPreset) => (
       <div className="flex justify-between items-center gap-2">
         <span className="flex-1 text-foreground font-normal">{p.name}</span>
@@ -62,15 +64,16 @@ const OptionsPresetDropdown: React.FC<OptionsPresetDropdownProps> = ({
         />
       </div>
     ),
-    onClick: handleApplyPreset,
   }));
 
   return (
     <AnimatedSelect
       items={dropdownItems}
-      headerText="Select Preset..."
+      value={selectedPreset}
+      onChange={handleApplyPreset}
+      placeholder="Select preset..."
       noItemsText="No option presets."
-      className={`mb-2 ${className}`}
+      className={`mb-2 ${className ?? ""}`}
     />
   );
 };

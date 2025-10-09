@@ -9,14 +9,18 @@ import {
   ShipmentTrackingResult,
 } from "../ShippingAdapter";
 
+import { env } from "@config/EnvVars";
+
 // Helper: convert EasyPost rate string to number in cents
 const dollarsToCents = (amount: string | number) =>
   Math.round(parseFloat(String(amount)) * 100);
 
+const apiKey = env.EASYPOST_API_KEY || "YOUR_EASYPOST_KEY";
+
 export class EasyPostAdapter implements ShippingAdapter {
   private api: InstanceType<typeof EasyPost>;
 
-  constructor(apiKey: string) {
+  constructor() {
     this.api = new EasyPost(apiKey);
   }
 

@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-
 import { Button, XButton, TagBox, AnimatedSelect } from "@components/ui";
-
 import type { Product, ProductTag, ProductTagPreset } from "@shared/types";
-
 import { ProductTagDialog } from "./ProductTagDialog";
 import { useApi } from "@api/useApi";
 
+/* -------------------- TagPresetsDropdown -------------------- */
 interface TagPresetsDropdownProps {
   onSelectPreset: (preset: ProductTagPreset) => void;
 }
@@ -30,6 +28,11 @@ const TagPresetsDropdown: React.FC<TagPresetsDropdownProps> = ({
   const [newTagColor, setNewTagColor] = useState("#e77919ff");
   const [newTagTextColor, setNewTagTextColor] = useState("#ffffff");
 
+  // Selected preset (for dropdown)
+  const [selectedPreset, setSelectedPreset] = useState<
+    ProductTagPreset | undefined
+  >(undefined);
+
   const createPreset = async () => {
     if (!newTagName.trim()) return;
     await createPresetMutation.mutateAsync({
@@ -41,23 +44,27 @@ const TagPresetsDropdown: React.FC<TagPresetsDropdownProps> = ({
     setNewTagName("");
     setNewTagColor("#bebebeff");
     setNewTagTextColor("#ffffff");
-    refetch(); // refresh presets list
+    refetch();
   };
 
   const deletePreset = async (id?: string) => {
     if (!id) return;
     await deletePresetMutation.mutateAsync(id);
     refetch();
+    // clear selection if deleted
+    if (selectedPreset?.id === id) setSelectedPreset(undefined);
   };
 
   const handleSelect = (preset: ProductTagPreset) => {
+    setSelectedPreset(preset);
     onSelectPreset(preset);
   };
 
   const dropdownItems = presets.map((p) => ({
     value: p,
+    label: p.name,
     render: (preset: ProductTagPreset) => (
-      <div className="flex gap-2 items-center w-auto cursor-pointer hover:bg-backgroundAlt z-100">
+      <div className="flex gap-2 items-center w-auto cursor-pointer hover:bg-backgroundAlt">
         <TagBox
           className="w-full h-6 self-center"
           text={preset.name}
@@ -73,14 +80,15 @@ const TagPresetsDropdown: React.FC<TagPresetsDropdownProps> = ({
         />
       </div>
     ),
-    onClick: handleSelect,
   }));
 
   return (
     <div className="relative flex items-center gap-2 w-full">
       <AnimatedSelect
         items={dropdownItems}
-        headerText="Select Tag..."
+        value={selectedPreset}
+        onChange={handleSelect}
+        placeholder="Select tag..."
         noItemsText="No tag presets."
         className="w-full"
       />

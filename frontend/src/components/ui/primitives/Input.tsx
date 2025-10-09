@@ -2,11 +2,14 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@components/lib/utils";
 
-const inputVariants = cva(
-  `flex h-9 w-full rounded-md border bg-transparent text-base shadow-sm
-	transition-all placeholder:text-muted-foreground 
+export const inputBorder = `bg-background text-base shadow-sm
+	transition-all placeholder:text-muted-foreground rounded-md border
 	focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
-	disabled:cursor-not-allowed disabled:opacity-50 appearance-none
+	disabled:cursor-not-allowed disabled:opacity-50 appearance-none`;
+
+const inputVariants = cva(
+  inputBorder +
+    `flex h-9 w-full   px-3 py-2
 	[&::-webkit-outer-spin-button]:appearance-none
 	[&::-webkit-inner-spin-button]:appearance-none
 	[moz-appearance:textfield]`,

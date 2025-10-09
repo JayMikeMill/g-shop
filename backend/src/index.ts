@@ -1,7 +1,7 @@
 import http from "http";
 import app from "./app";
 
-import { env } from "@config/envVars";
+import { env } from "@config/EnvVars";
 
 let currentApp = app;
 

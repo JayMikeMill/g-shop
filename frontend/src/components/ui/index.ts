@@ -5,6 +5,7 @@
 export * from "./custom/AnimatedDialog";
 export * from "./custom/AnimatedDropdownBox";
 export * from "./custom/AnimatedSelect";
+export * from "./custom/CountrySelect";
 export * from "./custom/CircleSpinner";
 export * from "./custom/ImageEditor";
 export * from "./custom/CropDialog";

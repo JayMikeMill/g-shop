@@ -1,16 +1,18 @@
 import { useState, useRef, useEffect, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@components/ui";
+import { Button, inputBorder } from "@components/ui";
 
 interface SelectItem<T> {
   value: T;
-  render: (item: T) => ReactNode;
-  onClick?: (item: T) => void;
+  label?: string;
+  render?: (item: T) => ReactNode;
 }
 
 interface AnimatedSelectProps<T> {
   items: SelectItem<T>[];
-  headerText?: string;
+  value?: T;
+  onChange?: (value: T) => void;
+  placeholder?: string;
   noItemsText?: string;
   className?: string;
   menuClassName?: string;
@@ -18,7 +20,9 @@ interface AnimatedSelectProps<T> {
 
 export const AnimatedSelect = <T,>({
   items,
-  headerText = "Select...",
+  value,
+  onChange,
+  placeholder = "Select...",
   noItemsText = "No items",
   className,
   menuClassName,
@@ -26,7 +30,7 @@ export const AnimatedSelect = <T,>({
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Close on outside click
+  // Close when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {
@@ -37,49 +41,62 @@ export const AnimatedSelect = <T,>({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const toggle = () => setOpen((prev) => !prev);
+  // Find selected item label
+  const selectedItem = items.find((i) => i.value === value);
+  const selectedLabel =
+    selectedItem?.label ??
+    (selectedItem?.render
+      ? selectedItem.render(selectedItem.value)
+      : undefined) ??
+    placeholder;
 
   return (
     <div ref={ref} className={`relative ${className ?? ""}`}>
-      {/* Dropdown button */}
-      {
-        <Button
-          className={`bg-background text-foreground
-            shadow-sm px-2 py-1 w-full text-left flex border border-input
-            justify-between items-center font-normal
-            hover:translate-none hover:bg-primary-50
-            active:translate-none active:bg-primary-100`}
-          onClick={toggle}
-        >
-          {headerText}
-          <span>{open ? "▲" : "▼"}</span>
-        </Button>
-      }
-      {/* Animated Dropdown menu */}
+      <button
+        type="button"
+        className={`bg-background text-base shadow-sm transition-all 
+          rounded-md border px-2 py-1 w-full text-left flex text-base
+					justify-between items-center 
+          ${open ? "ring-2 ring-ring" : ""}`}
+        onClick={() => setOpen((p) => !p)}
+      >
+        <span>{selectedLabel}</span>
+        <span>{open ? "▲" : "▼"}</span>
+      </button>
+
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className={`absolute z-10 mt-1 w-full bg-background 
-              border border-input rounded border-input
-              shadow-md max-h-60 overflow-y-auto ${menuClassName ?? ""}`}
+            initial={{ opacity: 0, y: -40 }} // start slightly above
+            animate={{ opacity: 1, y: 0 }} // slide to normal position
+            exit={{ opacity: 0, y: -40 }} // slide back up when exiting
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className={`
+              absolute top-full left-0 z-10 mt-1 w-full 
+              max-h-60 overflow-y-auto bg-background shadow-none
+              border border-border rounded-md shadow-sm
+              ${menuClassName ?? ""} shadow
+            `}
           >
             {items.length === 0 ? (
-              <div className="px-2 py-1 text-text">{noItemsText}</div>
+              <div className="px-2 py-1 text-muted-foreground">
+                {noItemsText}
+              </div>
             ) : (
               items.map((item, idx) => (
                 <div
                   key={idx}
-                  className="px-2 py-1 hover:bg-primary-50 cursor-pointer hover:bg-accent transition-colors"
+                  className={`px-2 py-1 cursor-pointer hover:bg-primary-100 transition-colors ${
+                    value === item.value ? "bg-primary/30" : ""
+                  }`}
                   onClick={() => {
-                    item.onClick?.(item.value);
+                    onChange?.(item.value);
                     setOpen(false);
                   }}
                 >
-                  {item.render(item.value)}
+                  {item.render
+                    ? item.render(item.value)
+                    : (item.label ?? String(item.value))}
                 </div>
               ))
             )}

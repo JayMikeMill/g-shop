@@ -6,7 +6,7 @@ import {
   PaymentStatus,
 } from "@shared/types";
 import Stripe from "stripe";
-import { env } from "@config/envVars";
+import { env } from "@config/EnvVars";
 import { ShippingInfo } from "@shared/types";
 
 // Initialize Stripe client

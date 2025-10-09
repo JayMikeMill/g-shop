@@ -156,8 +156,8 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
                   setProduct={setLocalProduct}
                 />
               }
-              openInitially={hasVariants}
-              disabled={!hasVariants}
+              autoSyncOpen={!!localProduct.options?.length} // 👈 automatic control
+              disabled={!localProduct.options?.length}
             >
               <ProductVariantEditor
                 product={localProduct}
