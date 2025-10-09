@@ -32,7 +32,7 @@ function InnerStripeForm({
 }: StripePaymentFormProps) {
   const stripe = useStripe();
   const elements = useElements();
-  const { placeOrder } = useApi();
+  const { placeOrder } = useApi().orders;
 
   const handlePayment = async () => {
     if (!stripe || !elements) return;

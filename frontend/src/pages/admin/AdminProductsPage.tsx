@@ -10,7 +10,7 @@ import type { Product } from "@shared/types";
 import { useApi } from "@api";
 
 export default function AdminProductsPage() {
-  const { uploadImage } = useApi();
+  const { uploadImage } = useApi().storage;
 
   const uploadBlobURL = async (blobURL: string, name: string) => {
     const blob = await fetch(blobURL).then((r) => r.blob());

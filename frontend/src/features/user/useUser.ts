@@ -9,7 +9,7 @@ const USER_STORAGE_KEY = "userData";
 export function useUser() {
   const dispatch = useAppDispatch();
   const { user, loading } = useAppSelector((state) => state.user);
-  const { register, login, logout } = useApi();
+  const { register, login, logout } = useApi().auth;
 
   // Load user from localStorage on mount
   useEffect(() => {

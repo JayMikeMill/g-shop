@@ -15,9 +15,11 @@ const router = Router();
 // -------------------------------
 router.post("/verify", verifyAddress);
 router.post("/rates", getRates);
-router.post("/create", createShipment);
-router.post("/buy", buyShipment);
 router.post("/track", trackShipment);
-router.post("/cancel", cancelShipment);
+
+// Backend only services
+// router.post("/create", createShipment);
+// router.post("/buy", buyShipment);
+// router.post("/cancel", cancelShipment);
 
 export default router;

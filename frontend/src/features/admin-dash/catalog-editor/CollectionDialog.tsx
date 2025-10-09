@@ -37,7 +37,7 @@ function CollectionDialogBase<T extends Collection>({
   const [isProcessingImages, setIsProcessingImages] = useState(false);
   const [isSavingCollection, setIsSavingCollection] = useState(false);
 
-  const { uploadImage } = useApi();
+  const { uploadImage } = useApi().storage;
 
   useEffect(() => {
     if (!open) {
