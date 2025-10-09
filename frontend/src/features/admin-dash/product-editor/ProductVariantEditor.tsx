@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import type { Product, ProductOption, ProductVariant } from "@shared/types";
 import { parseVariantOptions } from "@shared/utils";
-import { toMajorUnit, toMinorUnit } from "@shared/utils";
+import { toMajorPriceString, toMinorUnit } from "@shared/utils";
 import { Input, NumberInput } from "@components/ui";
 
 interface ProductVariantEditorProps {
@@ -70,13 +70,13 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
   };
 
   // Update price for a specific variant
-  const updateVariantPrice = (index: number, price: string) => {
+  const updateVariantPrice = (index: number, price?: number) => {
     setLocalVariants((prev) =>
       prev.map((v, i) =>
         i === index
           ? {
               ...v,
-              price: price === "" ? null : toMinorUnit(parseFloat(price)),
+              price,
             }
           : v
       )
@@ -129,9 +129,16 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
           {/* Price */}
           <NumberInput
             symbol="$"
-            value={variant.price ? toMajorUnit(variant.price) : ""}
+            value={variant.price ? toMajorPriceString(variant.price) : ""}
             placeholder="-"
-            onChange={(e) => updateVariantPrice(idx, e.target.value)}
+            onChange={(e) =>
+              updateVariantPrice(
+                idx,
+                e.target.value === ""
+                  ? undefined
+                  : toMinorUnit(parseFloat(e.target.value))
+              )
+            }
             className="w-full text-center"
           />
         </div>

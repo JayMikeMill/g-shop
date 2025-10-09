@@ -11,3 +11,7 @@ export const toMajorUnit = (minorUnits: number) => {
 export const toMinorUnit = (majorUnits: number) => {
   return Math.round(majorUnits * 100);
 };
+
+export const toMajorPriceString = (minorUnits: number): string => {
+  return toMajorUnit(minorUnits).toFixed(2);
+};

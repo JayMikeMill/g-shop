@@ -1,7 +1,7 @@
 // frontend/src/components/cart/ShoppingCartItem.tsx
 import { Button, TagBox } from "@components/ui";
 import type { CartItem } from "@shared/types";
-import { parseVariantOptions } from "@shared/utils";
+import { parseVariantOptions, toMajorPriceString } from "@shared/utils";
 import { Plus, Minus } from "lucide-react";
 interface ShoppingCartItemProps {
   item: CartItem;
@@ -47,7 +47,7 @@ export default function ShoppingCartItem({
           </div>
         )}
 
-        <p className="text-textSecondary">${item.price.toFixed(2)}</p>
+        <p className="text-textSecondary">${toMajorPriceString(item.price)}</p>
       </div>
 
       <div className="flex items-center gap-xs">
@@ -75,7 +75,7 @@ export default function ShoppingCartItem({
       </div>
 
       <p className="w-16 text-right text-text">
-        ${(item.price * item.quantity).toFixed(2)}
+        ${toMajorPriceString(item.price * item.quantity)}
       </p>
     </div>
   );

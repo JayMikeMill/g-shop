@@ -11,7 +11,7 @@ import { useApi } from "@api/useApi";
 import ProductOptionSelector from "@features/products/ProductOptionsSelector";
 import ProductImagesViewer from "@features/products/ProductImagesViewer";
 import { Button, TagBox } from "@components/ui";
-import { toMajorUnit } from "@shared/utils";
+import { toMajorPriceString } from "@shared/utils";
 
 const ProductPage = () => {
   // Get product ID from URL params
@@ -45,7 +45,7 @@ const ProductPage = () => {
 
   // Format discount label
   const discountLabel =
-    (product.discount ? (toMajorUnit(product.discount) ?? "0") : "0") +
+    (product.discount ? (toMajorPriceString(product.discount) ?? "0") : "0") +
     (product.discountType === "PERCENTAGE" ? "%" : "$");
 
   // Handle adding product to cart
@@ -74,16 +74,16 @@ const ProductPage = () => {
             {product.discount && discountedPrice < product.price ? (
               <>
                 <span className="text-xl text-textMuted line-through">
-                  ${product.price.toFixed(2)}
+                  ${toMajorPriceString(product.price)}
                 </span>
                 <span className="text-2xl text-text font-bold">
-                  ${discountedPrice.toFixed(2)}
+                  ${toMajorPriceString(discountedPrice)}
                 </span>
                 <span className="tag-box">{discountLabel} OFF!</span>
               </>
             ) : (
               <span className="text-2xl text-blue-600 font-bold">
-                ${product.price.toFixed(2)}
+                ${toMajorPriceString(product.price)}
               </span>
             )}
           </div>
@@ -102,16 +102,16 @@ const ProductPage = () => {
               {product.discount && discountedPrice < product.price ? (
                 <>
                   <span className="text-xl text-textMuted line-through">
-                    ${product.price.toFixed(2)}
+                    ${toMajorPriceString(product.price)}
                   </span>
                   <span className="text-2xl text-text font-bold">
-                    ${discountedPrice.toFixed(2)}
+                    ${toMajorPriceString(discountedPrice)}
                   </span>
                   <span className="tag-box">{discountLabel} OFF!</span>
                 </>
               ) : (
                 <span className="text-2xl text-blue-600 font-bold">
-                  ${product.price.toFixed(2)}
+                  ${toMajorPriceString(product.price)}
                 </span>
               )}
             </div>

@@ -65,7 +65,6 @@ const NumberInput = React.forwardRef<
       </span>
       <Input
         ref={ref}
-        type="number"
         min={0}
         step={0.01}
         placeholder="-"

@@ -1,6 +1,7 @@
 import { Order, Product, ProductVariant, QueryObject } from "@shared/types";
 import { db, payment as paymentAdapter } from "@config/adapters";
 import { DBAdapter } from "@adapters/DBAdapter";
+import { toMajorPriceString } from "@shared/utils/PriceUtils";
 
 export class OrderProcessingService {
   static async placeOrder(payment: any, order: Order) {
@@ -20,7 +21,7 @@ export class OrderProcessingService {
         metadata[`${prefix}variantId`] = item.variant?.id ?? "unknown";
         metadata[`${prefix}name`] = item.product.name ?? "unknown";
         metadata[`${prefix}quantity`] = String(item.quantity || 1);
-        metadata[`${prefix}price`] = String(item.price);
+        metadata[`${prefix}price`] = String(toMajorPriceString(item.price));
       });
 
       // 2b. Authorize payment

@@ -1,5 +1,9 @@
 import type { Collection, Order, Product } from "@shared/types";
-import { getDiscountString, toMajorUnit } from "@shared/utils";
+import {
+  getDiscountString,
+  getFinalPriceString,
+  toMajorPriceString,
+} from "@shared/utils";
 
 import { TagBox } from "@components/ui";
 
@@ -40,11 +44,14 @@ const productTableColumns = [
     sortable: true,
     render: (p: Product) => (
       <div className="flex flex-col items-center justify-center">
-        <span className="font-semibold text-center text-text">
-          {toMajorUnit(p.price).toFixed(2)}
+        <span className="font-semibold text-center text-base">
+          ${toMajorPriceString(p.price)}
         </span>
         <span className="font-semibold text-center text-red-400">
           -{getDiscountString(p)}
+        </span>
+        <span className="font-semibold text-center text-base">
+          {getFinalPriceString(p)}
         </span>
       </div>
     ),
