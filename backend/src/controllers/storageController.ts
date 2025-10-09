@@ -1,30 +1,36 @@
+import { Request, Response } from "express";
 import { controllerHandler } from "@utils/controllerHandler";
-import { StorageService as S } from "@services/StorageService";
+import S from "@services/StorageService";
 
+// Upload image
 export const uploadImage = controllerHandler({
-  handler: async (_, req, res) => {
-    if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+  select: (req: Request) => req.file, // pick the uploaded file
+  handler: async (file, req: Request, res: Response) => {
+    if (!file) return res.status(400).json({ error: "No file uploaded" });
 
-    const url = await S.uploadImage(req.file.buffer, req.file.originalname);
+    const url = await S.uploadImage(file.buffer, file.originalname);
     return { url };
   },
 });
 
+// Upload generic file
 export const uploadFile = controllerHandler({
-  handler: async (_, req, res) => {
-    if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+  select: (req: Request) => req.file, // pick the uploaded file
+  handler: async (file, req: Request, res: Response) => {
+    if (!file) return res.status(400).json({ error: "No file uploaded" });
 
     const url = await S.uploadFile(
-      req.file.buffer,
-      req.file.originalname,
-      req.file.mimetype
+      file.buffer,
+      file.originalname,
+      file.mimetype
     );
     return { url };
   },
 });
 
+// Delete file (data comes from req.body)
 export const deleteFile = controllerHandler({
-  handler: async ({ url }) => {
+  handler: async ({ url }: { url: string }) => {
     const success = await S.deleteFile(url);
     return { success };
   },

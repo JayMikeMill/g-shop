@@ -9,12 +9,10 @@
 
 import { PrismaClient } from "@prisma/client";
 
+import type { CrudInterface } from "@shared/interfaces";
+
 // Shared utilities and types
-import {
-  isQueryObject,
-  type CrudInterface,
-  type QueryObject,
-} from "@shared/types";
+import { isQueryObject, type QueryObject } from "@shared/types";
 
 // Utility to convert nested data into Prisma create/update shape
 import {

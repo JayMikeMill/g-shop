@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "@features/user/useUser";
 import { AnimatedDialog, Button, Input } from "@components/ui";
+import { emptyUser } from "@shared/types";
 
 export default function AdminLoginPage() {
-  const { user, loginUser } = useUser();
+  const { user, loginUser, registerUser } = useUser();
 
   const navigate = useNavigate();
   const location = useLocation();

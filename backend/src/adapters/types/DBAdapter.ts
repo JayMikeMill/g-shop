@@ -1,5 +1,5 @@
+import { CrudInterface } from "@shared/interfaces";
 import {
-  CrudInterface,
   Product,
   ProductVariant,
   ProductOptionsPreset,

@@ -2,14 +2,15 @@ import EasyPost from "@easypost/api";
 
 import { Address } from "@shared/types";
 
+import { ShippingAdapter } from "@adapters/types";
+
 import {
   Parcel,
   ShipmentRate,
   Shipment,
-  ShippingAdapter,
   AddressVerificationResult,
   ShipmentTrackingResult,
-} from "@adapters/types";
+} from "@shared/types";
 
 import { env } from "@config";
 

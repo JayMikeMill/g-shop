@@ -5,7 +5,7 @@ const IMGBB_API_KEY = process.env.IMGBB_API_KEY;
 const IMGBB_API_URL = "https://api.imgbb.com/1/upload";
 
 export class ImgBBStorageAdapter implements StorageAdapter {
-  async uploadImage(file: Buffer | string, filename: string): Promise<string> {
+  async uploadImage(file: Buffer, filename: string): Promise<string> {
     if (!IMGBB_API_KEY) throw new Error("IMGBB_API_KEY not set");
     const base64 = typeof file === "string" ? file : file.toString("base64");
     const form = new URLSearchParams();
@@ -22,7 +22,7 @@ export class ImgBBStorageAdapter implements StorageAdapter {
   }
 
   async uploadFile(
-    file: Buffer | string,
+    file: Buffer,
     filename: string,
     contentType?: string
   ): Promise<string> {

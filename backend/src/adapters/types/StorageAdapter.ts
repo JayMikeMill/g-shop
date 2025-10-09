@@ -4,7 +4,7 @@ export interface StorageAdapter {
    * @param file Buffer or base64 string
    * @param filename string
    */
-  uploadImage(file: Buffer | string, filename: string): Promise<string>;
+  uploadImage(file: Buffer, filename: string): Promise<string>;
 
   /**
    * Upload a generic file and return its public URL
@@ -12,7 +12,11 @@ export interface StorageAdapter {
    * @param filename string
    * @param contentType optional MIME type
    */
-  uploadFile(file: Buffer | string, filename: string, contentType?: string): Promise<string>;
+  uploadFile(
+    file: Buffer,
+    filename: string,
+    contentType?: string
+  ): Promise<string>;
 
   /**
    * Delete a file (image or any file) by its public URL or storage key

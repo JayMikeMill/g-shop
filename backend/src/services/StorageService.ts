@@ -1,19 +1,25 @@
 import { storage } from "@adapters/services";
+import { FileData, StorageApi } from "@shared/interfaces";
 
-export class StorageService {
-  static async uploadImage(file: Buffer | string, filename: string) {
-    return storage.uploadImage(file, filename);
+export class StorageService implements StorageApi {
+  async uploadImage(file: FileData, filename: string): Promise<string> {
+    // If it's a Buffer, use it directly; if it's a string, convert to Buffer
+    const buffer = file instanceof Buffer ? file : Buffer.from(file as string);
+    return storage.uploadImage(buffer, filename);
   }
 
-  static async uploadFile(
-    file: Buffer | string,
+  async uploadFile(
+    file: FileData,
     filename: string,
     contentType?: string
-  ) {
-    return storage.uploadFile(file, filename, contentType);
+  ): Promise<string> {
+    const buffer = file instanceof Buffer ? file : Buffer.from(file as string);
+    return storage.uploadFile(buffer, filename, contentType);
   }
 
-  static async deleteFile(url: string) {
+  async deleteFile(url: string): Promise<boolean> {
     return storage.deleteFile(url);
   }
 }
+
+export default new StorageService();

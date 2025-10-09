@@ -46,7 +46,7 @@ export function useUser() {
     (email: string, password: string) => {
       dispatch(setLoading(true));
       login(email, password)
-        .then((user) => {
+        .then(({ user }) => {
           dispatch(setUser(user as UserData));
           localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
           console.log("Logged in successfully", user);
@@ -62,7 +62,7 @@ export function useUser() {
   );
 
   const logoutUser = useCallback(() => {
-    logout()
+    logout(user?.id || "")
       .then(() => {
         console.log("Logged out successfully");
         dispatch(clearUser());

@@ -15,7 +15,7 @@ export default function AdminProductsPage() {
   const uploadBlobURL = async (blobURL: string, name: string) => {
     const blob = await fetch(blobURL).then((r) => r.blob());
     const uploaded = await uploadImage(blob, name);
-    return uploaded.url;
+    return uploaded;
   };
 
   const preSaveHook = async (item: Product): Promise<Product> => {

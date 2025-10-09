@@ -4,7 +4,7 @@ import { DBAdapter } from "@adapters/types/DBAdapter";
 import { toMajorPriceString } from "@shared/utils/PriceUtils";
 
 export class OrderProcessingService {
-  static async placeOrder(paymentMethod: any, order: Order) {
+  async placeOrder(paymentMethod: any, order: Order) {
     // implement order placement logic
     try {
       // 1. Check stock for all items in the order
@@ -73,7 +73,7 @@ export class OrderProcessingService {
     }
   }
 
-  static async refundOrder(id: string) {
+  async refundOrder(id: string) {
     // implement refund logic
   }
 }
@@ -126,7 +126,9 @@ async function stockAvailable(
         );
       }
     } else {
-      const product = productResult.data.find((p) => p.id === item.product.id);
+      const product = productResult.data.find(
+        (p: Product) => p.id === item.product.id
+      );
       if (!product) throw new Error(`Product not found: ${item.product.id}`);
 
       // Only check stock if defined
@@ -187,3 +189,5 @@ async function updateStock(order: Order, dbAdapter: DBAdapter) {
 
   await Promise.all(updatePromises);
 }
+
+export default new OrderProcessingService();

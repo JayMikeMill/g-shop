@@ -1,48 +1,54 @@
 // useApi.ts
-import type { Address } from "cluster";
 import { post, del } from "./client";
-import type { Order, User } from "@shared/types";
+import type {
+  User,
+  Order,
+  Address,
+  Parcel,
+  ShipmentRate,
+  Shipment,
+  AddressVerificationResult,
+  ShipmentTrackingResult,
+} from "@shared/types";
+import type {
+  AuthApi,
+  OrderProcessingApi,
+  ShippingApi,
+  StorageApi,
+} from "@shared/interfaces";
 
-export function useApi() {
+export function useApi(): {
+  auth: AuthApi;
+  orders: OrderProcessingApi;
+  storage: StorageApi;
+  shipping: ShippingApi;
+} {
   return {
     //////////////////////////////////
-    //  Authentication
+    // Authentication
     //////////////////////////////////
     auth: {
-      register: (user: User, password: string): Promise<User | null> =>
-        post(`/auth/register`, { user, password }),
+      register: (user: User, password: string) =>
+        post<User | null>(`/auth/register`, { user, password }),
       login: (email: string, password: string) =>
-        post(`/auth/login`, { email, password }),
-      logout: () => post(`/auth/logout`),
-    },
-
-    //////////////////////////////////
-    //  File Storage
-    //////////////////////////////////
-    storage: {
-      uploadImage: (file: Blob, filename: string) => {
-        const form = new FormData();
-        form.append("file", file, filename);
-        return post<{ url: string }>(`/storage/image`, form);
-      },
-      uploadFile: (file: Blob, filename: string) => {
-        const form = new FormData();
-        form.append("file", file, filename);
-        return post<{ url: string }>(`/storage/file`, form);
-      },
-      deleteFile: (url: string) =>
-        del<{ success: boolean }>(`/storage`, { url }),
+        post<{ token: string; user: User }>(`/auth/login`, { email, password }),
+      verify: (token: string) => post<User | null>(`/auth/verify`, { token }),
+      logout: (userId: string) => post<void>(`/auth/logout`, { userId }),
     },
 
     //////////////////////////////////
     // Orders
     //////////////////////////////////
     orders: {
-      placeOrder: (
-        paymentMethod: any,
-        order: Order
-      ): Promise<{ success: boolean; error?: string; data?: any }> =>
-        post(`/orders/place`, { paymentMethod, order }),
+      placeOrder: (paymentMethod: any, order: Order) =>
+        post<{ success: boolean; data?: any; error?: string }>(
+          `/orders/place`,
+          {
+            paymentMethod,
+            order,
+          }
+        ),
+      refundOrder: (id: string) => post<void>(`/orders/refund`, { id }),
     },
 
     //////////////////////////////////
@@ -50,11 +56,63 @@ export function useApi() {
     //////////////////////////////////
     shipping: {
       verifyAddress: (address: Address) =>
-        post(`/shipping/verify`, { address }),
-      getRates: (shipmentDetails: any) =>
-        post(`/shipping/rates`, { shipmentDetails }),
-      trackShipment: (trackingNumber: string, carrier: string) =>
-        post(`/shipping/track`, { trackingNumber, carrier }),
+        post<AddressVerificationResult>(`/shipping/verify`, { address }),
+      getRates: (from: Address, to: Address, parcel: Parcel) =>
+        post<ShipmentRate[]>(`/shipping/rates`, { from, to, parcel }),
+      createShipment: (
+        from: Address,
+        to: Address,
+        parcel: Parcel,
+        carrier?: string,
+        service?: string
+      ) =>
+        post<Shipment>(`/shipping/create`, {
+          from,
+          to,
+          parcel,
+          carrier,
+          service,
+        }),
+      buyShipment: (shipmentId: string, rate?: ShipmentRate) =>
+        post<Shipment>(`/shipping/buy`, { shipmentId, rate }),
+      trackShipment: (trackingNumber: string) =>
+        post<ShipmentTrackingResult>(`/shipping/track`, { trackingNumber }),
+      cancelShipment: (shipmentId: string) =>
+        post<boolean>(`/shipping/cancel`, { shipmentId }),
+    },
+
+    //////////////////////////////////
+    //  File Storage
+    //////////////////////////////////
+    storage: {
+      uploadImage: (file: Blob, filename: string): Promise<string> => {
+        const form = new FormData();
+        form.append("file", new File([file], filename));
+        return post<{ url: string }>(`/storage/image`, form).then(
+          (res) => res.url
+        );
+      },
+
+      uploadFile: (
+        file: Blob,
+        filename: string,
+        contentType?: string
+      ): Promise<string> => {
+        const form = new FormData();
+        const fileToSend = contentType
+          ? new File([file], filename, { type: contentType })
+          : new File([file], filename);
+        form.append("file", fileToSend);
+
+        return post<{ url: string }>(`/storage/file`, form).then(
+          (res) => res.url
+        );
+      },
+
+      deleteFile: (url: string): Promise<boolean> =>
+        del<{ success: boolean }>(`/storage`, { url }).then(
+          (res) => res.success
+        ),
     },
   };
 }

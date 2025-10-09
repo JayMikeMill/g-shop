@@ -1,5 +1,5 @@
 import { controllerHandler } from "@utils/controllerHandler";
-import { ShippingService as S } from "@services/ShippingService";
+import S from "@services/ShippingService";
 
 export const verifyAddress = controllerHandler({ handler: S.verifyAddress });
 

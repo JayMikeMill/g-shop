@@ -1,9 +1,8 @@
 // src/services/ShippingService.ts
-
 import { shipping } from "@adapters/services";
-import { Address } from "@shared/types";
-
+import { ShippingApi } from "@shared/interfaces";
 import {
+  Address,
   Parcel,
   ShipmentRate,
   Shipment,
@@ -11,20 +10,12 @@ import {
   ShipmentTrackingResult,
 } from "@shared/types";
 
-export class ShippingService {
-  // -------------------------------
-  // Verify Address
-  // -------------------------------
-  static async verifyAddress(
-    address: Address
-  ): Promise<AddressVerificationResult> {
+export class ShippingService implements ShippingApi {
+  async verifyAddress(address: Address): Promise<AddressVerificationResult> {
     return shipping.verifyAddress(address);
   }
 
-  // -------------------------------
-  // Get Shipping Rates
-  // -------------------------------
-  static async getRates(
+  async getRates(
     from: Address,
     to: Address,
     parcel: Parcel
@@ -32,10 +23,7 @@ export class ShippingService {
     return shipping.getRates(from, to, parcel);
   }
 
-  // -------------------------------
-  // Create Shipment
-  // -------------------------------
-  static async createShipment(
+  async createShipment(
     from: Address,
     to: Address,
     parcel: Parcel,
@@ -45,29 +33,20 @@ export class ShippingService {
     return shipping.createShipment(from, to, parcel, carrier, service);
   }
 
-  // -------------------------------
-  // Buy Shipment
-  // -------------------------------
-  static async buyShipment(
+  async buyShipment(
     shipmentId: string,
     rate?: ShipmentRate
   ): Promise<Shipment> {
     return shipping.buyShipment(shipmentId, rate);
   }
 
-  // -------------------------------
-  // Track Shipment
-  // -------------------------------
-  static async trackShipment(
-    trackingNumber: string
-  ): Promise<ShipmentTrackingResult> {
+  async trackShipment(trackingNumber: string): Promise<ShipmentTrackingResult> {
     return shipping.trackShipment(trackingNumber);
   }
 
-  // -------------------------------
-  // Cancel Shipment
-  // -------------------------------
-  static async cancelShipment(shipmentId: string): Promise<boolean> {
+  async cancelShipment(shipmentId: string): Promise<boolean> {
     return shipping.cancelShipment(shipmentId);
   }
 }
+
+export default new ShippingService();

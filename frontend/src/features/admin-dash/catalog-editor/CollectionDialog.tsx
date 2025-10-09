@@ -95,7 +95,7 @@ function CollectionDialogBase<T extends Collection>({
           blobBanner,
           `collection_banner`
         );
-        localItem.images.banner = uploadedBanner.url;
+        localItem.images.banner = uploadedBanner;
       }
 
       if (localItem.images.preview.startsWith("blob:")) {
@@ -106,7 +106,7 @@ function CollectionDialogBase<T extends Collection>({
           blobPreview,
           `collection_preview`
         );
-        localItem.images.preview = uploadedPreview.url;
+        localItem.images.preview = uploadedPreview;
       }
     } catch (err) {
       throw new Error("Error uploading images");

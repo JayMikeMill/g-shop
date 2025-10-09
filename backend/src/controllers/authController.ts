@@ -1,5 +1,5 @@
 import { controllerHandler } from "@utils/controllerHandler";
-import { AuthService as S } from "@services/AuthService";
+import S from "@services/AuthService";
 
 export const register = controllerHandler({
   handler: ({ user, password }) => S.register(user, password),
@@ -18,7 +18,7 @@ export const login = controllerHandler({
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     });
 
-    return user;
+    return { token, user };
   },
 });
 
