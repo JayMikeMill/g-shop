@@ -1,4 +1,4 @@
-import express from "express";
+import { Router } from "express";
 import {
   uploadImage,
   uploadFile,
@@ -7,10 +7,14 @@ import {
 import { requireRole } from "@middleware/authorization";
 import multer from "multer";
 
-const router = express.Router();
+const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
-// POST /storage/image - upload image
+// -------------------------------
+// Storage Routes (Admin Only)
+// -------------------------------
+
+// Upload an image
 router.post(
   "/image",
   requireRole(["ADMIN"]),
@@ -18,10 +22,10 @@ router.post(
   uploadImage
 );
 
-// POST /storage/file - upload generic file
+// Upload a generic file
 router.post("/file", requireRole(["ADMIN"]), upload.single("file"), uploadFile);
 
-// DELETE /storage - delete file/image by URL
+// Delete a file/image by URL
 router.delete("/", requireRole(["ADMIN"]), deleteFile);
 
 export default router;

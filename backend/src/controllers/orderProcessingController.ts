@@ -1,30 +1,10 @@
-import { Request, Response, NextFunction } from "express";
-import { OrderProcessingService } from "@services/OrdersProcessingService";
+import { controllerHandler } from "@utils/controllerHandler";
+import { OrderProcessingService as S } from "@services/OrdersProcessingService";
 
-export const placeOrder = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { payment, order } = req.body;
-    const result = await OrderProcessingService.placeOrder(payment, order);
-    res.json(result);
-  } catch (err: any) {
-    next(err);
-  }
-};
+export const placeOrder = controllerHandler({
+  handler: ({ payment, order }) => S.placeOrder(payment, order),
+});
 
-export const refundOrder = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { id } = req.body;
-    const result = await OrderProcessingService.refundOrder(id);
-    res.json(result);
-  } catch (err: any) {
-    next(err);
-  }
-};
+export const refundOrder = controllerHandler({
+  handler: ({ id }) => S.refundOrder(id),
+});

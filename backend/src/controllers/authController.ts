@@ -1,12 +1,10 @@
 import { controllerHandler } from "@utils/controllerHandler";
 import { AuthService as S } from "@services/AuthService";
 
-// ✅ Register
 export const register = controllerHandler({
   handler: ({ user, password }) => S.register(user, password),
 });
 
-// ✅ Login
 export const login = controllerHandler({
   handler: async ({ email, password }, req, res) => {
     const { token, user } = await S.login(email, password);
@@ -24,7 +22,6 @@ export const login = controllerHandler({
   },
 });
 
-// ✅ Verify Token
 export const verifyToken = controllerHandler({
   handler: async (_, req, res) => {
     const token = req.headers.authorization?.split(" ")[1];
@@ -37,7 +34,6 @@ export const verifyToken = controllerHandler({
   },
 });
 
-// ✅ Logout
 export const logout = controllerHandler({
   handler: async ({ id }, req, res) => {
     await S.logout(id);

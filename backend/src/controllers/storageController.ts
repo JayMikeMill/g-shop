@@ -1,54 +1,31 @@
-import { Request, Response, NextFunction } from "express";
-import { StorageService } from "@services/StorageService";
+import { controllerHandler } from "@utils/controllerHandler";
+import { StorageService as S } from "@services/StorageService";
 
-// POST /storage/image
-export async function uploadImage(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
+export const uploadImage = controllerHandler({
+  handler: async (_, req, res) => {
     if (!req.file) return res.status(400).json({ error: "No file uploaded" });
-    const url = await StorageService.uploadImage(
-      req.file.buffer,
-      req.file.originalname
-    );
-    res.status(200).json({ url });
-  } catch (err) {
-    next(err);
-  }
-}
 
-// POST /storage/file
-export async function uploadFile(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
+    const url = await S.uploadImage(req.file.buffer, req.file.originalname);
+    return { url };
+  },
+});
+
+export const uploadFile = controllerHandler({
+  handler: async (_, req, res) => {
     if (!req.file) return res.status(400).json({ error: "No file uploaded" });
-    const url = await StorageService.uploadFile(
+
+    const url = await S.uploadFile(
       req.file.buffer,
       req.file.originalname,
       req.file.mimetype
     );
-    res.status(200).json({ url });
-  } catch (err) {
-    next(err);
-  }
-}
+    return { url };
+  },
+});
 
-// DELETE /storage
-export async function deleteFile(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const { url } = req.body;
-    const success = await StorageService.deleteFile(url);
-    res.status(200).json({ success });
-  } catch (err) {
-    next(err);
-  }
-}
+export const deleteFile = controllerHandler({
+  handler: async ({ url }) => {
+    const success = await S.deleteFile(url);
+    return { success };
+  },
+});

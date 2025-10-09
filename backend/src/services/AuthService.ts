@@ -7,8 +7,11 @@ export class AuthService {
     return auth.register(user, password);
   }
 
-  static async login(email: string, password: string) {
-    return auth.login(email, password);
+  static async login(
+    email: string,
+    password: string
+  ): Promise<{ token: string; user: User }> {
+    return await AuthService.login(email, password);
   }
 
   static async verify(token: string): Promise<User | null> {

@@ -4,6 +4,7 @@ import { Router } from "express";
 import authRoutes from "@routes/auth";
 import storageRoutes from "@routes/storage";
 import orderRoutes from "@routes/orders";
+import shippingRoutes from "@routes/shipping";
 
 // CRUD route factory
 import { createCrudRoute } from "@utils/createCrudRoute";
@@ -17,6 +18,7 @@ const router = Router();
 router.use("/auth", authRoutes);
 router.use("/storage", storageRoutes);
 router.use("/orders", orderRoutes);
+router.use("/shipping", shippingRoutes);
 
 // ---------- CRUD Routes ----------
 function adminCrud(crud: any, extraOptions: any = {}) {

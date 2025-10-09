@@ -1,13 +1,15 @@
-import express from "express";
-
+import { Router } from "express";
 import {
   placeOrder,
   refundOrder,
 } from "@controllers/orderProcessingController";
-
 import { requireRole } from "@middleware/authorization";
 
-const router = express.Router();
+const router = Router();
+
+// -------------------------------
+// Order Routes
+// -------------------------------
 
 // Place order - any authenticated user
 router.post("/place", placeOrder);
