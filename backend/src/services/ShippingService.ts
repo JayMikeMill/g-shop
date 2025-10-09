@@ -1,8 +1,8 @@
 // src/services/ShippingService.ts
 
 import { shipping } from "@adapters/services";
+import { Address } from "@shared/types";
 import {
-  Address,
   Parcel,
   ShipmentRate,
   Shipment,
@@ -10,18 +10,20 @@ import {
   ShipmentTrackingResult,
 } from "@adapters/types/ShippingAdapter";
 
-class ShippingService {
+export class ShippingService {
   // -------------------------------
   // Verify Address
   // -------------------------------
-  async verifyAddress(address: Address): Promise<AddressVerificationResult> {
+  static async verifyAddress(
+    address: Address
+  ): Promise<AddressVerificationResult> {
     return shipping.verifyAddress(address);
   }
 
   // -------------------------------
   // Get Shipping Rates
   // -------------------------------
-  async getRates(
+  static async getRates(
     from: Address,
     to: Address,
     parcel: Parcel
@@ -32,7 +34,7 @@ class ShippingService {
   // -------------------------------
   // Create Shipment
   // -------------------------------
-  async createShipment(
+  static async createShipment(
     from: Address,
     to: Address,
     parcel: Parcel,
@@ -45,7 +47,7 @@ class ShippingService {
   // -------------------------------
   // Buy Shipment
   // -------------------------------
-  async buyShipment(
+  static async buyShipment(
     shipmentId: string,
     rate?: ShipmentRate
   ): Promise<Shipment> {
@@ -55,16 +57,16 @@ class ShippingService {
   // -------------------------------
   // Track Shipment
   // -------------------------------
-  async trackShipment(trackingNumber: string): Promise<ShipmentTrackingResult> {
+  static async trackShipment(
+    trackingNumber: string
+  ): Promise<ShipmentTrackingResult> {
     return shipping.trackShipment(trackingNumber);
   }
 
   // -------------------------------
   // Cancel Shipment
   // -------------------------------
-  async cancelShipment(shipmentId: string): Promise<boolean> {
+  static async cancelShipment(shipmentId: string): Promise<boolean> {
     return shipping.cancelShipment(shipmentId);
   }
 }
-
-export const ShippingServiceInstance = new ShippingService();
