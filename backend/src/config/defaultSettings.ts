@@ -1,7 +1,8 @@
 import { SiteSettings, UserSettings, AdminSettings } from "@shared/types";
+import SystemSettingsService from "@services/SystemSettingsService";
 
 // -----------Default site settings -----------
-export const defaultSiteSettings: SiteSettings = {
+const defaultSiteSettings: SiteSettings = {
   siteName: "My Store",
   themeSettings: {
     backgroundColor: "#ffffff",
@@ -38,8 +39,29 @@ export const defaultSiteSettings: SiteSettings = {
   taxRate: 7.5,
 };
 
-// -----------Default user settings -----------
-export const defaultUserSettings: UserSettings = {};
-
 // -----------Default admin settings -----------
-export const defaultAdminSettings: AdminSettings = {};
+const defaultAdminSettings: AdminSettings = {
+  adminEmail: "admin@mystore.com",
+  adminName: "Admin",
+  adminPassword: "admin123",
+  permissions: {
+    canManageUsers: true,
+    canManageProducts: true,
+    canManageOrders: true,
+  },
+};
+
+// -----------Default user settings -----------
+const defaultEngineSettings: UserSettings = {
+  maxConcurrentRequests: 5,
+  requestTimeout: 30000, // in ms
+  enableLogging: true,
+  logLevel: "info",
+};
+
+// set default settings for a scope if not exist
+export async function setDefaultSystemSettings() {
+  await SystemSettingsService.setDefaults("SITE", defaultSiteSettings);
+  await SystemSettingsService.setDefaults("ADMIN", defaultAdminSettings);
+  await SystemSettingsService.setDefaults("ENGINE", defaultEngineSettings);
+}

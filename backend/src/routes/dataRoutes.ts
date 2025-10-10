@@ -4,7 +4,9 @@ import { db } from "@adapters/services";
 
 const router = Router();
 
-// ---------- Helper for admin-only CRUD ----------
+// ===============================
+// Helper for admin-only CRUD
+// ===============================
 function adminCrud(crud: any, extraOptions: any = {}) {
   return createCrudRoute(crud, {
     create: ["ADMIN"],
@@ -14,7 +16,9 @@ function adminCrud(crud: any, extraOptions: any = {}) {
   });
 }
 
-// ---------- Product sub-resources ----------
+// ===============================
+// Product sub-resources
+// ===============================
 router.use("/products/tags-presets", adminCrud(db.productTagsPresets));
 router.use("/products/options-presets", adminCrud(db.productOptionsPresets));
 router.use(
@@ -22,17 +26,25 @@ router.use(
   adminCrud(db.productReviews, { create: ["USER", "ADMIN"] })
 );
 
-// Products must come last as it has nested routes
+// ===============================
+// Products
+// ===============================
 router.use("/products", adminCrud(db.products));
 
+// ===============================
 // Catalog
+// ===============================
 router.use("/catalog/categories", adminCrud(db.categories));
 router.use("/catalog/collections", adminCrud(db.collections));
 
+// ===============================
 // Orders
+// ===============================
 router.use("/orders", adminCrud(db.orders, { read: ["ADMIN", "OWNER"] }));
 
+// ===============================
 // Users
+// ===============================
 router.use(
   "/users",
   adminCrud(db.users, {

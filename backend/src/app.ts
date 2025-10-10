@@ -2,6 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import routes from "@routes/index";
+import { setDefaultSystemSettings } from "@config";
 
 const app = express();
 
@@ -29,6 +30,11 @@ app.use(
 );
 
 app.use(bodyParser.json());
+
+// set default settings
+setDefaultSystemSettings().catch((err: unknown) => {
+  console.error("Error setting default system settings:", err);
+});
 
 // Mount all API routes
 app.use("/api/v1", routes);

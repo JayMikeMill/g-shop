@@ -24,13 +24,16 @@ import {
   verifyAddress,
   getRates,
   trackShipment,
-  // createShipment,
-  // buyShipment,
-  // cancelShipment,
 } from "@controllers/shippingController";
 
 // Storage
 import storageRouter from "@routes/storageRoutes";
+
+// System Settings
+import {
+  getSettings,
+  updateSettings,
+} from "@controllers/systemSettingsController";
 
 // ===============================
 // Middleware
@@ -68,13 +71,16 @@ router.put("/orders/:id/refund", requireAdmin, refundOrder); // admin only
 router.post("/shipping/verify", verifyAddress);
 router.post("/shipping/rates", getRates);
 router.post("/shipping/track", trackShipment);
-// router.post("/shipping/create", createShipment);
-// router.post("/shipping/buy", buyShipment);
-// router.post("/shipping/cancel", cancelShipment);
 
 // ===============================
 // Storage Routes (Admin Only)
 // ===============================
 router.use("/storage", storageRouter);
+
+// ===============================
+// System Settings Routes (Admin Only)
+// ===============================
+router.get("/settings/:scope", requireAdmin, getSettings);
+router.put("/settings/:scope", requireAdmin, updateSettings);
 
 export default router;

@@ -8,27 +8,86 @@ import {
 
 import { db } from "@adapters/services";
 
+type AnySystemSettings = SiteSettings | AdminSettings | EngineSettings;
+
 export class SystemSettingsService {
+  // Cache: scope -> settings
+  private cache: Partial<Record<SystemSettingsScope, AnySystemSettings>> = {};
+
+  /**
+   * Get settings by scope
+   */
   async getSettings(
     scope: SystemSettingsScope
-  ): Promise<SiteSettings | AdminSettings | EngineSettings | null> {
-    const result = await db.systemSettings.getOne({ scope });
+  ): Promise<AnySystemSettings | null> {
+    // Return cached settings if available
+    if (this.cache[scope]) return this.cache[scope]!;
 
-    if (!result) {
-      return null;
+    const result = await db.systemSettings.getOne({ scope });
+    if (!result) return null;
+
+    const parsed = parseSystemSettings(result);
+    this.cache[scope] = parsed; // Cache it
+    return parsed;
+  }
+
+  /**
+   * Create or update system settings
+   */
+  async updateSystemSettings<T extends AnySystemSettings>(
+    scope: SystemSettingsScope,
+    settings: T
+  ): Promise<T> {
+    const existing = await db.systemSettings.getOne({ scope });
+
+    let updated: SystemSettings;
+    if (!existing) {
+      // Create new settings
+      updated = await db.systemSettings.create({
+        scope,
+        settings,
+      } as SystemSettings);
+    } else {
+      // Update existing settings
+      updated = await db.systemSettings.update({
+        ...existing,
+        settings,
+      } as SystemSettings & { id: string });
     }
-    return parseSystemSettings(result) as
-      | SiteSettings
-      | AdminSettings
-      | EngineSettings
-      | null;
+
+    const parsed = parseSystemSettings(updated) as T;
+    this.cache[scope] = parsed; // Update cache
+    return parsed;
+  }
+
+  /**
+   * Set defaults if no settings exist for the scope
+   */
+  async setDefaults<T extends AnySystemSettings>(
+    scope: SystemSettingsScope,
+    settings: T
+  ): Promise<T | void> {
+    const existing = await this.getSettings(scope);
+    if (!existing) {
+      return this.updateSystemSettings(scope, settings);
+    }
+    return existing as T;
+  }
+
+  /**
+   * Clear cache (optional)
+   */
+  clearCache(scope?: SystemSettingsScope) {
+    if (scope) delete this.cache[scope];
+    else this.cache = {};
   }
 }
 
-export function parseSystemSettings(
-  settings: SystemSettings
-): AdminSettings | SiteSettings | EngineSettings {
-  const parsedSettings = JSON.parse(JSON.stringify(settings.settings || {}));
+/**
+ * Parse the settings JSON to the correct type based on scope
+ */
+function parseSystemSettings(settings: SystemSettings): AnySystemSettings {
+  const parsedSettings = structuredClone(settings.settings || {}) as unknown;
 
   switch (settings.scope) {
     case "SITE":
@@ -37,8 +96,9 @@ export function parseSystemSettings(
       return parsedSettings as AdminSettings;
     case "ENGINE":
       return parsedSettings as EngineSettings;
-
     default:
       throw new Error("Invalid settings scope");
   }
 }
+
+export default new SystemSettingsService();
