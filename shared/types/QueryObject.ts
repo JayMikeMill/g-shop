@@ -61,8 +61,10 @@ export const isQueryObject = <T>(q: any): q is QueryObject<T> =>
 // -------------------- Query String Helpers --------------------
 
 // Convert QueryObject into query string
-export function toQueryString<T>(query?: QueryObject<T>): string {
+export function toQueryString<T>(query?: QueryType<T>): string {
   if (!query) return "";
+
+  if (!isQueryObject<T>(query)) return qs.stringify(query);
 
   const params: Record<string, any> = {};
 
@@ -86,9 +88,9 @@ export function toQueryString<T>(query?: QueryObject<T>): string {
 }
 
 // Parse query string / object into strongly-typed QueryObject
-export function parseQueryObject<T>(
+export function parseQueryType<T>(
   query: Record<string, any> | Record<string, any>[]
-): QueryObject<T> | Partial<T> | undefined {
+): QueryType<T> | undefined {
   // No query = undefined (used to fetch all)
   if (!query || Object.keys(query).length === 0) return undefined;
 
@@ -152,3 +154,5 @@ export function parseQueryObject<T>(
 
   return options;
 }
+
+export type QueryType<T> = QueryObject<T> | Partial<T>;

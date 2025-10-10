@@ -6,7 +6,6 @@ import type {
   Address,
   Parcel,
   ShipmentRate,
-  Shipment,
   AddressVerificationResult,
   ShipmentTrackingResult,
 } from "@shared/types";

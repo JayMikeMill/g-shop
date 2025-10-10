@@ -12,7 +12,7 @@ import { PrismaClient } from "@prisma/client";
 import type { CrudInterface } from "@shared/interfaces";
 
 // Shared utilities and types
-import { isQueryObject, type QueryObject } from "@shared/types";
+import { isQueryObject, type QueryType, type QueryObject } from "@shared/types";
 
 // Utility to convert nested data into Prisma create/update shape
 import {
@@ -103,20 +103,35 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
     return created;
   }
 
-  // Overloads
-  // If called with an id or specific query, return a single item or null
-  async get(query: Partial<T>): Promise<T | null>;
+  // -------------------- GET ONE --------------------
+  async getOne(query: QueryType<T>): Promise<T | null> {
+    const where: any = {};
 
-  // If called with a general query, return multiple items with total count
-  async get(
-    query?: QueryObject<T>
-  ): Promise<{ data: T[]; total: number } | null>;
+    // If query has id, use findUnique
+    if ("id" in query && query.id) {
+      return this.client.findUnique({
+        where: { id: query.id },
+        include: this.baseInclude,
+      });
+    }
 
-  // -------------------- Implementation --------------------
-  async get(
-    query?: Partial<T> | QueryObject<T>
-  ): Promise<T | { data: T[]; total: number } | null> {
-    // -------------------- NO QUERY: return all --------------------
+    // Otherwise, build where for findFirst
+    for (const key in query) {
+      const val = (query as any)[key];
+      if (val !== undefined) where[key] = val;
+    }
+
+    return this.client.findFirst({
+      where,
+      include: this.baseInclude,
+    });
+  }
+
+  // -------------------- GET MANY --------------------
+  async getMany(
+    query?: QueryType<T>
+  ): Promise<{ data: T[]; total: number } | null> {
+    // No query: return all
     if (!query) {
       const [data, total] = this.isTx
         ? await this.prisma.$transaction([
@@ -131,53 +146,38 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
       return { data, total };
     }
 
-    // -------------------- Partial (Single) --------------------
-    if (!isQueryObject(query)) {
-      const partialQuery = query as Partial<T>;
-      const where: any = {};
+    // If QueryObject, use buildPrismaQuery
+    if (isQueryObject(query)) {
+      const queryParams = buildPrismaQuery(
+        query as QueryObject<T>,
+        this.includeFieldsCfg,
+        this.searchFields || []
+      );
+      const [data, total] = this.isTx
+        ? await this.prisma.$transaction([
+            this.client.findMany(queryParams),
+            this.client.count({ where: queryParams.where }),
+          ])
+        : await Promise.all([
+            this.client.findMany(queryParams),
+            this.client.count({ where: queryParams.where }),
+          ]);
 
-      for (const key in partialQuery) {
-        const val = (partialQuery as any)[key];
-        if (val === undefined) continue;
-        where[key] = val;
-      }
-
-      // If 'id' is provided, use findUnique
-      if ((partialQuery as any).id) {
-        return await this.client.findUnique({
-          where: { id: (partialQuery as any).id },
-          include: this.baseInclude,
-        });
-      }
-
-      // Otherwise, use findFirst
-      return await this.client.findFirst({
-        where,
-        include: this.baseInclude,
-      });
+      return { data, total };
     }
 
-    // -------------------- QueryObject (Multiple) --------------------
-    const queryObj: QueryObject<T> = (query as QueryObject<T>) ?? {};
-    const queryParams = buildPrismaQuery(
-      queryObj,
-      this.includeFieldsCfg,
-      this.searchFields || []
-    );
-
-    let data: T[], total: number;
-
-    if (this.isTx) {
-      data = await this.client.findMany(queryParams);
-      total = await this.client.count({ where: queryParams.where });
-    } else {
-      [data, total] = await this.prisma.$transaction([
-        this.client.findMany(queryParams),
-        this.client.count({ where: queryParams.where }),
-      ]);
+    // Otherwise, Partial<T>
+    const where: any = {};
+    for (const key in query) {
+      const val = (query as any)[key];
+      if (val !== undefined) where[key] = val;
     }
 
-    return { data, total };
+    const data = await this.client.findMany({
+      where,
+      include: this.baseInclude,
+    });
+    return { data, total: data.length };
   }
 
   async update(
@@ -193,7 +193,7 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
       return this.increment(id, restData);
     }
 
-    const existing = await this.get({ id } as any);
+    const existing = await this.getOne({ id } as any);
     if (!existing) throw new Error("Document not found");
 
     const prismaData = await this.toPrisma(restData, "update", existing);
@@ -208,7 +208,7 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
   }
 
   async increment(id: string, updates: Partial<T>): Promise<T> {
-    const existing = await this.get({ id } as any);
+    const existing = await this.getOne({ id } as any);
     if (!existing) throw new Error("Document not found");
 
     const prismaData = await this.toPrisma(updates, "increment", existing);

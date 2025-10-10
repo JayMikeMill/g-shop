@@ -1,9 +1,8 @@
-import {
+import type {
   Address,
   AddressVerificationResult,
   Order,
   Parcel,
-  Shipment,
   ShipmentRate,
   ShipmentTrackingResult,
   User,

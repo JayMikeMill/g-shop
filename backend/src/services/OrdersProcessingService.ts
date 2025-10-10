@@ -92,7 +92,7 @@ async function stockAvailable(
     conditions: [{ field: "id", operator: "in", value: productIds }],
     includeFields: ["id", "name", "stock"],
   };
-  const productResult = await dbAdapter.products.get(productQuery);
+  const productResult = await dbAdapter.products.getMany(productQuery);
   if (!productResult?.data?.length)
     throw new Error("No products found for this order");
 
@@ -106,7 +106,7 @@ async function stockAvailable(
       conditions: [{ field: "id", operator: "in", value: variantIds }],
       includeFields: ["id", "productId", "stock"],
     };
-    const variantResult = await dbAdapter.productVariants.get(variantQuery);
+    const variantResult = await dbAdapter.productVariants.getMany(variantQuery);
     if (variantResult?.data?.length) {
       for (const v of variantResult.data) {
         if (v.id) variantMap[v.id] = v;
@@ -154,10 +154,10 @@ async function updateStock(order: Order, dbAdapter: DBAdapter) {
     const quantity = item.quantity || 1;
 
     if (item.variant?.id) {
-      const variant = await dbAdapter.productVariants.get({
-        conditions: [{ field: "id", operator: "=", value: item.variant.id }],
+      const variant = await dbAdapter.productVariants.getOne({
+        id: item.variant.id,
       });
-      if (variant?.data?.[0]?.stock != null) {
+      if (variant?.stock != null) {
         updatePromises.push(
           dbAdapter.productVariants.update(
             { id: item.variant.id, stock: -quantity },
@@ -173,10 +173,8 @@ async function updateStock(order: Order, dbAdapter: DBAdapter) {
         );
       }
     } else if (item.product?.id) {
-      const product = await dbAdapter.products.get({
-        conditions: [{ field: "id", operator: "=", value: item.product.id }],
-      });
-      if (product?.data?.[0]?.stock != null) {
+      const product = await dbAdapter.products.getOne({ id: item.product.id });
+      if (product?.stock != null) {
         updatePromises.push(
           dbAdapter.products.update(
             { id: item.product.id, stock: -quantity },

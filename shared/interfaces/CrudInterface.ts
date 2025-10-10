@@ -1,4 +1,4 @@
-import type { QueryObject } from "../";
+import type { QueryType } from "../types";
 
 export interface CrudInterface<T> {
   // Create a new item
@@ -6,10 +6,10 @@ export interface CrudInterface<T> {
 
   // Overloads for get method
   // If called with an id or specific query, return a single item or null
-  get(query: Partial<T>): Promise<T | null>;
+  getOne(query: QueryType<T>): Promise<T | null>;
 
   // If called with a general query, return multiple items with total count
-  get(query?: QueryObject<T>): Promise<{ data: T[]; total: number } | null>;
+  getMany(query?: QueryType<T>): Promise<{ data: T[]; total: number } | null>;
 
   // Update requires an id in the updates
   update(

@@ -1,6 +1,7 @@
 // backend/src/crud/FirebaseCRUD.ts
 import { useFirebase } from "./config/firebaseAdmin";
 import type { CrudInterface } from "@shared/interfaces";
+import { QueryType } from "@shared/types";
 
 export class FirebaseCrudAdapter<T extends { id?: string }>
   implements CrudInterface<T>
@@ -20,52 +21,61 @@ export class FirebaseCrudAdapter<T extends { id?: string }>
     return { ...data, id: docRef.id };
   }
 
-  // -------------------- GET OVERLOADS --------------------
-  async get(id: string): Promise<T | null>;
-  async get(
-    query: Partial<T>,
-    options?: { multiple?: false }
-  ): Promise<T | null>;
-  async get(
-    query: Partial<T>,
-    options: { multiple: true }
-  ): Promise<{ data: T[]; total: number }>;
-  async get(): Promise<{ data: T[]; total: number }>;
-
-  // -------------------- IMPLEMENTATION --------------------
-  async get(
-    idOrQuery?: string | Partial<T>,
-    options?: { multiple?: boolean }
-  ): Promise<T | { data: T[]; total: number } | null> {
+  // -------------------- GET --------------------
+  async getOne(query: QueryType<T>): Promise<T | null> {
     const collectionRef = this.db.collection(this.collection);
 
-    // 1️⃣ By ID
-    if (typeof idOrQuery === "string") {
-      const doc = await collectionRef.doc(idOrQuery).get();
+    // By ID
+    if ("id" in query && query.id) {
+      const doc = await collectionRef.doc(query.id).get();
       return doc.exists ? ({ ...doc.data(), id: doc.id } as T) : null;
     }
 
-    // 2️⃣ Partial query
-    if (idOrQuery && typeof idOrQuery === "object") {
-      const keys = Object.keys(idOrQuery) as (keyof T)[];
+    // Partial query
+    const keys = Object.keys(query) as (keyof T)[];
+    if (keys.length > 0) {
       let queryRef: FirebaseFirestore.Query<FirebaseFirestore.DocumentData> =
         collectionRef;
 
       keys.forEach((key) => {
-        queryRef = queryRef.where(String(key), "==", idOrQuery[key]);
+        queryRef = queryRef.where(
+          String(key),
+          "==",
+          (query as Partial<T>)[key]
+        );
       });
 
       const snapshot = await queryRef.get();
       const data = snapshot.docs.map((d) => ({ ...d.data(), id: d.id }) as T);
-
-      if (options?.multiple) {
-        return { data, total: data.length };
-      } else {
-        return data[0] ?? null;
-      }
+      return data[0] ?? null;
     }
 
-    // 3️⃣ Get all
+    return null;
+  }
+
+  async getMany(
+    query?: QueryType<T>
+  ): Promise<{ data: T[]; total: number } | null> {
+    const collectionRef = this.db.collection(this.collection);
+
+    if (query && Object.keys(query).length > 0) {
+      let queryRef: FirebaseFirestore.Query<FirebaseFirestore.DocumentData> =
+        collectionRef;
+
+      (Object.keys(query) as (keyof T)[]).forEach((key) => {
+        queryRef = queryRef.where(
+          String(key),
+          "==",
+          (query as Partial<T>)[key]
+        );
+      });
+
+      const snapshot = await queryRef.get();
+      const data = snapshot.docs.map((d) => ({ ...d.data(), id: d.id }) as T);
+      return { data, total: data.length };
+    }
+
+    // Get all
     const snapshot = await collectionRef.get();
     const allData = snapshot.docs.map((d) => ({ ...d.data(), id: d.id }) as T);
     return { data: allData, total: snapshot.size };

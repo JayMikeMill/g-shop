@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "@features/user/useUser";
 import { AnimatedDialog, Button, Input } from "@components/ui";
-import { emptyUser } from "@shared/types";
 
 export default function AdminLoginPage() {
   const { user, loginUser, registerUser } = useUser();
@@ -29,7 +28,7 @@ export default function AdminLoginPage() {
     setError(null);
     setLoading(true);
     try {
-      // await registerUser(
+      await registerUser;
       //   {
       //     ...emptyUser,
       //     email,

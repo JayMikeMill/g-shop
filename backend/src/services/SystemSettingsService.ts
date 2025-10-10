@@ -12,15 +12,12 @@ export class SystemSettingsService {
   async getSettings(
     scope: SystemSettingsScope
   ): Promise<SiteSettings | AdminSettings | EngineSettings | null> {
-    const result = await db.systemSettings.get({
-      conditions: [{ field: "scope", operator: "=", value: scope }],
-    });
-    const firstSetting =
-      result && result.data && result.data.length > 0 ? result.data[0] : null;
-    if (!firstSetting) {
+    const result = await db.systemSettings.getOne({ scope });
+
+    if (!result) {
       return null;
     }
-    return parseSystemSettings(firstSetting) as
+    return parseSystemSettings(result) as
       | SiteSettings
       | AdminSettings
       | EngineSettings
