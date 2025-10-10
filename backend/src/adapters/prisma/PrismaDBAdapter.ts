@@ -77,6 +77,7 @@ class UserCrud extends PrismaCrudAdapter<User> {
     super(prismaClient, {
       model: "user",
       searchFields: ["email"],
+      nestedMeta: { settings: { json: true } },
       isTx,
     });
   }
@@ -122,6 +123,7 @@ class ProductVariantCrud extends PrismaCrudAdapter<ProductVariant> {
     super(prismaClient, {
       model: "productVariant",
       searchFields: ["id"],
+      nestedMeta: { options: { json: true } },
       isTx,
     });
   }
@@ -142,6 +144,7 @@ class ProductOptionPresetCrud extends PrismaCrudAdapter<ProductOptionsPreset> {
     super(prismaClient, {
       model: "productOptionsPreset",
       searchFields: ["name"],
+      nestedMeta: { options: { json: true } },
       isTx,
     });
   }
@@ -194,11 +197,14 @@ class OrderCrud extends PrismaCrudAdapter<Order> {
 
       // CHANGED: dot-notation keys
       nestedMeta: {
-        transaction: { owned: true },
-        "transaction.billingAddress": { owned: true },
         shippingInfo: { owned: true },
         "shippingInfo.address": { owned: true },
         items: { owned: true },
+        "items.product": { json: true },
+        "items.variant": { json: true },
+        transaction: { owned: true },
+        "transaction.billingAddress": { owned: true },
+        "transaction.gatewayResponse": { json: true },
         statusHistory: { owned: true },
         invoices: { owned: true },
       },
@@ -213,6 +219,7 @@ class SystemSettingsCrud extends PrismaCrudAdapter<SystemSettings> {
   constructor(prismaClient: PrismaClient, isTx?: boolean) {
     super(prismaClient, {
       model: "systemSettings",
+      nestedMeta: { settings: { json: true } },
       searchFields: ["scope"],
       isTx,
     });

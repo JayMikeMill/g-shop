@@ -11,6 +11,7 @@
 type NestedConfig = {
   owned?: boolean; // owned nested object or array
   manyToMany?: boolean; // many-to-many relation (array of IDs)
+  json?: boolean; // JSON field (store value directly)
 };
 
 export type NestedMetadata<T> = Partial<Record<keyof T, NestedConfig>>;
@@ -54,10 +55,16 @@ export function prismaNestedUpdate<T>(
   const result: any = {};
 
   for (const key in incoming as any) {
+    const config = metaMap[key] || {};
     const value = (incoming as any)[key];
     const current = existing ? (existing as any)[key] : undefined;
-    const config = metaMap[key] || {};
     const nextMeta = childMeta(metaMap, key);
+
+    // ------------------ JSON field ------------------
+    if (config.json) {
+      result[key] = value; // store directly
+      continue;
+    }
 
     // ------------------ Many-to-many (array of IDs) ------------------
     if (config.manyToMany && Array.isArray(value)) {
