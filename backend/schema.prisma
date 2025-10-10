@@ -128,7 +128,7 @@ model User {
   lastLogin           DateTime?
   failedLoginAttempts Int       @default(0)
   cart                Cart?
-  settings            Settings?
+  settings            Json? ///is*UserSettings*
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
@@ -490,12 +490,10 @@ model CartItem {
 //////////////////////////////////////////////////////////////////
 /// SETTINGS
 //////////////////////////////////////////////////////////////////
-model Settings {
+model SystemSettings {
   id        String   @id @default(uuid())
-  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String?  @unique
-  scope     String   // ADMIN, SITE or USER
-  settings  Json     // AdminSettings, SiteSettings or UserSettings
+  scope     String   @unique // ADMIN, SITE or ENGINE
+  settings  Json     // AdminSettings, SiteSettings or EngineSettings
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
