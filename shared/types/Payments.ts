@@ -1,4 +1,4 @@
-import type { ShippingInfo } from "./";
+import type { ShippingInfo } from ".";
 
 // -------------------- Payment Request --------------------
 export interface PaymentRequest {

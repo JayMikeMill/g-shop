@@ -107,6 +107,12 @@ enum StockMovementType {
   ADJUSTMENT
 }
 
+enum SettingsScope {
+  SITE
+  USER
+  ADMIN
+}
+
 //////////////////////////////////////////////////////////////////
 /// USERS & AUTH
 //////////////////////////////////////////////////////////////////
@@ -121,7 +127,8 @@ model User {
   isVerified          Boolean   @default(false)
   lastLogin           DateTime?
   failedLoginAttempts Int       @default(0)
-  preferences         Json?
+  cart                Cart?
+  settings            Settings?
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
@@ -129,19 +136,19 @@ model User {
   paymentMethods UserPaymentMethod[]
   orders         Order[]
   reviews        ProductReview[]
-  cart           Cart?
   sessions       Session[]
 }
 
 model UserPaymentMethod {
-  id            String        @id @default(uuid())
+  id            String @id @default(uuid())
+  user          User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
   type          PaymentMethod
   last4         String
   expiry        String
   providerToken String
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
+
 }
 
 //////////////////////////////////////////////////////////////////
@@ -158,6 +165,7 @@ model Collection {
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
 
+  // Relations
   products Product[] @relation("ProductCollections")
 }
 
@@ -172,6 +180,7 @@ model Category {
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
 
+  // Relations
   products Product[] @relation("ProductCategories")
 }
 
@@ -181,6 +190,7 @@ model CollectionImageSet {
   preview   String
   thumbnail String
 
+  // Relations
   collection   Collection? @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   collectionId String?     @unique
   category     Category?   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
@@ -213,62 +223,64 @@ model Product {
   reviews        ProductReview[]
   createdAt      DateTime           @default(now())
   updatedAt      DateTime           @updatedAt
+
   CartItem       CartItem?
 }
 
 model ProductImageSet {
-  id        String @id @default(uuid())
+  id        String  @id @default(uuid())
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
   main      String
   preview   String
   thumbnail String
-
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String
 }
 
 model ProductOption {
-  id     String @id @default(uuid())
-  name   String
-  values Json ///is*string[]*
-
+  id        String  @id @default(uuid())
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
+  name      String
+  values    Json ///is*string[]*
 }
 
 model ProductVariant {
   id      String @id @default(uuid())
+  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
   options Json  ///is*string[]*
   price   Int?
   stock   Int?
 
-  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String
+  // Relations
   CartItem  CartItem[]
 }
 
 model ProductDimensions {
   id     String @id @default(uuid())
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String  @unique
   weight Int?
   length Int?
   width  Int?
   height Int?
-
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String  @unique
 }
 
 model ProductTag {
   id        String  @id @default(uuid())
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
   name      String
   color     String?
   textColor String?
-
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String
 }
 
 model ProductReview {
-  id           String       @id @default(uuid())
+  id           String  @id @default(uuid())
+  user         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+  product      Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId    String
   rating       Int
   comment      String
   status       ReviewStatus @default(PENDING)
@@ -276,10 +288,7 @@ model ProductReview {
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
+
 }
 
 model ProductTagPreset {
@@ -326,6 +335,8 @@ model Address {
   label          String?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
+
+  // Relations
   User           User?         @relation(fields: [userId], references: [id])
   userId         String?       @unique
   ShippingInfo   ShippingInfo? @relation(fields: [ShippingInfoId], references: [id], onDelete: Cascade)
@@ -473,4 +484,18 @@ model CartItem {
   price     Int
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
+}
+
+
+//////////////////////////////////////////////////////////////////
+/// SETTINGS
+//////////////////////////////////////////////////////////////////
+model Settings {
+  id        String   @id @default(uuid())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String?  @unique
+  scope     String   // ADMIN, SITE or USER
+  settings  Json     // AdminSettings, SiteSettings or UserSettings
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

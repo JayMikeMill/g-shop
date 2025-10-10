@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 
 // Path to your generated TS file
-const filePath = path.join(__dirname, "PrismaTypes.ts");
+const filePath = path.join(__dirname, "../types/PrismaTypes.ts");
 
 // Read file content
 let content = fs.readFileSync(filePath, "utf-8");

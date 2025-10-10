@@ -137,6 +137,14 @@ export const StockMovementType = {
   ADJUSTMENT: "ADJUSTMENT",
 } satisfies Record<string, StockMovementType>;
 
+export type SettingsScope = "SITE" | "USER" | "ADMIN";
+
+export const SettingsScope = {
+  SITE: "SITE",
+  USER: "USER",
+  ADMIN: "ADMIN",
+} satisfies Record<string, SettingsScope>;
+
 //////////////////////////////////////////////////////////////
 // USERS & AUTH
 //////////////////////////////////////////////////////////////
@@ -152,25 +160,25 @@ export interface User {
   isVerified: boolean;
   lastLogin?: Date | null;
   failedLoginAttempts: number;
-  preferences?: JsonValue | null;
+  cart?: Cart | null;
+  settings?: Settings | null;
   createdAt?: Date;
   updatedAt?: Date;
   addresses?: Address[];
   paymentMethods?: UserPaymentMethod[];
   orders?: Order[];
   reviews?: ProductReview[];
-  cart?: Cart | null;
   sessions?: Session[];
 }
 
 export interface UserPaymentMethod {
   id?: string;
+  user?: User;
+  userId?: string;
   type: PaymentMethod;
   last4: string;
   expiry: string;
   providerToken: string;
-  user?: User;
-  userId?: string;
 }
 
 //////////////////////////////////////////////////////////////
@@ -246,62 +254,62 @@ export interface Product {
 
 export interface ProductImageSet {
   id?: string;
+  product?: Product;
+  productId?: string;
   main: string;
   preview: string;
   thumbnail: string;
-  product?: Product;
-  productId?: string;
 }
 
 export interface ProductOption {
   id?: string;
-  name: string;
-  values: string[];
   product?: Product;
   productId?: string;
+  name: string;
+  values: string[];
 }
 
 export interface ProductVariant {
   id?: string;
+  product?: Product;
+  productId?: string;
   options: string[];
   price?: number | null;
   stock?: number | null;
-  product?: Product;
-  productId?: string;
   CartItem?: CartItem[];
 }
 
 export interface ProductDimensions {
   id?: string;
+  product?: Product;
+  productId?: string;
   weight?: number | null;
   length?: number | null;
   width?: number | null;
   height?: number | null;
-  product?: Product;
-  productId?: string;
 }
 
 export interface ProductTag {
   id?: string;
+  product?: Product;
+  productId?: string;
   name: string;
   color?: string | null;
   textColor?: string | null;
-  product?: Product;
-  productId?: string;
 }
 
 export interface ProductReview {
   id?: string;
+  user?: User;
+  userId?: string;
+  product?: Product;
+  productId?: string;
   rating: number;
   comment: string;
   status: ReviewStatus;
   helpfulCount: number;
   createdAt?: Date;
   updatedAt?: Date;
-  product?: Product;
-  productId?: string;
-  user?: User;
-  userId?: string;
 }
 
 export interface ProductTagPreset {
@@ -498,6 +506,20 @@ export interface CartItem {
   variantId?: string | null;
   quantity: number;
   price: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+//////////////////////////////////////////////////////////////
+// SETTINGS
+//////////////////////////////////////////////////////////////
+
+export interface Settings {
+  id?: string;
+  user?: User | null;
+  userId?: string | null;
+  scope: string;
+  settings: JsonValue;
   createdAt?: Date;
   updatedAt?: Date;
 }
