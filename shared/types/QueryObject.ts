@@ -1,5 +1,19 @@
 import qs from "qs";
 
+// -------------------- Example Usage --------------------
+// const query: QueryObject<User> = {
+//   search: "john",
+//   searchFields: ["name", "email", "address.city"],
+//   conditions: [
+//     { field: "age", operator: ">=", value: 18 },
+//     { field: "address.country", operator: "=", value: "USA" },
+//   ],
+//   sortBy: "name",
+//   sortOrder: "asc",
+//   limit: 10,
+//   page: 2,
+// };
+
 // -------------------- Deep Types --------------------
 
 // // Optional deep partial (skips arrays, functions, and nulls)

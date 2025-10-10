@@ -11,6 +11,7 @@ import type {
   Order,
   User,
   ProductVariant,
+  SystemSettings,
 } from "@shared/types";
 
 import { DBAdapter } from "@adapters/types";
@@ -31,6 +32,8 @@ export class PrismaDBAdapter implements DBAdapter {
   public orders: OrderCrud;
   public users: UserCrud;
 
+  public systemSettings: SystemSettingsCrud;
+
   constructor(prismaClient: PrismaClient = new PrismaClient(), isTx?: boolean) {
     this.prisma = prismaClient;
     this.isTx = isTx ?? false;
@@ -47,6 +50,7 @@ export class PrismaDBAdapter implements DBAdapter {
     this.collections = new CollectionCrud(prismaClient, isTx);
     this.orders = new OrderCrud(prismaClient, isTx);
     this.users = new UserCrud(prismaClient, isTx);
+    this.systemSettings = new SystemSettingsCrud(prismaClient, isTx);
   }
 
   /**
@@ -200,6 +204,16 @@ class OrderCrud extends PrismaCrudAdapter<Order> {
       },
 
       searchFields: ["id", "userId"],
+      isTx,
+    });
+  }
+}
+
+class SystemSettingsCrud extends PrismaCrudAdapter<SystemSettings> {
+  constructor(prismaClient: PrismaClient, isTx?: boolean) {
+    super(prismaClient, {
+      model: "systemSettings",
+      searchFields: ["scope"],
       isTx,
     });
   }

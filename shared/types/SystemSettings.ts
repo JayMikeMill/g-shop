@@ -42,6 +42,8 @@ export interface SocialMediaHandles {
   youtube?: string;
 }
 
+export interface AdminSettings {}
+
 export interface UserSettings {}
 
-export interface AdminSettings {}
+export interface EngineSettings {}

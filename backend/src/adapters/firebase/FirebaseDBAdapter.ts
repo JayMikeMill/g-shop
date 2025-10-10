@@ -14,6 +14,7 @@ import {
   Order,
   User,
   ProductVariant,
+  SystemSettings,
 } from "@shared/types";
 
 import type { DBAdapter } from "@adapters/types";
@@ -28,6 +29,7 @@ export class FirebaseDBAdapter implements DBAdapter {
   public categories: CrudInterface<Category>;
   public collections: CrudInterface<Collection>;
   public orders: CrudInterface<Order>;
+  public systemSettings: CrudInterface<SystemSettings>;
 
   constructor() {
     this.users = new FirebaseCrudAdapter<User>("users");
@@ -45,6 +47,10 @@ export class FirebaseDBAdapter implements DBAdapter {
     this.categories = new FirebaseCrudAdapter<Category>("categories");
     this.collections = new FirebaseCrudAdapter<Collection>("collections");
     this.orders = new FirebaseCrudAdapter<Order>("orders");
+
+    this.systemSettings = new FirebaseCrudAdapter<SystemSettings>(
+      "system_settings"
+    );
   }
 
   public isTx: boolean = false;

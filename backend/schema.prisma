@@ -107,10 +107,10 @@ enum StockMovementType {
   ADJUSTMENT
 }
 
-enum SettingsScope {
+enum SystemSettingsScope {
   SITE
-  USER
   ADMIN
+  ENGINE
 }
 
 //////////////////////////////////////////////////////////////////
@@ -491,9 +491,9 @@ model CartItem {
 /// SETTINGS
 //////////////////////////////////////////////////////////////////
 model SystemSettings {
-  id        String   @id @default(uuid())
-  scope     String   @unique // ADMIN, SITE or ENGINE
-  settings  Json     // AdminSettings, SiteSettings or EngineSettings
+  id        String  @id @default(uuid())
+  scope     SystemSettingsScope  @unique // ADMIN, SITE or ENGINE
+  settings  Json // AdminSettings, SiteSettings or EngineSettings
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

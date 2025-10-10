@@ -145,13 +145,13 @@ export const StockMovementType = {
   ADJUSTMENT: "ADJUSTMENT",
 } satisfies Record<string, StockMovementType>;
 
-export type SettingsScope = "SITE" | "USER" | "ADMIN";
+export type SystemSettingsScope = "SITE" | "ADMIN" | "ENGINE";
 
-export const SettingsScope = {
+export const SystemSettingsScope = {
   SITE: "SITE",
-  USER: "USER",
   ADMIN: "ADMIN",
-} satisfies Record<string, SettingsScope>;
+  ENGINE: "ENGINE",
+} satisfies Record<string, SystemSettingsScope>;
 
 //======================================================================
 // USERS & AUTH
@@ -524,7 +524,7 @@ export interface CartItem {
 
 export interface SystemSettings {
   id?: string;
-  scope: string;
+  scope: SystemSettingsScope;
   settings: JsonValue;
   createdAt?: Date;
   updatedAt?: Date;

@@ -9,6 +9,7 @@ import {
   Collection,
   Order,
   User,
+  SystemSettings,
 } from "@shared/types";
 
 export interface DBAdapter {
@@ -22,6 +23,8 @@ export interface DBAdapter {
   collections: CrudInterface<Collection>;
   orders: CrudInterface<Order>;
   users: CrudInterface<User>;
+
+  systemSettings: CrudInterface<SystemSettings>;
 
   isTx?: boolean;
   transaction<T>(callback: (tx: DBAdapter) => Promise<T>): Promise<T>;
