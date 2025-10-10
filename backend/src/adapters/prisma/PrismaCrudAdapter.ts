@@ -92,10 +92,12 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
     );
     return removeEmptyArrays(created);
   }
-
-  // -------------------- CRUD --------------------
+  //===================================================
+  // -------------------- CREATE --------------------
+  //===================================================
   async create(data: Partial<T>): Promise<T> {
     const prismaData = await this.toPrisma(data, "create");
+    console.log("Creating in model:", this.model, prismaData);
     const created = await this.client.create({
       data: prismaData,
       include: this.baseInclude,
@@ -103,7 +105,9 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
     return created;
   }
 
+  //===================================================
   // -------------------- GET ONE --------------------
+  //===================================================
   async getOne(query: QueryType<T>): Promise<T | null> {
     const where: any = {};
 
@@ -127,13 +131,15 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
     });
   }
 
+  //===================================================
   // -------------------- GET MANY --------------------
+  //===================================================
   async getMany(
     query?: QueryType<T>
   ): Promise<{ data: T[]; total: number } | null> {
     // No query: return all
     if (!query) {
-      const [data, total] = this.isTx
+      const [data, total] = !this.isTx // No nested transactions
         ? await this.prisma.$transaction([
             this.client.findMany({ include: this.baseInclude }),
             this.client.count(),
@@ -153,7 +159,7 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
         this.includeFieldsCfg,
         this.searchFields || []
       );
-      const [data, total] = this.isTx
+      const [data, total] = !this.isTx // No nested transactions
         ? await this.prisma.$transaction([
             this.client.findMany(queryParams),
             this.client.count({ where: queryParams.where }),
@@ -180,6 +186,9 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
     return { data, total: data.length };
   }
 
+  //===================================================
+  // -------------------- UPDATE --------------------
+  //===================================================
   async update(
     updates: Partial<T> & { id?: string },
     options?: { increment: boolean }
