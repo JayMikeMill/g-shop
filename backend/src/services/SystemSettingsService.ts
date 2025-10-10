@@ -8,8 +8,9 @@ import type {
 } from "@shared/types";
 
 import { db } from "@adapters/services";
+import { SystemSettingsApi } from "@shared/interfaces/ServiceApis";
 
-export class SystemSettingsService {
+export class SystemSettingsService implements SystemSettingsApi {
   // Cache: scope -> settings
   private cache: Partial<Record<SystemSettingsScope, AnySystemSettings>> = {};
 
@@ -33,7 +34,7 @@ export class SystemSettingsService {
   /**
    * Create or update system settings
    */
-  async updateSystemSettings<T extends AnySystemSettings>(
+  async updateSettings<T extends AnySystemSettings>(
     scope: SystemSettingsScope,
     settings: T
   ): Promise<T> {
@@ -68,7 +69,7 @@ export class SystemSettingsService {
   ): Promise<T | void> {
     const existing = await this.getSettings(scope);
     if (!existing) {
-      return this.updateSystemSettings(scope, settings);
+      return this.updateSettings(scope, settings);
     }
     return existing as T;
   }

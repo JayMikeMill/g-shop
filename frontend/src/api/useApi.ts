@@ -8,19 +8,23 @@ import type {
   ShipmentRate,
   AddressVerificationResult,
   ShipmentTrackingResult,
+  AnySystemSettings,
+  SystemSettingsScope,
 } from "@shared/types";
 import type {
   AuthApi,
   OrderProcessingApi,
   ShippingApi,
+  SystemSettingsApi,
   StorageApi,
 } from "@shared/interfaces";
 
 export function useApi(): {
   auth: AuthApi;
   orders: OrderProcessingApi;
-  storage: StorageApi;
   shipping: ShippingApi;
+  storage: StorageApi;
+  settings: SystemSettingsApi;
 } {
   return {
     // ===============================
@@ -94,6 +98,18 @@ export function useApi(): {
         del<{ success: boolean }>(`/storage`, { url }).then(
           (res) => res.success
         ),
+    },
+
+    // ===============================
+    //  System Settings
+    // ===============================
+    settings: {
+      getSettings: (scope: SystemSettingsScope) =>
+        post<AnySystemSettings | null>(`/settings/${scope}`),
+      updateSettings: (
+        scope: SystemSettingsScope,
+        settings: AnySystemSettings
+      ) => post<AnySystemSettings | null>(`/settings/${scope}`, { settings }),
     },
   };
 }

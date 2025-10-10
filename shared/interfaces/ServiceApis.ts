@@ -1,10 +1,13 @@
+import { SystemSettings } from "./../../node_modules/.prisma/client/index.d";
 import type {
   Address,
   AddressVerificationResult,
+  AnySystemSettings,
   Order,
   Parcel,
   ShipmentRate,
   ShipmentTrackingResult,
+  SystemSettingsScope,
   User,
 } from "../types";
 
@@ -46,4 +49,13 @@ export interface ShippingApi {
   verifyAddress(address: Address): Promise<AddressVerificationResult>;
   getRates(from: Address, to: Address, parcel: Parcel): Promise<ShipmentRate[]>;
   trackShipment(trackingNumber: string): Promise<ShipmentTrackingResult>;
+}
+
+//  System Settings interface
+export interface SystemSettingsApi {
+  getSettings(scope: SystemSettingsScope): Promise<AnySystemSettings | null>;
+  updateSettings(
+    scope: SystemSettingsScope,
+    settings: AnySystemSettings
+  ): Promise<AnySystemSettings | null>;
 }
