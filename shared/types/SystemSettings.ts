@@ -1,5 +1,7 @@
 // -------------------- Settings --------------------
 
+import { Address } from "./";
+
 // General Site Settings
 export interface SiteSettings {
   siteName: string;
@@ -42,8 +44,13 @@ export interface SocialMediaHandles {
   youtube?: string;
 }
 
-export interface AdminSettings {}
+export interface AdminSettings {
+  adminEmail: string;
+  shippingOrigin: Address;
+}
 
 export interface UserSettings {}
 
 export interface EngineSettings {}
+
+export type AnySystemSettings = SiteSettings | AdminSettings | EngineSettings;

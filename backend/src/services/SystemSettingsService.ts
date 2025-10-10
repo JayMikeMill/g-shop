@@ -1,5 +1,6 @@
-import {
+import type {
   SystemSettings,
+  AnySystemSettings,
   SystemSettingsScope,
   SiteSettings,
   AdminSettings,
@@ -7,8 +8,6 @@ import {
 } from "@shared/types";
 
 import { db } from "@adapters/services";
-
-type AnySystemSettings = SiteSettings | AdminSettings | EngineSettings;
 
 export class SystemSettingsService {
   // Cache: scope -> settings
