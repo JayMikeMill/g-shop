@@ -42,12 +42,15 @@ const defaultSiteSettings: SiteSettings = {
 // -----------Default admin settings -----------
 const defaultAdminSettings: AdminSettings = {
   adminEmail: "admin@mystore.com",
-  adminName: "Admin",
-  adminPassword: "admin123",
-  permissions: {
-    canManageUsers: true,
-    canManageProducts: true,
-    canManageOrders: true,
+  shippingOrigin: {
+    name: "My Store Warehouse",
+    email: "warehouse@mystore.com",
+    street1: "123 Main St",
+    city: "Anytown",
+    state: "CA",
+    postalCode: "12345",
+    country: "USA",
+    phone: "555-123-4567",
   },
 };
 

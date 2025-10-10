@@ -1,5 +1,5 @@
 // useApi.ts
-import { post, del } from "./client";
+import { post, del, put, get } from "./client";
 import type {
   User,
   Order,
@@ -105,11 +105,12 @@ export function useApi(): {
     // ===============================
     settings: {
       getSettings: (scope: SystemSettingsScope) =>
-        post<AnySystemSettings | null>(`/settings/${scope}`),
+        get<AnySystemSettings | null>(`/settings/${scope}`),
+
       updateSettings: (
         scope: SystemSettingsScope,
         settings: AnySystemSettings
-      ) => post<AnySystemSettings | null>(`/settings/${scope}`, { settings }),
+      ) => put<AnySystemSettings | null>(`/settings/${scope}`, { settings }),
     },
   };
 }
