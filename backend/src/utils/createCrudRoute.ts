@@ -14,6 +14,18 @@ export type CRUDRouteOptions = {
   delete?: CRUDRouteAuth;
 };
 
+export const reqAdminEdit: CRUDRouteOptions = {
+  create: ["ADMIN"],
+  update: ["ADMIN"],
+  delete: ["ADMIN"],
+};
+
+export const reqOwnerEdit: CRUDRouteOptions = {
+  create: ["ADMIN", "OWNER"],
+  update: ["ADMIN", "OWNER"],
+  delete: ["ADMIN", "OWNER"],
+};
+
 export function createCrudRoute(
   crud: CrudInterface<any>,
   options?: CRUDRouteOptions

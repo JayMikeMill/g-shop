@@ -26,61 +26,49 @@ import {
   trackShipment,
 } from "@controllers/shippingController";
 
-// Storage
-import storageRouter from "@routes/storageRoutes";
-
 // System Settings
 import {
   getSettings,
   updateSettings,
 } from "@controllers/systemSettingsController";
 
-// ===============================
 // Middleware
-// ===============================
 import { requireRole as roles } from "@middleware/authorization";
+import {
+  deleteFile,
+  uploadFile,
+  uploadImage,
+} from "@controllers/storageController";
+const reqAdmin = roles(["ADMIN"]);
 
-// ===============================
-// Initialize Router & Multer
-// ===============================
-const router = Router();
+// Initialize Multer
 const upload = multer({ storage: multer.memoryStorage() });
 
-// ===============================
-// Helper Middleware
-// ===============================
-const requireAdmin = roles(["ADMIN"]);
+// Initialize Router
+const router = Router();
 
-// ===============================
-// Auth Routes
-// ===============================
+// ---------------- Auth ----------------
 router.post("/auth/register", register);
 router.post("/auth/login", login);
 router.get("/auth/verify", verifyToken);
 router.post("/auth/logout", logout);
 
-// ===============================
-// Order Routes
-// ===============================
+// ---------------- Order  ----------------
 router.post("/orders/place", placeOrder); // any authenticated user
-router.put("/orders/:id/refund", requireAdmin, refundOrder); // admin only
+router.put("/orders/:id/refund", reqAdmin, refundOrder); // admin only
 
-// ===============================
-// Shipping Routes
-// ===============================
+// ---------------- Shipping  ----------------
 router.post("/shipping/verify", verifyAddress);
 router.post("/shipping/rates", getRates);
 router.post("/shipping/track", trackShipment);
 
-// ===============================
-// Storage Routes (Admin Only)
-// ===============================
-router.use("/storage", storageRouter);
+// ---------------- Storage  ----------------
+router.post("/image", reqAdmin, upload.single("file"), uploadImage);
+router.post("/file", reqAdmin, upload.single("file"), uploadFile);
+router.delete("/", reqAdmin, deleteFile);
 
-// ===============================
-// System Settings Routes (Admin Only)
-// ===============================
-router.get("/settings/:scope", requireAdmin, getSettings);
-router.put("/settings/:scope", requireAdmin, updateSettings);
+// ---------------- System Settings  ----------------
+router.get("/settings/:scope", reqAdmin, getSettings);
+router.put("/settings/:scope", reqAdmin, updateSettings);
 
 export default router;
