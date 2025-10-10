@@ -46,7 +46,8 @@ export function useUser() {
     (email: string, password: string) => {
       dispatch(setLoading(true));
       login(email, password)
-        .then(({ user }) => {
+        .then((user) => {
+          if (!user) throw new Error("Invalid login response");
           dispatch(setUser(user as UserData));
           localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
           console.log("Logged in successfully", user);

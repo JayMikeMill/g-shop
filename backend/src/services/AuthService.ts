@@ -1,3 +1,4 @@
+import { login } from "./../controllers/authController";
 // @services/authService.ts
 import { auth } from "@adapters/services";
 import { AuthApi } from "@shared/interfaces";
@@ -8,7 +9,13 @@ export class AuthService implements AuthApi {
     return auth.register(user, password);
   }
 
-  async login(
+  // Dummy implementation to satisfy interface
+  // backend uses authenticate instead, and returns only user to frontend
+  async login(): Promise<User | null> {
+    return null;
+  }
+
+  async authenticate(
     email: string,
     password: string
   ): Promise<{ token: string; user: User }> {

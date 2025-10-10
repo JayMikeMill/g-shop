@@ -24,21 +24,21 @@ export function useApi(): {
   shipping: ShippingApi;
 } {
   return {
-    //////////////////////////////////
+    // ===============================
     // Authentication
-    //////////////////////////////////
+    // ===============================
     auth: {
       register: (user: User, password: string) =>
         post<User | null>(`/auth/register`, { user, password }),
       login: (email: string, password: string) =>
-        post<{ token: string; user: User }>(`/auth/login`, { email, password }),
+        post<User | null>(`/auth/login`, { email, password }),
       verify: (token: string) => post<User | null>(`/auth/verify`, { token }),
       logout: (userId: string) => post<void>(`/auth/logout`, { userId }),
     },
 
-    //////////////////////////////////
+    // ===============================
     // Orders
-    //////////////////////////////////
+    // ===============================
     orders: {
       placeOrder: (paymentMethod: any, order: Order) =>
         post<{ success: boolean; data?: any; error?: string }>(
@@ -51,9 +51,9 @@ export function useApi(): {
       refundOrder: (id: string) => post<void>(`/orders/refund`, { id }),
     },
 
-    //////////////////////////////////
+    // ===============================
     // Shipping
-    //////////////////////////////////
+    // ===============================
     shipping: {
       verifyAddress: (address: Address) =>
         post<AddressVerificationResult>(`/shipping/verify`, address),
@@ -63,9 +63,9 @@ export function useApi(): {
         post<ShipmentTrackingResult>(`/shipping/track`, { trackingNumber }),
     },
 
-    //////////////////////////////////
+    // ===============================
     //  File Storage
-    //////////////////////////////////
+    // ===============================
     storage: {
       uploadImage: (file: Blob, filename: string): Promise<string> => {
         const form = new FormData();

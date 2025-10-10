@@ -12,10 +12,7 @@ import {
 // Authentication interface
 export interface AuthApi {
   register(user: User, password: string): Promise<User | null>;
-  login(
-    email: string,
-    password: string
-  ): Promise<{ token: string; user: User }>;
+  login(email: string, password: string): Promise<User | null>;
   verify(token: string): Promise<User | null>;
   logout(userId: string): Promise<void>;
 }

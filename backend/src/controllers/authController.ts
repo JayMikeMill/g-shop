@@ -7,8 +7,12 @@ export const register = controllerHandler({
 
 export const login = controllerHandler({
   handler: async ({ email, password }, req, res) => {
-    const { token, user } = await S.login(email, password);
-    if (!user) return res.status(401).json({ error: "Invalid credentials" });
+    const { token, user } = await S.authenticate(email, password);
+
+    if (!user) {
+      res.status(401).json({ error: "Invalid credentials" });
+      return null;
+    }
 
     // Set HTTP-only cookie
     res.cookie("auth_token", token, {
@@ -18,7 +22,7 @@ export const login = controllerHandler({
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     });
 
-    return { token, user };
+    return user;
   },
 });
 
