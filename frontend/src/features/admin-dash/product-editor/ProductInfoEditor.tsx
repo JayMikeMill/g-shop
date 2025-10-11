@@ -111,7 +111,6 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
             onChange={(e) =>
               setLocalProduct((prev) => ({
                 ...prev,
-                discount: undefined,
                 discountType:
                   e.target.value === "%" ? "PERCENTAGE" : "FIXED_AMOUNT",
               }))

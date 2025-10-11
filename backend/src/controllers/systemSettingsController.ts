@@ -5,6 +5,15 @@ import { SystemSettingsService as S } from "@services";
 // ------------------------
 // Get settings by scope
 // ------------------------
+export const getSiteSettings = controllerHandler({
+  select: (req: Request) => req.params.scope, // pick the scope from params
+  handler: async () => {
+    const result = await S.getSiteSettings();
+    if (!result) throw new Error("Settings not found");
+    return result;
+  },
+});
+
 export const getSettings = controllerHandler({
   select: (req: Request) => req.params.scope, // pick the scope from params
   handler: async (scope: string) => {
@@ -13,7 +22,6 @@ export const getSettings = controllerHandler({
     return result;
   },
 });
-
 // ------------------------
 // Update settings by scope
 // ------------------------

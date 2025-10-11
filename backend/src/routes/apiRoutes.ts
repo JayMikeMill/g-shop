@@ -29,6 +29,7 @@ import {
 // System Settings
 import {
   getSettings,
+  getSiteSettings,
   updateSettings,
 } from "@controllers/systemSettingsController";
 
@@ -68,7 +69,8 @@ router.post("/file", reqAdmin, upload.single("file"), uploadFile);
 router.delete("/", reqAdmin, deleteFile);
 
 // ---------------- System Settings  ----------------
-router.get("/settings/:scope", reqAdmin, getSettings);
-router.put("/settings/:scope", reqAdmin, updateSettings);
+router.get("/settings/site", getSiteSettings);
+router.get("/settings/admin/:scope", reqAdmin, getSettings);
+router.put("/settings/admin/:scope", reqAdmin, updateSettings);
 
 export default router;

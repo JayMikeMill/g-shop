@@ -10,7 +10,11 @@ import type {
   ShipmentTrackingResult,
 } from "@shared/types";
 
-import type { AnySystemSettings, SystemSettingsScope } from "@shared/settings";
+import type {
+  AnySystemSettings,
+  SiteSettings,
+  SystemSettingsScope,
+} from "@shared/settings";
 
 import type {
   AuthApi,
@@ -105,13 +109,16 @@ export function useApi(): {
     //  System Settings
     // ===============================
     settings: {
+      getSiteSettings: () => get<SiteSettings | null>(`/settings/site`),
+
       getSettings: (scope: SystemSettingsScope) =>
-        get<AnySystemSettings | null>(`/settings/${scope}`),
+        get<AnySystemSettings | null>(`/settings/admin/${scope}`),
 
       updateSettings: (
         scope: SystemSettingsScope,
         settings: AnySystemSettings
-      ) => put<AnySystemSettings | null>(`/settings/${scope}`, { settings }),
+      ) =>
+        put<AnySystemSettings | null>(`/settings/admin/${scope}`, { settings }),
     },
   };
 }

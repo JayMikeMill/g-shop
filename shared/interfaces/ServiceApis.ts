@@ -9,7 +9,7 @@ import type {
   User,
 } from "../types";
 
-import type { AnySystemSettings } from "../settings";
+import type { AnySystemSettings, SiteSettings } from "../settings";
 
 // Authentication interface
 export interface AuthApi {
@@ -53,6 +53,7 @@ export interface ShippingApi {
 
 //  System Settings interface
 export interface SystemSettingsApi {
+  getSiteSettings(): Promise<SiteSettings | null>;
   getSettings(scope: SystemSettingsScope): Promise<AnySystemSettings | null>;
   updateSettings(
     scope: SystemSettingsScope,
