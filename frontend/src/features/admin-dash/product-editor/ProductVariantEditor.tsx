@@ -127,7 +127,7 @@ export const ProductVariantEditor: React.FC<ProductVariantEditorProps> = ({
 
           {/* Price */}
           <NumberInput
-            symbol="$"
+            style="CURRENCY"
             value={variant.price ? toMajorPriceString(variant.price) : ""}
             placeholder="-"
             onChange={(e) =>

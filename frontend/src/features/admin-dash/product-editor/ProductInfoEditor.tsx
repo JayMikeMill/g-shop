@@ -72,12 +72,13 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
         <Label className="w-32">
           Price
           <NumberInput
-            symbol="$"
-            value={toMajorUnit(localProduct.price)}
+            style="CURRENCY"
+            unitConversion={true}
+            value={localProduct.price}
             onChange={(e) =>
               setLocalProduct((prev) => ({
                 ...prev,
-                price: toMinorUnit(parseFloat(e.target.value)),
+                price: parseFloat(e.target.value),
               }))
             }
             required
@@ -89,23 +90,15 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
           <Label>
             Discount
             <NumberInput
-              symbol={discountTypeSymbol}
+              style={discountTypeSymbol === "%" ? "PERCENT" : "CURRENCY"}
+              unitConversion={true}
               className="text-center  w-32"
               onFocus={(e) => e.target.select()}
-              decimals={isPercentage ? 0 : 2}
-              value={
-                localProduct.discount
-                  ? isPercentage
-                    ? localProduct.discount
-                    : toMajorUnit(localProduct.discount)
-                  : ""
-              }
+              value={localProduct.discount || ""}
               onChange={(e) =>
                 setLocalProduct((prev) => ({
                   ...prev,
-                  discount: isPercentage
-                    ? parseInt(e.target.value)
-                    : toMinorUnit(parseFloat(e.target.value)),
+                  discount: parseFloat(e.target.value),
                 }))
               }
             />
@@ -118,6 +111,7 @@ const ProductInfoEditor: React.FC<ProductInfoEditorProps> = ({
             onChange={(e) =>
               setLocalProduct((prev) => ({
                 ...prev,
+                discount: undefined,
                 discountType:
                   e.target.value === "%" ? "PERCENTAGE" : "FIXED_AMOUNT",
               }))

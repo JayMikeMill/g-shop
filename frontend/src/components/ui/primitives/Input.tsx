@@ -42,7 +42,7 @@ const inputVariants = cva(
   }
 );
 
-type InputProps = React.InputHTMLAttributes<HTMLInputElement> &
+export type InputProps = React.InputHTMLAttributes<HTMLInputElement> &
   VariantProps<typeof inputVariants>;
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -58,67 +58,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
   }
 );
 
-const NumberInput = React.forwardRef<
-  HTMLInputElement,
-  InputProps & { symbol?: string; decimals?: number }
->(({ className, variant, size, decimals, symbol = "$", ...props }, ref) => {
-  const [isFocused, setIsFocused] = useState<boolean>(false);
-
-  const { value, onBlur, onFocus, step, ...rest } = props;
-  let rawValue = value;
-
-  if (!isFocused || decimals === 0)
-    rawValue = padDecimals(value?.toString() || "", decimals) ?? "";
-
-  return (
-    <div className="flex flex-1 relative">
-      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-base">
-        {symbol}
-      </span>
-      <Input
-        ref={ref}
-        type="number"
-        value={rawValue}
-        placeholder="-"
-        onFocus={(e) => {
-          e.target.select();
-          setIsFocused(true);
-          onFocus && onFocus(e);
-        }}
-        onBlur={(e) => {
-          setIsFocused(false);
-          onBlur && onBlur(e);
-        }}
-        className={cn("w-full text-center", className)} // add padding-left for the $ sign
-        {...rest}
-      />
-    </div>
-  );
-});
-
-const padDecimals = (value: string, decimals = 2) => {
-  // Remove everything except digits and dot, keep only first valid number
-  const cleaned = value
-    .replace(/[^0-9.]/g, "")
-    .replace(/^(\d*\.?\d*).*$/, "$1");
-
-  // If empty or just ".", return empty string
-  if (cleaned === "" || cleaned === ".") return "";
-
-  if (decimals === 0) {
-    // Only keep integer part
-    return parseInt(cleaned).toString();
-  }
-
-  // Split integer and fractional part
-  const [intPart, fracPart = ""] = cleaned.split(".");
-
-  // Pad/truncate fractional part
-  const paddedFrac = (fracPart + "0".repeat(decimals)).slice(0, decimals);
-
-  return `${intPart}.${paddedFrac}`;
-};
-
 Input.displayName = "Input";
 
-export { inputVariants, Input, NumberInput };
+export { inputVariants, Input };

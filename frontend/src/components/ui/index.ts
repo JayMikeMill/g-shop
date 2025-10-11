@@ -11,6 +11,7 @@ export * from "./custom/ImageEditor";
 export * from "./custom/CropDialog";
 export * from "./custom/DynamicTable";
 export * from "./custom/TagBox";
+export * from "./custom/NumberInput";
 
 // Primitives
 export * from "./primitives/Label";
@@ -21,3 +22,4 @@ export * from "./primitives/Select";
 export * from "./primitives/Dialog";
 export * from "./primitives/alert";
 export * from "./primitives/Tooltip";
+export * from "./primitives/Toggle";

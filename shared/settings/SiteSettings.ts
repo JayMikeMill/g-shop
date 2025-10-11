@@ -22,9 +22,9 @@ export interface SiteSettings {
   headingFont?: string;
   bodyFont?: string;
   fontFamily?: string;
-  fontSize?: string;
-  borderRadius?: string;
-  shadowDepth?: string;
+  fontSize?: number;
+  borderRadius?: number;
+  shadowDepth?: number;
 
   // ------------------
   // Social Media
@@ -41,10 +41,10 @@ export interface SiteSettings {
   // ------------------
   // E-commerce (public info only)
   // ------------------
-  defaultCurrency: string;
-  itemsPerPage: number;
-  taxRate: number; // percentage, e.g., 7.5
-  enableReviews: boolean;
+  defaultCurrency?: string;
+  itemsPerPage?: number;
+  taxRate?: number; // percentage, e.g., 7.5
+  enableReviews?: boolean;
   enableWishlist?: boolean;
   enableCoupons?: boolean;
   enableGiftCards?: boolean;
@@ -53,7 +53,7 @@ export interface SiteSettings {
   freeShippingThreshold?: number; // in cents
   flatShippingRate?: number; // in cents
   carrierShippingRates?: Record<string, number>; // e.g., {"UPS": 500, "FedEx": 700}
-  paymentMethods: string[]; // e.g., ["CREDIT_CARD", "PAYPAL"]
+  paymentMethods?: string[]; // e.g., ["CREDIT_CARD", "PAYPAL"]
   defaultShippingMethod?: string;
   defaultPaymentMethod?: string;
 

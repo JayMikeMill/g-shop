@@ -1,4 +1,3 @@
-import { Address } from "../types";
 import { AdminSettings } from "./";
 
 export const defaultAdminSettings: AdminSettings = {

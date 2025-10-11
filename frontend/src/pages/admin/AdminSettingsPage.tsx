@@ -1,20 +1,38 @@
 import { useEffect, useState } from "react";
 import { useApi } from "@api";
+import SiteSettingsForm from "@features/admin-dash/settings-editor/site-settings/SiteSettingsForm";
+import type { SiteSettings } from "@shared/settings";
 
 export default function AdminSettingsPage() {
-  const [siteSettings, setSiteSettings] = useState<null | any>(null);
+  const emptySiteSettings: SiteSettings = {
+    siteName: "",
+  };
+
+  const [siteSettings, setSiteSettings] =
+    useState<SiteSettings>(emptySiteSettings);
 
   const { settings } = useApi();
 
   useEffect(() => {
     async function fetchSettings() {
-      const siteSettings = await settings.getSettings("SITE");
-      console.log("Site Settings:", siteSettings);
-      setSiteSettings(siteSettings || null);
+      const retrieved = (await settings.getSettings("SITE")) as SiteSettings;
+      console.log("Site Settings:", retrieved);
+      setSiteSettings(retrieved);
     }
     fetchSettings();
-  }, [settings]);
+  }, []);
 
   console.log("Site Settings:", siteSettings);
-  return <div>{JSON.stringify(siteSettings)}</div>;
+
+  return (
+    <div className="p-md max-w-3xl mx-auto">
+      <SiteSettingsForm
+        settings={siteSettings}
+        onSave={async (newSettings) => {
+          await settings.updateSettings("SITE", newSettings);
+          setSiteSettings(newSettings);
+        }}
+      />
+    </div>
+  );
 }

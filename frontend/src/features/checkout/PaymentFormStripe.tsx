@@ -80,7 +80,7 @@ function InnerStripeForm({
         return;
       }
 
-      // Send paymentMethod.id to backend
+      // Send paymentMethod.id
       const response = await placeOrder(paymentMethod, order);
 
       if (response?.success === true) {

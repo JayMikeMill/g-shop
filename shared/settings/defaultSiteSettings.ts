@@ -22,9 +22,9 @@ export const defaultSiteSettings: SiteSettings = {
   headingFont: "Arial, sans-serif",
   bodyFont: "Verdana, sans-serif",
   fontFamily: "Arial, sans-serif",
-  fontSize: "16px",
-  borderRadius: "4px",
-  shadowDepth: "small",
+  fontSize: 16,
+  borderRadius: 4,
+  shadowDepth: 4,
 
   // ------------------
   // Social Media
