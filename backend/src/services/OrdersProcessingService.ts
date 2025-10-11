@@ -3,7 +3,7 @@ import { db, payment } from "@adapters/services";
 import { DBAdapter } from "@adapters/types/DBAdapter";
 import { toMajorPriceString } from "@shared/utils/PriceUtils";
 
-export class OrderProcessingService {
+class OrderProcessingService {
   async placeOrder(paymentMethod: any, order: Order) {
     // implement order placement logic
     try {

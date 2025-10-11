@@ -1,10 +1,6 @@
 import { Router } from "express";
 
-import {
-  createCrudRoute as CR,
-  reqAdminEdit,
-  reqOwnerEdit,
-} from "@utils/createCrudRoute";
+import { createCrudRoute as CR, reqAdminEdit, reqOwnerEdit } from "@utils";
 
 import { db } from "@adapters/services";
 

@@ -2,7 +2,8 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import routes from "@routes/index";
-import { setDefaultSystemSettings } from "@config";
+
+import { SystemSettingsService } from "@services";
 
 const app = express();
 
@@ -32,7 +33,7 @@ app.use(
 app.use(bodyParser.json());
 
 // set default settings
-setDefaultSystemSettings().catch((err: unknown) => {
+SystemSettingsService.resetToDefaultSettings().catch((err: unknown) => {
   console.error("Error setting default system settings:", err);
 });
 

@@ -5,12 +5,18 @@ import type {
   SiteSettings,
   AdminSettings,
   EngineSettings,
-} from "@shared/types";
+} from "@shared/settings";
+
+import {
+  defaultSiteSettings,
+  defaultAdminSettings,
+  defaultEngineSettings,
+} from "@shared/settings";
 
 import { db } from "@adapters/services";
 import { SystemSettingsApi } from "@shared/interfaces/ServiceApis";
 
-export class SystemSettingsService implements SystemSettingsApi {
+class SystemSettingsService implements SystemSettingsApi {
   // Cache: scope -> settings
   private cache: Partial<Record<SystemSettingsScope, AnySystemSettings>> = {};
 
@@ -60,10 +66,23 @@ export class SystemSettingsService implements SystemSettingsApi {
     return parsed;
   }
 
+  // set default settings for a scope if not exist
+  async setDefaultSettings() {
+    await this.setDefaults("SITE", defaultSiteSettings);
+    await this.setDefaults("ADMIN", defaultAdminSettings);
+    await this.setDefaults("ENGINE", defaultEngineSettings);
+  }
+
+  async resetToDefaultSettings() {
+    await this.updateSettings("SITE", defaultSiteSettings);
+    await this.updateSettings("ADMIN", defaultAdminSettings);
+    await this.updateSettings("ENGINE", defaultEngineSettings);
+  }
+
   /**
    * Set defaults if no settings exist for the scope
    */
-  async setDefaults<T extends AnySystemSettings>(
+  private async setDefaults<T extends AnySystemSettings>(
     scope: SystemSettingsScope,
     settings: T
   ): Promise<T | void> {

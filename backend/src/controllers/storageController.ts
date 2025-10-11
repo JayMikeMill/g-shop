@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { controllerHandler } from "@utils/controllerHandler";
-import S from "@services/StorageService";
+import { controllerHandler } from "@utils";
+import { StorageService as S } from "@services";
 
 // Upload image
 export const uploadImage = controllerHandler({

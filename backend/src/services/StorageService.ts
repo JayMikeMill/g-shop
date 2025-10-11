@@ -1,7 +1,7 @@
 import { storage } from "@adapters/services";
 import { FileData, StorageApi } from "@shared/interfaces";
 
-export class StorageService implements StorageApi {
+class StorageService implements StorageApi {
   async uploadImage(file: FileData, filename: string): Promise<string> {
     // If it's a Buffer, use it directly; if it's a string, convert to Buffer
     const buffer = file instanceof Buffer ? file : Buffer.from(file as string);

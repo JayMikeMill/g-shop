@@ -1,5 +1,5 @@
-import { controllerHandler } from "@utils/controllerHandler";
-import S from "@services/OrdersProcessingService";
+import { controllerHandler } from "@utils";
+import { OrdersProcessingService as S } from "@services";
 
 export const placeOrder = controllerHandler({
   handler: ({ paymentMethod, order }) => S.placeOrder(paymentMethod, order),

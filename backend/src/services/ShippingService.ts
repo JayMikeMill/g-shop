@@ -10,7 +10,7 @@ import {
   ShipmentTrackingResult,
 } from "@shared/types";
 
-export class ShippingService implements ShippingApi {
+class ShippingService implements ShippingApi {
   async verifyAddress(address: Address): Promise<AddressVerificationResult> {
     return shipping.verifyAddress(address);
   }

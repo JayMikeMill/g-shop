@@ -1,5 +1,5 @@
-import { controllerHandler } from "@utils/controllerHandler";
-import S from "@services/AuthService";
+import { controllerHandler } from "@utils";
+import { AuthService as S } from "@services";
 
 export const register = controllerHandler({
   handler: ({ user, password }) => S.register(user, password),

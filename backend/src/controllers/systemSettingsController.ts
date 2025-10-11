@@ -1,8 +1,6 @@
-import { Request, Response } from "express";
-import { controllerHandler } from "@utils/controllerHandler";
-import { SystemSettingsService } from "@services/SystemSettingsService";
-
-const S = new SystemSettingsService();
+import { Request } from "express";
+import { controllerHandler } from "@utils";
+import { SystemSettingsService as S } from "@services";
 
 // ------------------------
 // Get settings by scope
