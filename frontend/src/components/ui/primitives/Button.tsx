@@ -58,9 +58,9 @@ const buttonVariants = cva("", {
         baseButton +
         `
         bg-accent text-primary-foreground
-        -translate-y-[0.1rem] scale-110
-        hover:shadow-md hover:-translate-y-[0.2rem]
-        active:bg-accent-600 active:-translate-y-[0.3rem]`,
+        -translate-y-[0.2rem]
+        hover:shadow-md hover:-translate-y-[0.3rem]
+        active:bg-accent-600 active:-translate-y-[0.4rem]`,
       blank: "",
     },
     size: {

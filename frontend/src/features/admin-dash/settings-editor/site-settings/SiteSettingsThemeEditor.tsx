@@ -32,12 +32,16 @@ const SiteSettingsThemeEditor: React.FC<Props> = ({
     ))}
 
     {["fontSize", "borderRadius", "shadowDepth"].map((key) => (
-      <NumberInput
-        key={key}
-        decimals={0}
-        value={(settings as any)[key] || ""}
-        onChange={(value) => setSettings((prev) => ({ ...prev, [key]: value }))}
-      />
+      <Label key={key}>
+        {key}
+        <NumberInput
+          decimals={0}
+          value={(settings as any)[key] || ""}
+          onChange={(value) =>
+            setSettings((prev) => ({ ...prev, [key]: value }))
+          }
+        />
+      </Label>
     ))}
   </div>
 );

@@ -25,31 +25,35 @@ const SiteSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
   };
 
   return (
-    <div className="flex flex-col gap-lg p-md">
-      <SiteSettingsBasicInfoEditor
-        settings={formSettings}
-        setSettings={setFormSettings}
-      />
-      <SiteSettingsThemeEditor
-        settings={formSettings}
-        setSettings={setFormSettings}
-      />
-      <SiteSettingsSocialEditor
-        settings={formSettings}
-        setSettings={setFormSettings}
-      />
-      <SiteSettingsEcommerceEditor
-        settings={formSettings}
-        setSettings={setFormSettings}
-      />
+    <div className="flex flex-row  p-md w-full">
+      <div className="flex flex-col gap-lg p-md w-1/2">
+        <SiteSettingsBasicInfoEditor
+          settings={formSettings}
+          setSettings={setFormSettings}
+        />
+        <SiteSettingsThemeEditor
+          settings={formSettings}
+          setSettings={setFormSettings}
+        />
+        <SiteSettingsSocialEditor
+          settings={formSettings}
+          setSettings={setFormSettings}
+        />
+      </div>
+      <div className="flex flex-col gap-lg p-md w-1/2">
+        <SiteSettingsEcommerceEditor
+          settings={formSettings}
+          setSettings={setFormSettings}
+        />
 
-      <button
-        className="btn btn-primary mt-lg"
-        type="button"
-        onClick={handleSave}
-      >
-        Save Settings
-      </button>
+        <button
+          className="btn btn-primary mt-lg"
+          type="button"
+          onClick={handleSave}
+        >
+          Save Settings
+        </button>
+      </div>
     </div>
   );
 };

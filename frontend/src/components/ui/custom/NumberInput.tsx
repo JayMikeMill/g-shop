@@ -20,20 +20,19 @@ const NumberInput = React.forwardRef<
 
     const { value, onBlur, onFocus, onChange, ...rest } = props;
 
-    const isCurrency = style === "CURRENCY";
     let rawValue =
       unitConversion === true && value ? toMajorUnit(Number(value)) : value;
 
-    decimals = style ? (isCurrency ? 2 : 1) : decimals;
+    decimals = style === "CURRENCY" || style === "PERCENT" ? 2 : decimals;
 
     if (!isFocused || decimals === 0)
       rawValue = padDecimals(rawValue?.toString() || "", decimals) ?? "";
 
     return (
       <div className="flex flex-1 relative">
-        {style && (
+        {style === "CURRENCY" && (
           <span className="absolute left-2 top-1/2 -translate-y-1/2 text-base">
-            {isCurrency ? "$" : "%"}
+            $
           </span>
         )}
         <Input
@@ -60,6 +59,12 @@ const NumberInput = React.forwardRef<
           className={cn("w-full text-center", className)} // add padding-left for the $ sign
           {...rest}
         />
+
+        {style === "PERCENT" && (
+          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-base">
+            %
+          </span>
+        )}
       </div>
     );
   }

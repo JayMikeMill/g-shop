@@ -1,38 +1,118 @@
+// AdminSettingsPage.tsx
+import { NavLink, Outlet } from "react-router-dom";
+import { buttonVariants } from "@components/ui";
+
+// API
 import { useEffect, useState } from "react";
 import { useApi } from "@api";
+
+// Editors
 import SiteSettingsForm from "@features/admin-dash/settings-editor/site-settings/SiteSettingsForm";
-import type { SiteSettings } from "@shared/settings";
+import AdminSettingsForm from "@features/admin-dash/settings-editor/admin-settings/AdminSettingsForm";
 
-export default function AdminSettingsPage() {
-  const emptySiteSettings: SiteSettings = {
-    siteName: "",
-  };
+// Types
+import type {
+  SiteSettings,
+  AdminSettings,
+  SystemSettingsScope,
+  AnySystemSettings,
+} from "@shared/settings";
 
-  const [siteSettings, setSiteSettings] =
-    useState<SiteSettings>(emptySiteSettings);
+/**
+ * Wrapper with secondary navigation for settings sections
+ */
+export default function AdminSettingsPageWrapper() {
+  return (
+    <div className="flex flex-col w-full h-full">
+      {/* Secondary Settings Navigation */}
+      <nav className="flex gap-2 p-2 py-4 border-b border-border overflow-x-auto whitespace-nowrap">
+        <NavLink
+          to="site"
+          className={({ isActive }) =>
+            buttonVariants({ variant: isActive ? "raised" : "default" })
+          }
+        >
+          Site
+        </NavLink>
+        <NavLink
+          to="admin"
+          className={({ isActive }) =>
+            buttonVariants({ variant: isActive ? "raised" : "default" })
+          }
+        >
+          Admin
+        </NavLink>
+      </nav>
 
+      {/* Nested settings content */}
+      <div className="flex-grow overflow-y-auto p-2 max-w-6xl mx-auto w-full">
+        <Outlet />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Generic page component for any settings type
+ */
+function GenericSettingsPage<T>({
+  apiKey,
+  Editor,
+  emptySettings,
+}: {
+  apiKey: SystemSettingsScope;
+  Editor: React.FC<{ settings: T; onSave: (s: T) => void }>;
+  emptySettings: T;
+}) {
   const { settings } = useApi();
+  const [currentSettings, setCurrentSettings] = useState<T>(emptySettings);
 
   useEffect(() => {
     async function fetchSettings() {
-      const retrieved = (await settings.getSettings("SITE")) as SiteSettings;
-      console.log("Site Settings:", retrieved);
-      setSiteSettings(retrieved);
+      const retrieved = (await settings.getSettings(apiKey)) as T;
+      setCurrentSettings(retrieved);
     }
     fetchSettings();
-  }, []);
+  }, [apiKey]);
 
-  console.log("Site Settings:", siteSettings);
+  const handleSave = async (newSettings: T) => {
+    await settings.updateSettings(apiKey, newSettings as AnySystemSettings);
+    setCurrentSettings(newSettings);
+  };
 
+  return <Editor settings={currentSettings} onSave={handleSave} />;
+}
+
+/**
+ * Individual pages for each settings section
+ */
+export function AdminSiteSettingsPage() {
   return (
-    <div className="p-md max-w-3xl mx-auto">
-      <SiteSettingsForm
-        settings={siteSettings}
-        onSave={async (newSettings) => {
-          await settings.updateSettings("SITE", newSettings);
-          setSiteSettings(newSettings);
-        }}
-      />
-    </div>
+    <GenericSettingsPage<SiteSettings>
+      apiKey="SITE"
+      Editor={SiteSettingsForm}
+      emptySettings={{ siteName: "" }}
+    />
+  );
+}
+
+export function AdminAdminSettingsPage() {
+  return (
+    <GenericSettingsPage<AdminSettings>
+      apiKey="ADMIN"
+      Editor={AdminSettingsForm}
+      emptySettings={{
+        adminEmail: "",
+        shippingOrigin: {
+          name: "",
+          email: "",
+          street1: "",
+          city: "",
+          state: "",
+          postalCode: "",
+          country: "",
+        },
+      }}
+    />
   );
 }
