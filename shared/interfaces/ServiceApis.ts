@@ -1,8 +1,6 @@
-import { SystemSettings } from "./../../node_modules/.prisma/client/index.d";
 import type {
   Address,
   AddressVerificationResult,
-  AnySystemSettings,
   Order,
   Parcel,
   ShipmentRate,
@@ -10,6 +8,8 @@ import type {
   SystemSettingsScope,
   User,
 } from "../types";
+
+import type { AnySystemSettings } from "../settings";
 
 // Authentication interface
 export interface AuthApi {

@@ -8,9 +8,10 @@ import type {
   ShipmentRate,
   AddressVerificationResult,
   ShipmentTrackingResult,
-  AnySystemSettings,
-  SystemSettingsScope,
 } from "@shared/types";
+
+import type { AnySystemSettings, SystemSettingsScope } from "@shared/settings";
+
 import type {
   AuthApi,
   OrderProcessingApi,

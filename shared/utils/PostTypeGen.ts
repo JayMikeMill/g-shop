@@ -21,7 +21,7 @@ ${separator}
 // Do not edit directly!
 ${separator}
 
-import type { UserSettings } from "./";`;
+import type { UserSettings } from "../settings";`;
 
 // replace prisma-generator-typescript-interfaces header
 content = content.replace(
