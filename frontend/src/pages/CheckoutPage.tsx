@@ -26,8 +26,8 @@ export default function CheckoutPage() {
 
       <ShippingForm
         className="p-4"
-        defaultValues={shippingInfo}
-        onChange={setShippingInfo}
+        shippingInfo={shippingInfo}
+        setShippingInfo={setShippingInfo}
       />
 
       <PaymentFormStripe

@@ -42,7 +42,7 @@ export const AnimatedDropdownBox: React.FC<AnimatedDropdownBoxProps> = ({
         variant="blank"
         className={`flex justify-between items-center bg-primary-100
 				rounded-md w-full px-4 py-2 text-base font-semibold 
-				${disabled ? "cursor-not-allowed" : ""}`}
+				${disabled ? "cursor-not-allowed" : ""} ${open ? "rounded-b-none" : ""}`}
         onClick={() => !disabled && setInternalOpen((prev) => !prev)}
       >
         {customTitle ?? title}

@@ -6,6 +6,7 @@ import SiteSettingsBasicInfoEditor from "./SiteSettingsBasicInfoEditor";
 import SiteSettingsThemeEditor from "./SiteSettingsThemeEditor";
 import SiteSettingsSocialEditor from "./SiteSettingsSocialEditor";
 import SiteSettingsEcommerceEditor from "./SiteSettingsEcommerceEditor";
+import { AnimatedDropdownBox } from "@components/ui/custom/AnimatedDropdownBox";
 
 interface Props {
   settings: SiteSettings;
@@ -25,35 +26,59 @@ const SiteSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
   };
 
   return (
-    <div className="flex flex-row  p-md w-full">
-      <div className="flex flex-col gap-lg p-md w-1/2">
-        <SiteSettingsBasicInfoEditor
-          settings={formSettings}
-          setSettings={setFormSettings}
-        />
-        <SiteSettingsThemeEditor
-          settings={formSettings}
-          setSettings={setFormSettings}
-        />
-        <SiteSettingsSocialEditor
-          settings={formSettings}
-          setSettings={setFormSettings}
-        />
-      </div>
-      <div className="flex flex-col gap-lg p-md w-1/2">
-        <SiteSettingsEcommerceEditor
-          settings={formSettings}
-          setSettings={setFormSettings}
-        />
-
-        <button
-          className="btn btn-primary mt-lg"
-          type="button"
-          onClick={handleSave}
+    <div className="flex flex-col gap-sm w-full sm:flex-row sm:gap-lg">
+      <div className="flex flex-col w-full gap-sm sm:gap-md">
+        <AnimatedDropdownBox
+          className=" gap-lg p-md w-full"
+          title="Basic Settings"
+          openInitially={true}
         >
-          Save Settings
-        </button>
+          <SiteSettingsBasicInfoEditor
+            settings={formSettings}
+            setSettings={setFormSettings}
+          />
+        </AnimatedDropdownBox>
+        <AnimatedDropdownBox
+          className=" gap-lg p-md w-full"
+          title="Theme Settings"
+          openInitially={true}
+        >
+          <SiteSettingsThemeEditor
+            settings={formSettings}
+            setSettings={setFormSettings}
+          />
+        </AnimatedDropdownBox>
+
+        <AnimatedDropdownBox
+          className=" gap-lg p-md w-full"
+          title="Social Media Settings"
+          openInitially={true}
+        >
+          <SiteSettingsSocialEditor
+            settings={formSettings}
+            setSettings={setFormSettings}
+          />
+        </AnimatedDropdownBox>
       </div>
+      <AnimatedDropdownBox
+        className=" gap-lg p-md w-full"
+        title="E-Commerce Settings"
+        openInitially={true}
+      >
+        <div className="flex flex-col h-auto">
+          <SiteSettingsEcommerceEditor
+            settings={formSettings}
+            setSettings={setFormSettings}
+          />
+        </div>
+      </AnimatedDropdownBox>
+      {/* <button
+        className="btn btn-primary mt-lg"
+        type="button"
+        onClick={handleSave}
+      >
+        Save Settings
+      </button> */}
     </div>
   );
 };

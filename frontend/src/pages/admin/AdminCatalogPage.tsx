@@ -18,11 +18,12 @@ export default function AdminCatalogPageWrapper() {
   return (
     <div className="flex flex-col w-full h-full">
       {/* Secondary Catalog Navigation */}
-      <nav className="flex gap-2 p-2 py-4 border-b border-border overflow-x-auto whitespace-nowrap">
+      <nav className="flex gap-2 p-2 py-4 justify-center border-b border-border overflow-x-auto whitespace-nowrap">
         <NavLink
           to="categories"
           className={({ isActive }) =>
-            buttonVariants({ variant: isActive ? "raised" : "default" })
+            buttonVariants({ variant: isActive ? "raised" : "default" }) +
+            " w-1/2 sm:w-40"
           }
         >
           Categories
@@ -30,7 +31,8 @@ export default function AdminCatalogPageWrapper() {
         <NavLink
           to="collections"
           className={({ isActive }) =>
-            buttonVariants({ variant: isActive ? "raised" : "default" })
+            buttonVariants({ variant: isActive ? "raised" : "default" }) +
+            " w-1/2 sm:w-40"
           }
         >
           Collections

@@ -106,12 +106,12 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
   };
 
   return (
-    <div className="flex flex-col flex-1 overflow-hidden border-t">
+    <div className="flex flex-col flex-1 overflow-hidden">
       <div className="flex flex-1 flex-col sm:flex-row sm:gap-md sm:py-md overflow-hidden min-h-0">
         {/* Main Editor */}
         <div className="flex-1 flex flex-col gap-md overflow-y-auto pb-md sm:border sm:rounded-lg">
           {/* Editors */}
-          <div className="flex flex-col gap-md p-xs sm:p-sd">
+          <div className="flex flex-col gap-sm p-sm sm:p-md sm:gap-md">
             {/* Info Editor */}
             <AnimatedDropdownBox title="Product Info" openInitially={true}>
               <ProductInfoEditor
@@ -176,9 +176,9 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
         </div>
 
         {/* Image Editor */}
-        <div className=" flex flex-col flex-shrink-0  pb-md gap-md sm:w-1/3 sm:pb-0">
+        <div className=" flex flex-col  sm:w-1/3">
           <MultiImageEditor<ProductImageSet>
-            className=""
+            className="mb-sm sm:mb-md"
             images={localProduct.images ?? []}
             onImagesChange={(imgs) =>
               setLocalProduct((prev) => ({
@@ -192,10 +192,11 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
           />
 
           {/* Footer Buttons */}
-          <div className="w-full flex flex-row gap-2 sm:px-0 items-center sm:flex-col sm:gap-2">
+          <div className="w-full flex flex-row px-2 gap-2 sm:px-0 items-center sm:flex-col sm:gap-2">
             <Button
               className="w-full h-12 sm:hidden"
               type="button"
+              variant="secondary"
               onClick={handleCancel}
             >
               Cancel

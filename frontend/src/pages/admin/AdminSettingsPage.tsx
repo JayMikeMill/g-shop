@@ -25,22 +25,24 @@ export default function AdminSettingsPageWrapper() {
   return (
     <div className="flex flex-col w-full h-full">
       {/* Secondary Settings Navigation */}
-      <nav className="flex gap-2 p-2 py-4 border-b border-border overflow-x-auto whitespace-nowrap">
+      <nav className="flex gap-2 p-2 py-4 justify-center border-b border-border overflow-x-auto whitespace-nowrap">
         <NavLink
           to="site"
           className={({ isActive }) =>
-            buttonVariants({ variant: isActive ? "raised" : "default" })
+            buttonVariants({ variant: isActive ? "raised" : "default" }) +
+            " w-1/2 sm:w-40"
           }
         >
-          Site
+          Site Settings
         </NavLink>
         <NavLink
           to="admin"
           className={({ isActive }) =>
-            buttonVariants({ variant: isActive ? "raised" : "default" })
+            buttonVariants({ variant: isActive ? "raised" : "default" }) +
+            " w-1/2 sm:w-40"
           }
         >
-          Admin
+          Admin Settings
         </NavLink>
       </nav>
 
