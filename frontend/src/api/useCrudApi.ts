@@ -9,9 +9,9 @@ export function CRUD<T extends { id?: string }>(
   return {
     create: (data: Partial<T>) => post<T>(`/${name}`, data),
     getOne: (query: QueryType<T>) =>
-      get<T | null>(`/${name}/one${toQueryString<T>(query)}`),
+      get<T | null>(`/${name}/one${toQueryString(query)}`),
     getMany: (query?: QueryType<T>) =>
-      get<{ data: T[]; total: number }>(`/${name}?${toQueryString(query)}`),
+      get<{ data: T[]; total: number }>(`/${name}${toQueryString(query)}`),
     update: (updates: Partial<T> & { id: string }) =>
       put<T>(`/${name}/${updates.id}`, updates),
     delete: (id: string) => del<T>(`/${name}/${id}`),

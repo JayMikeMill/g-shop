@@ -2,7 +2,7 @@
 import {
   AdminCrudPage,
   OrderEditorDialog,
-  orderTableColumns,
+  orderTable,
 } from "@features/admin-dash";
 import type { Order } from "@shared/types";
 
@@ -13,7 +13,7 @@ export default function AdminOrdersPage() {
       objectsName="Orders"
       objectName="Order"
       apiKey="orders"
-      columns={orderTableColumns}
+      tableLayout={orderTable}
       Editor={OrderEditorDialog}
       pageSize={10}
       searchable={true}

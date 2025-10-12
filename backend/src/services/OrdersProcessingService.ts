@@ -90,7 +90,7 @@ async function stockAvailable(
 
   const productQuery: QueryObject<Product> = {
     conditions: [{ field: "id", operator: "in", value: productIds }],
-    includeFields: ["id", "name", "stock"],
+    select: ["id", "name", "stock"],
   };
   const productResult = await dbAdapter.products.getMany(productQuery);
   if (!productResult?.data?.length)
@@ -104,7 +104,7 @@ async function stockAvailable(
   if (variantIds.length > 0) {
     const variantQuery: QueryObject<ProductVariant> = {
       conditions: [{ field: "id", operator: "in", value: variantIds }],
-      includeFields: ["id", "productId", "stock"],
+      select: ["id", "productId", "stock"],
     };
     const variantResult = await dbAdapter.productVariants.getMany(variantQuery);
     if (variantResult?.data?.length) {

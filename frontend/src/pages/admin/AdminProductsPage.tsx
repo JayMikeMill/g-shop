@@ -3,7 +3,7 @@
 import {
   AdminCrudPage,
   ProductEditorDialog,
-  productTableColumns,
+  productTable,
 } from "@features/admin-dash";
 
 import type { Product } from "@shared/types";
@@ -50,7 +50,7 @@ export default function AdminProductsPage() {
       objectName="Product"
       objectsName="Products"
       apiKey="products"
-      columns={productTableColumns}
+      tableLayout={productTable}
       Editor={ProductEditorDialog}
       pageSize={5}
       preSaveHook={preSaveHook}

@@ -36,10 +36,7 @@ export function createCrudRoute(
     (handler: (req: Request) => Promise<any>) =>
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const result = await handler(req);
-        if (result === null)
-          return res.status(404).json({ error: "Not found" });
-        res.json(result);
+        res.json(await handler(req));
       } catch (err) {
         next(err);
       }
@@ -61,12 +58,14 @@ export function createCrudRoute(
   else router.get("/", getManyHandler);
 
   // getOne
-  const getOneHandler = wrapHandler((req) =>
-    crud.getOne({ id: req.params.id })
-  );
+  const getOneHandler = wrapHandler((req) => {
+    console.log("GET ONE REQ QUERY:", parseQueryType(req.query));
+    return crud.getOne(parseQueryType(req.query) ?? {});
+  });
+
   if (options?.read?.length)
-    router.get("/one", requireRole(options.read), getOneHandler);
-  else router.get("/one", getOneHandler);
+    router.get("/one/", requireRole(options.read), getOneHandler);
+  else router.get("/one/", getOneHandler);
 
   // ---------------- UPDATE ----------------
   const updateHandler = wrapHandler((req) =>

@@ -133,7 +133,7 @@ const ProductTagsEditor: React.FC<ProductTagsEditorProps> = ({
 
   const addTag = (preset: ProductTagPreset) => {
     if (!localTags.some((t) => t.name === preset.name)) {
-      setLocalTags((prev) => [...prev, preset]);
+      setLocalTags((prev) => [...prev, { ...preset, id: undefined }]);
     }
   };
 

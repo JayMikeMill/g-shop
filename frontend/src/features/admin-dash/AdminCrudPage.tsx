@@ -13,12 +13,13 @@ import {
 import type { CrudEditorInterface } from "@features/admin-dash/CrudEditorInterface";
 
 import { useDataApi } from "@api";
+import type { TableLayout } from "./tableColumns";
 
 interface AdminCrudPageProps<T extends { id?: string }> {
   objectsName: string;
   objectName: string;
   apiKey: keyof ReturnType<typeof useDataApi>; // e.g., "collections" | "categories"
-  columns: TableColumn<T>[];
+  tableLayout: TableLayout<T>;
   Editor?: React.ComponentType<CrudEditorInterface<T>>;
   preSaveHook?: (item: T, isNew: boolean) => Promise<T>;
   pageSize?: number;
@@ -29,28 +30,36 @@ function AdminCrudPage<T extends { id?: string }>({
   objectsName,
   objectName,
   apiKey,
-  columns,
+  tableLayout,
   Editor,
   preSaveHook,
   pageSize = 10,
   searchable = true,
 }: AdminCrudPageProps<T>) {
-  const [editingItem, setEditingItem] = useState<T | null>(null);
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+
+  const { dbSelect, columns } = tableLayout;
 
   const api = useDataApi()[apiKey] as any;
 
   // Fetch
   const { data, isLoading, refetch } = api.getMany({
     search,
+    select: [...dbSelect, "id"],
     page,
     limit: pageSize,
     sortBy: "createdAt",
     sortOrder: "desc",
   } as QueryObject<T>);
+
+  // Fetch product data
+  const { data: editingItem } = api.getOne({ id: editingItemId });
+
+  console.log("Fetched data:", data);
 
   const items: T[] = data?.data ?? [];
   const totalPages = data?.total ? Math.ceil(data.total / pageSize) : 1;
@@ -65,14 +74,13 @@ function AdminCrudPage<T extends { id?: string }>({
       item = await preSaveHook(item, isNew);
     }
 
-    console.log("handleSave", { item, isNew });
-
     setIsSaving(true);
 
     try {
+      console.log("handleSave", { item, isNew });
       if (isNew) await createItem.mutateAsync(item);
       else await updateItem.mutateAsync(item as any);
-      setEditingItem(null);
+      setEditingItemId(null);
       setIsCreating(false);
     } catch (err: any) {
       alert(`Failed to save ${objectName}: ${err.message}`);
@@ -86,7 +94,7 @@ function AdminCrudPage<T extends { id?: string }>({
     setIsSaving(true);
     try {
       await deleteItem.mutateAsync(id);
-      setEditingItem(null);
+      setEditingItemId(null);
       setIsCreating(false);
     } catch (err: any) {
       alert(`Failed to delete ${objectName}: ${err.message}`);
@@ -98,23 +106,23 @@ function AdminCrudPage<T extends { id?: string }>({
 
   const handleAddClick = () => {
     setIsCreating(true);
-    setEditingItem(null);
+    setEditingItemId(null);
   };
 
-  const handleRowClick = (item: T) => setEditingItem(item);
+  const handleRowClick = (item: T) => setEditingItemId(item.id!);
 
   return (
     <div className="pt-lg pb-lg">
       {/* Editor Dialog */}
       {Editor && (
         <Editor
-          open={editingItem !== null || isCreating}
+          open={editingItem || isCreating}
           item={editingItem}
           onCreate={(item) => handleSave(item, true)}
           onModify={(item) => handleSave(item, false)}
           onDelete={handleDelete}
           onCancel={() => {
-            setEditingItem(null);
+            setEditingItemId(null);
             setIsCreating(false);
           }}
         />

@@ -6,7 +6,7 @@ import {
   AdminCrudPage,
   CategoryDialog,
   CollectionDialog,
-  collectionTableColumns,
+  collectionTable,
 } from "@features/admin-dash";
 
 import type { Category, Collection } from "@shared/types";
@@ -53,7 +53,7 @@ export function AdminCollectionsPage() {
       objectsName="Collections"
       objectName="Collection"
       apiKey="collections"
-      columns={collectionTableColumns}
+      tableLayout={collectionTable}
       Editor={CollectionDialog}
     />
   );
@@ -65,7 +65,7 @@ export function AdminCategoriesPage() {
       objectsName="Categories"
       objectName="Category"
       apiKey="categories"
-      columns={collectionTableColumns}
+      tableLayout={collectionTable}
       Editor={CategoryDialog}
     />
   );

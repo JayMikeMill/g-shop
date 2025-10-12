@@ -11,6 +11,7 @@ export default function HomePage() {
   // Use default value if data is undefined
   const products = data?.data ?? [];
 
+  console.log("HomePage products:", products);
   return (
     <div className="text-center py-xl px-md font-sans text-text">
       <h1 className="text-heading-lg font-bold text-title mb-md">
