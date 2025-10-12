@@ -64,9 +64,9 @@ router.post("/shipping/rates", getRates);
 router.post("/shipping/track", trackShipment);
 
 // ---------------- Storage  ----------------
-router.post("/image", reqAdmin, upload.single("file"), uploadImage);
-router.post("/file", reqAdmin, upload.single("file"), uploadFile);
-router.delete("/", reqAdmin, deleteFile);
+router.post("/storage/image", reqAdmin, upload.single("file"), uploadImage);
+router.post("/storage/file", reqAdmin, upload.single("file"), uploadFile);
+router.delete("/storage/:id", reqAdmin, deleteFile);
 
 // ---------------- System Settings  ----------------
 router.get("/settings/site", getSiteSettings);
