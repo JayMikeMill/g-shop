@@ -125,6 +125,8 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
       if (val !== undefined) where[key] = val;
     }
 
+    console.log("Getting one from model:", this.model, query);
+
     return this.client.findFirst({
       where,
       include: this.baseInclude,
@@ -159,6 +161,8 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
         this.includeFieldsCfg,
         this.searchFields || []
       );
+
+      console.log("Built query params:", queryParams);
       const [data, total] = !this.isTx // No nested transactions
         ? await this.prisma.$transaction([
             this.client.findMany(queryParams),

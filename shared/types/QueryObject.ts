@@ -46,7 +46,7 @@ export interface QueryCondition<T = any> {
 export interface QueryObject<T> {
   search?: string;
   searchFields?: DeepDotKeyof<T>[]; // dot-notation keys
-  includeFields?: DeepDotKeyof<T>[]; // dot-notation keys
+  select?: DeepDotKeyof<T>[]; // dot-notation keys
   conditions?: QueryCondition<T>[];
   sortBy?: DeepDotKeyof<T>;
   sortOrder?: "asc" | "desc";
@@ -60,11 +60,11 @@ export const isQueryObject = <T>(q: any): q is QueryObject<T> =>
 
 // -------------------- Query String Helpers --------------------
 
-// Convert QueryObject into query string
+// -------------------- To Query String --------------------
 export function toQueryString<T>(query?: QueryType<T>): string {
   if (!query) return "";
 
-  if (!isQueryObject<T>(query)) return qs.stringify(query);
+  if (!isQueryObject<T>(query)) return "?" + qs.stringify(query);
 
   const params: Record<string, any> = {};
 
@@ -83,21 +83,19 @@ export function toQueryString<T>(query?: QueryType<T>): string {
   }
 
   if (query.searchFields?.length) params.searchFields = query.searchFields;
+  if (query.select?.length) params.select = query.select;
 
-  return qs.stringify(params, { encode: true, arrayFormat: "brackets" });
+  return "?" + qs.stringify(params, { encode: true, arrayFormat: "brackets" });
 }
 
-// Parse query string / object into strongly-typed QueryObject
+// -------------------- Parse Query Type --------------------
 export function parseQueryType<T>(
   query: Record<string, any> | Record<string, any>[]
 ): QueryType<T> | undefined {
-  // No query = undefined (used to fetch all)
   if (!query || Object.keys(query).length === 0) return undefined;
 
-  // If an array is passed, use the first item
   const q = Array.isArray(query) ? query[0] : query;
 
-  // If the object doesn't have any query-related keys, assume it's a Partial<T>
   const queryKeys = [
     "limit",
     "page",
@@ -105,25 +103,27 @@ export function parseQueryType<T>(
     "sortOrder",
     "search",
     "searchFields",
+    "searchFields[]",
+    "select",
+    "select[]",
     "conditions",
   ];
   const hasQueryKeys = queryKeys.some((k) => k in q);
-  if (!hasQueryKeys) {
-    return q as Partial<T>;
-  }
+  if (!hasQueryKeys) return q as Partial<T>;
 
-  const options: QueryObject<T> = { searchFields: [] };
+  const options: QueryObject<T> = {};
 
+  // --- Parse numbers
   if (q.limit !== undefined) {
     const n = Number(q.limit);
     if (!isNaN(n) && n > 0) options.limit = n;
   }
-
   if (q.page !== undefined) {
     const n = Number(q.page);
     if (!isNaN(n) && n > 0) options.page = n;
   }
 
+  // --- Sort
   if (q.sortBy !== undefined)
     options.sortBy = String(q.sortBy) as DeepDotKeyof<T>;
 
@@ -133,14 +133,36 @@ export function parseQueryType<T>(
       options.sortOrder = order as "asc" | "desc";
   }
 
+  // --- Search
   if (q.search !== undefined) options.search = String(q.search);
 
-  if (q.searchFields) {
-    options.searchFields = Array.isArray(q.searchFields)
-      ? (q.searchFields as DeepDotKeyof<T>[])
-      : (Object.values(q.searchFields).map(String) as DeepDotKeyof<T>[]);
-  }
+  // --- Normalize input into string arrays
+  const toStringArray = (input: any): string[] => {
+    if (!input) return [];
+    if (Array.isArray(input)) return input.map((v) => String(v));
+    if (typeof input === "object")
+      return Object.values(input).map((v) => String(v));
+    if (typeof input === "string") {
+      return input
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+    }
+    return [];
+  };
 
+  // --- Handle select and searchFields variants
+  const rawSelect = q.select ?? q["select[]"];
+  const rawSearchFields = q.searchFields ?? q["searchFields[]"];
+
+  const select = toStringArray(rawSelect);
+  if (select.length) options.select = select as DeepDotKeyof<T>[];
+
+  const searchFields = toStringArray(rawSearchFields);
+  if (searchFields.length)
+    options.searchFields = searchFields as DeepDotKeyof<T>[];
+
+  // --- Conditions
   if (q.conditions) {
     const rawConditions = Array.isArray(q.conditions)
       ? q.conditions
@@ -152,7 +174,7 @@ export function parseQueryType<T>(
     }));
   }
 
+  console.log("Parsed query options:", query, options);
   return options;
 }
-
 export type QueryType<T> = QueryObject<T> | Partial<T>;

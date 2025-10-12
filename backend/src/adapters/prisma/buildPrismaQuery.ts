@@ -184,7 +184,6 @@ export function buildPrismaQuery<T>(
 ): PrismaFindParams {
   const where = buildPrismaWhere(queryObj);
 
-  // Search
   if (queryObj.search) {
     const searchFields =
       queryObj.searchFields && queryObj.searchFields.length > 0
@@ -205,38 +204,37 @@ export function buildPrismaQuery<T>(
     });
   }
 
-  // Base include from adapter config (string[] or map)
-  let include = normalizeIncludeConfig(includeConfig) || undefined;
   let select: any = undefined;
+  let include: any = undefined;
 
-  // Query-specific include fields (dot-notation supported)
-  if (queryObj.includeFields?.length) {
-    const nestedSelects = queryObj.includeFields
-      .filter((f) => String(f).includes("."))
-      .map(String);
-    const topScalars = queryObj.includeFields
-      .filter((f) => !String(f).includes("."))
-      .map(String);
-
-    // Build nested includes for dot paths selecting leaf scalars
-    if (nestedSelects.length) {
-      const nestedInclude: any = {};
-      for (const p of nestedSelects) {
-        const inc = includeForSelectPath(p);
-        if (inc) deepMerge(nestedInclude, inc);
+  const buildNestedSelect = (fields: string[]): any => {
+    const result: any = {};
+    for (const field of fields) {
+      const parts = field.split(".");
+      let current = result;
+      for (let i = 0; i < parts.length; i++) {
+        const isLeaf = i === parts.length - 1;
+        const key = parts[i];
+        if (isLeaf) {
+          current[key] = true;
+        } else {
+          if (!current[key] || current[key] === true) current[key] = {};
+          current = current[key];
+        }
       }
-      include = include ? deepMerge(include, nestedInclude) : nestedInclude;
     }
+    return result;
+  };
 
-    // Only emit top-level select if we DO NOT already have an include.
-    // Prisma forbids using include and select together at the same level.
-    if (!include && topScalars.length) {
-      select = select || {};
-      for (const f of topScalars) select[f] = true;
-    }
+  if (queryObj.select?.length) {
+    select = buildNestedSelect(queryObj.select.map(String));
+  } else if (includeConfig) {
+    const defaultFields = Array.isArray(includeConfig)
+      ? includeConfig.map(String)
+      : Object.keys(includeConfig);
+    include = buildNestedSelect(defaultFields);
   }
 
-  // Pagination & Sorting
   const orderBy = queryObj.sortBy
     ? { [queryObj.sortBy]: queryObj.sortOrder === "desc" ? "desc" : "asc" }
     : undefined;
@@ -250,10 +248,10 @@ export function buildPrismaQuery<T>(
   if (typeof take === "number") result.take = take;
   if (typeof skip === "number") result.skip = skip;
 
-  if (include && Object.keys(include).length) {
-    result.include = include;
-  } else if (select && Object.keys(select).length) {
+  if (select && Object.keys(select).length) {
     result.select = select;
+  } else if (include && Object.keys(include).length) {
+    result.include = include;
   }
 
   return result;

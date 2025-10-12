@@ -100,7 +100,6 @@ class ProductCrud extends PrismaCrudAdapter<Product> {
         "reviews",
       ],
 
-      // CHANGED: dot-notation keys
       nestedMeta: {
         images: { owned: true },
         tags: { owned: true },
