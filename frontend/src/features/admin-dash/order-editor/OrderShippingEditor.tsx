@@ -21,8 +21,6 @@ export default function OrderShippingEditor({
   order,
   setOrder,
 }: OrderShippingEditorProps) {
-  console.log("Rendering OrderShippingEditor", order);
-
   // Ensure shippingInfo exists
   const shippingInfo: ShippingInfo = order.shippingInfo || {
     orderId: order.id,

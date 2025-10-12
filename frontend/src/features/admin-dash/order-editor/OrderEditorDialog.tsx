@@ -36,13 +36,12 @@ export const OrderEditorDialog: React.FC<CrudEditorInterface<Order>> = ({
     else onCreate(localOrder);
   };
 
-  console.log("Rendering OrderEditorDialog", { open, item, localOrder });
   return (
     <AnimatedDialog
       open={!!open}
       onClose={onCancel}
       title={item?.id ? "Edit Order" : "Create Order"}
-      className="flex flex-col overflow-hidden pl-2 w-full h-full sm:rounded-2xl sm:max-w-4xl px-md sm:px-lg"
+      className="flex flex-col overflow-hidden pl-2 w-full h-full rounded-none sm:rounded-2xl sm:max-w-4xl sm:px-lg"
     >
       <div className="flex flex-col flex-1 overflow-hidden border-t gap-md p-xs sm:p-sd overflow-y-auto">
         <AnimatedDropdownBox title="Order Info" openInitially={true}>

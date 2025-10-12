@@ -27,22 +27,42 @@ export default function AddressForm({
     },
   });
 
-  // Local update helper — merges partial field updates into current address
+  // Extract first and last name from full name if possible
+  const [firstName = "", lastName = ""] = (address?.name ?? "").split(" ", 2);
+
   function handleChange<K extends keyof Address>(key: K, value: Address[K]) {
     setAddress({ ...address, [key]: value } as Address);
   }
 
+  function handleNameChange(part: "first" | "last", value: string) {
+    const currentFull = address?.name ?? "";
+    const parts = currentFull.split(" ");
+    const newFirst = part === "first" ? value : (parts[0] ?? "");
+    const newLast = part === "last" ? value : (parts[1] ?? "");
+    const fullName = [newFirst, newLast].filter(Boolean).join(" ");
+    handleChange("name", fullName);
+  }
+
   return (
     <form className={`flex flex-col gap-4 ${className ?? ""} pad-sm`}>
-      <div className="flex gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row">
         <div className="flex-1">
-          <Label>Name</Label>
+          <Label>First Name</Label>
           <Input
-            {...register("name")}
-            defaultValue={address?.name ?? ""}
-            onChange={(e) => handleChange("name", e.target.value)}
+            defaultValue={firstName}
+            onChange={(e) => handleNameChange("first", e.target.value)}
           />
         </div>
+        <div className="flex-1">
+          <Label>Last Name</Label>
+          <Input
+            defaultValue={lastName}
+            onChange={(e) => handleNameChange("last", e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-4 sm:flex-row">
         <div className="flex-1">
           <Label>Email</Label>
           <Input
@@ -51,9 +71,6 @@ export default function AddressForm({
             onChange={(e) => handleChange("email", e.target.value)}
           />
         </div>
-      </div>
-
-      <div className="flex gap-4">
         <div className="flex-1">
           <Label>Phone</Label>
           <Input
@@ -64,23 +81,13 @@ export default function AddressForm({
         </div>
       </div>
 
-      <div className="flex gap-4">
-        <div className="flex-1">
-          <Label>Street 1</Label>
-          <Input
-            {...register("street1")}
-            defaultValue={address?.street1 ?? ""}
-            onChange={(e) => handleChange("street1", e.target.value)}
-          />
-        </div>
-        <div className="flex-1">
-          <Label>Street 2</Label>
-          <Input
-            {...register("street2")}
-            defaultValue={address?.street2 ?? ""}
-            onChange={(e) => handleChange("street2", e.target.value)}
-          />
-        </div>
+      <div className="flex-1">
+        <Label>Street Name</Label>
+        <Input
+          {...register("street1")}
+          defaultValue={address?.street1 ?? ""}
+          onChange={(e) => handleChange("street1", e.target.value)}
+        />
       </div>
 
       <div className="flex gap-4">
@@ -100,9 +107,6 @@ export default function AddressForm({
             onChange={(e) => handleChange("state", e.target.value)}
           />
         </div>
-      </div>
-
-      <div className="flex gap-4">
         <div className="flex-1">
           <Label>Postal Code</Label>
           <Input
@@ -111,22 +115,23 @@ export default function AddressForm({
             onChange={(e) => handleChange("postalCode", e.target.value)}
           />
         </div>
-        <div className="flex-1">
-          <Label>Country</Label>
-          <Controller
-            name="country"
-            control={control}
-            render={({ field }) => (
-              <CountrySelect
-                value={address?.country ?? "US"}
-                onChange={(val) => {
-                  field.onChange(val);
-                  handleChange("country", val);
-                }}
-              />
-            )}
-          />
-        </div>
+      </div>
+
+      <div className="flex-1">
+        <Label>Country</Label>
+        <Controller
+          name="country"
+          control={control}
+          render={({ field }) => (
+            <CountrySelect
+              value={address?.country ?? "US"}
+              onChange={(val) => {
+                field.onChange(val);
+                handleChange("country", val);
+              }}
+            />
+          )}
+        />
       </div>
     </form>
   );
