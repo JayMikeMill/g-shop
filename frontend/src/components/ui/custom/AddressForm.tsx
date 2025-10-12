@@ -1,6 +1,4 @@
-import { useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
-
+import { Controller, useForm } from "react-hook-form";
 import { Input, Label, CountrySelect } from "@components/ui";
 import type { Address } from "@shared/types";
 
@@ -15,7 +13,7 @@ export default function AddressForm({
   setAddress,
   className,
 }: AddressFormProps) {
-  const { control, register, getValues } = useForm<Address>({
+  const { control, register } = useForm<Address>({
     defaultValues: {
       name: address?.name ?? "",
       email: address?.email ?? "",
@@ -29,63 +27,89 @@ export default function AddressForm({
     },
   });
 
-  // Call setAddress whenever the form values change
-  useEffect(() => {
-    const handle = () => {
-      setAddress(getValues());
-    };
-
-    // Use a timeout to catch changes after render
-    const id = setTimeout(handle);
-    return () => clearTimeout(id);
-  }, [control, getValues, setAddress]);
+  // Local update helper — merges partial field updates into current address
+  function handleChange<K extends keyof Address>(key: K, value: Address[K]) {
+    setAddress({ ...address, [key]: value } as Address);
+  }
 
   return (
-    <form className={`flex flex-col gap-4 ${className} pad-sm`}>
+    <form className={`flex flex-col gap-4 ${className ?? ""} pad-sm`}>
       <div className="flex gap-4">
         <div className="flex-1">
           <Label>Name</Label>
-          <Input {...register("name")} />
+          <Input
+            {...register("name")}
+            defaultValue={address?.name ?? ""}
+            onChange={(e) => handleChange("name", e.target.value)}
+          />
         </div>
         <div className="flex-1">
           <Label>Email</Label>
-          <Input {...register("email")} />
+          <Input
+            {...register("email")}
+            defaultValue={address?.email ?? ""}
+            onChange={(e) => handleChange("email", e.target.value)}
+          />
         </div>
       </div>
 
       <div className="flex gap-4">
         <div className="flex-1">
           <Label>Phone</Label>
-          <Input {...register("phone")} />
+          <Input
+            {...register("phone")}
+            defaultValue={address?.phone ?? ""}
+            onChange={(e) => handleChange("phone", e.target.value)}
+          />
         </div>
       </div>
 
       <div className="flex gap-4">
         <div className="flex-1">
           <Label>Street 1</Label>
-          <Input {...register("street1")} />
+          <Input
+            {...register("street1")}
+            defaultValue={address?.street1 ?? ""}
+            onChange={(e) => handleChange("street1", e.target.value)}
+          />
         </div>
         <div className="flex-1">
           <Label>Street 2</Label>
-          <Input {...register("street2")} />
+          <Input
+            {...register("street2")}
+            defaultValue={address?.street2 ?? ""}
+            onChange={(e) => handleChange("street2", e.target.value)}
+          />
         </div>
       </div>
 
       <div className="flex gap-4">
         <div className="flex-1">
           <Label>City</Label>
-          <Input {...register("city")} />
+          <Input
+            {...register("city")}
+            defaultValue={address?.city ?? ""}
+            onChange={(e) => handleChange("city", e.target.value)}
+          />
         </div>
         <div className="flex-1">
           <Label>State</Label>
-          <Input {...register("state")} />
+          <Input
+            {...register("state")}
+            defaultValue={address?.state ?? ""}
+            onChange={(e) => handleChange("state", e.target.value)}
+          />
         </div>
       </div>
 
       <div className="flex gap-4">
         <div className="flex-1">
           <Label>Postal Code</Label>
-          <Input {...register("postalCode")} />
+          <Input
+            {...register("postalCode")}
+            defaultValue={address?.postalCode ?? ""}
+            onChange={(e) => handleChange("postalCode", e.target.value)}
+          />
         </div>
         <div className="flex-1">
           <Label>Country</Label>
@@ -94,8 +118,11 @@ export default function AddressForm({
             control={control}
             render={({ field }) => (
               <CountrySelect
-                value={field.value ?? "US"}
-                onChange={field.onChange}
+                value={address?.country ?? "US"}
+                onChange={(val) => {
+                  field.onChange(val);
+                  handleChange("country", val);
+                }}
               />
             )}
           />

@@ -36,6 +36,7 @@ export const OrderEditorDialog: React.FC<CrudEditorInterface<Order>> = ({
     else onCreate(localOrder);
   };
 
+  console.log("Rendering OrderEditorDialog", { open, item, localOrder });
   return (
     <AnimatedDialog
       open={!!open}

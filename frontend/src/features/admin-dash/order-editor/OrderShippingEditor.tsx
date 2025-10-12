@@ -1,3 +1,4 @@
+import AddressForm from "@components/ui/custom/AddressForm";
 import type {
   Order,
   ShippingInfo,
@@ -50,69 +51,12 @@ export default function OrderShippingEditor({
 
   return (
     <div className="flex flex-col gap-2">
-      <input
-        type="text"
-        placeholder="Name"
-        value={address.name}
-        onChange={(e) => updateShipping({}, { name: e.target.value })}
-        className="border rounded px-2 py-1 w-full"
+      <AddressForm
+        address={address}
+        setAddress={(addr) => updateShipping({}, addr)}
+        className="border rounded p-2"
       />
-      <input
-        type="text"
-        placeholder="Email"
-        value={address.email}
-        onChange={(e) => updateShipping({}, { email: e.target.value })}
-        className="border rounded px-2 py-1 w-full"
-      />
-      <input
-        type="text"
-        placeholder="Phone"
-        value={address.phone || ""}
-        onChange={(e) => updateShipping({}, { phone: e.target.value })}
-        className="border rounded px-2 py-1 w-full"
-      />
-      <input
-        type="text"
-        placeholder="Street 1"
-        value={address.street1}
-        onChange={(e) => updateShipping({}, { street1: e.target.value })}
-        className="border rounded px-2 py-1 w-full"
-      />
-      <input
-        type="text"
-        placeholder="Street 2"
-        value={address.street2 || ""}
-        onChange={(e) => updateShipping({}, { street2: e.target.value })}
-        className="border rounded px-2 py-1 w-full"
-      />
-      <input
-        type="text"
-        placeholder="City"
-        value={address.city}
-        onChange={(e) => updateShipping({}, { city: e.target.value })}
-        className="border rounded px-2 py-1 w-full"
-      />
-      <input
-        type="text"
-        placeholder="State"
-        value={address.state}
-        onChange={(e) => updateShipping({}, { state: e.target.value })}
-        className="border rounded px-2 py-1 w-full"
-      />
-      <input
-        type="text"
-        placeholder="Postal Code"
-        value={address.postalCode}
-        onChange={(e) => updateShipping({}, { postalCode: e.target.value })}
-        className="border rounded px-2 py-1 w-full"
-      />
-      <input
-        type="text"
-        placeholder="Country"
-        value={address.country}
-        onChange={(e) => updateShipping({}, { country: e.target.value })}
-        className="border rounded px-2 py-1 w-full"
-      />
+      {/* Shipping fields */}
       <select
         value={shippingInfo.carrier || ""}
         onChange={(e) =>

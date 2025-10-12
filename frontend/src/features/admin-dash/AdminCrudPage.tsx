@@ -59,8 +59,6 @@ function AdminCrudPage<T extends { id?: string }>({
   // Fetch product data
   const { data: editingItem } = api.getOne({ id: editingItemId });
 
-  console.log("Fetched data:", data);
-
   const items: T[] = data?.data ?? [];
   const totalPages = data?.total ? Math.ceil(data.total / pageSize) : 1;
 
