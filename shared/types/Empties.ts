@@ -20,13 +20,6 @@ export const emptyUser: User = {
   failedLoginAttempts: 0,
 };
 
-export const emptyProduct: Product = {
-  name: "",
-  price: 0,
-  description: "",
-  status: "ACTIVE", // or whichever default makes sense
-};
-
 export const emptyOrder: Order = {
   status: "PENDING",
   total: 0,

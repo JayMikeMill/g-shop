@@ -1,3 +1,4 @@
+export * from "./SafeType";
 export * from "./PrismaTypes";
 export * from "./Empties";
 export * from "./QueryObject";

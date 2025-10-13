@@ -2,11 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
 
 // Types
-import {
-  type Product,
-  type ProductImageSet,
-  emptyProduct,
-} from "@shared/types";
+import type { Product, ProductImageSet, SafeType } from "@shared/types";
 
 // UI Components
 import { AnimatedDropdownBox, Button } from "@components/ui";
@@ -23,6 +19,13 @@ import ProductDimensionsForm from "./ProductDimensionsForm";
 import ProductTagsForm from "./ProductTagsForm";
 import ProductInfoForm from "./ProductInfoForm";
 
+export const newProduct: SafeType<Product> = {
+  name: "",
+  price: 0,
+  description: "",
+  status: "ACTIVE", // or whichever default makes sense
+};
+
 export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
   item,
   onCreate,
@@ -38,7 +41,7 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
   // Form Setup
   // --------------------------
   const methods = useForm<Product>({
-    defaultValues: item ?? emptyProduct,
+    defaultValues: item ?? newProduct,
     mode: "onChange",
   });
 
@@ -56,7 +59,7 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
       reset(item);
       setIsAdding(false);
     } else {
-      reset(emptyProduct);
+      reset(newProduct);
       setIsAdding(true);
     }
   }, [item, reset]);
@@ -65,7 +68,7 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
   // Actions
   // --------------------------
   const handleCancel = () => {
-    reset(emptyProduct);
+    reset(newProduct);
     setIsAdding(false);
     onCancel();
   };

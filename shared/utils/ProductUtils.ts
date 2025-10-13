@@ -22,7 +22,8 @@ export const getDiscountString = (product: Product) => {
 };
 
 export const getFinalPrice = (product: Product) => {
-  if (!product.discount) return 0;
+  if (!product.discount || !product.price) return 0;
+
   const discount = product.discount || 0;
   if (discount <= 0) return product.price;
   const isPercentage = product.discountType === "PERCENTAGE";

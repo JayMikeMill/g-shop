@@ -9,6 +9,7 @@ generator client {
 generator typescriptInterfaces {
   provider          = "prisma-generator-typescript-interfaces"
   output            = "../shared/types/PrismaTypes.ts"
+  headerComment     = "[PrismaTypesHeader]"
   optionalNullables = true
   enumType          = object
   prettier          = true
@@ -128,7 +129,7 @@ model User {
   lastLogin           DateTime?
   failedLoginAttempts Int       @default(0)
   cart                Cart?
-  settings            Json? ///is*UserSettings*
+  settings            Json?
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
@@ -204,7 +205,7 @@ model Product {
   id             String             @id @default(uuid())
   name           String
   sku            String?            @unique
-  price          I
+  price          Int
   discount       Int?
   discountType   DiscountType?
   description    String
@@ -250,14 +251,14 @@ model ProductOption {
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
   name      String
-  values    Json ///is*string[]*
+  values    Json /// ![string[]]
 }
 
 model ProductVariant {
   id      String @id @default(uuid())
   product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
-  options Json  ///is*string[]*
+  options Json  /// ![string[]]
   price   Int?
   stock   Int?
 
@@ -301,7 +302,7 @@ model ProductTagPreset {
 model ProductOptionsPreset {
   id       String @id @default(uuid())
   name     String
-  options  Json ///is*ProductOption[]*
+  options  Json /// ![ProductOption[]]
 }
 
 //////////////////////////////////////////////////////////////////
@@ -395,8 +396,8 @@ model OrderItem {
   id       String @id @default(uuid())
   order    Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId  String
-  product  Json ///is*Product*
-  variant  Json? ///is*ProductVariant*
+  product  Json  /// ![Product]
+  variant  Json? /// ![ProductVariant]
   quantity Int
   price    Int
 }

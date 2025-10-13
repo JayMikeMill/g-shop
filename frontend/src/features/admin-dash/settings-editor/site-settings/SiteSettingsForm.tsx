@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
-import type { SiteSettings } from "@shared/settings";
-
-// Editors
-import SiteSettingsBasicInfoEditor from "./SiteSettingsBasicInfoEditor";
-import SiteSettingsThemeEditor from "./SiteSettingsThemeEditor";
-import SiteSettingsSocialEditor from "./SiteSettingsSocialEditor";
-import SiteSettingsEcommerceEditor from "./SiteSettingsEcommerceEditor";
+import React, { useEffect } from "react";
+import { useForm, FormProvider } from "react-hook-form";
+//import { zodResolver } from "@hookform/resolvers/zod";
+//import { SiteSettingsSchema, SiteSettingsFormType } from "./SiteSettingsSchema";
+import SiteSettingsBasicInfoForm from "./SiteSettingsBasicInfoForm";
+import SiteSettingsThemeForm from "./SiteSettingsThemeForm";
+import SiteSettingsSocialForm from "./SiteSettingsSocialForm";
+import SiteSettingsEcommerceForm from "./SiteSettingsEcommerceForm";
 import { AnimatedDropdownBox } from "@components/ui/custom/AnimatedDropdownBox";
+import type { SiteSettings } from "@shared/settings";
 
 interface Props {
   settings: SiteSettings;
@@ -14,72 +15,61 @@ interface Props {
 }
 
 const SiteSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
-  const [formSettings, setFormSettings] = useState<SiteSettings>(settings);
+  const methods = useForm<SiteSettings>({
+    //resolver: zodResolver(SiteSettingsSchema),
+    defaultValues: settings,
+    mode: "onChange",
+  });
 
   useEffect(() => {
-    console.log("Settings updated:", settings);
-    setFormSettings(settings);
+    methods.reset(settings);
   }, [settings]);
 
-  const handleSave = () => {
-    onSave(formSettings);
-  };
+  const handleSave = methods.handleSubmit(onSave);
 
   return (
-    <div className="flex flex-col gap-sm w-full sm:flex-row sm:gap-lg">
-      <div className="flex flex-col w-full gap-sm sm:gap-md">
-        <AnimatedDropdownBox
-          className=" gap-lg p-md w-full"
-          title="Basic Settings"
-          openInitially={true}
-        >
-          <SiteSettingsBasicInfoEditor
-            settings={formSettings}
-            setSettings={setFormSettings}
-          />
-        </AnimatedDropdownBox>
-        <AnimatedDropdownBox
-          className=" gap-lg p-md w-full"
-          title="Theme Settings"
-          openInitially={true}
-        >
-          <SiteSettingsThemeEditor
-            settings={formSettings}
-            setSettings={setFormSettings}
-          />
-        </AnimatedDropdownBox>
-
-        <AnimatedDropdownBox
-          className=" gap-lg p-md w-full"
-          title="Social Media Settings"
-          openInitially={true}
-        >
-          <SiteSettingsSocialEditor
-            settings={formSettings}
-            setSettings={setFormSettings}
-          />
-        </AnimatedDropdownBox>
-      </div>
-      <AnimatedDropdownBox
-        className=" gap-lg p-md w-full"
-        title="E-Commerce Settings"
-        openInitially={true}
+    <FormProvider {...methods}>
+      <form
+        className="flex flex-col gap-sm w-full sm:flex-row sm:gap-lg"
+        onSubmit={handleSave}
       >
-        <div className="flex flex-col h-auto">
-          <SiteSettingsEcommerceEditor
-            settings={formSettings}
-            setSettings={setFormSettings}
-          />
+        <div className="flex flex-col w-full gap-sm sm:gap-md">
+          <AnimatedDropdownBox
+            className=" gap-lg p-md w-full"
+            title="Basic Settings"
+            openInitially={true}
+          >
+            <SiteSettingsBasicInfoForm />
+          </AnimatedDropdownBox>
+          <AnimatedDropdownBox
+            className=" gap-lg p-md w-full"
+            title="Theme Settings"
+            openInitially={true}
+          >
+            <SiteSettingsThemeForm />
+          </AnimatedDropdownBox>
+          <AnimatedDropdownBox
+            className=" gap-lg p-md w-full"
+            title="Social Media Settings"
+            openInitially={true}
+          >
+            <SiteSettingsSocialForm />
+          </AnimatedDropdownBox>
         </div>
-      </AnimatedDropdownBox>
-      {/* <button
-        className="btn btn-primary mt-lg"
-        type="button"
-        onClick={handleSave}
-      >
-        Save Settings
-      </button> */}
-    </div>
+        <AnimatedDropdownBox
+          className=" gap-lg p-md w-full"
+          title="E-Commerce Settings"
+          openInitially={true}
+        >
+          <div className="flex flex-col h-auto">
+            <SiteSettingsEcommerceForm />
+          </div>
+        </AnimatedDropdownBox>
+        <button className="btn btn-primary mt-lg" type="submit">
+          Save Settings
+        </button>
+      </form>
+    </FormProvider>
   );
 };
 

@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
-import type { AdminSettings } from "@shared/settings";
-
-// Editors
-import AdminSettingsContactEditor from "./AdminSettingsContactEditor";
-import AdminSettingsShippingOriginEditor from "./AdminSettingsShippingOrigenEditor";
-import AdminSettingsFeaturesEditor from "./AdminSettingsFeaturesEditor";
-import AdminSettingsAnalyticsEditor from "./AdminSettingsAnalyticsEditor";
+import React, { useEffect } from "react";
+import { useForm, FormProvider } from "react-hook-form";
+// import { zodResolver } from "@hookform/resolvers/zod";
+// import { AdminSettingsSchema, AdminSettingsFormType } from "./AdminSettingsSchema";
+import AdminSettingsContactForm from "./AdminSettingsContactForm";
+import AdminSettingsShippingOriginForm from "./AdminSettingsShippingOriginForm";
+import AdminSettingsFeaturesForm from "./AdminSettingsFeaturesForm";
+import AdminSettingsAnalyticsForm from "./AdminSettingsAnalyticsForm";
 import { AnimatedDropdownBox } from "@components/ui/custom/AnimatedDropdownBox";
+import type { AdminSettings } from "@shared/settings";
+import type { SafeType } from "@shared/types";
 
 interface Props {
   settings: AdminSettings;
@@ -14,71 +16,61 @@ interface Props {
 }
 
 const AdminSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
-  const [formSettings, setFormSettings] = useState<AdminSettings>(settings);
+  const methods = useForm<SafeType<AdminSettings>>({
+    //resolver: zodResolver(AdminSettingsSchema),
+    defaultValues: settings,
+    mode: "onChange",
+  });
 
   useEffect(() => {
-    setFormSettings(settings);
+    methods.reset(settings);
   }, [settings]);
 
-  const handleSave = () => {
-    onSave(formSettings);
-  };
+  const handleSave = methods.handleSubmit(onSave);
 
   return (
-    <div className="flex flex-col gap-sm w-full sm:flex-row sm:gap-lg">
-      <div className="flex flex-col w-full gap-sm sm:gap-md">
-        <AnimatedDropdownBox
-          className=" gap-lg p-md w-full"
-          title="Contact Settings"
-          openInitially={true}
-        >
-          <AdminSettingsContactEditor
-            settings={formSettings}
-            setSettings={setFormSettings}
-          />
-        </AnimatedDropdownBox>
-        <AnimatedDropdownBox
-          className=" gap-lg p-md w-full"
-          title="Shipping Origin"
-          openInitially={true}
-        >
-          <AdminSettingsShippingOriginEditor
-            settings={formSettings}
-            setSettings={setFormSettings}
-          />
-        </AnimatedDropdownBox>
-      </div>
-
-      <div className="flex flex-col w-full">
-        <AnimatedDropdownBox
-          className=" gap-lg p-md w-full"
-          title="Features Settings"
-          openInitially={true}
-        >
-          <AdminSettingsFeaturesEditor
-            settings={formSettings}
-            setSettings={setFormSettings}
-          />
-        </AnimatedDropdownBox>
-        <AnimatedDropdownBox
-          className=" gap-lg p-md w-full"
-          title="Analytics Settings"
-          openInitially={true}
-        >
-          <AdminSettingsAnalyticsEditor
-            settings={formSettings}
-            setSettings={setFormSettings}
-          />
-        </AnimatedDropdownBox>
-        <button
-          className="btn btn-primary mt-lg"
-          type="button"
-          onClick={handleSave}
-        >
-          Save Admin Settings
-        </button>
-      </div>
-    </div>
+    <FormProvider {...methods}>
+      <form
+        className="flex flex-col gap-sm w-full sm:flex-row sm:gap-lg"
+        onSubmit={handleSave}
+      >
+        <div className="flex flex-col w-full gap-sm sm:gap-md">
+          <AnimatedDropdownBox
+            className=" gap-lg p-md w-full"
+            title="Contact Settings"
+            openInitially={true}
+          >
+            <AdminSettingsContactForm />
+          </AnimatedDropdownBox>
+          <AnimatedDropdownBox
+            className=" gap-lg p-md w-full"
+            title="Shipping Origin"
+            openInitially={true}
+          >
+            <AdminSettingsShippingOriginForm />
+          </AnimatedDropdownBox>
+        </div>
+        <div className="flex flex-col w-full">
+          <AnimatedDropdownBox
+            className=" gap-lg p-md w-full"
+            title="Features Settings"
+            openInitially={true}
+          >
+            <AdminSettingsFeaturesForm />
+          </AnimatedDropdownBox>
+          <AnimatedDropdownBox
+            className=" gap-lg p-md w-full"
+            title="Analytics Settings"
+            openInitially={true}
+          >
+            <AdminSettingsAnalyticsForm />
+          </AnimatedDropdownBox>
+          <button className="btn btn-primary mt-lg" type="submit">
+            Save Admin Settings
+          </button>
+        </div>
+      </form>
+    </FormProvider>
   );
 };
 
