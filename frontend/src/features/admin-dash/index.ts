@@ -9,4 +9,4 @@ export * from "./order-editor/OrderEditorDialog";
 export * from "./CrudEditorInterface";
 export * from "./AdminCrudPage";
 
-export * from "./tableColumns";
+export * from "./TableLayouts";

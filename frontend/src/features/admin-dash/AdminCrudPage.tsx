@@ -13,7 +13,7 @@ import {
 import type { CrudEditorInterface } from "@features/admin-dash/CrudEditorInterface";
 
 import { useDataApi } from "@api";
-import type { TableLayout } from "./tableColumns";
+import type { TableLayout } from "./TableLayouts";
 
 interface AdminCrudPageProps<T extends { id?: string }> {
   objectsName: string;
