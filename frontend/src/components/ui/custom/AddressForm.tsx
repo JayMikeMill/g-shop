@@ -1,138 +1,138 @@
-import { Controller, useForm } from "react-hook-form";
+import React from "react";
+import {
+  useForm,
+  Controller,
+  type UseFormReturn,
+  type Path,
+} from "react-hook-form";
 import { Input, Label, CountrySelect } from "@components/ui";
-import type { Address } from "@shared/types";
+import { emptyAddress, type Address, type SafeType } from "@shared/types";
 
 interface AddressFormProps {
   address?: Address;
-  setAddress: (address: Address) => void;
   className?: string;
+  onSubmit?: (data: SafeType<Address>) => void;
+  formContext?: UseFormReturn<any>; // optional parent form
+  rootName?: string; // optional root path for nested forms
 }
 
 export default function AddressForm({
   address,
-  setAddress,
   className,
+  onSubmit,
+  formContext,
+  rootName,
 }: AddressFormProps) {
-  const { control, register } = useForm<Address>({
-    defaultValues: {
-      name: address?.name ?? "",
-      email: address?.email ?? "",
-      phone: address?.phone ?? "",
-      street1: address?.street1 ?? "",
-      street2: address?.street2 ?? "",
-      city: address?.city ?? "",
-      state: address?.state ?? "",
-      postalCode: address?.postalCode ?? "",
-      country: address?.country ?? "US",
-    },
-  });
+  // Use parent form if provided, else create local form
+  const form =
+    formContext ??
+    useForm<SafeType<Address>>({
+      defaultValues: address ?? (emptyAddress as SafeType<Address>),
+    });
 
-  // Extract first and last name from full name if possible
-  const [firstName = "", lastName = ""] = (address?.name ?? "").split(" ", 2);
+  const { register, handleSubmit, control, watch, setValue } = form;
 
-  function handleChange<K extends keyof Address>(key: K, value: Address[K]) {
-    setAddress({ ...address, [key]: value } as Address);
-  }
+  // Strongly typed nested field path
+  const getFieldName = <K extends keyof Address>(
+    field: K
+  ): Path<SafeType<Address>> =>
+    rootName
+      ? (`${rootName}.${field}` as Path<SafeType<Address>>)
+      : (field as Path<SafeType<Address>>);
 
-  function handleNameChange(part: "first" | "last", value: string) {
-    const currentFull = address?.name ?? "";
-    const parts = currentFull.split(" ");
+  // Watch a single field safely
+  const watchField = <K extends keyof Address>(field: K): Address[K] =>
+    watch(getFieldName(field) as any); // safe cast for watch
+
+  // Split full name safely into first/last
+  const fullName = (watchField("name") ?? "") as string;
+  const [firstName, lastName] = fullName.split(" ", 2);
+
+  const handleNameChange = (part: "first" | "last", value: string) => {
+    const parts = fullName.split(" ");
     const newFirst = part === "first" ? value : (parts[0] ?? "");
     const newLast = part === "last" ? value : (parts[1] ?? "");
-    const fullName = [newFirst, newLast].filter(Boolean).join(" ");
-    handleChange("name", fullName);
-  }
+    const full = [newFirst, newLast].filter(Boolean).join(" ");
+    (form.setValue as UseFormReturn<SafeType<Address>>["setValue"])(
+      getFieldName("name"),
+      full,
+      { shouldValidate: true, shouldDirty: true }
+    );
+  };
+
+  // Cast register to the form type we know
+  const safeRegister = form.register as UseFormReturn<
+    SafeType<Address>
+  >["register"];
+
+  const Container: React.ElementType = formContext ? "div" : "form";
 
   return (
-    <form className={`flex flex-col gap-4 ${className ?? ""} pad-sm`}>
+    <Container
+      className={`flex flex-col gap-4 ${className ?? ""} pad-sm`}
+      onSubmit={onSubmit && !formContext ? handleSubmit(onSubmit) : undefined}
+    >
+      {/* First / Last Name */}
       <div className="flex flex-col gap-4 sm:flex-row">
         <div className="flex-1">
           <Label>First Name</Label>
           <Input
-            defaultValue={firstName}
+            value={firstName}
             onChange={(e) => handleNameChange("first", e.target.value)}
           />
         </div>
         <div className="flex-1">
           <Label>Last Name</Label>
           <Input
-            defaultValue={lastName}
+            value={lastName}
             onChange={(e) => handleNameChange("last", e.target.value)}
           />
         </div>
       </div>
 
+      {/* Email / Phone */}
       <div className="flex flex-col gap-4 sm:flex-row">
         <div className="flex-1">
           <Label>Email</Label>
-          <Input
-            {...register("email")}
-            defaultValue={address?.email ?? ""}
-            onChange={(e) => handleChange("email", e.target.value)}
-          />
+          <Input {...safeRegister(getFieldName("email"))} />
         </div>
         <div className="flex-1">
           <Label>Phone</Label>
-          <Input
-            {...register("phone")}
-            defaultValue={address?.phone ?? ""}
-            onChange={(e) => handleChange("phone", e.target.value)}
-          />
+          <Input {...safeRegister(getFieldName("phone"))} />
         </div>
       </div>
 
+      {/* Street */}
       <div className="flex-1">
         <Label>Street Name</Label>
-        <Input
-          {...register("street1")}
-          defaultValue={address?.street1 ?? ""}
-          onChange={(e) => handleChange("street1", e.target.value)}
-        />
+        <Input {...safeRegister(getFieldName("street1"))} />
       </div>
 
+      {/* City / State / Postal */}
       <div className="flex gap-4">
         <div className="flex-1">
           <Label>City</Label>
-          <Input
-            {...register("city")}
-            defaultValue={address?.city ?? ""}
-            onChange={(e) => handleChange("city", e.target.value)}
-          />
+          <Input {...safeRegister(getFieldName("city"))} />
         </div>
         <div className="flex-1">
           <Label>State</Label>
-          <Input
-            {...register("state")}
-            defaultValue={address?.state ?? ""}
-            onChange={(e) => handleChange("state", e.target.value)}
-          />
+          <Input {...safeRegister(getFieldName("state"))} />
         </div>
         <div className="flex-1">
           <Label>Postal Code</Label>
-          <Input
-            {...register("postalCode")}
-            defaultValue={address?.postalCode ?? ""}
-            onChange={(e) => handleChange("postalCode", e.target.value)}
-          />
+          <Input {...safeRegister(getFieldName("postalCode"))} />
         </div>
       </div>
 
+      {/* Country */}
       <div className="flex-1">
         <Label>Country</Label>
         <Controller
-          name="country"
+          name={getFieldName("country")}
           control={control}
-          render={({ field }) => (
-            <CountrySelect
-              value={address?.country ?? "US"}
-              onChange={(val) => {
-                field.onChange(val);
-                handleChange("country", val);
-              }}
-            />
-          )}
+          render={({ field }) => <CountrySelect {...field} />}
         />
       </div>
-    </form>
+    </Container>
   );
 }
