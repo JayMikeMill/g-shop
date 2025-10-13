@@ -52,7 +52,7 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
   // Sync logic
   // --------------------------
   useEffect(() => {
-    if (item) {
+    if (item?.id) {
       reset(item);
       setIsAdding(false);
     } else {

@@ -16,7 +16,7 @@ export const getDiscountString = (product: Product) => {
   const isPercentage = product.discountType === "PERCENTAGE";
   return (
     (isPercentage ? "" : "$") +
-    `${toMajorUnit(product.discount).toFixed(isPercentage ? 0 : 2)}` +
+    toMajorUnit(product.discount).toFixed(2) +
     (isPercentage ? "%" : "")
   );
 };
@@ -26,8 +26,9 @@ export const getFinalPrice = (product: Product) => {
   const discount = product.discount || 0;
   if (discount <= 0) return product.price;
   const isPercentage = product.discountType === "PERCENTAGE";
+
   return isPercentage
-    ? product.price * (discount / 100 / 100)
+    ? product.price - product.price * (discount / 10000)
     : product.price - discount;
 };
 

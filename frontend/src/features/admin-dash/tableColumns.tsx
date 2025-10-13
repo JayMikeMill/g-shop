@@ -8,12 +8,21 @@ import {
 import { TagBox, type TableColumn } from "@components/ui";
 
 export type TableLayout<T> = {
-  columns: TableColumn<T>[];
   dbSelect: (keyof T)[]; // fields to select from DB for this table
+  columns: TableColumn<T>[];
 };
 
 // ----- Products -----
 export const productTable: TableLayout<Product> = {
+  dbSelect: [
+    "images",
+    "name",
+    "price",
+    "discount",
+    "discountType",
+    "tags",
+    "description",
+  ] as (keyof Product)[],
   columns: [
     {
       id: "image",
@@ -57,7 +66,7 @@ export const productTable: TableLayout<Product> = {
             -{getDiscountString(p)}
           </span>
           <span className="font-semibold text-center text-base">
-            {getFinalPriceString(p)}
+            ${getFinalPriceString(p)}
           </span>
         </div>
       ),
@@ -93,13 +102,6 @@ export const productTable: TableLayout<Product> = {
       ),
     },
   ],
-  dbSelect: [
-    "images",
-    "name",
-    "price",
-    "tags",
-    "description",
-  ] as (keyof Product)[],
 };
 
 // ----- Orders -----
