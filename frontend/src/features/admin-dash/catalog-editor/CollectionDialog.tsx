@@ -1,27 +1,12 @@
 // src/components/CatalogDialog.tsx
-import { useState, useEffect } from "react";
-
 import type { CrudEditorInterface } from "../CrudEditorInterface";
-import {
-  type Collection,
-  type Category,
-  type CollectionImageSet,
-  emptyCollection,
-} from "@shared/types";
-
-// UI Components
-import { AnimatedDialog, Button, Input, Textarea } from "@components/ui";
-import { ImageEditor } from "@components/ui";
-import { CircleSpinner } from "@components/ui";
-
-import CollectionImageProcessor from "./CollectionImagesProcessor";
-
-import { useApi } from "@api";
+import { type Collection, type Category, emptyCollection } from "@shared/types";
+import { AnimatedDialog } from "@components/ui";
+import CollectionEditorForm from "./CollectionEditorForm";
 
 interface CollectionDialogProps<T extends Collection>
   extends CrudEditorInterface<T> {
-  apiKey: "categories" | "collections"; // optional, used internally
-  typeLabel: "Category" | "Collection"; // optional, used for title/spinner
+  typeLabel: "Category" | "Collection";
 }
 
 function CollectionDialogBase<T extends Collection>({
@@ -30,270 +15,37 @@ function CollectionDialogBase<T extends Collection>({
   onCreate,
   onModify,
   onCancel,
-  typeLabel: type,
+  typeLabel,
 }: CollectionDialogProps<T>) {
-  const [localItem, setLocalItem] = useState<T>(emptyCollection as T);
-  const [isAdding, setIsAdding] = useState(false);
-  const [isProcessingImages, setIsProcessingImages] = useState(false);
-  const [isSavingCollection, setIsSavingCollection] = useState(false);
-
-  const { uploadImage } = useApi().storage;
-
-  useEffect(() => {
-    if (!open) {
-      setLocalItem(emptyCollection as T);
-      setIsAdding(false);
-      return;
-    }
-    if (!item) {
-      setLocalItem(emptyCollection as T);
-      setIsAdding(true);
-      return;
-    }
-    setLocalItem(item);
-    setIsAdding(false);
-  }, [open, item]);
-
-  const clearItem = () => {
-    setLocalItem(emptyCollection as T);
-    setIsAdding(false);
-  };
-  const handleCancel = () => {
-    clearItem();
-    onCancel();
-  };
-
-  const handleSave = async () => {
-    try {
-      setIsSavingCollection(true); // spinner for saving collection
-
-      await uploadImages(); // we'll handle spinner for uploading separately
-
-      if (isAdding) {
-        onCreate(localItem);
-      } else {
-        onModify({ ...localItem, id: localItem.id! });
-      }
-
-      clearItem();
-    } catch (err: any) {
-      alert(err?.message || "Error saving collection");
-    } finally {
-      setIsSavingCollection(false);
-    }
-  };
-
-  const uploadImages = async () => {
-    if (!localItem.images) return;
-
-    try {
-      if (localItem.images.banner.startsWith("blob:")) {
-        const blobBanner = await fetch(localItem.images.banner).then((r) =>
-          r.blob()
-        );
-        const uploadedBanner = await uploadImage(
-          blobBanner,
-          `collection_banner`
-        );
-        localItem.images.banner = uploadedBanner;
-      }
-
-      if (localItem.images.preview.startsWith("blob:")) {
-        const blobPreview = await fetch(localItem.images.preview).then((r) =>
-          r.blob()
-        );
-        const uploadedPreview = await uploadImage(
-          blobPreview,
-          `collection_preview`
-        );
-        localItem.images.preview = uploadedPreview;
-      }
-    } catch (err) {
-      throw new Error("Error uploading images");
-    }
-  };
+  const isAdding = !item || !item.id;
 
   return (
     <AnimatedDialog
-      title={isAdding ? `Add ${type}` : `Edit ${type}`}
+      title={isAdding ? `Add ${typeLabel}` : `Edit ${typeLabel}`}
       open={!!open}
-      onClose={handleCancel}
+      onClose={onCancel}
       className="flex flex-col overflow-hidden rounded-none pl-2 w-full h-full 
       sm:rounded-2xl sm:max-w-3xl px-md sm:px-lg"
     >
-      {/* Loading Spinner */}
-      {isSavingCollection && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/30">
-          <CircleSpinner text={`Saving ${type}...`} />
-        </div>
-      )}
-
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSave();
-        }}
-        className="flex flex-1 flex-col gap-4 overflow-y-auto py-4 w-auto  px-1"
-      >
-        <div className="flex flex-row gap-md min-w-0">
-          {/* Name */}
-          <label className="flex flex-1 flex-col gap-1 text-sm w-auto font-semibold text-text">
-            {type} Name
-            <Input
-              className="w-full"
-              type="text"
-              placeholder={`${type} Name`}
-              value={localItem.name}
-              onChange={(e) =>
-                setLocalItem((prev) => ({ ...prev, name: e.target.value }))
-              }
-              required
-            />
-          </label>
-
-          {/* Slug */}
-          <label className="flex flex-1 flex-col gap-1 text-sm font-semibold text-text">
-            Slug
-            <Input
-              type="text"
-              placeholder="URL Slug"
-              value={localItem.slug}
-              onChange={(e) =>
-                setLocalItem((prev) => ({ ...prev, slug: e.target.value }))
-              }
-              required
-              className="w-full"
-            />
-          </label>
-        </div>
-
-        {/* SEO */}
-        <div className="flex flex-col gap-2">
-          <label className="flex flex-col gap-1 text-sm font-semibold text-text">
-            SEO Title
-            <Input
-              type="text"
-              placeholder="SEO Title"
-              value={localItem.seoTitle ?? ""}
-              onChange={(e) =>
-                setLocalItem((prev) => ({
-                  ...prev,
-                  seoTitle: e.target.value,
-                }))
-              }
-            />
-          </label>
-
-          <label className="flex flex-col gap-1 text-sm font-semibold text-text">
-            Keywords (comma-separated)
-            <Input
-              type="text"
-              placeholder="keyword1, keyword2"
-              value={localItem.seoKeywords ?? ""}
-              onChange={(e) =>
-                setLocalItem((prev) => ({
-                  ...prev,
-                  seoKeywords: e.target.value.split(",").map((k) => k.trim()),
-                }))
-              }
-            />
-          </label>
-        </div>
-
-        {/* Description */}
-        <label className="flex flex-col gap-1 text-sm font-semibold text-text">
-          Description
-          <Textarea
-            placeholder="Description"
-            value={localItem.description ?? ""}
-            onChange={(e) =>
-              setLocalItem((prev) => ({ ...prev, description: e.target.value }))
-            }
-          />
-        </label>
-
-        {/* Description */}
-        <label className="flex flex-col gap-1 text-sm font-semibold text-text">
-          Description
-          <Textarea
-            placeholder="Description"
-            value={localItem.description ?? ""}
-            onChange={(e) =>
-              setLocalItem((prev) => ({ ...prev, description: e.target.value }))
-            }
-            className="px-2 py-1 h-24 resize-none"
-          />
-        </label>
-
-        {/* Images */}
-        <div className="flex flex-row gap-2">
-          {/* Preview Image Editor */}
-          <ImageEditor<CollectionImageSet>
-            image={localItem.images ?? undefined}
-            onImageChange={(img: CollectionImageSet | undefined) =>
-              setLocalItem((prev) => ({
-                ...prev,
-                images: { ...prev.images, preview: img?.preview },
-              }))
-            }
-            getPreview={(img) => img?.preview || ""}
-            processor={CollectionImageProcessor.processPreview}
-            setIsProcessingImages={setIsProcessingImages}
-            emptyText="+ Add Preview Image"
-            className="w-32 aspect-[1/1]"
-          />
-
-          {/* Banner Image Editor */}
-          <ImageEditor<CollectionImageSet>
-            image={localItem.images ?? undefined}
-            onImageChange={(img: CollectionImageSet | undefined) =>
-              setLocalItem((prev) => ({
-                ...prev,
-                images: { ...prev.images, banner: img?.banner },
-              }))
-            }
-            getPreview={(img) => img?.banner || ""}
-            processor={CollectionImageProcessor.processBanner}
-            setIsProcessingImages={setIsProcessingImages}
-            emptyText="+ Add Banner Image"
-            className="flex-1"
-          />
-        </div>
-        {/* Footer Buttons */}
-        <div className="w-full flex flex-row gap-2 px-0 sm:px-0 items-center py-4 border-t flex-shrink-0">
-          <Button type="button" className="w-full h-12" onClick={handleCancel}>
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            className="w-full h-12"
-            disabled={isProcessingImages}
-          >
-            {isProcessingImages
-              ? "Processing..."
-              : isAdding
-                ? `Add ${type}`
-                : `Save Changes`}
-          </Button>
-        </div>
-      </form>
+      <CollectionEditorForm
+        item={item ?? emptyCollection}
+        isAdding={isAdding}
+        onCreate={onCreate as (item: Collection) => void}
+        onModify={onModify as (item: Collection) => void}
+        onCancel={onCancel}
+        typeLabel={typeLabel}
+      />
     </AnimatedDialog>
   );
 }
 
 // Convenience wrappers
-// For collections
 const CollectionDialog = (props: CrudEditorInterface<Collection>) => (
-  <CollectionDialogBase
-    {...props}
-    typeLabel="Collection"
-    apiKey="collections"
-  />
+  <CollectionDialogBase {...props} typeLabel="Collection" />
 );
 
-// For categories
 const CategoryDialog = (props: CrudEditorInterface<Category>) => (
-  <CollectionDialogBase {...props} typeLabel="Category" apiKey="categories" />
+  <CollectionDialogBase {...props} typeLabel="Category" />
 );
 
 export { CategoryDialog, CollectionDialog };

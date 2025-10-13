@@ -87,7 +87,7 @@ export interface ImageEditorProps<T extends Record<string, any>> {
   className?: string;
   images: T[];
   onImagesChange: (images: T[]) => void;
-  setIsProcessingImages: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsProcessingImages: (v: boolean) => void;
   processor: (file: File, onProgress?: (percent: number) => void) => Promise<T>;
   getPreview?: (item: T) => string;
   single?: boolean; // if true → single-image editor
