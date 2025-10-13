@@ -87,7 +87,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const classNames = cn(buttonVariants({ variant, size, className }));
 
     return (
-      <button className={classNames} ref={ref} {...props}>
+      <button type="button" className={classNames} ref={ref} {...props}>
         {children}
         {loadingIcon && (
           <span

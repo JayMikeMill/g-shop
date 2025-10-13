@@ -33,7 +33,7 @@ const SiteSettingsEcommerceEditor: React.FC<Props> = ({
         <Label className="text-center w-full sm:w-1/2">
           Items Per Page
           <NumberInput
-            decimals={0}
+            variant="wholeNumber"
             value={settings.itemsPerPage ?? 10}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setSettings((prev) => ({
@@ -46,7 +46,7 @@ const SiteSettingsEcommerceEditor: React.FC<Props> = ({
         <Label className="text-center w-full sm:w-1/2">
           Max Cart Items
           <NumberInput
-            decimals={0}
+            variant="wholeNumber"
             value={settings.maxCartItems ?? 0}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setSettings((prev) => ({
@@ -122,7 +122,7 @@ const SiteSettingsEcommerceEditor: React.FC<Props> = ({
       <Label>
         Tax Rate (%)
         <NumberInput
-          style="PERCENT"
+          variant="percent"
           value={settings.taxRate ?? 0}
           decimals={2}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -136,8 +136,7 @@ const SiteSettingsEcommerceEditor: React.FC<Props> = ({
       <Label>
         Free Shipping Threshold
         <NumberInput
-          style="CURRENCY"
-          unitConversion={true}
+          variant="currency"
           value={settings.freeShippingThreshold ?? 0}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setSettings((prev) => ({
@@ -151,7 +150,7 @@ const SiteSettingsEcommerceEditor: React.FC<Props> = ({
       <Label>
         Flat Shipping Rate
         <NumberInput
-          style="CURRENCY"
+          variant="currency"
           unitConversion={true}
           value={settings.flatShippingRate ?? 0}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -169,6 +168,7 @@ const SiteSettingsEcommerceEditor: React.FC<Props> = ({
           <Label key={carrier}>
             {carrier} Rate (cents)
             <NumberInput
+              variant="wholeNumber"
               value={rate}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 handleCarrierRateChange(carrier, parseInt(e.target.value))

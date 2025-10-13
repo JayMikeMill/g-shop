@@ -1,5 +1,5 @@
-// src/components/ProductDialog.tsx
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
 
 // Types
 import {
@@ -11,21 +11,17 @@ import {
 // UI Components
 import { AnimatedDropdownBox, Button } from "@components/ui";
 
-// Editors
-import ProductInfoEditor from "./ProductInfoEditor";
-import ProductTagsEditor from "./ProductTagsEditor";
-import ProductOptionsEditor from "./ProductOptionsEditor";
-
-import {
-  ProductVariantEditor,
-  ProductVariantHeader,
-} from "./ProductVariantEditor";
-
-import ProductDimensionsEditor from "./ProductDimensionsEditor";
+// Image Editor & Processor
+import { MultiImageEditor } from "@components/ui";
 import ProductImageProcessor from "./ProductImagesProcessor";
 
-import { MultiImageEditor } from "@components/ui";
+// Forms
 import type { CrudEditorInterface } from "../CrudEditorInterface";
+import { ProductVariantForm, ProductVariantHeader } from "./ProductVariantForm";
+import ProductOptionsForm from "./ProductOptionsForm";
+import ProductDimensionsForm from "./ProductDimensionsForm";
+import ProductTagsForm from "./ProductTagsForm";
+import ProductInfoForm from "./ProductInfoForm";
 
 export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
   item,
@@ -34,190 +30,178 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
   onDelete,
   onCancel,
 }) => {
-  const [localProduct, setLocalProduct] = useState<Product>(
-    item ?? emptyProduct
-  );
-
   const [isAdding, setIsAdding] = useState(false);
   const [isProcessingImages, setIsProcessingImages] = useState(false);
   const [isSavingProduct, setIsSavingProduct] = useState(false);
 
-  // Sync local product when dialog opens
-  useEffect(() => {
-    // Creating new product
-    if (item) {
-      setLocalProduct(item);
-      setIsAdding(false);
-      // Editing existing product
-    } else {
-      clearProduct();
-      setIsAdding(true);
-      return;
-    }
-  }, [item]);
+  // --------------------------
+  // Form Setup
+  // --------------------------
+  const methods = useForm<Product>({
+    defaultValues: item ?? emptyProduct,
+    mode: "onChange",
+  });
 
+  const { reset, handleSubmit, watch } = methods;
+
+  // Watch options for variant toggle
+  const options = watch("options");
+  const images = watch("images");
+
+  // --------------------------
+  // Sync logic
+  // --------------------------
+  useEffect(() => {
+    if (item) {
+      reset(item);
+      setIsAdding(false);
+    } else {
+      reset(emptyProduct);
+      setIsAdding(true);
+    }
+  }, [item, reset]);
+
+  // --------------------------
+  // Actions
+  // --------------------------
   const handleCancel = () => {
-    clearProduct();
+    reset(emptyProduct);
+    setIsAdding(false);
     onCancel();
   };
 
-  const clearProduct = () => {
-    setLocalProduct(emptyProduct);
-    setIsAdding(false);
-  };
-
   const handleDelete = async () => {
-    if (!localProduct.id) {
+    const product = methods.getValues();
+    if (!product.id) {
       alert("Cannot delete a product that hasn't been created yet.");
       return;
     }
-
-    const confirmed = window.confirm(
-      `Are you sure you want to delete ${localProduct.name}?`
-    );
-
-    if (!confirmed) return;
-
-    onDelete(localProduct.id);
+    if (!window.confirm(`Are you sure you want to delete ${product.name}?`))
+      return;
+    onDelete(product.id);
   };
 
-  const handleSave = async () => {
-    if (!localProduct.images || localProduct.images.length === 0) {
+  const onSubmit: SubmitHandler<Product> = async (data) => {
+    if (!data.images?.length) {
       alert("At least one image is required");
       return;
     }
-
     if (isProcessingImages) {
       alert("Please wait for images to finish processing.");
       return;
     }
 
     setIsSavingProduct(true);
-
-    // Call appropriate handler
-    if (isAdding) {
-      await onCreate(localProduct);
-    } else if (localProduct.id) {
-      await onModify(localProduct as Product & { id: string });
+    try {
+      if (isAdding) await onCreate(data);
+      else if (data.id) await onModify(data as Product & { id: string });
+    } finally {
+      setIsSavingProduct(false);
     }
-
-    setIsSavingProduct(false);
-    //clearProduct();
   };
 
+  // --------------------------
+  // Render
+  // --------------------------
   return (
-    <div className="flex flex-col flex-1 overflow-hidden">
-      <div className="flex flex-1 flex-col sm:flex-row sm:gap-md sm:py-md overflow-hidden min-h-0">
-        {/* Main Editor */}
-        <div className="flex-1 flex flex-col gap-md overflow-y-auto pb-md sm:border sm:rounded-lg">
-          {/* Editors */}
-          <div className="flex flex-col gap-sm p-sm sm:p-md sm:gap-md">
-            {/* Info Editor */}
-            <AnimatedDropdownBox title="Product Info" openInitially={true}>
-              <ProductInfoEditor
-                product={localProduct}
-                setProduct={setLocalProduct}
-              />
-            </AnimatedDropdownBox>
+    <FormProvider {...methods}>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col flex-1 overflow-hidden"
+      >
+        <div className="flex flex-1 flex-col sm:flex-row sm:gap-md sm:py-md overflow-hidden min-h-0">
+          {/* Main Editor */}
+          <div className="flex-1 flex flex-col gap-md overflow-y-auto pb-md sm:border sm:rounded-lg">
+            <div className="flex flex-col gap-sm p-sm sm:p-md sm:gap-md">
+              {/* Info Editor */}
+              <AnimatedDropdownBox title="Product Info" openInitially>
+                <ProductInfoForm />
+              </AnimatedDropdownBox>
 
-            {/* Tags Editor */}
-            <AnimatedDropdownBox title="Product Tags" openInitially={true}>
-              <ProductTagsEditor
-                product={localProduct}
-                setProduct={setLocalProduct}
-                openInitially={true}
-              />
-            </AnimatedDropdownBox>
+              {/* Tags Editor */}
+              <AnimatedDropdownBox title="Product Tags" openInitially>
+                <ProductTagsForm />
+              </AnimatedDropdownBox>
 
-            {/* Dimensions Editor */}
-            <AnimatedDropdownBox title="Dimensions" openInitially={true}>
-              <ProductDimensionsEditor
-                product={localProduct}
-                setProduct={setLocalProduct}
-              />
-            </AnimatedDropdownBox>
+              {/* Dimensions Editor */}
+              <AnimatedDropdownBox title="Dimensions" openInitially>
+                <ProductDimensionsForm />
+              </AnimatedDropdownBox>
 
-            {/* Options Editor */}
-            <AnimatedDropdownBox title="Options" openInitially={true}>
-              <ProductOptionsEditor
-                product={localProduct}
-                setProduct={setLocalProduct}
-              />
-            </AnimatedDropdownBox>
+              {/* Options Editor */}
+              <AnimatedDropdownBox title="Options" openInitially>
+                <ProductOptionsForm />
+              </AnimatedDropdownBox>
 
-            {/* Stock Editor */}
-            <AnimatedDropdownBox
-              customTitle={
-                <ProductVariantHeader
-                  product={localProduct}
-                  setProduct={setLocalProduct}
-                />
+              {/* Variants */}
+              <AnimatedDropdownBox
+                customTitle={<ProductVariantHeader />}
+                autoSyncOpen={!!options?.length}
+                disabled={!options?.length}
+              >
+                <ProductVariantForm />
+              </AnimatedDropdownBox>
+            </div>
+
+            {/* Delete Button */}
+            {!isAdding && (
+              <Button
+                variant="destructive"
+                className="h-12 w-1/2 self-center"
+                type="button"
+                onClick={handleDelete}
+              >
+                Delete Product
+              </Button>
+            )}
+          </div>
+
+          {/* Image Editor */}
+          <div className="flex flex-col sm:w-1/3">
+            <MultiImageEditor<ProductImageSet>
+              className="mb-sm sm:mb-md"
+              images={images ?? []}
+              onImagesChange={(imgs) =>
+                methods.setValue("images", imgs as ProductImageSet[], {
+                  shouldDirty: true,
+                })
               }
-              autoSyncOpen={!!localProduct.options?.length} // 👈 automatic control
-              disabled={!localProduct.options?.length}
-            >
-              <ProductVariantEditor
-                product={localProduct}
-                setProduct={setLocalProduct}
-              />
-            </AnimatedDropdownBox>
-          </div>
+              processor={ProductImageProcessor.process}
+              getPreview={(item: ProductImageSet) => item.preview}
+              setIsProcessingImages={setIsProcessingImages}
+            />
 
-          {/* Delete Button */}
-          {!isAdding && (
-            <Button
-              variant="destructive"
-              className="h-12 w-1/2 self-center"
-              onClick={handleDelete}
-            >
-              Delete Product
-            </Button>
-          )}
-        </div>
+            {/* Footer Buttons */}
+            <div className="w-full flex flex-row px-2 gap-2 sm:px-0 items-center sm:flex-col sm:gap-2">
+              <Button
+                className="w-full h-12 sm:hidden"
+                type="button"
+                variant="secondary"
+                onClick={handleCancel}
+              >
+                Cancel
+              </Button>
 
-        {/* Image Editor */}
-        <div className=" flex flex-col  sm:w-1/3">
-          <MultiImageEditor<ProductImageSet>
-            className="mb-sm sm:mb-md"
-            images={localProduct.images ?? []}
-            onImagesChange={(imgs) =>
-              setLocalProduct((prev) => ({
-                ...prev,
-                images: imgs as ProductImageSet[],
-              }))
-            }
-            processor={ProductImageProcessor.process}
-            getPreview={(item: ProductImageSet) => item.preview}
-            setIsProcessingImages={setIsProcessingImages}
-          />
-
-          {/* Footer Buttons */}
-          <div className="w-full flex flex-row px-2 gap-2 sm:px-0 items-center sm:flex-col sm:gap-2">
-            <Button
-              className="w-full h-12 sm:hidden"
-              type="button"
-              variant="secondary"
-              onClick={handleCancel}
-            >
-              Cancel
-            </Button>
-            <Button
-              className={`w-full h-12  ${isProcessingImages || isSavingProduct ? "justify-between" : ""}`}
-              disabled={isProcessingImages || isSavingProduct}
-              onClick={handleSave}
-              loadingIcon={isProcessingImages || isSavingProduct}
-            >
-              {isSavingProduct
-                ? "Saving Product..."
-                : isProcessingImages
-                  ? "Processing Images..."
-                  : localProduct.id
-                    ? "Save Changes"
-                    : "Create Product"}
-            </Button>
+              <Button
+                className={`w-full h-12 ${
+                  isProcessingImages || isSavingProduct ? "justify-between" : ""
+                }`}
+                type="submit"
+                disabled={isProcessingImages || isSavingProduct}
+                loadingIcon={isProcessingImages || isSavingProduct}
+              >
+                {isSavingProduct
+                  ? "Saving Product..."
+                  : isProcessingImages
+                    ? "Processing Images..."
+                    : isAdding
+                      ? "Create Product"
+                      : "Save Changes"}
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </form>
+    </FormProvider>
   );
 };

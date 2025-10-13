@@ -2,8 +2,9 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@components/lib/utils";
 import { useState } from "react";
+import { Currency } from "lucide-react";
 
-export const inputBorder = `bg-background text-base shadow-sm
+export const inputBorder = `bg-background text-base shadow-sm h-9
 	transition-all placeholder:text-muted-foreground rounded-md border
 	focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
 	disabled:cursor-not-allowed disabled:opacity-50 appearance-none`;
@@ -19,6 +20,7 @@ const inputVariants = cva(
     variants: {
       variant: {
         default: "border-input text-foreground",
+
         error:
           "border-destructive text-destructive placeholder:text-destructive/50",
         ghost:

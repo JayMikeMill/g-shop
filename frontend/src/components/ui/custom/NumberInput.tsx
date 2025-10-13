@@ -1,96 +1,97 @@
 import * as React from "react";
-import { cn } from "@components/lib/utils";
-import { useState } from "react";
-import { Input, type InputProps } from "../primitives/Input";
-import { toMajorUnit, toMinorUnit } from "@shared/utils";
+import { Controller, type Control } from "react-hook-form";
+import {
+  NumericFormat,
+  type NumberFormatValues,
+  type NumericFormatProps,
+} from "react-number-format";
+import { inputBorder } from "../primitives/Input";
 
-const NumberInput = React.forwardRef<
-  HTMLInputElement,
-  InputProps & {
-    style?: "CURRENCY" | "PERCENT";
-    decimals?: number;
-    unitConversion?: boolean;
-  }
->(
-  (
-    { className, variant, size, style, decimals, unitConversion, ...props },
-    ref
-  ) => {
-    const [isFocused, setIsFocused] = useState<boolean>(false);
+type Variant = "currency" | "percent" | "wholeNumber";
 
-    const { value, onBlur, onFocus, onChange, ...rest } = props;
+interface NumberInputProps {
+  variant?: Variant;
+  controlProps?: { control: Control<any>; name: string; rules?: any }; // RHF integration
+  unitConversion?: boolean; // multiply/divide by 100
+  value?: number; // for standalone usage
+  onChange?: (value: number | null) => void; // for standalone usage
+  className?: string;
+}
 
-    let rawValue =
-      unitConversion === true && value ? toMajorUnit(Number(value)) : value;
-
-    decimals = style === "CURRENCY" || style === "PERCENT" ? 2 : decimals;
-
-    if (!isFocused || decimals === 0)
-      rawValue = padDecimals(rawValue?.toString() || "", decimals) ?? "";
-
-    return (
-      <div className="flex flex-1 relative">
-        {style === "CURRENCY" && (
-          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-base">
-            $
-          </span>
-        )}
-        <Input
-          ref={ref}
-          type="number"
-          value={rawValue}
-          placeholder="-"
-          onFocus={(e) => {
-            e.target.select();
-            setIsFocused(true);
-            onFocus && onFocus(e);
-          }}
-          onChange={(e) => {
-            if (unitConversion === true) {
-              const minor = toMinorUnit(parseFloat(e.target.value));
-              e.target.value = minor.toString();
-            }
-            onChange && onChange(e);
-          }}
-          onBlur={(e) => {
-            setIsFocused(false);
-            onBlur && onBlur(e);
-          }}
-          className={cn("w-full text-center", className)} // add padding-left for the $ sign
-          {...rest}
-        />
-
-        {style === "PERCENT" && (
-          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-base">
-            %
-          </span>
-        )}
-      </div>
-    );
-  }
-);
-
-const padDecimals = (value: string, decimals = 2) => {
-  // Remove everything except digits and dot, keep only first valid number
-  const cleaned = value
-    .replace(/[^0-9.]/g, "")
-    .replace(/^(\d*\.?\d*).*$/, "$1");
-
-  // If empty or just ".", return empty string
-  if (cleaned === "" || cleaned === ".") return "";
-
-  if (decimals === 0) {
-    // Only keep integer part
-    return parseInt(cleaned).toString();
-  }
-
-  // Split integer and fractional part
-  const [intPart, fracPart = ""] = cleaned.split(".");
-
-  // Pad/truncate fractional part
-  const paddedFrac = (fracPart + "0".repeat(decimals)).slice(0, decimals);
-
-  return `${intPart}.${paddedFrac}`;
+const formatProp = {
+  currency: {
+    prefix: "$",
+    decimalScale: 2,
+    fixedDecimalScale: true,
+    thousandSeparator: true,
+  },
+  percent: {
+    suffix: "%",
+    decimalScale: 2,
+    fixedDecimalScale: true,
+    thousandSeparator: false,
+  },
+  wholeNumber: {
+    decimalScale: 0,
+    fixedDecimalScale: true,
+    thousandSeparator: true,
+  },
 };
 
-export { NumberInput };
+export const NumberInput: React.FC<NumberInputProps & NumericFormatProps> = ({
+  variant = "currency",
+  controlProps,
+  unitConversion = false,
+  value,
+  onChange,
+  className,
+  ...props
+}) => {
+  const renderInput = (
+    inputValue: number | null,
+    inputOnChange: (v: number | null) => void
+  ) => {
+    if (variant === "currency" || variant === "percent") unitConversion = true;
+
+    // Apply unit conversion for display and value
+    const displayValue =
+      unitConversion && inputValue != null ? inputValue / 100 : inputValue;
+
+    return (
+      <NumericFormat
+        value={displayValue}
+        onFocus={(e) => e.target.select()}
+        onValueChange={(values: NumberFormatValues) => {
+          const newValue =
+            values.floatValue != null
+              ? unitConversion
+                ? values.floatValue * 100
+                : values.floatValue
+              : null;
+          inputOnChange(newValue);
+        }}
+        placeholder="-"
+        allowNegative={false}
+        className={inputBorder + className + " text-center"}
+        {...formatProp[variant]}
+        {...props}
+      />
+    );
+  };
+
+  // If controlProps provided, wrap in Controller
+  if (controlProps) {
+    const { control, name, rules } = controlProps;
+    return (
+      <Controller
+        control={control}
+        name={name}
+        rules={rules}
+        render={({ field }) => renderInput(field.value, field.onChange)}
+      />
+    );
+  }
+
+  // Standalone usage
+  return renderInput(value ?? null, onChange ?? (() => {}));
+};

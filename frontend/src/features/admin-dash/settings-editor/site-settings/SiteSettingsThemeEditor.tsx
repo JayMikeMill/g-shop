@@ -35,7 +35,7 @@ const SiteSettingsThemeEditor: React.FC<Props> = ({
       <Label key={key}>
         {key}
         <NumberInput
-          decimals={0}
+          variant="wholeNumber"
           value={(settings as any)[key] || ""}
           onChange={(value) =>
             setSettings((prev) => ({ ...prev, [key]: value }))
