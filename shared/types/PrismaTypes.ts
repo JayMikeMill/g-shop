@@ -221,9 +221,9 @@ export interface Category {
 
 export interface CollectionImageSet {
   id?: string;
-  banner: string;
-  preview: string;
-  thumbnail: string;
+  banner?: string | null;
+  preview?: string | null;
+  thumbnail?: string | null;
   collection?: Collection | null;
   collectionId?: string | null;
   category?: Category | null;

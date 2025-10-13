@@ -162,6 +162,10 @@ class CategoryCrud extends PrismaCrudAdapter<Category> {
   constructor(prismaClient: PrismaClient, isTx?: boolean) {
     super(prismaClient, {
       model: "category",
+      includeFields: ["images"],
+      nestedMeta: {
+        images: { owned: true },
+      },
       searchFields: ["name", "description"],
       isTx,
     });
@@ -172,6 +176,10 @@ class CollectionCrud extends PrismaCrudAdapter<Collection> {
   constructor(prismaClient: PrismaClient, isTx?: boolean) {
     super(prismaClient, {
       model: "collection",
+      includeFields: ["images"],
+      nestedMeta: {
+        images: { owned: true },
+      },
       searchFields: ["name", "description"],
       isTx,
     });

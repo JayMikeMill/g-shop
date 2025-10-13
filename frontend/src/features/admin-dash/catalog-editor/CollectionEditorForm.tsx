@@ -4,7 +4,6 @@ import { Button, Input, Textarea, CircleSpinner } from "@components/ui";
 import { ImageEditor } from "@components/ui";
 import CollectionImageProcessor from "./CollectionImagesProcessor";
 import type { SafeType, Collection, CollectionImageSet } from "@shared/types";
-import { useApi } from "@api";
 
 interface CollectionEditorFormProps {
   item?: Collection;
@@ -18,6 +17,10 @@ interface CollectionEditorFormProps {
 const newCollection: Collection = {
   name: "",
   slug: "",
+  images: { id: "", banner: "", preview: "", thumbnail: "" },
+  description: "",
+  seoTitle: "",
+  id: "",
 };
 
 const CollectionEditorForm: React.FC<CollectionEditorFormProps> = ({
@@ -30,40 +33,25 @@ const CollectionEditorForm: React.FC<CollectionEditorFormProps> = ({
 }) => {
   const [isProcessingImages, setIsProcessingImages] = React.useState(false);
   const [isSaving, setIsSaving] = React.useState(false);
-  const { uploadImage } = useApi().storage;
 
   const methods = useForm<SafeType<Collection>>({
     defaultValues: item ?? newCollection,
     mode: "onChange",
   });
 
+  const { reset, handleSubmit } = methods;
+
   useEffect(() => {
-    methods.reset(item ?? newCollection);
+    reset(item ?? newCollection);
   }, [item]);
 
-  const uploadImages = async (data: Collection) => {
-    if (!data.images) return data;
-    const newImages = { ...data.images };
-
-    if (newImages.banner?.startsWith("blob:")) {
-      const blobBanner = await fetch(newImages.banner).then((r) => r.blob());
-      newImages.banner = await uploadImage(blobBanner, `collection_banner`);
-    }
-    if (newImages.preview?.startsWith("blob:")) {
-      const blobPreview = await fetch(newImages.preview).then((r) => r.blob());
-      newImages.preview = await uploadImage(blobPreview, `collection_preview`);
-    }
-    return { ...data, images: newImages };
-  };
-
-  const handleSave = methods.handleSubmit(async (formData) => {
+  const handleSave = handleSubmit(async (formData) => {
     try {
       setIsSaving(true);
-      const dataWithImages = await uploadImages(formData);
       if (isAdding) {
-        onCreate(dataWithImages);
+        onCreate(formData);
       } else {
-        onModify({ ...dataWithImages, id: dataWithImages.id! });
+        onModify(formData);
       }
     } catch (err: any) {
       alert(err?.message || "Error saving collection");

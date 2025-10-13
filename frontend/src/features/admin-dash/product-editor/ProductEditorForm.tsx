@@ -9,7 +9,7 @@ import { AnimatedDropdownBox, Button } from "@components/ui";
 
 // Image Editor & Processor
 import { MultiImageEditor } from "@components/ui";
-import ProductImageProcessor from "./ProductImagesProcessor";
+import { processProductImages } from "@utils/dataImagesProcessing";
 
 // Forms
 import type { CrudEditorInterface } from "../CrudEditorInterface";
@@ -169,7 +169,7 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
                   shouldDirty: true,
                 })
               }
-              processor={ProductImageProcessor.process}
+              processor={processProductImages}
               getPreview={(item: ProductImageSet) => item.preview}
               setIsProcessingImages={setIsProcessingImages}
             />

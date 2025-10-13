@@ -10,6 +10,7 @@ import {
 } from "@features/admin-dash";
 
 import type { Category, Collection } from "@shared/types";
+import { uploadCollectionImages } from "@utils/dataImagesProcessing";
 
 // API hook
 import { NavLink, Outlet } from "react-router-dom";
@@ -54,6 +55,7 @@ export function AdminCollectionsPage() {
       objectName="Collection"
       apiKey="collections"
       tableLayout={collectionTable}
+      preSaveHook={uploadCollectionImages}
       Editor={CollectionDialog}
     />
   );
@@ -66,6 +68,7 @@ export function AdminCategoriesPage() {
       objectName="Category"
       apiKey="categories"
       tableLayout={collectionTable}
+      preSaveHook={uploadCollectionImages}
       Editor={CategoryDialog}
     />
   );

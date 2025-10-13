@@ -187,9 +187,9 @@ model Category {
 
 model CollectionImageSet {
   id        String @id @default(uuid())
-  banner    String
-  preview   String
-  thumbnail String
+  banner    String?
+  preview   String?
+  thumbnail String?
 
   // Relations
   collection   Collection? @relation(fields: [collectionId], references: [id], onDelete: Cascade)
