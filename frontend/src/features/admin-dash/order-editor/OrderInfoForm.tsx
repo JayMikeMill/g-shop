@@ -1,11 +1,11 @@
 import { useFormContext } from "react-hook-form";
-import { Label } from "@components/ui";
+import { AnimatedSelect, Label } from "@components/ui";
+import { OrderStatusKeys, type OrderStatus } from "@shared/types";
 
 const OrderInfoForm: React.FC = () => {
-  const { register, watch } = useFormContext();
+  const { register, watch, control } = useFormContext();
   const orderId = watch("id");
   const userId = watch("userId");
-  const status = watch("status");
   const total = watch("total");
 
   return (
@@ -18,19 +18,22 @@ const OrderInfoForm: React.FC = () => {
         User ID:
         <Label className="text-lg">{userId ?? "No user ID"}</Label>
       </Label>
+
       <Label>
-        Status:
-        <select
-          {...register("status")}
-          className="border rounded px-2 py-1 mt-1 w-full"
-        >
-          {["PENDING", "PAID", "SHIPPED", "DELIVERED", "CANCELLED"].map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-        </select>
+        Status
+        <AnimatedSelect
+          items={Object.values(OrderStatusKeys).map((key) => ({
+            value: key as OrderStatus,
+            label: key as string,
+            render: () => <span>{key}</span>,
+          }))}
+          controlProps={{
+            control,
+            name: "status",
+          }}
+        />
       </Label>
+
       <div>
         <Label className="text-md">
           Order Total:

@@ -1,33 +1,55 @@
 import { useFormContext } from "react-hook-form";
 import AddressForm from "@components/ui/custom/AddressForm";
-import { Input } from "@components/ui";
-import type { Order } from "@shared/types";
+import { AnimatedSelect, Input, Label } from "@components/ui";
+
+import {
+  ShippingCarrierKeys,
+  ShippingMethodKeys,
+  type Order,
+  type ShippingCarrier,
+  type ShippingMethod,
+} from "@shared/types";
 
 const OrderShippingForm: React.FC = () => {
   const formContext = useFormContext<Order>();
-  const { register } = formContext;
+  const { register, control } = formContext;
 
   return (
     <div className="flex flex-col gap-2">
-      <AddressForm
-        formContext={formContext}
-        rootName="shippingInfo.address"
-        className="border rounded p-2"
-      />
-      <select
-        {...register("shippingInfo.carrier")}
-        className="border rounded px-2 py-1 w-full"
-      >
-        <option value="">Select Carrier</option>
-        {/* Add carrier options here */}
-      </select>
-      <select
-        {...register("shippingInfo.method")}
-        className="border rounded px-2 py-1 w-full"
-      >
-        <option value="">Select Method</option>
-        {/* Add method options here */}
-      </select>
+      <AddressForm formContext={formContext} rootName="shippingInfo.address" />
+
+      {/* Shipping carrier options */}
+      <Label>
+        Carrier
+        <AnimatedSelect
+          items={Object.values(ShippingCarrierKeys).map((key) => ({
+            value: key as ShippingCarrier,
+            label: key as string,
+            render: () => <span>{key}</span>,
+          }))}
+          controlProps={{
+            control,
+            name: "shippingInfo.carrier",
+          }}
+        />
+      </Label>
+
+      {/* Shipping method options */}
+      <Label>
+        Method
+        <AnimatedSelect
+          items={Object.values(ShippingMethodKeys).map((key) => ({
+            value: key as ShippingMethod,
+            label: key as string,
+            render: () => <span>{key}</span>,
+          }))}
+          controlProps={{
+            control,
+            name: "shippingInfo.method",
+          }}
+        />
+      </Label>
+
       <Input
         type="text"
         placeholder="Tracking #"
@@ -36,7 +58,7 @@ const OrderShippingForm: React.FC = () => {
       />
       <Input
         type="number"
-        placeholder="Cost (cents)"
+        placeholder="Cost"
         {...register("shippingInfo.cost", { valueAsNumber: true })}
         className="border rounded px-2 py-1 w-full"
       />

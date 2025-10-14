@@ -11,15 +11,13 @@ import { emptyAddress, type Address, type SafeType } from "@shared/types";
 interface AddressFormProps {
   address?: Address;
   className?: string;
-  onSubmit?: (data: SafeType<Address>) => void;
-  formContext?: UseFormReturn<any>; // optional parent form
+  formContext: UseFormReturn<any>; // optional parent form
   rootName?: string; // optional root path for nested forms
 }
 
 export default function AddressForm({
   address,
   className,
-  onSubmit,
   formContext,
   rootName,
 }: AddressFormProps) {
@@ -30,7 +28,7 @@ export default function AddressForm({
       defaultValues: address ?? (emptyAddress as SafeType<Address>),
     });
 
-  const { register, handleSubmit, control, watch, setValue } = form;
+  const { control, watch } = form;
 
   // Strongly typed nested field path
   const getFieldName = <K extends keyof Address>(
@@ -65,13 +63,8 @@ export default function AddressForm({
     SafeType<Address>
   >["register"];
 
-  const Container: React.ElementType = formContext ? "div" : "form";
-
   return (
-    <Container
-      className={`flex flex-col gap-4 ${className ?? ""} pad-sm`}
-      onSubmit={onSubmit && !formContext ? handleSubmit(onSubmit) : undefined}
-    >
+    <div className={`flex flex-col gap-4 ${className ?? ""} pad-sm`}>
       {/* First / Last Name */}
       <div className="flex flex-col gap-4 sm:flex-row">
         <div className="flex-1">
@@ -118,12 +111,11 @@ export default function AddressForm({
           <Label>State</Label>
           <Input {...safeRegister(getFieldName("state"))} />
         </div>
-        <div className="flex-1">
-          <Label>Postal Code</Label>
-          <Input {...safeRegister(getFieldName("postalCode"))} />
-        </div>
       </div>
-
+      <div className="flex-1">
+        <Label>Postal Code</Label>
+        <Input {...safeRegister(getFieldName("postalCode"))} />
+      </div>
       {/* Country */}
       <div className="flex-1">
         <Label>Country</Label>
@@ -133,6 +125,6 @@ export default function AddressForm({
           render={({ field }) => <CountrySelect {...field} />}
         />
       </div>
-    </Container>
+    </div>
   );
 }
