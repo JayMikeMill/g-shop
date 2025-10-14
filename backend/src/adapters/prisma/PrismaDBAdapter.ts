@@ -1,21 +1,20 @@
 // src/crud/ProductCrud.ts
 import { PrismaClient } from "@prisma/client";
 
-import type {
-  Product,
-  ProductOptionsPreset,
-  ProductReview,
-  ProductTagPreset,
-  Category,
-  Collection,
-  Order,
-  User,
-  ProductVariant,
-  SystemSettings,
-} from "@shared/types";
+import {
+  UserCrud,
+  ProductCrud,
+  ProductVariantCrud,
+  ProductTagPresetCrud,
+  ProductOptionPresetCrud,
+  ProductReviewCrud,
+  CategoryCrud,
+  CollectionCrud,
+  OrderCrud,
+  SystemSettingsCrud,
+} from "./PrismaCrudApapters";
 
 import { DBAdapter } from "@adapters/types";
-import { PrismaCrudAdapter } from "./PrismaCrudAdapter";
 
 export class PrismaDBAdapter implements DBAdapter {
   private prisma: PrismaClient;
@@ -34,23 +33,21 @@ export class PrismaDBAdapter implements DBAdapter {
 
   public systemSettings: SystemSettingsCrud;
 
-  constructor(prismaClient: PrismaClient = new PrismaClient(), isTx?: boolean) {
-    this.prisma = prismaClient;
+  constructor(prismaC: PrismaClient = new PrismaClient(), isTx?: boolean) {
+    this.prisma = prismaC;
     this.isTx = isTx ?? false;
 
-    this.products = new ProductCrud(prismaClient, isTx);
-    this.productVariants = new ProductVariantCrud(prismaClient, isTx);
-    this.productTagsPresets = new ProductTagPresetCrud(prismaClient, isTx);
-    this.productOptionsPresets = new ProductOptionPresetCrud(
-      prismaClient,
-      isTx
-    );
-    this.productReviews = new ProductReviewCrud(prismaClient, isTx);
-    this.categories = new CategoryCrud(prismaClient, isTx);
-    this.collections = new CollectionCrud(prismaClient, isTx);
-    this.orders = new OrderCrud(prismaClient, isTx);
-    this.users = new UserCrud(prismaClient, isTx);
-    this.systemSettings = new SystemSettingsCrud(prismaClient, isTx);
+    // Initialize CRUD adapters
+    this.products = new ProductCrud(prismaC, isTx);
+    this.productVariants = new ProductVariantCrud(prismaC, isTx);
+    this.productTagsPresets = new ProductTagPresetCrud(prismaC, isTx);
+    this.productOptionsPresets = new ProductOptionPresetCrud(prismaC, isTx);
+    this.productReviews = new ProductReviewCrud(prismaC, isTx);
+    this.categories = new CategoryCrud(prismaC, isTx);
+    this.collections = new CollectionCrud(prismaC, isTx);
+    this.orders = new OrderCrud(prismaC, isTx);
+    this.users = new UserCrud(prismaC, isTx);
+    this.systemSettings = new SystemSettingsCrud(prismaC, isTx);
   }
 
   /**
@@ -66,169 +63,6 @@ export class PrismaDBAdapter implements DBAdapter {
         true
       );
       return await callback(txAdapter);
-    });
-  }
-}
-
-// ----------------- Crud Adapters -----------------
-
-class UserCrud extends PrismaCrudAdapter<User> {
-  constructor(prismaClient: PrismaClient, isTx?: boolean) {
-    super(prismaClient, {
-      model: "user",
-      searchFields: ["email"],
-      nestedMeta: { settings: { json: true } },
-      isTx,
-    });
-  }
-}
-
-class ProductCrud extends PrismaCrudAdapter<Product> {
-  constructor(prismaClient: PrismaClient, isTx?: boolean) {
-    super(prismaClient, {
-      model: "product",
-
-      // CHANGED: dot-notation array
-      includeFields: [
-        "images",
-        "tags",
-        "options",
-        "variants",
-        "dimensions",
-        "categories",
-        "collections",
-        "reviews",
-      ],
-
-      nestedMeta: {
-        images: { owned: true },
-        tags: { owned: true },
-        options: { owned: true },
-        variants: { owned: true },
-        dimensions: { owned: true },
-        categories: { manyToMany: true },
-        collections: { manyToMany: true },
-        reviews: { owned: true },
-      },
-
-      searchFields: ["id", "name", "description"],
-      isTx,
-    });
-  }
-}
-
-class ProductVariantCrud extends PrismaCrudAdapter<ProductVariant> {
-  constructor(prismaClient: PrismaClient, isTx?: boolean) {
-    super(prismaClient, {
-      model: "productVariant",
-      searchFields: ["id"],
-      nestedMeta: { options: { json: true } },
-      isTx,
-    });
-  }
-}
-
-class ProductTagPresetCrud extends PrismaCrudAdapter<ProductTagPreset> {
-  constructor(prismaClient: PrismaClient, isTx?: boolean) {
-    super(prismaClient, {
-      model: "productTagPreset",
-      searchFields: ["name"],
-      isTx,
-    });
-  }
-}
-
-class ProductOptionPresetCrud extends PrismaCrudAdapter<ProductOptionsPreset> {
-  constructor(prismaClient: PrismaClient, isTx?: boolean) {
-    super(prismaClient, {
-      model: "productOptionsPreset",
-      searchFields: ["name"],
-      nestedMeta: { options: { json: true } },
-      isTx,
-    });
-  }
-}
-
-class ProductReviewCrud extends PrismaCrudAdapter<ProductReview> {
-  constructor(prismaClient: PrismaClient, isTx?: boolean) {
-    super(prismaClient, {
-      model: "productReview",
-      isTx,
-    });
-  }
-}
-
-class CategoryCrud extends PrismaCrudAdapter<Category> {
-  constructor(prismaClient: PrismaClient, isTx?: boolean) {
-    super(prismaClient, {
-      model: "category",
-      includeFields: ["images"],
-      nestedMeta: {
-        images: { owned: true },
-      },
-      searchFields: ["name", "description"],
-      isTx,
-    });
-  }
-}
-
-class CollectionCrud extends PrismaCrudAdapter<Collection> {
-  constructor(prismaClient: PrismaClient, isTx?: boolean) {
-    super(prismaClient, {
-      model: "collection",
-      includeFields: ["images"],
-      nestedMeta: {
-        images: { owned: true },
-      },
-      searchFields: ["name", "description"],
-      isTx,
-    });
-  }
-}
-
-class OrderCrud extends PrismaCrudAdapter<Order> {
-  constructor(prismaClient: PrismaClient, isTx?: boolean) {
-    super(prismaClient, {
-      model: "order",
-
-      // CHANGED: dot-notation array
-      includeFields: [
-        "transaction",
-        "transaction.billingAddress",
-        "shippingInfo",
-        "shippingInfo.address",
-        "items",
-        "statusHistory",
-        "invoices",
-      ],
-
-      // CHANGED: dot-notation keys
-      nestedMeta: {
-        shippingInfo: { owned: true },
-        "shippingInfo.address": { owned: true },
-        items: { owned: true },
-        "items.product": { json: true },
-        "items.variant": { json: true },
-        transaction: { owned: true },
-        "transaction.billingAddress": { owned: true },
-        "transaction.gatewayResponse": { json: true },
-        statusHistory: { owned: true },
-        invoices: { owned: true },
-      },
-
-      searchFields: ["id", "userId"],
-      isTx,
-    });
-  }
-}
-
-class SystemSettingsCrud extends PrismaCrudAdapter<SystemSettings> {
-  constructor(prismaClient: PrismaClient, isTx?: boolean) {
-    super(prismaClient, {
-      model: "systemSettings",
-      nestedMeta: { settings: { json: true } },
-      searchFields: ["scope"],
-      isTx,
     });
   }
 }

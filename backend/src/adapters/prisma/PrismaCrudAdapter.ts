@@ -37,7 +37,7 @@ function removeEmptyArrays(obj: any): any {
 }
 
 // ----------------- PrismaCRUDAdapter -----------------
-export interface PrismaCRUDAdapterOptions<T> {
+export interface PrismaCRUDAdapterProps<T> {
   // The Prisma model name, e.g. 'user' (must match a model in your PrismaClient)
   model: keyof PrismaClient;
   // Accept dot-notation include paths or a map of path -> { select/include }
@@ -58,7 +58,7 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
   private nestedMeta?: NestedMetadata<T> | DotNestedMetadata; // CHANGED
   private isTx: boolean;
 
-  constructor(prisma: PrismaClient, opts: PrismaCRUDAdapterOptions<T>) {
+  constructor(prisma: PrismaClient, opts: PrismaCRUDAdapterProps<T>) {
     this.prisma = prisma;
     this.model = opts.model;
     this.includeFieldsCfg = opts.includeFields;
