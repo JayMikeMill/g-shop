@@ -1,7 +1,3 @@
-//==================================================
-// Imports
-//==================================================
-
 import { PrismaClient } from "@prisma/client";
 import { DBAdapter } from "@adapters/types";
 

@@ -14,7 +14,7 @@ import type { UserSettings } from "../settings";
 
 export type UserRole = "USER" | "STAFF" | "ADMIN";
 
-export const UserRole = {
+export const UserRoleKeys = {
   USER: "USER",
   STAFF: "STAFF",
   ADMIN: "ADMIN",
@@ -28,7 +28,7 @@ export type OrderStatus =
   | "CANCELLED"
   | "REFUNDED";
 
-export const OrderStatus = {
+export const OrderStatusKeys = {
   PENDING: "PENDING",
   PAID: "PAID",
   SHIPPED: "SHIPPED",
@@ -44,7 +44,7 @@ export type ShippingStatus =
   | "DELIVERED"
   | "EXCEPTION";
 
-export const ShippingStatus = {
+export const ShippingStatusKeys = {
   LABEL_CREATED: "LABEL_CREATED",
   IN_TRANSIT: "IN_TRANSIT",
   OUT_FOR_DELIVERY: "OUT_FOR_DELIVERY",
@@ -54,7 +54,7 @@ export const ShippingStatus = {
 
 export type TransactionStatus = "PENDING" | "PAID" | "REFUNDED" | "FAILED";
 
-export const TransactionStatus = {
+export const TransactionStatusKeys = {
   PENDING: "PENDING",
   PAID: "PAID",
   REFUNDED: "REFUNDED",
@@ -78,7 +78,7 @@ export type PaymentMethod =
   | "OTHER_CRYPTO"
   | "OTHER";
 
-export const PaymentMethod = {
+export const PaymentMethodKeys = {
   CARD: "CARD",
   STRIPE: "STRIPE",
   PAYPAL: "PAYPAL",
@@ -98,7 +98,7 @@ export const PaymentMethod = {
 
 export type ShippingCarrier = "UPS" | "FEDEX" | "USPS" | "DHL" | "AMAZON";
 
-export const ShippingCarrier = {
+export const ShippingCarrierKeys = {
   UPS: "UPS",
   FEDEX: "FEDEX",
   USPS: "USPS",
@@ -108,7 +108,7 @@ export const ShippingCarrier = {
 
 export type ShippingMethod = "STANDARD" | "EXPRESS" | "OVERNIGHT";
 
-export const ShippingMethod = {
+export const ShippingMethodKeys = {
   STANDARD: "STANDARD",
   EXPRESS: "EXPRESS",
   OVERNIGHT: "OVERNIGHT",
@@ -116,7 +116,7 @@ export const ShippingMethod = {
 
 export type ProductStatus = "ACTIVE" | "INACTIVE" | "DISCONTINUED";
 
-export const ProductStatus = {
+export const ProductStatusKeys = {
   ACTIVE: "ACTIVE",
   INACTIVE: "INACTIVE",
   DISCONTINUED: "DISCONTINUED",
@@ -124,7 +124,7 @@ export const ProductStatus = {
 
 export type ReviewStatus = "PENDING" | "APPROVED" | "REJECTED";
 
-export const ReviewStatus = {
+export const ReviewStatusKeys = {
   PENDING: "PENDING",
   APPROVED: "APPROVED",
   REJECTED: "REJECTED",
@@ -132,14 +132,14 @@ export const ReviewStatus = {
 
 export type DiscountType = "PERCENTAGE" | "FIXED_AMOUNT";
 
-export const DiscountType = {
+export const DiscountTypeKeys = {
   PERCENTAGE: "PERCENTAGE",
   FIXED_AMOUNT: "FIXED_AMOUNT",
 } satisfies Record<string, DiscountType>;
 
 export type StockMovementType = "SALE" | "RESTOCK" | "ADJUSTMENT";
 
-export const StockMovementType = {
+export const StockMovementTypeKeys = {
   SALE: "SALE",
   RESTOCK: "RESTOCK",
   ADJUSTMENT: "ADJUSTMENT",
@@ -147,7 +147,7 @@ export const StockMovementType = {
 
 export type SystemSettingsScope = "SITE" | "ADMIN" | "ENGINE";
 
-export const SystemSettingsScope = {
+export const SystemSettingsScopeKeys = {
   SITE: "SITE",
   ADMIN: "ADMIN",
   ENGINE: "ENGINE",

@@ -1,7 +1,7 @@
 import { lazy, type JSX } from "react";
 import { Navigate, Route } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
-import { UserRole } from "@shared/types/PrismaTypes";
+import { UserRoleKeys } from "@shared/types/PrismaTypes";
 
 // Default exports → just lazy import
 const AdminLoginPage = lazy(() => import("@pages/admin/AdminLoginPage"));
@@ -52,7 +52,7 @@ export const adminRoutes: JSX.Element[] = [
     key="dashboard"
     path="/admin"
     element={
-      <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
+      <ProtectedRoute allowedRoles={[UserRoleKeys.ADMIN]}>
         <AdminDashboardPage />
       </ProtectedRoute>
     }

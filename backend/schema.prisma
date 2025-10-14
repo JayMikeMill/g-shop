@@ -12,6 +12,7 @@ generator typescriptInterfaces {
   headerComment     = "[PrismaTypesHeader]"
   optionalNullables = true
   enumType          = object
+  enumObjectSuffix  = "Keys"
   prettier          = true
 }
 

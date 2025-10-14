@@ -1,5 +1,23 @@
-import { DeepDotKeyof, QueryCondition, QueryObject } from "@shared/types";
+/**
+ * ====================================================
+ * GENERIC PRISMA QUERY BUILDER
+ * ====================================================
+ *
+ * Converts a custom QueryObject<T> into a Prisma-compatible
+ * findMany/findFirst/findUnique query object.
+ *
+ * Supports:
+ * - Nested dot-notation fields
+ * - Full-text search on multiple fields
+ * - Conditions with operators (=, !=, <, <=, >, >=, like, in)
+ * - Select/include nested fields
+ * - Sorting, pagination (limit & page)
+ */
 
+import { DeepDotKeyof, QueryCondition, QueryObject } from "@shared/types";
+import { ModelMetadata } from "./ModelMetadata";
+
+/** Prisma find parameters */
 type PrismaFindParams = {
   where?: any;
   select?: any;
@@ -9,7 +27,10 @@ type PrismaFindParams = {
   skip?: number;
 };
 
-// Merge helper
+/** -------------------- DEEP MERGE --------------------
+ * Recursively merges `source` object into `target`.
+ * Arrays are overwritten; only plain objects are merged.
+ */
 export function deepMerge(target: any, source: any) {
   if (!source || typeof source !== "object") return target;
 
@@ -39,202 +60,30 @@ export function deepMerge(target: any, source: any) {
   return target;
 }
 
-// Convert dot-notation array to nested object (raw, not wrapped)
-export function dotToNestedObject(paths: string[]) {
-  const root: any = {};
-  for (const f of paths) {
-    const parts = f.split(".");
-    let current = root;
-    for (let i = 0; i < parts.length; i++) {
-      const p = parts[i];
-      const isLeaf = i === parts.length - 1;
-
-      if (!isLeaf) {
-        // Ensure container is an object; upgrade boolean 'true' to {}
-        if (current[p] === true) current[p] = {};
-        if (
-          !current[p] ||
-          typeof current[p] !== "object" ||
-          Array.isArray(current[p])
-        ) {
-          current[p] = {};
-        }
-        current = current[p];
-      } else {
-        // Leaf: if already an object (because a deeper path was added earlier), keep it
-        if (current[p] && typeof current[p] === "object") {
-          // keep existing nested object; no-op
-        } else {
-          current[p] = true;
-        }
-      }
-    }
-  }
-  return root;
-}
-
-// Wrap nested object into Prisma include shape
-function wrapAsPrismaInclude(obj: any): any {
-  const out: any = {};
-  for (const key of Object.keys(obj)) {
-    const val = obj[key];
-    if (val === true) {
-      out[key] = true;
-      continue;
-    }
-    // Already a config object with include/select
-    if (val && (val.include || val.select)) {
-      const cfg: any = {};
-      if (val.select) cfg.select = val.select;
-      if (val.include)
-        cfg.include = wrapAsPrismaInclude(
-          typeof val.include === "object" && !Array.isArray(val.include)
-            ? val.include
-            : {}
-        );
-      out[key] = Object.keys(cfg).length ? cfg : true;
-      continue;
-    }
-    // Plain nested object → treat as nested include
-    out[key] = { include: wrapAsPrismaInclude(val) };
-  }
-  return out;
-}
-
-// Build include with optional metadata map:
-// - If includeMap is array of paths: turns into nested includes
-// - If includeMap is { "a.b": true | { select: {...} | include: {...} } }
-export function normalizeIncludeConfig(
-  includeMap?: string[] | Record<string, any>
-): any {
-  if (!includeMap) return undefined;
-
-  if (Array.isArray(includeMap)) {
-    return wrapAsPrismaInclude(dotToNestedObject(includeMap.map(String)));
-  }
-
-  // object map of path -> meta
-  const raw: any = {};
-  for (const key of Object.keys(includeMap)) {
-    const parts = key.split(".");
-    let current = raw;
-    for (let i = 0; i < parts.length; i++) {
-      const p = parts[i];
-      const isLeaf = i === parts.length - 1;
-
-      if (!isLeaf) {
-        // Ensure container is an object; upgrade boolean 'true' to {}
-        if (current[p] === true) current[p] = {};
-        if (
-          !current[p] ||
-          typeof current[p] !== "object" ||
-          Array.isArray(current[p])
-        ) {
-          current[p] = {};
-        }
-        current = current[p];
-      } else {
-        const meta = includeMap[key];
-
-        // Merge behavior:
-        // - if existing is object and meta === true -> keep object
-        // - if existing is true and meta is object -> replace with object meta
-        // - if both objects -> shallow-merge select/include keys
-        // - else -> set true
-        const existing = current[p];
-
-        if (meta && typeof meta === "object") {
-          const next: any = {
-            ...(existing && typeof existing === "object" ? existing : {}),
-            ...(meta.select ? { select: meta.select } : {}),
-            ...(meta.include ? { include: meta.include } : {}),
-          };
-          current[p] = next;
-        } else if (existing && typeof existing === "object") {
-          // already has nested; keep it
-        } else {
-          current[p] = true;
-        }
-      }
-    }
-  }
-
-  return wrapAsPrismaInclude(raw);
-}
-
-// Build nested include+select for dot fields (treat leaf as scalar select)
-function includeForSelectPath(path: string) {
-  const parts = path.split(".");
-  if (parts.length < 2) return undefined;
-
-  // Build include chain so that last relation has select of leaf field
-  const leaf = parts.pop()!;
-  let obj: any = { select: { [leaf]: true } };
-  for (let i = parts.length - 1; i >= 0; i--) {
-    obj = { include: { [parts[i]]: obj } };
-  }
-  // unwrap first level
-  return obj.include;
-}
-
+/** -------------------- BUILD PRISMA QUERY --------------------
+ * Converts a QueryObject<T> into Prisma findMany params
+ */
 export function buildPrismaQuery<T>(
   queryObj: QueryObject<T>,
-  includeConfig: string[] | Record<string, any> | undefined,
-  defaultSearchFields: (keyof T)[]
+  modelMeta: ModelMetadata<T>
 ): PrismaFindParams {
-  const where = buildPrismaWhere(queryObj);
-
-  if (queryObj.search) {
-    const searchFields =
-      queryObj.searchFields && queryObj.searchFields.length > 0
-        ? queryObj.searchFields
-        : defaultSearchFields;
-
-    if (!searchFields || searchFields.length === 0) {
-      throw new Error("searchFields must be defined for search queries.");
-    }
-
-    where.OR = searchFields.map((field) => {
-      const parts = String(field).split(".");
-      let nested: any = { contains: queryObj.search };
-      for (let i = parts.length - 1; i >= 0; i--) {
-        nested = { [parts[i]]: nested };
-      }
-      return nested;
-    });
-  }
+  // Build WHERE clause from conditions + search
+  const where = buildPrismaWhere(queryObj, modelMeta.baseSearch || []);
 
   let select: any = undefined;
   let include: any = undefined;
 
-  const buildNestedSelect = (fields: string[]): any => {
-    const result: any = {};
-    for (const field of fields) {
-      const parts = field.split(".");
-      let current = result;
-      for (let i = 0; i < parts.length; i++) {
-        const isLeaf = i === parts.length - 1;
-        const key = parts[i];
-        if (isLeaf) {
-          current[key] = true;
-        } else {
-          if (!current[key] || current[key] === true) current[key] = {};
-          current = current[key];
-        }
-      }
-    }
-    return result;
-  };
-
+  // Build select/include
   if (queryObj.select?.length) {
     select = buildNestedSelect(queryObj.select.map(String));
-  } else if (includeConfig) {
-    const defaultFields = Array.isArray(includeConfig)
-      ? includeConfig.map(String)
-      : Object.keys(includeConfig);
+  } else if (modelMeta.baseInclude) {
+    const defaultFields = Array.isArray(modelMeta.baseInclude)
+      ? modelMeta.baseInclude.map(String)
+      : Object.keys(modelMeta.baseInclude);
     include = buildNestedSelect(defaultFields);
   }
 
+  // Sorting and pagination
   const orderBy = queryObj.sortBy
     ? { [queryObj.sortBy]: queryObj.sortOrder === "desc" ? "desc" : "asc" }
     : undefined;
@@ -257,8 +106,13 @@ export function buildPrismaQuery<T>(
   return result;
 }
 
-// -------------------- Prisma Where Builder --------------------
-export function buildPrismaWhere<T>(query: QueryObject<T>): any {
+/** -------------------- BUILD WHERE CLAUSE --------------------
+ * Converts QueryObject conditions and search fields into Prisma where
+ */
+export function buildPrismaWhere<T>(
+  query: QueryObject<T>,
+  defaultSearchFields: (keyof T)[]
+): any {
   const where: any = {};
 
   // Conditions
@@ -271,22 +125,33 @@ export function buildPrismaWhere<T>(query: QueryObject<T>): any {
     }
   }
 
-  // Search
+  // Full-text search
   if (query.search) {
-    const fieldsToSearch: DeepDotKeyof<T>[] =
+    const searchFields =
       query.searchFields && query.searchFields.length > 0
         ? query.searchFields
-        : (Object.keys(query as any) as DeepDotKeyof<T>[]); // fallback shallow
+        : defaultSearchFields;
 
-    where.OR = fieldsToSearch.map((field) =>
-      buildNestedWhere(field, { contains: query.search })
-    );
+    if (!searchFields || searchFields.length === 0) {
+      throw new Error("searchFields must be defined for search queries.");
+    }
+
+    where.OR = searchFields.map((field) => {
+      const parts = String(field).split(".");
+      let nested: any = { contains: query.search };
+      for (let i = parts.length - 1; i >= 0; i--) {
+        nested = { [parts[i]]: nested };
+      }
+      return nested;
+    });
   }
 
   return where;
 }
 
-// Convert dot-notation key into nested object
+/** -------------------- NESTED WHERE BUILDER --------------------
+ * Converts dot-notation string field into nested Prisma where object
+ */
 export function buildNestedWhere(field: DeepDotKeyof<any>, value: any): any {
   if (field === undefined || field === null || field === "") return value;
 
@@ -301,7 +166,9 @@ export function buildNestedWhere(field: DeepDotKeyof<any>, value: any): any {
   return nested;
 }
 
-// -------------------- Operator Mapper --------------------
+/** -------------------- OPERATOR MAPPING --------------------
+ * Maps custom operators to Prisma query operators
+ */
 function mapOperator(op: QueryCondition["operator"]): string {
   switch (op) {
     case "=":
@@ -323,4 +190,30 @@ function mapOperator(op: QueryCondition["operator"]): string {
     default:
       return "equals";
   }
+}
+
+/** -------------------- NESTED SELECT BUILDER --------------------
+ * Converts an array of dot-notation fields into nested Prisma select/include
+ */
+function buildNestedSelect(fields: string[]): any {
+  const result: any = {};
+
+  for (const field of fields) {
+    const parts = field.split(".");
+    let current = result;
+
+    for (let i = 0; i < parts.length; i++) {
+      const isLeaf = i === parts.length - 1;
+      const key = parts[i];
+
+      if (isLeaf) {
+        current[key] = true;
+      } else {
+        if (!current[key] || current[key] === true) current[key] = {};
+        current = current[key];
+      }
+    }
+  }
+
+  return result;
 }

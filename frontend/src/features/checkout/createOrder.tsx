@@ -1,9 +1,9 @@
 import { useApi } from "@api";
 import {
   type ShippingInfo,
-  TransactionStatus as TransactionStatuses,
-  PaymentMethod as PaymentMethods,
-  OrderStatus as OrderStatuses,
+  TransactionStatusKeys,
+  PaymentMethodKeys,
+  OrderStatusKeys,
   type Order,
   type Cart,
 } from "@shared/types";
@@ -24,7 +24,7 @@ export async function createOrder(
   // Create order object
   return {
     total: cart.total + (shippingInfo.cost ?? 0),
-    status: OrderStatuses.PENDING,
+    status: OrderStatusKeys.PENDING,
     items: cart.items
       ?.filter((item) => item.product !== undefined)
       .map((item) => ({
@@ -35,17 +35,17 @@ export async function createOrder(
       })),
     statusHistory: [
       {
-        status: OrderStatuses.PENDING,
+        status: OrderStatusKeys.PENDING,
         timestamp: new Date(),
       },
     ],
     shippingInfo,
     transaction: {
       billingAddress: shippingInfo.address,
-      method: PaymentMethods.STRIPE,
+      method: PaymentMethodKeys.STRIPE,
       amount: cart.total,
       currency: "USD",
-      status: TransactionStatuses.PENDING,
+      status: TransactionStatusKeys.PENDING,
     },
     invoices: [{ createdAt: new Date(), invoiceNumber: `INV-${Date.now()}` }],
   };

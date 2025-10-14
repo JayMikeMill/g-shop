@@ -13,10 +13,13 @@ import type {
   Order,
   SystemSettings,
 } from "@shared/types";
+import { FieldConfigDefaults } from "./ModelMetadata";
 
 //==================================================
 // CRUD Configuration
 //==================================================
+
+const { owned, manyToMany, json, include, search } = FieldConfigDefaults;
 
 const CrudProps: CrudPropsType = {
   // ========================================
@@ -24,8 +27,10 @@ const CrudProps: CrudPropsType = {
   // ========================================
   users: {
     model: "user",
-    nestedMeta: { settings: { json: true } },
-    searchFields: ["email"],
+    fieldMeta: {
+      email: { search },
+      settings: { json },
+    },
   },
 
   // ========================================
@@ -33,58 +38,58 @@ const CrudProps: CrudPropsType = {
   // ========================================
   categories: {
     model: "category",
-    includeFields: ["images"],
-    nestedMeta: { images: { owned: true } },
-    searchFields: ["name", "description"],
+    fieldMeta: {
+      name: { search },
+      description: { search },
+      images: { owned, include },
+    },
   },
 
   collections: {
     model: "collection",
-    includeFields: ["images"],
-    nestedMeta: { images: { owned: true } },
-    searchFields: ["name", "description"],
+    fieldMeta: {
+      name: { search },
+      description: { search },
+      images: { owned, include },
+    },
   },
 
   products: {
     model: "product",
-    includeFields: [
-      "images",
-      "tags",
-      "options",
-      "variants",
-      "dimensions",
-      "categories",
-      "collections",
-      "reviews",
-    ],
-    nestedMeta: {
-      images: { owned: true },
-      tags: { owned: true },
-      options: { owned: true },
-      variants: { owned: true },
-      dimensions: { owned: true },
-      categories: { manyToMany: true },
-      collections: { manyToMany: true },
-      reviews: { owned: true },
+    fieldMeta: {
+      id: { search },
+      name: { search },
+      description: { search },
+      images: { owned, include },
+      tags: { owned, include },
+      options: { owned, include },
+      variants: { owned, include },
+      dimensions: { owned, include },
+      categories: { manyToMany, include },
+      collections: { manyToMany, include },
+      reviews: { owned, include },
     },
-    searchFields: ["id", "name", "description"],
   },
 
   productVariants: {
     model: "productVariant",
-    nestedMeta: { options: { json: true } },
-    searchFields: ["id"],
+    fieldMeta: {
+      id: { search },
+      options: { json },
+    },
   },
 
   productOptionsPresets: {
     model: "productOptionsPreset",
-    nestedMeta: { options: { json: true } },
-    searchFields: ["name"],
+    fieldMeta: {
+      name: { search },
+      options: { json },
+    },
   },
 
   productTagsPresets: {
     model: "productTagPreset",
-    searchFields: ["name"],
+    fieldMeta: { name: { search } },
   },
 
   productReviews: {
@@ -96,28 +101,21 @@ const CrudProps: CrudPropsType = {
   // ========================================
   orders: {
     model: "order",
-    includeFields: [
-      "transaction",
-      "transaction.billingAddress",
-      "shippingInfo",
-      "shippingInfo.address",
-      "items",
-      "statusHistory",
-      "invoices",
-    ],
-    nestedMeta: {
-      shippingInfo: { owned: true },
-      "shippingInfo.address": { owned: true },
-      items: { owned: true },
-      "items.product": { json: true },
-      "items.variant": { json: true },
-      transaction: { owned: true },
-      "transaction.billingAddress": { owned: true },
-      "transaction.gatewayResponse": { json: true },
-      statusHistory: { owned: true },
-      invoices: { owned: true },
+
+    fieldMeta: {
+      id: { search },
+      userId: { search },
+      shippingInfo: { owned, include },
+      "shippingInfo.address": { owned, include },
+      items: { owned, include },
+      "items.product": { json },
+      "items.variant": { json },
+      transaction: { owned, include },
+      "transaction.billingAddress": { owned, include },
+      "transaction.gatewayResponse": { json },
+      statusHistory: { owned, include },
+      invoices: { owned, include },
     },
-    searchFields: ["id", "userId"],
   },
 
   // ========================================
@@ -125,8 +123,10 @@ const CrudProps: CrudPropsType = {
   // ========================================
   systemSettings: {
     model: "systemSettings",
-    nestedMeta: { settings: { json: true } },
-    searchFields: ["scope"],
+    fieldMeta: {
+      scope: { search },
+      settings: { json },
+    },
   },
 };
 
