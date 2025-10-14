@@ -1,53 +1,80 @@
-// src/crud/ProductCrud.ts
+//==================================================
+// Imports
+//==================================================
+
 import { PrismaClient } from "@prisma/client";
+import { DBAdapter } from "@adapters/types";
 
 import {
+  // Core user/auth
   UserCrud,
-  ProductCrud,
-  ProductVariantCrud,
-  ProductTagPresetCrud,
-  ProductOptionPresetCrud,
-  ProductReviewCrud,
+
+  // Catalog & Products
   CategoryCrud,
   CollectionCrud,
+  ProductCrud,
+  ProductVariantCrud,
+  ProductOptionPresetCrud,
+  ProductTagPresetCrud,
+  ProductReviewCrud,
+
+  // Commerce
   OrderCrud,
+
+  // System / Configuration
   SystemSettingsCrud,
 } from "./PrismaCrudApapters";
 
-import { DBAdapter } from "@adapters/types";
+//==================================================
+// PrismaDBAdapter
+//==================================================
 
 export class PrismaDBAdapter implements DBAdapter {
   private prisma: PrismaClient;
   public isTx?: boolean = false;
 
-  public products: ProductCrud;
-  public productVariants: ProductVariantCrud;
-  public productTagsPresets: ProductTagPresetCrud;
-  public productOptionsPresets: ProductOptionPresetCrud;
-  public productReviews: ProductReviewCrud;
-
-  public categories: CategoryCrud;
-  public collections: CollectionCrud;
-  public orders: OrderCrud;
+  // ---------- Core user/auth ----------
   public users: UserCrud;
 
+  // ---------- Catalog & Products ----------
+  public categories: CategoryCrud;
+  public collections: CollectionCrud;
+  public products: ProductCrud;
+  public productVariants: ProductVariantCrud;
+  public productOptionsPresets: ProductOptionPresetCrud;
+  public productTagsPresets: ProductTagPresetCrud;
+  public productReviews: ProductReviewCrud;
+
+  // ---------- Commerce ----------
+  public orders: OrderCrud;
+
+  // ---------- System / Configuration ----------
   public systemSettings: SystemSettingsCrud;
 
-  constructor(prismaC: PrismaClient = new PrismaClient(), isTx?: boolean) {
-    this.prisma = prismaC;
+  constructor(prismaClient: PrismaClient = new PrismaClient(), isTx?: boolean) {
+    this.prisma = prismaClient;
     this.isTx = isTx ?? false;
 
-    // Initialize CRUD adapters
-    this.products = new ProductCrud(prismaC, isTx);
-    this.productVariants = new ProductVariantCrud(prismaC, isTx);
-    this.productTagsPresets = new ProductTagPresetCrud(prismaC, isTx);
-    this.productOptionsPresets = new ProductOptionPresetCrud(prismaC, isTx);
-    this.productReviews = new ProductReviewCrud(prismaC, isTx);
-    this.categories = new CategoryCrud(prismaC, isTx);
-    this.collections = new CollectionCrud(prismaC, isTx);
-    this.orders = new OrderCrud(prismaC, isTx);
-    this.users = new UserCrud(prismaC, isTx);
-    this.systemSettings = new SystemSettingsCrud(prismaC, isTx);
+    // ---------- Core user/auth ----------
+    this.users = new UserCrud(prismaClient, isTx);
+
+    // ---------- Catalog & Products ----------
+    this.categories = new CategoryCrud(prismaClient, isTx);
+    this.collections = new CollectionCrud(prismaClient, isTx);
+    this.products = new ProductCrud(prismaClient, isTx);
+    this.productVariants = new ProductVariantCrud(prismaClient, isTx);
+    this.productOptionsPresets = new ProductOptionPresetCrud(
+      prismaClient,
+      isTx
+    );
+    this.productTagsPresets = new ProductTagPresetCrud(prismaClient, isTx);
+    this.productReviews = new ProductReviewCrud(prismaClient, isTx);
+
+    // ---------- Commerce ----------
+    this.orders = new OrderCrud(prismaClient, isTx);
+
+    // ---------- System / Configuration ----------
+    this.systemSettings = new SystemSettingsCrud(prismaClient, isTx);
   }
 
   /**
@@ -57,7 +84,6 @@ export class PrismaDBAdapter implements DBAdapter {
     callback: (tx: PrismaDBAdapter) => Promise<T>
   ): Promise<T> {
     return await this.prisma.$transaction(async (txClient: unknown) => {
-      // Explicit cast: txClient behaves like PrismaClient for all query operations
       const txAdapter = new PrismaDBAdapter(
         txClient as unknown as PrismaClient,
         true

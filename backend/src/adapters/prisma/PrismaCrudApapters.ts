@@ -2,22 +2,49 @@ import { PrismaClient } from "@prisma/client";
 import { PrismaCrudAdapter, PrismaCRUDAdapterProps } from "./PrismaCrudAdapter";
 
 import type {
-  Product,
-  ProductOptionsPreset,
-  ProductReview,
-  ProductTagPreset,
+  User,
   Category,
   Collection,
-  Order,
-  User,
+  Product,
   ProductVariant,
+  ProductOptionsPreset,
+  ProductTagPreset,
+  ProductReview,
+  Order,
   SystemSettings,
 } from "@shared/types";
 
+//==================================================
+// CRUD Configuration
+//==================================================
+
 const CrudProps: CrudPropsType = {
   // ========================================
-  // Product
+  // Core user/auth
   // ========================================
+  users: {
+    model: "user",
+    nestedMeta: { settings: { json: true } },
+    searchFields: ["email"],
+  },
+
+  // ========================================
+  // Catalog & Products
+  // ========================================
+  categories: {
+    model: "category",
+    includeFields: ["images"],
+    nestedMeta: { images: { owned: true } },
+    searchFields: ["name", "description"],
+  },
+
+  collections: {
+    model: "collection",
+    includeFields: ["images"],
+    nestedMeta: { images: { owned: true } },
+    searchFields: ["name", "description"],
+  },
+
   products: {
     model: "product",
     includeFields: [
@@ -43,18 +70,10 @@ const CrudProps: CrudPropsType = {
     searchFields: ["id", "name", "description"],
   },
 
-  // ========================================
-  // PRoduct Variants, Tags & Options
-  // ========================================
   productVariants: {
     model: "productVariant",
     nestedMeta: { options: { json: true } },
     searchFields: ["id"],
-  },
-
-  productTagsPresets: {
-    model: "productTagPreset",
-    searchFields: ["name"],
   },
 
   productOptionsPresets: {
@@ -63,32 +82,17 @@ const CrudProps: CrudPropsType = {
     searchFields: ["name"],
   },
 
-  // ========================================
-  // Product Reviews
-  // ========================================
+  productTagsPresets: {
+    model: "productTagPreset",
+    searchFields: ["name"],
+  },
+
   productReviews: {
     model: "productReview",
   },
 
   // ========================================
-  // Categories & Collections
-  // ========================================
-  categories: {
-    model: "category",
-    includeFields: ["images"],
-    nestedMeta: { images: { owned: true } },
-    searchFields: ["name", "description"],
-  },
-
-  collections: {
-    model: "collection",
-    includeFields: ["images"],
-    nestedMeta: { images: { owned: true } },
-    searchFields: ["name", "description"],
-  },
-
-  // ========================================
-  // Orders
+  // Commerce
   // ========================================
   orders: {
     model: "order",
@@ -117,16 +121,7 @@ const CrudProps: CrudPropsType = {
   },
 
   // ========================================
-  // Orders
-  // ========================================
-  users: {
-    model: "user",
-    nestedMeta: { settings: { json: true } },
-    searchFields: ["email"],
-  },
-
-  // ========================================
-  // System Settings
+  // System / Configuration
   // ========================================
   systemSettings: {
     model: "systemSettings",
@@ -135,16 +130,20 @@ const CrudProps: CrudPropsType = {
   },
 };
 
+//==================================================
+// Types
+//==================================================
+
 type CrudPropsType = {
-  products: PrismaCRUDAdapterProps<Product>;
-  productVariants: PrismaCRUDAdapterProps<ProductVariant>;
-  productTagsPresets: PrismaCRUDAdapterProps<ProductTagPreset>;
-  productOptionsPresets: PrismaCRUDAdapterProps<ProductOptionsPreset>;
-  productReviews: PrismaCRUDAdapterProps<ProductReview>;
+  users: PrismaCRUDAdapterProps<User>;
   categories: PrismaCRUDAdapterProps<Category>;
   collections: PrismaCRUDAdapterProps<Collection>;
+  products: PrismaCRUDAdapterProps<Product>;
+  productVariants: PrismaCRUDAdapterProps<ProductVariant>;
+  productOptionsPresets: PrismaCRUDAdapterProps<ProductOptionsPreset>;
+  productTagsPresets: PrismaCRUDAdapterProps<ProductTagPreset>;
+  productReviews: PrismaCRUDAdapterProps<ProductReview>;
   orders: PrismaCRUDAdapterProps<Order>;
-  users: PrismaCRUDAdapterProps<User>;
   systemSettings: PrismaCRUDAdapterProps<SystemSettings>;
 };
 
@@ -152,9 +151,23 @@ type CrudPropsType = {
 // ----------------- Crud Adapters -----------------
 //==================================================
 
+// ---------- Core user/auth ----------
 class UserCrud extends PrismaCrudAdapter<User> {
   constructor(prismaClient: PrismaClient, isTx?: boolean) {
     super(prismaClient, { ...CrudProps.users, isTx });
+  }
+}
+
+// ---------- Catalog & Products ----------
+class CategoryCrud extends PrismaCrudAdapter<Category> {
+  constructor(prismaClient: PrismaClient, isTx?: boolean) {
+    super(prismaClient, { ...CrudProps.categories, isTx });
+  }
+}
+
+class CollectionCrud extends PrismaCrudAdapter<Collection> {
+  constructor(prismaClient: PrismaClient, isTx?: boolean) {
+    super(prismaClient, { ...CrudProps.collections, isTx });
   }
 }
 
@@ -170,15 +183,15 @@ class ProductVariantCrud extends PrismaCrudAdapter<ProductVariant> {
   }
 }
 
-class ProductTagPresetCrud extends PrismaCrudAdapter<ProductTagPreset> {
-  constructor(prismaClient: PrismaClient, isTx?: boolean) {
-    super(prismaClient, { ...CrudProps.productTagsPresets, isTx });
-  }
-}
-
 class ProductOptionPresetCrud extends PrismaCrudAdapter<ProductOptionsPreset> {
   constructor(prismaClient: PrismaClient, isTx?: boolean) {
     super(prismaClient, { ...CrudProps.productOptionsPresets, isTx });
+  }
+}
+
+class ProductTagPresetCrud extends PrismaCrudAdapter<ProductTagPreset> {
+  constructor(prismaClient: PrismaClient, isTx?: boolean) {
+    super(prismaClient, { ...CrudProps.productTagsPresets, isTx });
   }
 }
 
@@ -188,39 +201,40 @@ class ProductReviewCrud extends PrismaCrudAdapter<ProductReview> {
   }
 }
 
-class CategoryCrud extends PrismaCrudAdapter<Category> {
-  constructor(prismaClient: PrismaClient, isTx?: boolean) {
-    super(prismaClient, { ...CrudProps.categories, isTx });
-  }
-}
-
-class CollectionCrud extends PrismaCrudAdapter<Collection> {
-  constructor(prismaClient: PrismaClient, isTx?: boolean) {
-    super(prismaClient, { ...CrudProps.collections, isTx });
-  }
-}
-
+// ---------- Commerce ----------
 class OrderCrud extends PrismaCrudAdapter<Order> {
   constructor(prismaClient: PrismaClient, isTx?: boolean) {
     super(prismaClient, { ...CrudProps.orders, isTx });
   }
 }
 
+// ---------- System / Configuration ----------
 class SystemSettingsCrud extends PrismaCrudAdapter<SystemSettings> {
   constructor(prismaClient: PrismaClient, isTx?: boolean) {
     super(prismaClient, { ...CrudProps.systemSettings, isTx });
   }
 }
 
+//==================================================
+// Exports
+//==================================================
+
 export {
+  // Core user/auth
   UserCrud,
-  ProductCrud,
-  ProductVariantCrud,
-  ProductTagPresetCrud,
-  ProductOptionPresetCrud,
-  ProductReviewCrud,
+
+  // Catalog & Products
   CategoryCrud,
   CollectionCrud,
+  ProductCrud,
+  ProductVariantCrud,
+  ProductOptionPresetCrud,
+  ProductTagPresetCrud,
+  ProductReviewCrud,
+
+  // Commerce
   OrderCrud,
+
+  // System / Configuration
   SystemSettingsCrud,
 };
