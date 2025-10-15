@@ -20,11 +20,11 @@ class SystemSettingsService implements SystemSettingsApi {
   // Cache: scope -> settings
   private cache: Partial<Record<SystemSettingsScope, AnySystemSettings>> = {};
 
-  /**
-   * Get site settings
-   */
   async getSiteSettings(): Promise<SiteSettings | null> {
     return this.getSettings("SITE") as Promise<SiteSettings | null>;
+  }
+  async getAdminSettings(): Promise<AdminSettings | null> {
+    return this.getSettings("ADMIN") as Promise<AdminSettings | null>;
   }
 
   /**

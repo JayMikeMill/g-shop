@@ -1,10 +1,23 @@
-import { Order, Product, ProductVariant, QueryObject } from "@shared/types";
-import { db, payment } from "@adapters/services";
+import { SystemSettingsService } from "@services";
+import {
+  Address,
+  Order,
+  Product,
+  ProductVariant,
+  QueryObject,
+} from "@shared/types";
+import { db, payment, shipping } from "@adapters/services";
 import { DBAdapter } from "@adapters/types/DBAdapter";
 import { toMajorPriceString } from "@shared/utils/PriceUtils";
+import { OrderProcessingApi } from "@shared/interfaces";
+import { getOrderDiminsions } from "@shared/utils";
+import { Shipment } from "@easypost/api";
 
-class OrderProcessingService {
-  async placeOrder(paymentMethod: any, order: Order) {
+class OrderProcessingService implements OrderProcessingApi {
+  async placeOrder(
+    paymentMethod: any,
+    order: Order
+  ): Promise<{ success: boolean; data?: any; error?: string }> {
     // implement order placement logic
     try {
       // 1. Check stock for all items in the order
@@ -46,7 +59,6 @@ class OrderProcessingService {
           throw new Error("Out of stock");
         }
 
-        console.log("Stock verified, creating order...", order);
         // 3b. Create order and update stock
         newOrder = await tx.orders.create(order);
 
@@ -71,6 +83,66 @@ class OrderProcessingService {
             : String(error),
       };
     }
+  }
+
+  // Buy shipping label for an order
+  async buyOrderShipping(orderId: string): Promise<Order | null> {
+    const order = await db.orders.getOne({ id: orderId });
+    if (!order) throw new Error("Order not found (id: " + orderId + ")");
+
+    const adminSettings = await SystemSettingsService.getAdminSettings();
+
+    //const fromAddress = adminSettings?.shippingOrigin;
+    const fromAddress = {
+      name: "My Store",
+      street1: "1791 King Ave",
+      city: "Hamilton",
+      state: "OH",
+      postalCode: "45015",
+      country: "US",
+      phone: "614-555-1234",
+      email: "info@mystore.com",
+    };
+
+    const normalizedFrom = (await shipping.verifyAddress(fromAddress))
+      .normalizedAddress;
+
+    if (!normalizedFrom)
+      throw new Error("Shipping origin address not set in admin settings");
+
+    const toAddress = order.shippingInfo?.address;
+
+    if (!toAddress) throw new Error("Order has no shipping address");
+
+    // console.log(
+    //   "Buying shipping for order:",
+    //   order,
+    //   "from",
+    //   normalizedFrom,
+    //   "to",
+    //   toAddress
+    // );
+
+    const createdShipment = await shipping.createShipment(
+      normalizedFrom,
+      order.shippingInfo?.address!,
+      //getOrderDiminsions(order)
+      { length: 12, width: 8, height: 4, weight: 32 }
+    );
+
+    if (!createdShipment) throw new Error("Failed to create shipment");
+
+    const purchasedShiment = await shipping.buyShipment(createdShipment.id);
+
+    if (!purchasedShiment) throw new Error("Failed to buy shipment");
+
+    order.shippingInfo!.tracking = purchasedShiment.trackingNumber;
+    order.shippingInfo!.status = "LABEL_CREATED";
+
+    await db.orders.update(order as Order & { id: string });
+
+    console.log("Shipping purchased:", purchasedShiment);
+    return order;
   }
 
   async refundOrder(id: string) {

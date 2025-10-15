@@ -8,6 +8,7 @@ import {
 } from "@shared/utils";
 
 import { Button, TagBox, type TableColumn } from "@components/ui";
+import { buyOrderShipping } from "./order-editor/buyOrderShipping";
 
 export type TableLayout<T> = {
   query: QueryObject<T>; // fields to select from DB for this table
@@ -172,7 +173,7 @@ export const orderTable: TableLayout<Order> = {
               className="primary"
               onClick={(e) => {
                 e.stopPropagation();
-                window.alert("Implement shipping logic");
+                buyOrderShipping(o.id!);
               }}
             >
               Buy Shipping

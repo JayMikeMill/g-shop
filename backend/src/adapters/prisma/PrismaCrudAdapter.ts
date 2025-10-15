@@ -67,8 +67,6 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
     this.model = opts.model;
     this.modelMetadata = buildMetadata(opts.fieldMeta || {});
     this.isTx = opts.isTx ?? false;
-
-    console.log("Built model metadata:", this.model, this.modelMetadata);
   }
 
   /** Access Prisma model client */
@@ -102,7 +100,6 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
   //===================================================
   async create(data: Partial<T>): Promise<T> {
     const prismaData = await this.toPrisma(data, "create");
-    console.log("Creating in model:", this.model, prismaData);
 
     return this.client.create({
       data: prismaData,

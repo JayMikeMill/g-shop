@@ -56,6 +56,8 @@ export function useApi(): {
             order,
           }
         ),
+      buyOrderShipping: (orderId: string) =>
+        post<Order | null>(`/orders/buy-shipping`, { orderId }),
       refundOrder: (id: string) => post<void>(`/orders/refund`, { id }),
     },
 

@@ -1,4 +1,4 @@
-import { Address } from "shared/types";
+import { Address } from "../types";
 
 export function formatAddress(address: Address): string {
   if (!address) return "";

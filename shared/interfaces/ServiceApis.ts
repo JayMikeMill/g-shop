@@ -41,6 +41,7 @@ export interface OrderProcessingApi {
     data?: { newOrder: Order; payment: any };
     error?: string;
   }>;
+  buyOrderShipping(orderId: string): Promise<Order | null>;
   refundOrder(id: string): Promise<void>;
 }
 

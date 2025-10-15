@@ -79,6 +79,8 @@ async function verifyAddress(
     );
   }
 
+  console.log("Address verified:", result);
+
   return {
     ...shippingInfo,
     address: result.normalizedAddress ?? shippingInfo.address,

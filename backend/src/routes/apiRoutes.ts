@@ -16,6 +16,7 @@ import {
 // Orders
 import {
   placeOrder,
+  buyOrderShipping,
   refundOrder,
 } from "@controllers/orderProcessingController";
 
@@ -56,6 +57,7 @@ router.post("/auth/logout", logout);
 
 // ---------------- Order  ----------------
 router.post("/orders/place", placeOrder); // any authenticated user
+router.post("/orders/buy-shipping", reqAdmin, buyOrderShipping); // any authenticated user
 router.put("/orders/:id/refund", reqAdmin, refundOrder); // admin only
 
 // ---------------- Shipping  ----------------

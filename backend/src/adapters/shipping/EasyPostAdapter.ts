@@ -121,10 +121,13 @@ export class EasyPostAdapter implements ShippingAdapter {
     carrier?: string,
     service?: string
   ): Promise<Shipment> {
+    const mappedFrom = mapToEasyPostAddress(fromAddress);
+    const mappedTo = mapToEasyPostAddress(toAddress);
+
     // 1️⃣ Create the shipment in EasyPost
     const epShipment = await this.api.Shipment.create({
-      from_address: fromAddress,
-      to_address: toAddress,
+      from_address: mappedFrom,
+      to_address: mappedTo,
       parcel,
     });
 
@@ -181,6 +184,7 @@ export class EasyPostAdapter implements ShippingAdapter {
       chosenRate
     );
 
+    console.log("Bought shipment:", boughtShipment);
     return this.mapShipment(boughtShipment);
   }
 
@@ -220,7 +224,7 @@ export class EasyPostAdapter implements ShippingAdapter {
   // -------------------------------
   // Helper: Map EasyPost shipment to our Shipment interface
   // -------------------------------
-  private mapShipment(epShipment: any): Shipment {
+  private mapShipment(epShipment: EasyPost.Shipment): Shipment {
     return {
       id: epShipment.id,
       trackingNumber: epShipment.tracking_code,
@@ -236,7 +240,7 @@ export class EasyPostAdapter implements ShippingAdapter {
         country: epShipment.from_address?.country || "",
         company: epShipment.from_address?.company || undefined,
         phone: epShipment.from_address?.phone || undefined,
-        email: epShipment.from_address?.email || undefined,
+        email: epShipment.from_address?.email || "none",
       },
       toAddress: {
         name: epShipment.to_address?.name || "",
@@ -248,13 +252,13 @@ export class EasyPostAdapter implements ShippingAdapter {
         country: epShipment.to_address?.country || "",
         company: epShipment.to_address?.company || undefined,
         phone: epShipment.to_address?.phone || undefined,
-        email: epShipment.to_address?.email || undefined,
+        email: epShipment.to_address?.email || "none",
       },
       parcel: {
-        length: epShipment.parcel?.length,
-        width: epShipment.parcel?.width,
-        height: epShipment.parcel?.height,
-        weight: epShipment.parcel?.weight,
+        length: epShipment.parcel?.length || 0,
+        width: epShipment.parcel?.width || 0,
+        height: epShipment.parcel?.height || 0,
+        weight: epShipment.parcel?.weight || 0,
       },
       rates: epShipment.rates?.map(
         (r: any): ShipmentRate => ({
