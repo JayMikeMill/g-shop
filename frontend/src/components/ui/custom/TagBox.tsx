@@ -11,11 +11,20 @@ function TagBox({
   children?: React.ReactNode;
   className?: string;
 }) {
+  const styles: any = {};
+  if (color) {
+    // @ts-ignore
+    styles["backgroundColor"] = color;
+  }
+  if (textColor) {
+    styles["color"] = textColor;
+  }
+
   return (
     <div
       className={`flex items-center gap-sm px-2 py-1 rounded 
-        text-xs font-semibold shadow-md items-center justify-center ${className}`}
-      style={{ backgroundColor: color, color: textColor || "#fff" }}
+        text-md font-bold shadow-md items-center justify-center ${className}`}
+      style={styles}
     >
       <span className="text-center">{text}</span>
       {children}

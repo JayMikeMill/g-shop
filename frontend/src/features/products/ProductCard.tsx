@@ -3,8 +3,16 @@ import { useNavigate } from "react-router-dom";
 // import { useCart } from "@features/cart/useCart";
 
 import { TagBox } from "@components/ui";
+
 import type { Product } from "@shared/types";
-import { toMajorPriceString } from "@shared/utils";
+
+import {
+  getProductDiscount,
+  getProductDiscountLabel,
+  getProductDiscountPercent,
+  getProductFinalPrice,
+  toMajorUnit,
+} from "@shared/utils";
 
 interface ProductCardProps {
   product: Product;
@@ -29,9 +37,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   // Format discount label
-  const discountLabel =
-    (product.discount ? (toMajorPriceString(product.discount) ?? "0") : "0") +
-    (product.discountType === "PERCENTAGE" ? "%" : "$");
+  const discountPercent = getProductDiscountPercent(product).toFixed(0) + "%";
+  const discountLabel = getProductDiscountLabel(product);
+  const priceLabel = toMajorUnit(getProductFinalPrice(product)).toFixed(2);
 
   return (
     <div
@@ -54,22 +62,43 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <div className="absolute top-2 left-2 flex gap-1">
             {product.tags.map((tag, index) => (
               <TagBox
+                className="h-8 text-lg"
                 key={index}
                 text={tag.name}
                 color={tag.color ? tag.color : "accent"}
                 textColor={tag.textColor ? tag.textColor : "#fff"}
               />
             ))}
+            <TagBox
+              className="h-8 text-lg bg-accent"
+              key={"discount"}
+              text={discountPercent + " OFF!"}
+              color={"accent"}
+              textColor={"#fff"}
+            />
           </div>
         )}
       </div>
 
-      <div className="p-md ">
-        <h3 className="text-base font-semibold mb-2 text-text">
-          {product.name}
-        </h3>
-        <div className="flex items-center gap-2 justify-center">
-          {discountLabel}
+      <div className="p-md">
+        <h3 className="text-xl font-semibold mb-2 text-text">{product.name}</h3>
+
+        {/* Price display with discount handling */}
+        <div className="flex items-center justify-center gap-2">
+          {product.discount ? (
+            <>
+              <span className="text-xl text-muted line-through">
+                {discountLabel}
+              </span>
+              <span className="text-2xl text-text font-bold">
+                ${priceLabel}
+              </span>
+            </>
+          ) : (
+            <span className="text-2xl text-blue-600 font-bold">
+              ${priceLabel}
+            </span>
+          )}
         </div>
       </div>
     </div>

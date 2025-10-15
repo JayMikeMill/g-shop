@@ -96,6 +96,11 @@ export default {
           950: "var(--destructive-950)",
         },
 
+        muted: {
+          DEFAULT: "var(--muted)",
+          foreground: "var(--muted-foreground)",
+        },
+
         success: "var(--color-success)",
         warning: "var(--color-warning)",
         error: "var(--color-error)",

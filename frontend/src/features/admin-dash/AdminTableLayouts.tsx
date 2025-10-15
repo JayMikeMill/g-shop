@@ -1,7 +1,7 @@
 import type { Collection, Order, Product, QueryObject } from "@shared/types";
 import {
   formatAddress,
-  getDiscountString,
+  getProductDiscountLabel,
   getFinalPriceString,
   getTotalOrderItems,
   toMajorPriceString,
@@ -68,7 +68,7 @@ export const productTable: TableLayout<Product> = {
             ${toMajorPriceString(p.price)}
           </span>
           <span className="font-semibold text-center text-red-400">
-            -{getDiscountString(p)}
+            -{getProductDiscountLabel(p)}
           </span>
           <span className="font-semibold text-center text-base">
             ${getFinalPriceString(p)}

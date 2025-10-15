@@ -11,17 +11,12 @@ export const parseVariantOptions = (variant?: ProductVariant) => {
 };
 
 // Parse serialized variant options like "Color:Red|Size:M" into objects
-export const getDiscountString = (product: Product) => {
+export const getProductDiscountLabel = (product: Product) => {
   if (!product.discount) return "";
-  const isPercentage = product.discountType === "PERCENTAGE";
-  return (
-    (isPercentage ? "" : "$") +
-    toMajorUnit(product.discount).toFixed(2) +
-    (isPercentage ? "%" : "")
-  );
+  return "$" + toMajorUnit(getProductDiscount(product)).toFixed(2);
 };
 
-export const getFinalPrice = (product: Product) => {
+export const getProductFinalPrice = (product: Product) => {
   if (!product.discount || !product.price) return 0;
 
   const discount = product.discount || 0;
@@ -33,6 +28,13 @@ export const getFinalPrice = (product: Product) => {
     : product.price - discount;
 };
 
+export const getProductDiscount = (product: Product) => {
+  return product.price - getProductFinalPrice(product);
+};
+export const getProductDiscountPercent = (product: Product) => {
+  return (getProductDiscount(product) / product.price) * 100;
+};
+
 export const getFinalPriceString = (product: Product) => {
-  return toMajorPriceString(getFinalPrice(product));
+  return toMajorPriceString(getProductFinalPrice(product));
 };
