@@ -8,8 +8,6 @@ import {
   type Cart,
 } from "@shared/types";
 
-import { toMinorUnit } from "@shared/utils";
-
 export async function createOrder(
   cart: Cart,
   shippingInfo: ShippingInfo
@@ -19,11 +17,21 @@ export async function createOrder(
   } catch (error) {
     console.error("Error verifying address:", error);
     return null;
+  } finally {
+    console.log("Address verified with EasyPost:", shippingInfo.address);
   }
 
-  // Create order object
+  // Calculate order totals
+  const tax = cart.total * 0.065;
+  const shippingCost = shippingInfo.cost ?? 0;
+  const total = cart.total + tax + shippingCost;
+
+  console.log("Creating order with totals:", { tax, shippingCost, total });
+  // Return Order object
   return {
-    total: cart.total + (shippingInfo.cost ?? 0),
+    tax: tax,
+    shippingCost,
+    total: total,
     status: OrderStatusKeys.PENDING,
     items: cart.items
       ?.filter((item) => item.product !== undefined)
@@ -31,7 +39,7 @@ export async function createOrder(
         product: item.product as NonNullable<typeof item.product>,
         variant: item.variant as NonNullable<typeof item.variant>,
         quantity: item.quantity,
-        price: toMinorUnit(item.price),
+        price: item.price,
       })),
     statusHistory: [
       {

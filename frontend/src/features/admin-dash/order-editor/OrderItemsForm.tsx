@@ -1,6 +1,6 @@
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { DynamicTable, Label } from "@components/ui";
-import { toMajorPriceString } from "@shared/utils";
+import { toMajorPriceString, toMajorUnit } from "@shared/utils";
 import type { Order } from "@shared/types";
 
 const OrderItemsForm: React.FC = () => {
@@ -47,7 +47,7 @@ const OrderItemsForm: React.FC = () => {
           id: "price",
           label: "Price",
           width: "100px",
-          render: (i) => <Label>{i.price}</Label>,
+          render: (i) => <Label>{toMajorUnit(i.price).toFixed(2)}</Label>,
         },
       ]}
     />

@@ -3,6 +3,7 @@ import { useCart } from "@features/cart/useCart";
 
 import ShoppingCartItem from "./ShoppingCartItem";
 import { Button } from "@components/ui";
+import { toMajorUnit } from "@shared/utils";
 
 interface ShoppingCartProps {
   // optional callback if you want SlideOutCart to close when checkout is clicked
@@ -50,7 +51,7 @@ export default function ShoppingCart({
       <div className="mt-auto border-t border-divider pt-md flex flex-col gap-sm">
         <div className="flex justify-between font-semibold text-text">
           <span>Subtotal</span>
-          <span>${totals.subtotal.toFixed(2)}</span>
+          <span>${toMajorUnit(totals.subtotal).toFixed(2)}</span>
         </div>
         <div className="flex justify-between font-semibold text-textSecondary">
           <span>Shipping</span>
@@ -58,7 +59,7 @@ export default function ShoppingCart({
         </div>
         <div className="flex justify-between font-bold text-lg text-text">
           <span>Total</span>
-          <span>${totals.total.toFixed(2)}</span>
+          <span>${toMajorUnit(totals.total).toFixed(2)}</span>
         </div>
 
         {/* Checkout button */}

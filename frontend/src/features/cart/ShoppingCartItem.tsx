@@ -20,6 +20,7 @@ export default function ShoppingCartItem({
     item?.product?.images?.[0]?.main ||
     "";
 
+  console.log("Rendering item:", item);
   const name = item?.product?.name ?? "Unknown Product";
   const selectedOptions = item.variant ? parseVariantOptions(item.variant) : [];
 

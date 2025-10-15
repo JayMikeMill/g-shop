@@ -1,22 +1,13 @@
+import { useFormContext } from "react-hook-form";
 import AddressForm from "@components/ui/custom/AddressForm";
-import type { ShippingInfo } from "@shared/types";
+import type { CheckoutFormType } from "./CheckoutSchema";
 
-export default function ShippingForm({
-  className,
-  shippingInfo,
-  setShippingInfo,
-}: {
-  className?: string;
-  shippingInfo: ShippingInfo;
-  setShippingInfo: (info: ShippingInfo) => void;
-}) {
-  // Form implementation here
+export default function ShippingForm({ className }: { className?: string }) {
+  const formContext = useFormContext<CheckoutFormType>();
+
   return (
     <div className={className}>
-      <AddressForm
-        address={shippingInfo.address ?? undefined}
-        setAddress={(address) => setShippingInfo({ ...shippingInfo, address })}
-      />
+      <AddressForm formContext={formContext} rootName="shippingInfo.address" />
     </div>
   );
 }

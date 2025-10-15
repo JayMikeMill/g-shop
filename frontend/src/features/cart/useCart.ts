@@ -21,7 +21,7 @@ export function useCart() {
 
   // Wrap dispatch calls with useCallback for stable references
   const addItem = useCallback(
-    (item: CartItem) => dispatch(addToCart(item)),
+    (item: Partial<CartItem>) => dispatch(addToCart(item)),
     [dispatch]
   );
   const removeItem = useCallback(

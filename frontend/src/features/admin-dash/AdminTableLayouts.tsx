@@ -3,10 +3,11 @@ import {
   formatAddress,
   getDiscountString,
   getFinalPriceString,
+  getTotalOrderItems,
   toMajorPriceString,
 } from "@shared/utils";
 
-import { TagBox, type TableColumn } from "@components/ui";
+import { Button, TagBox, type TableColumn } from "@components/ui";
 
 export type TableLayout<T> = {
   query: QueryObject<T>; // fields to select from DB for this table
@@ -150,7 +151,34 @@ export const orderTable: TableLayout<Order> = {
       label: "Total",
       width: "20px",
       render: (o: Order) => (
-        <span className="font-semibold">${(o.total / 100).toFixed(2)}</span>
+        <div className="flex flex-col items-center justify-center">
+          <span className="font-semibold">Items: {getTotalOrderItems(o)}</span>
+          <span className="font-semibold">${(o.total / 100).toFixed(2)}</span>
+        </div>
+      ),
+    },
+    {
+      id: "shipping",
+      label: "Shipping",
+      width: "20px",
+      render: (o: Order) => (
+        <div className="flex flex-col items-center justify-center">
+          {o.shippingInfo?.tracking ? (
+            <span className="font-semibold whitespace-pre-wrap">
+              {`Tracking:\n${o.shippingInfo.tracking}\nStatus:\n${o.shippingInfo.status}`}
+            </span>
+          ) : (
+            <Button
+              className="primary"
+              onClick={(e) => {
+                e.stopPropagation();
+                window.alert("Implement shipping logic");
+              }}
+            >
+              Buy Shipping
+            </Button>
+          )}
+        </div>
       ),
     },
     {

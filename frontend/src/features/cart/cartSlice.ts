@@ -1,6 +1,6 @@
 // src/features/cart/cartSlice.ts
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { Cart, CartItem } from "@shared/types";
+import type { Cart, CartItem, SafeType } from "@shared/types";
 
 // -------------------- Helpers --------------------
 
@@ -50,7 +50,7 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    addToCart: (state, action: PayloadAction<CartItem>) => {
+    addToCart: (state, action: PayloadAction<Partial<CartItem>>) => {
       const item = action.payload;
 
       // Work on a local items array (never null)
@@ -58,6 +58,8 @@ const cartSlice = createSlice({
         ? [...state.cart.items]
         : ([] as any);
 
+      // Check if item with same productId and variantId exists
+      // If so, increment quantity instead of adding new item
       const existingIndex = items.findIndex(
         (cartItem) =>
           cartItem.productId === item.productId &&
@@ -67,17 +69,18 @@ const cartSlice = createSlice({
       if (existingIndex !== -1) {
         items[existingIndex].quantity += item.quantity ?? 1;
       } else {
+        // Determine price: variant price if available, else product price minus discount
+        const productPrice = item.variant?.price ?? item.product?.price ?? 0;
+        const finalPrice = productPrice - (item.product?.discount ?? 0);
+
         items.push({
           id: item.id,
-          cartId: item.cartId,
           productId: item.productId,
           variantId: item.variantId ?? null,
-          quantity: item.quantity ?? 1,
-          price: item.price,
           product: item.product,
           variant: item.variant ?? null,
-          createdAt: item.createdAt,
-          updatedAt: item.updatedAt,
+          quantity: 1,
+          price: finalPrice,
         });
       }
 
@@ -87,7 +90,7 @@ const cartSlice = createSlice({
       state.cart.subtotal = totals.subtotal;
       state.cart.total = totals.total;
 
-      saveCart(state.cart as any);
+      saveCart(state.cart as SafeType<Cart>);
     },
 
     removeFromCart: (state, action: PayloadAction<CartItem>) => {
@@ -117,7 +120,7 @@ const cartSlice = createSlice({
       state.cart.subtotal = totals.subtotal;
       state.cart.total = totals.total;
 
-      saveCart(state.cart as any);
+      saveCart(state.cart as SafeType<Cart>);
     },
 
     clearCart: (state) => {

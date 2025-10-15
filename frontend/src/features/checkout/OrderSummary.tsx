@@ -1,6 +1,6 @@
 // Cart state management
 import { useCart } from "@features/cart/useCart";
-import { parseVariantOptions } from "@shared/utils";
+import { parseVariantOptions, toMajorUnit } from "@shared/utils";
 
 export default function OrderSummary() {
   const { cart, totals } = useCart();
@@ -57,8 +57,8 @@ export default function OrderSummary() {
                 )}
 
                 <p className="text-textSecondary">
-                  Price: ${item.price.toFixed(2)} × {item.quantity} = $
-                  {(item.price * item.quantity).toFixed(2)}
+                  Price: ${toMajorUnit(item.price).toFixed(2)} × {item.quantity}{" "}
+                  = ${toMajorUnit(item.price * item.quantity).toFixed(2)}
                 </p>
               </div>
             </div>
@@ -68,7 +68,7 @@ export default function OrderSummary() {
 
       <div className="mt-4 pt-md flex flex-col gap-sm text-right font-semibold text-text">
         <p>Total Items: {totals.items}</p>
-        <p>Subtotal: ${totals.subtotal.toFixed(2)}</p>
+        <p>Subtotal: ${toMajorUnit(totals.subtotal).toFixed(2)}</p>
       </div>
     </div>
   );

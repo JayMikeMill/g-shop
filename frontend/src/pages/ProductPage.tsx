@@ -56,7 +56,6 @@ const ProductPage = () => {
       variantId: selectedVariant?.id ?? undefined,
       variant: selectedVariant ?? undefined,
       quantity: 1,
-      price: selectedVariant?.price ?? discountedPrice,
     });
   };
 

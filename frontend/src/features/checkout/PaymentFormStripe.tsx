@@ -1,5 +1,8 @@
 // frontend/src/components/forms/payment-forms/PaymentFormStripe.tsx
+import React, { forwardRef, useImperativeHandle } from "react";
+
 import { loadStripe } from "@stripe/stripe-js";
+
 import {
   Elements,
   CardElement,
@@ -7,151 +10,100 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 
-import { type ShippingInfo, type Cart } from "@shared/types";
+import { inputStyle } from "@components/ui";
+import type { Address } from "@shared/types";
 
-import { Button } from "@components/ui";
-import { useApi } from "@api";
-
-import { createOrder } from "./createOrder";
-
-interface StripePaymentFormProps {
-  cart: Cart;
-  shippingInfo: ShippingInfo;
-  setLoading: (loading: boolean) => void;
-  setMessage: (msg: string | null) => void;
-}
-
-// Load Stripe publishable key from environment
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
-function InnerStripeForm({
-  cart,
-  shippingInfo,
-  setLoading,
-  setMessage,
-}: StripePaymentFormProps) {
+export interface StripePaymentFormHandle {
+  handlePayment: (
+    billingAdress?: Address
+  ) => Promise<import("@stripe/stripe-js").PaymentMethod | undefined>;
+}
+
+function InnerStripeForm(_: unknown, ref: React.Ref<StripePaymentFormHandle>) {
   const stripe = useStripe();
   const elements = useElements();
-  const { placeOrder } = useApi().orders;
 
-  const handlePayment = async () => {
-    try {
-      const order = await createOrder(cart, shippingInfo);
+  useImperativeHandle(ref, () => ({
+    // Expose the handlePayment function to the parent component
+    handlePayment: async (billingAdress?: Address) => {
+      // Check that Stripe.js has loaded
+      if (!stripe || !elements) throw new Error("Stripe not loaded");
 
-      if (!order) {
-        setMessage("Order creation failed");
-        return;
-      }
-
-      console.log("Created order:", order);
-
-      if (!stripe || !elements) return;
+      // Get a reference to a mounted CardElement. Elements knows how
+      // to find your CardElement because there can only ever be one of
+      // each type of element.
       const cardElement = elements.getElement(CardElement);
-      if (!cardElement) return;
+      if (!cardElement) throw new Error("Card element not found");
 
-      setLoading(true);
-
-      // Create payment method on Stripe
+      // Try to create a payment method using the card Element
       const { error, paymentMethod } = await stripe.createPaymentMethod({
         type: "card",
         card: cardElement,
         billing_details: {
-          name: shippingInfo.address?.name,
-          email: shippingInfo.address?.email,
-          phone: shippingInfo.address?.phone,
+          name: billingAdress?.name,
+          email: billingAdress?.email,
+          phone: billingAdress?.phone,
           address: {
-            line1: shippingInfo.address?.street1,
-            line2: shippingInfo.address?.street2,
-            city: shippingInfo.address?.city,
-            state: shippingInfo.address?.state,
-            postal_code: shippingInfo.address?.postalCode,
+            line1: billingAdress?.street1,
+            line2: billingAdress?.street2,
+            city: billingAdress?.city,
+            state: billingAdress?.state,
+            postal_code: billingAdress?.postalCode,
             country: "US",
           },
         },
       });
 
+      // Handle any errors from Stripe.js
       if (error) {
-        setMessage(error.message || "Payment method creation failed");
-        return;
+        console.error("Stripe payment method error:", error);
+        throw new Error("Payment method creation failed");
       }
 
-      if (!paymentMethod) {
-        setMessage("Payment method is undefined");
-        return;
-      }
+      (paymentMethod as any)._paymentType = "stripe";
 
-      // Send paymentMethod.id
-      const response = await placeOrder(paymentMethod, order);
-
-      if (response?.success === true) {
-        await onSuccess();
-        console.log("Payment and order successful:", response);
-      } else {
-        setMessage("Payment failed: " + (response?.error || "Unknown error"));
-      }
-    } catch (err) {
-      console.error("Stripe payment error:", err);
-      setMessage("Payment could not be processed");
-    } finally {
-      setLoading(false);
-      setTimeout(() => setMessage(null), 3000);
-    }
-  };
-
-  const onSuccess = async () => {
-    setMessage("Payment successful!");
-  };
+      return paymentMethod;
+    },
+  }));
 
   return (
-    <div className="surface-box p-lg flex flex-col gap-md text-text font-sans">
-      <h3 className="text-xl mb-lg text-center font-bold">Payment Info</h3>
-      <p className="text-lg font-semibold text-text text-right md:text-left">
-        Total: ${cart.total.toFixed(2)}
-      </p>
-
-      <div className="w-full h-auto mb-md border border-border rounded-md bg-background p-4">
-        <CardElement
-          options={{
-            style: {
-              base: {
-                fontSize: "16px",
-                color: getComputedStyle(
-                  document.documentElement
-                ).getPropertyValue("--color-text"),
-                fontFamily: "inherit",
-                "::placeholder": {
-                  color: getComputedStyle(
-                    document.documentElement
-                  ).getPropertyValue("--color-text-secondary"),
-                },
-              },
-              invalid: {
-                color: getComputedStyle(
-                  document.documentElement
-                ).getPropertyValue("--color-danger"),
-              },
+    <CardElement
+      className={inputStyle + " p-2"}
+      options={{
+        style: {
+          base: {
+            fontSize: "16px",
+            color: getComputedStyle(document.documentElement).getPropertyValue(
+              "--color-text"
+            ),
+            fontFamily: "inherit",
+            "::placeholder": {
+              color: getComputedStyle(
+                document.documentElement
+              ).getPropertyValue("--color-text-secondary"),
             },
-          }}
-        />
-      </div>
-      <Button
-        onClick={handlePayment}
-        className="w-full"
-        disabled={!stripe || !elements}
-      >
-        Pay Now
-      </Button>
-    </div>
+          },
+          invalid: {
+            color: getComputedStyle(document.documentElement).getPropertyValue(
+              "--color-danger"
+            ),
+          },
+        },
+      }}
+    />
   );
 }
 
-// Wrap in Elements provider
-export default function StripePaymentFormWrapper(
-  props: StripePaymentFormProps
-) {
+const ForwardedInnerStripeForm = forwardRef(InnerStripeForm);
+
+export default function StripePaymentForm(props: {
+  formRef: React.Ref<StripePaymentFormHandle>;
+}) {
   return (
     <Elements stripe={stripePromise}>
-      <InnerStripeForm {...props} />
+      <ForwardedInnerStripeForm ref={props.formRef} />
     </Elements>
   );
 }

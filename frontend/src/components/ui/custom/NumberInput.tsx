@@ -5,7 +5,7 @@ import {
   type NumberFormatValues,
   type NumericFormatProps,
 } from "react-number-format";
-import { inputBorder } from "../primitives/Input";
+import { inputStyle } from "../primitives/Input";
 
 type Variant = "wholeNumber" | "currency" | "percent" | "weight" | "size";
 
@@ -84,7 +84,7 @@ export const NumberInput: React.FC<NumberInputProps & NumericFormatProps> = ({
         }}
         placeholder="-"
         allowNegative={false}
-        className={inputBorder + " " + className + " text-center "}
+        className={inputStyle + " " + className + " text-center "}
         {...formatProp[variant]}
         {...props}
       />

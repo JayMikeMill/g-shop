@@ -1,4 +1,3 @@
-import React from "react";
 import {
   useForm,
   Controller,
@@ -9,14 +8,12 @@ import { Input, Label, CountrySelect } from "@components/ui";
 import { emptyAddress, type Address, type SafeType } from "@shared/types";
 
 interface AddressFormProps {
-  address?: Address;
   className?: string;
   formContext: UseFormReturn<any>; // optional parent form
   rootName?: string; // optional root path for nested forms
 }
 
 export default function AddressForm({
-  address,
   className,
   formContext,
   rootName,
@@ -25,7 +22,7 @@ export default function AddressForm({
   const form =
     formContext ??
     useForm<SafeType<Address>>({
-      defaultValues: address ?? (emptyAddress as SafeType<Address>),
+      defaultValues: emptyAddress as SafeType<Address>,
     });
 
   const { control, watch } = form;

@@ -61,7 +61,6 @@ export class EasyPostAdapter implements ShippingAdapter {
       });
 
       const suggestions = epAddress.verifications?.delivery?.details ?? [];
-      console.log("EasyPost verification result:", suggestions);
 
       const verified = epAddress.verifications?.delivery?.success ?? false;
       const errors: string[] | undefined =
