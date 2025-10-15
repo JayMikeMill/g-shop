@@ -6,7 +6,7 @@ function TagBox({
   className,
 }: {
   text: string;
-  color: string;
+  color?: string;
   textColor?: string;
   children?: React.ReactNode;
   className?: string;

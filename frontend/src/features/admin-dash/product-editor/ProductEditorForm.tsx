@@ -18,6 +18,7 @@ import ProductOptionsForm from "./ProductOptionsForm";
 import ProductDimensionsForm from "./ProductDimensionsForm";
 import ProductTagsForm from "./ProductTagsForm";
 import ProductInfoForm from "./ProductInfoForm";
+import ProductCollectionsForm from "./ProductCollectionsForm";
 
 export const newProduct: SafeType<Product> = {
   name: "",
@@ -129,6 +130,11 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
               {/* Dimensions Editor */}
               <AnimatedDropdownBox title="Dimensions" openInitially>
                 <ProductDimensionsForm />
+              </AnimatedDropdownBox>
+
+              {/* Collections Editor */}
+              <AnimatedDropdownBox title="Categories/Collections" openInitially>
+                <ProductCollectionsForm />
               </AnimatedDropdownBox>
 
               {/* Options Editor */}

@@ -112,6 +112,7 @@ export function buildPrismaWhere<T>(
   query: QueryObject<T>,
   defaultSearchFields: (keyof T)[]
 ): any {
+  console.log("buildPrismaWhere", query, defaultSearchFields);
   const where: any = {};
 
   // Conditions

@@ -57,7 +57,14 @@ export interface QueryObject<T> {
 
 // Helper to detect QueryObject
 export const isQueryObject = <T>(q: any): q is QueryObject<T> =>
-  q && (q.conditions || q.search || q.limit || q.page || q.includeFields);
+  q &&
+  (q.conditions ||
+    q.select ||
+    q.include ||
+    q.search ||
+    q.limit ||
+    q.page ||
+    q.includeFields);
 
 // -------------------- To Query String --------------------
 export function toQueryString<T>(query?: QueryType<T>): string {
