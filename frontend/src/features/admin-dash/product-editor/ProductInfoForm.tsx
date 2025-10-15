@@ -17,13 +17,13 @@ export const ProductInfoForm: React.FC = () => {
 
   return (
     <div className="flex flex-col flex-1 gap-md overflow-hidden p-0.5">
-      <Label>
-        Name
+      <div className="flex flex-col">
+        <Label>Name</Label>
         <Input placeholder="Product Name" {...register("name")} required />
-      </Label>
+      </div>
       <div className="flex gap-md justify-left">
-        <Label className="w-32">
-          Price
+        <div className="flex flex-col w-32">
+          <Label>Amount</Label>
           <NumberInput
             variant="currency"
             controlProps={{
@@ -32,10 +32,10 @@ export const ProductInfoForm: React.FC = () => {
               rules: { valueAsNumber: true },
             }}
           />
-        </Label>
+        </div>
         <div className="flex items-end gap-sm">
-          <Label>
-            Discount
+          <div className="flex flex-col w-32">
+            <Label>Discount</Label>
             <NumberInput
               variant={discountTypeSymbol === "%" ? "percent" : "currency"}
               className="text-center w-32"
@@ -45,7 +45,7 @@ export const ProductInfoForm: React.FC = () => {
                 rules: { valueAsNumber: true },
               }}
             />
-          </Label>
+          </div>
           <AnimatedSelect<DiscountType>
             items={[
               {
@@ -62,15 +62,15 @@ export const ProductInfoForm: React.FC = () => {
           />
         </div>
       </div>
-      <Label>
-        Description
+      <div className="flex flex-col">
+        <Label>Description</Label>
         <Textarea
           {...register("description")}
           placeholder="Product Description"
           required
           className="px-md py-1 h-40 resize-none"
         />
-      </Label>
+      </div>
     </div>
   );
 };

@@ -16,8 +16,8 @@ const OrderTransactionForm: React.FC = () => {
   return (
     <div className="flex flex-col gap-md justify-left">
       <div className="flex flex-row gap-md">
-        <Label className="w-1/2">
-          Amount
+        <div className="w-1/2">
+          <Label>Amount</Label>
           <NumberInput
             className="w-full"
             variant="currency"
@@ -28,21 +28,21 @@ const OrderTransactionForm: React.FC = () => {
               rules: { valueAsNumber: true },
             }}
           />
-        </Label>
-        <Label className="w-1/2">
-          Currency
+        </div>
+        <div className="w-1/2">
+          <Label>Currency</Label>
           <Input
             {...register("transaction.currency")}
             type="text"
             placeholder="Currency"
           />
-        </Label>
+        </div>
       </div>
 
       <div className="flex flex-row gap-md">
         {/* Payment method options */}
-        <Label className="w-1/2">
-          Method
+        <div className="w-1/2">
+          <Label>Method</Label>
           <AnimatedSelect
             items={Object.values(PaymentMethodKeys).map((key) => ({
               value: key as PaymentMethod,
@@ -54,9 +54,9 @@ const OrderTransactionForm: React.FC = () => {
               name: "transaction.method",
             }}
           />
-        </Label>
-        <Label className="w-1/2">
-          Status
+        </div>
+        <div className="w-1/2">
+          <Label>Status</Label>
           <AnimatedSelect
             items={Object.values(TransactionStatusKeys).map((key) => ({
               value: key as TransactionStatus,
@@ -68,7 +68,7 @@ const OrderTransactionForm: React.FC = () => {
               name: "transaction.status",
             }}
           />
-        </Label>
+        </div>
       </div>
     </div>
   );

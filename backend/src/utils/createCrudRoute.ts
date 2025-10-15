@@ -59,7 +59,6 @@ export function createCrudRoute(
 
   // getOne
   const getOneHandler = wrapHandler((req) => {
-    console.log("GET ONE REQ QUERY:", parseQueryType(req.query));
     return crud.getOne(parseQueryType(req.query) ?? {});
   });
 

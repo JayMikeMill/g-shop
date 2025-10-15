@@ -45,8 +45,9 @@ export interface QueryCondition<T = any> {
 
 export interface QueryObject<T> {
   search?: string;
-  searchFields?: DeepDotKeyof<T>[]; // dot-notation keys
-  select?: DeepDotKeyof<T>[]; // dot-notation keys
+  searchFields?: (DeepDotKeyof<T> | string)[];
+  select?: (DeepDotKeyof<T> | string)[];
+  include?: (DeepDotKeyof<T> | string)[];
   conditions?: QueryCondition<T>[];
   sortBy?: DeepDotKeyof<T>;
   sortOrder?: "asc" | "desc";
@@ -57,8 +58,6 @@ export interface QueryObject<T> {
 // Helper to detect QueryObject
 export const isQueryObject = <T>(q: any): q is QueryObject<T> =>
   q && (q.conditions || q.search || q.limit || q.page || q.includeFields);
-
-// -------------------- Query String Helpers --------------------
 
 // -------------------- To Query String --------------------
 export function toQueryString<T>(query?: QueryType<T>): string {
@@ -84,6 +83,7 @@ export function toQueryString<T>(query?: QueryType<T>): string {
 
   if (query.searchFields?.length) params.searchFields = query.searchFields;
   if (query.select?.length) params.select = query.select;
+  if (query.include?.length) params.include = query.include;
 
   return "?" + qs.stringify(params, { encode: true, arrayFormat: "brackets" });
 }
@@ -158,6 +158,9 @@ export function parseQueryType<T>(
   const select = toStringArray(rawSelect);
   if (select.length) options.select = select as DeepDotKeyof<T>[];
 
+  const include = toStringArray(q.include);
+  if (include.length) options.include = include as DeepDotKeyof<T>[];
+
   const searchFields = toStringArray(rawSearchFields);
   if (searchFields.length)
     options.searchFields = searchFields as DeepDotKeyof<T>[];
@@ -174,7 +177,6 @@ export function parseQueryType<T>(
     }));
   }
 
-  console.log("Parsed query options:", query, options);
   return options;
 }
 export type QueryType<T> = QueryObject<T> | Partial<T>;

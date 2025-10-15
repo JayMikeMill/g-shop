@@ -20,9 +20,9 @@ export const newOrder: SafeType<Order> = {
 };
 
 interface Props {
-  item: Order;
+  item: Order | null;
   onCreate: (order: Order) => void;
-  onModify: (order: Order) => void;
+  onModify: (order: Order & { id: string }) => void;
   onDelete: (id: string) => void;
   onCancel: () => void;
 }
@@ -52,44 +52,52 @@ const OrderEditorForm: React.FC<Props> = ({
       onDelete(id);
   };
   const handleSave = methods.handleSubmit((data) => {
-    if (data.id) onModify(data);
+    if (data.id) onModify(data as Order & { id: string });
     else onCreate(data);
   });
 
   return (
     <FormProvider {...methods}>
       <form
-        className="flex flex-col flex-1 overflow-hidden border-t gap-md p-xs sm:p-sd overflow-y-auto"
+        className="flex flex-col flex-1 overflow-y-auto gap-sm sm:gap-md relative"
         onSubmit={handleSave}
       >
-        <AnimatedDropdownBox title="Order Info" openInitially={true}>
-          <OrderInfoForm />
-        </AnimatedDropdownBox>
-        <AnimatedDropdownBox title="Items" openInitially={true}>
-          <OrderItemsForm />
-        </AnimatedDropdownBox>
-        <AnimatedDropdownBox title="Shipping Info" openInitially={true}>
-          <OrderShippingForm />
-        </AnimatedDropdownBox>
-        <AnimatedDropdownBox title="Transaction" openInitially={true}>
-          <OrderTransactionForm />
-        </AnimatedDropdownBox>
-        <AnimatedDropdownBox title="Status History" openInitially={true}>
-          <OrderStatusHistoryForm />
-        </AnimatedDropdownBox>
-        <AnimatedDropdownBox title="Notes" openInitially={true}>
-          <OrderNotesForm />
-        </AnimatedDropdownBox>
-        <div className="flex gap-2 mt-4 justify-center">
+        <div className="flex flex-col gap-sm p-sm sm:p-md sm:gap-md">
+          <AnimatedDropdownBox title="Order Info" openInitially={true}>
+            <OrderInfoForm />
+          </AnimatedDropdownBox>
+          <AnimatedDropdownBox title="Items" openInitially={true}>
+            <OrderItemsForm />
+          </AnimatedDropdownBox>
+          <AnimatedDropdownBox title="Shipping Info" openInitially={true}>
+            <OrderShippingForm />
+          </AnimatedDropdownBox>
+          <AnimatedDropdownBox title="Transaction" openInitially={true}>
+            <OrderTransactionForm />
+          </AnimatedDropdownBox>
+          <AnimatedDropdownBox title="Status History" openInitially={true}>
+            <OrderStatusHistoryForm />
+          </AnimatedDropdownBox>
+          <AnimatedDropdownBox title="Notes" openInitially={true}>
+            <OrderNotesForm />
+          </AnimatedDropdownBox>
+        </div>
+        {/* Action buttons */}
+        <div className="sticky bottom-0 bg-card py-md flex gap-2 px-md justify-center border-t">
           {methods.watch("id") && (
-            <Button variant="destructive" type="button" onClick={handleDelete}>
+            <Button
+              className="flex flex-1"
+              variant="destructive"
+              type="button"
+              onClick={handleDelete}
+            >
               Delete Order
             </Button>
           )}
-          <Button type="button" onClick={handleCancel}>
+          <Button className="flex flex-1" variant="flat" onClick={handleCancel}>
             Cancel
           </Button>
-          <Button type="submit">
+          <Button className="flex flex-1" type="submit">
             {methods.watch("id") ? "Save Changes" : "Create Order"}
           </Button>
         </div>

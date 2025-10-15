@@ -10,12 +10,12 @@ export const ProductDimensionsForm: React.FC = () => {
   const sizePrefix = system === "imperial" ? "in" : "cm";
 
   return (
-    <div className="grid grid-cols-4 gap-md w-full">
+    <div className="grid grid-cols-4 gap-xs w-full sm:gap-md">
       {/* Weight */}
-      <div className="flex flex-col gap-1 w-full">
-        <Label className="text-center text-sm">Weight ({weightPrefix})</Label>
+      <div className="flex flex-col w-full">
+        <Label className="text-center whitespace-nowrap">Weight</Label>
         <NumberInput
-          variant="wholeNumber"
+          variant="weight"
           controlProps={{
             control,
             name: "dimensions.weight",
@@ -26,10 +26,10 @@ export const ProductDimensionsForm: React.FC = () => {
       </div>
 
       {/* Length */}
-      <div className="flex flex-col gap-1 w-full">
-        <Label className="text-center text-sm">Length ({sizePrefix})</Label>
+      <div className="flex flex-col w-full">
+        <Label className="text-center whitespace-nowrap">Length</Label>
         <NumberInput
-          variant="wholeNumber"
+          variant="size"
           controlProps={{
             control,
             name: "dimensions.length",
@@ -40,10 +40,10 @@ export const ProductDimensionsForm: React.FC = () => {
       </div>
 
       {/* Width */}
-      <div className="flex flex-col gap-1 w-full">
-        <Label className="text-center text-sm">Width ({sizePrefix})</Label>
+      <div className="flex flex-col w-full">
+        <Label className="text-center whitespace-nowrap">Width</Label>
         <NumberInput
-          variant="wholeNumber"
+          variant="size"
           controlProps={{
             control,
             name: "dimensions.width",
@@ -54,10 +54,10 @@ export const ProductDimensionsForm: React.FC = () => {
       </div>
 
       {/* Height */}
-      <div className="flex flex-col gap-1 w-full">
-        <Label className="text-center text-sm">Height ({sizePrefix})</Label>
+      <div className="flex flex-col w-full">
+        <Label className="text-center whitespace-nowrap">Height</Label>
         <NumberInput
-          variant="wholeNumber"
+          variant="size"
           controlProps={{
             control,
             name: "dimensions.height",

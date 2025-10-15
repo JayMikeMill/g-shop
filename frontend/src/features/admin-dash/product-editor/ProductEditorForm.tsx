@@ -175,11 +175,11 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
             />
 
             {/* Footer Buttons */}
-            <div className="w-full flex flex-row px-2 gap-2 sm:px-0 items-center sm:flex-col sm:gap-2">
+            <div className="w-full flex flex-row p-md gap-2 sm:px-0 items-center sm:flex-col sm:gap-2">
               <Button
                 className="w-full h-12 sm:hidden"
                 type="button"
-                variant="secondary"
+                variant="flat"
                 onClick={handleCancel}
               >
                 Cancel

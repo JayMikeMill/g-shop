@@ -7,7 +7,7 @@ import {
 } from "react-number-format";
 import { inputBorder } from "../primitives/Input";
 
-type Variant = "currency" | "percent" | "wholeNumber";
+type Variant = "wholeNumber" | "currency" | "percent" | "weight" | "size";
 
 interface NumberInputProps {
   variant?: Variant;
@@ -19,6 +19,11 @@ interface NumberInputProps {
 }
 
 const formatProp = {
+  wholeNumber: {
+    decimalScale: 0,
+    fixedDecimalScale: true,
+    thousandSeparator: true,
+  },
   currency: {
     prefix: "$",
     decimalScale: 2,
@@ -31,10 +36,17 @@ const formatProp = {
     fixedDecimalScale: true,
     thousandSeparator: false,
   },
-  wholeNumber: {
+  weight: {
+    suffix: "gm",
     decimalScale: 0,
     fixedDecimalScale: true,
-    thousandSeparator: true,
+    thousandSeparator: false,
+  },
+  size: {
+    suffix: "cm",
+    decimalScale: 0,
+    fixedDecimalScale: true,
+    thousandSeparator: false,
   },
 };
 

@@ -110,15 +110,15 @@ export const ProductVariantHeader: React.FC = () => {
   }, [variants, setValue, hasVariants, getValues]);
 
   return (
-    <div className="flex flex-row items-center justify-between w-full pr-md">
+    <div className="flex flex-row items-center justify-between w-full pr-md py-2">
       <span className="font-semibold whitespace-nowrap">
         {hasVariants ? "Total Stock" : "Product Stock"}
       </span>
 
       <NumberInput
         variant="wholeNumber"
+        className="flex-none w-24 h-[28px] disabled:opacity-100"
         disabled={hasVariants}
-        className="flex-1 w-24 h-7"
         controlProps={{
           control,
           name: "stock",

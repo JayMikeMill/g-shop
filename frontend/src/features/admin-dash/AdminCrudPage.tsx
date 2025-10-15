@@ -13,7 +13,7 @@ import {
 import type { CrudEditorInterface } from "@features/admin-dash/CrudEditorInterface";
 
 import { useDataApi } from "@api";
-import type { TableLayout } from "./TableLayouts";
+import type { TableLayout } from "./AdminTableLayouts";
 
 interface AdminCrudPageProps<T extends { id?: string }> {
   objectsName: string;
@@ -42,14 +42,16 @@ function AdminCrudPage<T extends { id?: string }>({
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
 
-  const { dbSelect, columns } = tableLayout;
+  const { query, columns } = tableLayout;
 
   const api = useDataApi()[apiKey] as any;
 
   // Fetch
   const { data, isLoading, refetch } = api.getMany({
     search,
-    select: [...dbSelect, "id"],
+    searchFields: query.searchFields,
+    select: query.select ? [...query.select, "id"] : undefined,
+    include: query.include,
     page,
     limit: pageSize,
     sortBy: "createdAt",

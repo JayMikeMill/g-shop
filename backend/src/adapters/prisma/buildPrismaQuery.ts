@@ -75,12 +75,11 @@ export function buildPrismaQuery<T>(
 
   // Build select/include
   if (queryObj.select?.length) {
-    select = buildNestedSelect(queryObj.select.map(String));
+    select = buildNestedPrisma(queryObj.select.map(String), "select");
+  } else if (queryObj.include?.length) {
+    include = buildNestedPrisma(queryObj.include.map(String), "include");
   } else if (modelMeta.baseInclude) {
-    const defaultFields = Array.isArray(modelMeta.baseInclude)
-      ? modelMeta.baseInclude.map(String)
-      : Object.keys(modelMeta.baseInclude);
-    include = buildNestedSelect(defaultFields);
+    include = modelMeta.baseInclude;
   }
 
   // Sorting and pagination
@@ -192,28 +191,38 @@ function mapOperator(op: QueryCondition["operator"]): string {
   }
 }
 
-/** -------------------- NESTED SELECT BUILDER --------------------
- * Converts an array of dot-notation fields into nested Prisma select/include
+/**
+ * Build nested Prisma select/include object from array of dot-notation strings
+ *
+ * @param fields - array of dot-notation strings
+ * @param mode - "select" (default) or "include"
+ * @returns nested object ready for Prisma
  */
-function buildNestedSelect(fields: string[]): any {
-  const result: any = {};
+export function buildNestedPrisma(
+  fields: string[],
+  mode: "select" | "include" = "select"
+): any {
+  const root: any = {};
 
   for (const field of fields) {
     const parts = field.split(".");
-    let current = result;
+    let current = root;
 
     for (let i = 0; i < parts.length; i++) {
-      const isLeaf = i === parts.length - 1;
+      const leaf = i === parts.length - 1;
       const key = parts[i];
 
-      if (isLeaf) {
+      if (leaf) {
         current[key] = true;
       } else {
         if (!current[key] || current[key] === true) current[key] = {};
-        current = current[key];
+        if (mode === "include" && !("include" in current[key])) {
+          current[key] = { include: current[key] };
+        }
+        current = mode === "include" ? current[key].include : current[key];
       }
     }
   }
 
-  return result;
+  return root;
 }

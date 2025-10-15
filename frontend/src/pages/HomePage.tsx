@@ -1,5 +1,5 @@
 import ProductCardList from "@features/products/ProductCardList";
-import ProductLoader from "@features/products/ProductLoader";
+import { LoaderBar } from "@components/ui";
 import { useDataApi } from "@api";
 
 export default function HomePage() {
@@ -21,7 +21,7 @@ export default function HomePage() {
         Find the perfect products for you, from our wide range of items.
       </p>
 
-      {isLoading ? <ProductLoader /> : <ProductCardList products={products} />}
+      {isLoading ? <LoaderBar /> : <ProductCardList products={products} />}
       {error && (
         <div className="text-red-500 mt-md">Failed to load products</div>
       )}

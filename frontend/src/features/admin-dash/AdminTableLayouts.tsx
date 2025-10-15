@@ -1,5 +1,6 @@
-import type { Collection, Order, Product } from "@shared/types";
+import type { Collection, Order, Product, QueryObject } from "@shared/types";
 import {
+  formatAddress,
   getDiscountString,
   getFinalPriceString,
   toMajorPriceString,
@@ -8,21 +9,23 @@ import {
 import { TagBox, type TableColumn } from "@components/ui";
 
 export type TableLayout<T> = {
-  dbSelect: (keyof T)[]; // fields to select from DB for this table
+  query: QueryObject<T>; // fields to select from DB for this table
   columns: TableColumn<T>[];
 };
 
 // ----- Products -----
 export const productTable: TableLayout<Product> = {
-  dbSelect: [
-    "images",
-    "name",
-    "price",
-    "discount",
-    "discountType",
-    "tags",
-    "description",
-  ] as (keyof Product)[],
+  query: {
+    select: [
+      "images",
+      "name",
+      "price",
+      "discount",
+      "discountType",
+      "tags",
+      "description",
+    ],
+  },
   columns: [
     {
       id: "image",
@@ -106,65 +109,68 @@ export const productTable: TableLayout<Product> = {
 
 // ----- Orders -----
 export const orderTable: TableLayout<Order> = {
+  query: {
+    include: ["shippingInfo.address"],
+    searchFields: [
+      "id",
+      "userId",
+      "shippingInfo.address.name",
+      "shippingInfo.address.street1",
+      "shippingInfo.address.street2",
+      "shippingInfo.address.city",
+      "shippingInfo.address.state",
+      "shippingInfo.address.postalCode",
+      "shippingInfo.address.country",
+    ],
+  },
   columns: [
     {
-      id: "id",
-      label: "Order ID",
-      width: "150px",
-      render: (o: Order) => <span className="font-semibold">{o.id}</span>,
-    },
-    {
-      id: "userId",
-      label: "User ID",
-      width: "120px",
-      render: (o: Order) => <span className="font-semibold">{o.userId}</span>,
-    },
-    {
-      id: "status",
-      label: "Status",
-      width: "120px",
-      render: (o: Order) => <span className="font-semibold">{o.status}</span>,
+      id: "createdAt",
+      label: "Created/Status",
+      width: "40px",
+      render: (o: Order) => (
+        <div className="flex flex-col items-center justify-center">
+          <span style={{ whiteSpace: "pre-line" }}>
+            {new Date(o.createdAt ?? "").toLocaleString([], {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true, // optional, 24-hour format
+            })}
+          </span>
+          <div className="border-b border-black w-full" />
+          <span className="font-semibold">{o.status}</span>
+        </div>
+      ),
     },
     {
       id: "total",
       label: "Total",
-      width: "100px",
+      width: "20px",
       render: (o: Order) => (
-        <span className="font-semibold">${o.total / 100}</span>
+        <span className="font-semibold">${(o.total / 100).toFixed(2)}</span>
       ),
     },
     {
-      id: "createdAt",
-      label: "Created",
-      width: "180px",
+      id: "address",
+      label: "Shipping Address",
+      width: "80px",
       render: (o: Order) => (
-        <span className="font-semibold">
-          {new Date(o.createdAt ?? "").toLocaleString()}
-        </span>
-      ),
-    },
-    {
-      id: "updatedAt",
-      label: "Updated",
-      width: "180px",
-      render: (o: Order) => (
-        <span className="font-semibold">
-          {new Date(o.updatedAt ?? "").toLocaleString()}
+        <span className="font-semibold text-center whitespace-pre-wrap">
+          {formatAddress(o.shippingInfo?.address)}
         </span>
       ),
     },
   ],
-  dbSelect: [
-    "userId",
-    "status",
-    "total",
-    "createdAt",
-    "updatedAt",
-  ] as (keyof Order)[],
 };
 
 // ----- Collections -----
 export const collectionTable: TableLayout<Collection> = {
+  query: {
+    select: ["name", "slug", "description"],
+  },
   columns: [
     { id: "name", label: "Name", render: (row: Collection) => row.name },
     { id: "slug", label: "Slug", render: (row: Collection) => row.slug },
@@ -174,5 +180,4 @@ export const collectionTable: TableLayout<Collection> = {
       render: (row: Collection) => row.description?.slice(0, 50) + "...",
     },
   ],
-  dbSelect: ["name", "slug", "description"] as (keyof Collection)[],
 };

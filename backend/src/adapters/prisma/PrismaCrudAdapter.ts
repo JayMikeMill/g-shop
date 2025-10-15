@@ -129,7 +129,6 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
       if (val !== undefined) where[key] = val;
     }
 
-    console.log("Getting one from model:", this.model, query);
     return this.client.findFirst({
       where,
       include: this.modelMetadata.baseInclude,
@@ -162,7 +161,6 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
         query as QueryObject<T>,
         this.modelMetadata
       );
-      console.log("Built query params:", queryParams);
 
       const [data, total] = !this.isTx
         ? await this.prisma.$transaction([

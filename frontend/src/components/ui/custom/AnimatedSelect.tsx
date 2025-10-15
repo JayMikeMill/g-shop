@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, type ReactNode } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, m } from "framer-motion";
 import { type Control, Controller } from "react-hook-form";
 
 interface SelectItem<T> {
@@ -68,12 +68,12 @@ export const AnimatedSelect = <T,>({
       <div ref={ref} className={`relative ${className ?? ""}`}>
         <button
           type="button"
-          className={`bg-background text-base shadow-sm transition-all 
-						rounded-md border px-2 py-1 w-full text-left flex justify-between items-center 
+          className={`bg-background text-base shadow-sm h-9 transition-all 
+						rounded-md border px-2 py-1 w-full text-left flex justify-between
 						${open ? "ring-2 ring-ring" : ""}`}
           onClick={() => setOpen((p) => !p)}
         >
-          <span>{displayedLabel}</span>
+          <span className={"w-full " + menuClassName}>{displayedLabel}</span>
           <span>{open ? "▲" : "▼"}</span>
         </button>
 

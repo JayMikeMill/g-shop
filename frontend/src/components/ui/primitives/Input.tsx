@@ -1,8 +1,6 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@components/lib/utils";
-import { useState } from "react";
-import { Currency } from "lucide-react";
 
 export const inputBorder = `bg-background text-base shadow-sm h-9
 	transition-all placeholder:text-muted-foreground rounded-md border
@@ -11,7 +9,7 @@ export const inputBorder = `bg-background text-base shadow-sm h-9
 
 const inputVariants = cva(
   inputBorder +
-    `flex h-9 w-full   px-3 py-2
+    `flex h-9 w-full px-3 py-2
 	[&::-webkit-outer-spin-button]:appearance-none
 	[&::-webkit-inner-spin-button]:appearance-none
 	[moz-appearance:textfield]`,

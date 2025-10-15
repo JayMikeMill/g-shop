@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Search } from "lucide-react";
-import { Input } from "@components/ui";
+import { Input, LoaderBar } from "@components/ui";
 import "./dynamic-table.css";
 
 export interface TableColumn<T> {
@@ -80,7 +80,7 @@ export const DynamicTable = <T extends { id?: string }>({
       <div className="table-container">
         {loading || data.length === 0 ? (
           <div className="w-full flex items-center justify-center border-border border rounded h-24 text-text text-3xl">
-            {loading ? "Loading..." : `No ${objectsName}`}
+            {loading ? <LoaderBar /> : `No ${objectsName}`}
           </div>
         ) : (
           <table className="table w-full">
