@@ -123,11 +123,13 @@ class OrderProcessingService implements OrderProcessingApi {
     //   toAddress
     // );
 
+    const parcel = { length: 12, width: 8, height: 4, weight: 32 };
+
     const createdShipment = await shipping.createShipment(
       normalizedFrom,
       order.shippingInfo?.address!,
       //getOrderDiminsions(order)
-      { length: 12, width: 8, height: 4, weight: 32 }
+      parcel
     );
 
     if (!createdShipment) throw new Error("Failed to create shipment");
@@ -136,8 +138,16 @@ class OrderProcessingService implements OrderProcessingApi {
 
     if (!purchasedShiment) throw new Error("Failed to buy shipment");
 
-    order.shippingInfo!.tracking = purchasedShiment.trackingNumber;
-    order.shippingInfo!.status = "LABEL_CREATED";
+    const shippingInfo = {
+      shipmentId: purchasedShiment.id,
+      parcel: parcel,
+      tracking: purchasedShiment.trackingNumber,
+      labelUrl: purchasedShiment.labelUrl,
+      carrier: purchasedShiment.carrier,
+      status: purchasedShiment.status,
+    };
+
+    order.shippingInfo = { ...order.shippingInfo, ...shippingInfo };
 
     await db.orders.update(order as Order & { id: string });
 

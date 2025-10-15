@@ -37,21 +37,6 @@ export const OrderStatusKeys = {
   REFUNDED: "REFUNDED",
 } satisfies Record<string, OrderStatus>;
 
-export type ShippingStatus =
-  | "LABEL_CREATED"
-  | "IN_TRANSIT"
-  | "OUT_FOR_DELIVERY"
-  | "DELIVERED"
-  | "EXCEPTION";
-
-export const ShippingStatusKeys = {
-  LABEL_CREATED: "LABEL_CREATED",
-  IN_TRANSIT: "IN_TRANSIT",
-  OUT_FOR_DELIVERY: "OUT_FOR_DELIVERY",
-  DELIVERED: "DELIVERED",
-  EXCEPTION: "EXCEPTION",
-} satisfies Record<string, ShippingStatus>;
-
 export type TransactionStatus = "PENDING" | "PAID" | "REFUNDED" | "FAILED";
 
 export const TransactionStatusKeys = {
@@ -95,24 +80,6 @@ export const PaymentMethodKeys = {
   OTHER_CRYPTO: "OTHER_CRYPTO",
   OTHER: "OTHER",
 } satisfies Record<string, PaymentMethod>;
-
-export type ShippingCarrier = "UPS" | "FEDEX" | "USPS" | "DHL" | "AMAZON";
-
-export const ShippingCarrierKeys = {
-  UPS: "UPS",
-  FEDEX: "FEDEX",
-  USPS: "USPS",
-  DHL: "DHL",
-  AMAZON: "AMAZON",
-} satisfies Record<string, ShippingCarrier>;
-
-export type ShippingMethod = "STANDARD" | "EXPRESS" | "OVERNIGHT";
-
-export const ShippingMethodKeys = {
-  STANDARD: "STANDARD",
-  EXPRESS: "EXPRESS",
-  OVERNIGHT: "OVERNIGHT",
-} satisfies Record<string, ShippingMethod>;
 
 export type ProductStatus = "ACTIVE" | "INACTIVE" | "DISCONTINUED";
 
@@ -368,10 +335,10 @@ export interface Address {
   updatedAt?: Date;
   User?: User | null;
   userId?: string | null;
-  ShippingInfo?: ShippingInfo | null;
-  ShippingInfoId?: string | null;
   Transaction?: Transaction | null;
   TransactionId?: string | null;
+  ShippingInfos?: ShippingInfo[];
+  FromShipments?: ShippingInfo[];
 }
 
 export interface ShippingInfo {
@@ -379,22 +346,37 @@ export interface ShippingInfo {
   order?: Order;
   orderId?: string;
   address?: Address | null;
-  carrier?: ShippingCarrier | null;
-  method?: ShippingMethod | null;
-  cost?: number | null;
+  addressId?: string | null;
+  fromAddress?: Address | null;
+  fromAddressId?: string | null;
+  shipmentId?: string | null;
   tracking?: string | null;
   labelUrl?: string | null;
-  status?: ShippingStatus | null;
+  carrier?: string | null;
+  method?: string | null;
+  parcel?: ParcelDimensions | null;
+  cost?: number | null;
+  status?: string | null;
   statusHistory?: ShippingStatusHistory[];
   createdAt?: Date;
   updatedAt?: Date;
+}
+
+export interface ParcelDimensions {
+  id?: string;
+  ShippingInfo?: ShippingInfo | null;
+  ShippingInfoId?: string | null;
+  weight?: number | null;
+  length?: number | null;
+  width?: number | null;
+  height?: number | null;
 }
 
 export interface ShippingStatusHistory {
   id?: string;
   shippingInfo?: ShippingInfo;
   shippingInfoId?: string;
-  status: ShippingStatus;
+  status: string;
   timestamp: Date;
 }
 

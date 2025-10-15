@@ -129,7 +129,7 @@ export const orderTable: TableLayout<Order> = {
     {
       id: "createdAt",
       label: "Created/Status",
-      width: "40px",
+      width: "140px",
       render: (o: Order) => (
         <div className="flex flex-col items-center justify-center">
           <span style={{ whiteSpace: "pre-line" }}>
@@ -150,7 +150,7 @@ export const orderTable: TableLayout<Order> = {
     {
       id: "total",
       label: "Total",
-      width: "20px",
+      width: "80px",
       render: (o: Order) => (
         <div className="flex flex-col items-center justify-center">
           <span className="font-semibold">Items: {getTotalOrderItems(o)}</span>
@@ -161,13 +161,27 @@ export const orderTable: TableLayout<Order> = {
     {
       id: "shipping",
       label: "Shipping",
-      width: "20px",
+      width: "140px",
       render: (o: Order) => (
         <div className="flex flex-col items-center justify-center">
           {o.shippingInfo?.tracking ? (
-            <span className="font-semibold whitespace-pre-wrap">
-              {`Tracking:\n${o.shippingInfo.tracking}\nStatus:\n${o.shippingInfo.status}`}
-            </span>
+            <div className="flex flex-col">
+              <span className="font-semibold whitespace-pre-wrap">
+                {`Tracking\n${o.shippingInfo.tracking}\nStatus:\n${o.shippingInfo.status}`}
+              </span>
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.open(
+                    o.shippingInfo?.labelUrl || "",
+                    "_blank",
+                    "noopener,noreferrer"
+                  );
+                }}
+              >
+                Label
+              </Button>
+            </div>
           ) : (
             <Button
               className="primary"
@@ -185,7 +199,7 @@ export const orderTable: TableLayout<Order> = {
     {
       id: "address",
       label: "Shipping Address",
-      width: "80px",
+      width: "200px",
       render: (o: Order) => (
         <span className="font-semibold text-center whitespace-pre-wrap">
           {formatAddress(o.shippingInfo?.address)}

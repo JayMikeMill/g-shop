@@ -1,53 +1,21 @@
 import { useFormContext } from "react-hook-form";
 import AddressForm from "@components/ui/custom/AddressForm";
-import { AnimatedSelect, Input, Label } from "@components/ui";
-import {
-  ShippingCarrierKeys,
-  ShippingMethodKeys,
-  type Order,
-  type ShippingCarrier,
-  type ShippingMethod,
-} from "@shared/types";
+import { Input, Label } from "@components/ui";
+import { type Order } from "@shared/types";
 
 const OrderShippingForm: React.FC = () => {
   const formContext = useFormContext<Order>();
-  const { register, control } = formContext;
+  const { register, control, getValues } = formContext;
 
   return (
     <div className="flex flex-col gap-2">
       <AddressForm formContext={formContext} rootName="shippingInfo.address" />
 
       {/* Shipping carrier options */}
-      <Label>
-        Carrier
-        <AnimatedSelect
-          items={Object.values(ShippingCarrierKeys).map((key) => ({
-            value: key as ShippingCarrier,
-            label: key as string,
-            render: () => <span>{key}</span>,
-          }))}
-          controlProps={{
-            control,
-            name: "shippingInfo.carrier",
-          }}
-        />
-      </Label>
+      <Label>Carrier: ${getValues("shippingInfo.carrier")}</Label>
 
       {/* Shipping method options */}
-      <Label>
-        Method
-        <AnimatedSelect
-          items={Object.values(ShippingMethodKeys).map((key) => ({
-            value: key as ShippingMethod,
-            label: key as string,
-            render: () => <span>{key}</span>,
-          }))}
-          controlProps={{
-            control,
-            name: "shippingInfo.method",
-          }}
-        />
-      </Label>
+      <Label>Method: ${getValues("shippingInfo.method")}</Label>
 
       <Input
         type="text"

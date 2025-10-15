@@ -1,6 +1,6 @@
 import { Address } from "../types";
 
-export function formatAddress(address: Address): string {
+export function formatAddress(address?: Address | null): string {
   if (!address) return "";
 
   const lines: string[] = [];

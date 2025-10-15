@@ -39,14 +39,6 @@ enum OrderStatus {
   REFUNDED
 }
 
-enum ShippingStatus {
-  LABEL_CREATED
-  IN_TRANSIT
-  OUT_FOR_DELIVERY
-  DELIVERED
-  EXCEPTION
-}
-
 enum TransactionStatus {
   PENDING
   PAID
@@ -70,20 +62,6 @@ enum PaymentMethod {
   LITECOIN
   OTHER_CRYPTO
   OTHER
-}
-
-enum ShippingCarrier {
-  UPS
-  FEDEX
-  USPS
-  DHL
-  AMAZON
-}
-
-enum ShippingMethod {
-  STANDARD
-  EXPRESS
-  OVERNIGHT
 }
 
 enum ProductStatus {
@@ -340,34 +318,52 @@ model Address {
 
   // Relations
   User           User?         @relation(fields: [userId], references: [id])
-  userId         String?       @unique
-  ShippingInfo   ShippingInfo? @relation(fields: [ShippingInfoId], references: [id], onDelete: Cascade)
-  ShippingInfoId String?       @unique
+  userId         String?          
   Transaction    Transaction?  @relation(fields: [TransactionId], references: [id], onDelete: Cascade)
   TransactionId  String?       @unique
+
+
+  // Relations
+  ShippingInfos  ShippingInfo[] @relation("ShippingInfoToAddress")
+  FromShipments  ShippingInfo[] @relation("ShippingInfoFromAddress")
 }
 
 model ShippingInfo {
   id            String                  @id @default(uuid())
   order         Order                   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId       String                  @unique
-  address       Address?
-  carrier       ShippingCarrier?
-  method        ShippingMethod?
-  cost          Int?
+  address       Address?                @relation("ShippingInfoToAddress", fields: [addressId], references: [id])
+  addressId     String?
+  fromAddress   Address?                @relation("ShippingInfoFromAddress", fields: [fromAddressId], references: [id])
+  fromAddressId String?
+  shipmentId    String?
   tracking      String?
   labelUrl      String?
-  status        ShippingStatus?
+  carrier       String?
+  method        String?
+  parcel        ParcelDimensions?
+  cost          Int?
+  status        String?
   statusHistory ShippingStatusHistory[]
   createdAt     DateTime                @default(now())
   updatedAt     DateTime                @updatedAt
 }
 
+model ParcelDimensions {
+  id             String        @id @default(uuid())
+  ShippingInfo   ShippingInfo? @relation(fields: [ShippingInfoId], references: [id], onDelete: Cascade)
+  ShippingInfoId String?       @unique
+  weight         Int?
+  length         Int?
+  width          Int?
+  height         Int?
+}
+
 model ShippingStatusHistory {
   id             String         @id @default(uuid())
   shippingInfo   ShippingInfo   @relation(fields: [shippingInfoId], references: [id], onDelete: Cascade)
-  shippingInfoId String
-  status         ShippingStatus
+  shippingInfoId String         @unique
+  status         String
   timestamp      DateTime       @default(now())
 }
 
