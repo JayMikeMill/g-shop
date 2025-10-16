@@ -14,6 +14,7 @@ export * from "./custom/TagBox";
 export * from "./custom/NumberInput";
 export * from "./custom/DateTimeInput";
 export * from "./custom/LoaderBar";
+export * from "./custom/NavButton";
 
 // Primitives
 export * from "./primitives/Label";
