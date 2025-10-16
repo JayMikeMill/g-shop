@@ -121,8 +121,8 @@ const CollectionFields: React.FC<{
             type="text"
             placeholder="URL Slug"
             {...register("slug")}
-            required
             className="w-full"
+            required
           />
         </label>
       </div>

@@ -54,7 +54,7 @@ export const ProductVariantForm: React.FC = () => {
                 key={`variant-${idx}-opt-${optIdx}`}
                 className="options-tag"
               >
-                {opt.value}
+                {`${opt.name}:${opt.value} `}
               </span>
             ))}
           </div>
@@ -112,7 +112,7 @@ export const ProductVariantHeader: React.FC = () => {
   return (
     <div className="flex flex-row items-center justify-between w-full pr-md py-2">
       <span className="font-semibold whitespace-nowrap">
-        {hasVariants ? "Total Stock" : "Product Stock"}
+        {hasVariants ? "Variants" : "Product Stock"}
       </span>
 
       <NumberInput

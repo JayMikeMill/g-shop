@@ -38,7 +38,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   // Format discount label
   const discountPercent = getProductDiscountPercent(product).toFixed(0) + "%";
-  const discountLabel = getProductDiscountLabel(product);
+  const discountLabel = "$" + toMajorUnit(product.price).toFixed(2);
   const priceLabel = toMajorUnit(getProductFinalPrice(product)).toFixed(2);
 
   return (

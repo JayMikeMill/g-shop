@@ -1,9 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
-import { X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { X, ChevronRight } from "lucide-react";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@features/user/useUser";
 import { Button, XButton } from "@components/ui";
+import { useDataApi } from "@api";
 
 interface SiteMenuProps {
   isOpen: boolean;
@@ -12,17 +13,20 @@ interface SiteMenuProps {
 
 export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
   const { user } = useUser();
-  const navigate = useNavigate();
+  const { categories } = useDataApi();
 
-  // Local state controls visibility for exit animation
+  const { data: categoryData } = categories.getMany({
+    select: ["id", "name", "slug"],
+  });
+
+  const categoriesList = categoryData?.data ?? [];
+  const navigate = useNavigate();
   const [visible, setVisible] = useState(isOpen);
 
-  // Sync local state when parent opens menu
   useEffect(() => {
     if (isOpen) setVisible(true);
   }, [isOpen]);
 
-  // Escape key closes menu
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === "Escape") handleClose();
   }, []);
@@ -40,15 +44,29 @@ export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
   }, [visible, handleKeyDown]);
 
   const handleClose = () => setVisible(false);
-
-  // After exit animation completes
   const handleExitComplete = () => {
     if (!visible) onClose();
   };
-
   const handleNavigate = (path: string) => {
     navigate(path);
     handleClose();
+  };
+
+  // Variants for staggered menu items
+  const menuItemsVariants: Variants = {
+    hidden: {},
+    show: {
+      transition: {
+        staggerChildren: 0.05,
+        delayChildren: 0.1, // wait until menu slide-in finishes
+      },
+    },
+  };
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, x: -20 },
+    show: { opacity: 1, x: 0, transition: { duration: 0.25 } },
+    exit: { opacity: 0, x: -20, transition: { duration: 0.2 } },
   };
 
   return (
@@ -63,22 +81,23 @@ export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
           <motion.div
             className="absolute inset-0 bg-black"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.4 }}
+            animate={{ opacity: 0.3 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            onClick={handleClose} // click outside closes menu
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            onClick={handleClose}
           />
 
           {/* Slide-out menu */}
           <motion.div
-            className="relative bg-card w-2/3 max-w-xs h-full shadow-lg p-lg flex flex-col gap-4"
+            className="relative bg-card w-2/3 max-w-sm h-full shadow-lg flex flex-col"
             initial={{ x: "-100%" }}
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
           >
             {/* Close button */}
             <XButton
+              className="hover:bg-transparent "
               onClick={handleClose}
               aria-label="Close menu"
               type="button"
@@ -86,28 +105,89 @@ export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
               <X size={24} />
             </XButton>
 
-            {/* Menu links */}
-            {user?.role == "ADMIN" && (
-              <Button
-                variant={"flatLink"}
-                onClick={() => handleNavigate("/admin")}
-              >
-                Admin Dashboard
-              </Button>
-            )}
-
-            <Button variant={"flatLink"} onClick={() => handleNavigate("/")}>
-              Home
-            </Button>
-            <Button
-              variant={"flatLink"}
-              onClick={() => handleNavigate("/about")}
+            {/* Menu Items with staggered animation */}
+            <motion.div
+              className="flex flex-col"
+              variants={menuItemsVariants}
+              initial="hidden"
+              animate="show"
+              exit="hidden"
             >
-              About
-            </Button>
+              <MenuItem
+                variants={itemVariants}
+                onClick={() => handleNavigate("/")}
+              >
+                Home
+              </MenuItem>
+
+              {user?.role === "ADMIN" && (
+                <MenuItem
+                  variants={itemVariants}
+                  onClick={() => handleNavigate("/admin")}
+                >
+                  Admin Dashboard
+                </MenuItem>
+              )}
+
+              {categoriesList.length > 0 && (
+                <div className="flex flex-col">
+                  {categoriesList.map((category) => (
+                    <MenuItem
+                      key={category.id}
+                      variants={itemVariants}
+                      onClick={() =>
+                        handleNavigate(`/categories/${category.slug}`)
+                      }
+                    >
+                      {category.name}
+                    </MenuItem>
+                  ))}
+                </div>
+              )}
+
+              <MenuItem
+                variants={itemVariants}
+                onClick={() => handleNavigate("/about")}
+              >
+                About
+              </MenuItem>
+            </motion.div>
           </motion.div>
         </div>
       )}
     </AnimatePresence>
   );
 }
+
+// MenuItem component below SiteMenu
+interface MenuItemProps {
+  children: React.ReactNode;
+  onClick: () => void;
+  variants?: Variants;
+}
+
+const MenuItem = ({ children, onClick, variants }: MenuItemProps) => {
+  return (
+    <motion.div variants={variants} className="overflow-hidden">
+      <Button
+        onClick={onClick}
+        className={`
+					group w-full text-xl py-lg justify-between px-4 rounded
+					hover:bg-primary-50 dark:hover:bg-primary/20 hover:scale-[1.02]
+					border-b transition-colors flex items-center 
+          transition-all duration-300
+          shadow-none
+          bg-transparent text-foreground
+          hover:shadow-none 
+          active:translate-none active:shadow-none
+				`}
+      >
+        <span>{children}</span>
+        <ChevronRight
+          size={20}
+          className="text-black transition-transform duration-200 group-hover:translate-x-1"
+        />
+      </Button>
+    </motion.div>
+  );
+};

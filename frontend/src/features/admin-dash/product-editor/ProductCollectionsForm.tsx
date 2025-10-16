@@ -83,7 +83,7 @@ const ProductCollectionsForm: React.FC = () => {
 export default ProductCollectionsForm;
 
 //==========================================================
-// Product Category Presets Select
+// Product Collection Select
 //==========================================================
 
 interface CollectionSelectProps {

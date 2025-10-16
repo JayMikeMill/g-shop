@@ -23,7 +23,7 @@ export const ProductInfoForm: React.FC = () => {
       </div>
       <div className="flex gap-md justify-left">
         <div className="flex flex-col w-32">
-          <Label>Amount</Label>
+          <Label>Price</Label>
           <NumberInput
             variant="currency"
             controlProps={{

@@ -23,6 +23,11 @@ const buttonVariants = cva("", {
         `
         bg-primary text-primary-foreground 
         active:bg-primary-600`,
+      bare: `
+        bg-transparent text-foreground
+        active:bg-primary active:text-primary-foreground
+        transition-colors`,
+
       destructive:
         baseButton +
         `
