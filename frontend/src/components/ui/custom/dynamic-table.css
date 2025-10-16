@@ -1,11 +1,4 @@
 /* =========================
-     Table Container
-  ========================== */
-.table-container {
-  @apply overflow-x-auto w-full rounded-card shadow-card border border-border;
-}
-
-/* =========================
      Table
   ========================== */
 .table {

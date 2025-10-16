@@ -137,6 +137,8 @@ function AdminCrudPage<T extends { id?: string }>({
 
       {/* Table */}
       <DynamicTable<T>
+        className="sm:px-md"
+        tableClassName="rounded-none sm:rounded-card"
         objectsName={objectsName}
         columns={columns}
         data={items}

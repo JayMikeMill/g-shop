@@ -28,6 +28,8 @@ export interface DynamicTableProps<T> {
   onRowClick?: (row: T) => void;
   headerButton?: ReactNode;
   objectsName?: string;
+  className?: string;
+  tableClassName?: string;
 }
 
 export const DynamicTable = <T extends { id?: string }>({
@@ -44,11 +46,13 @@ export const DynamicTable = <T extends { id?: string }>({
   onRowClick,
   headerButton,
   objectsName = "Objects",
+  className = "",
+  tableClassName = "",
 }: DynamicTableProps<T>) => {
   return (
-    <div className="flex flex-col gap-4 px-2">
+    <div className={`flex flex-col gap-4 ${className}`}>
       {/* Header */}
-      <div className="flex flex-row w-full gap-2 items-center">
+      <div className="flex flex-row w-full gap-2 items-center px-md">
         {headerButton && <div className="h-full">{headerButton}</div>}
 
         {searchable && onSearchChange && onSearchSubmit && (
@@ -77,7 +81,9 @@ export const DynamicTable = <T extends { id?: string }>({
       </div>
 
       {/* Table */}
-      <div className="table-container">
+      <div
+        className={`overflow-x-auto w-full shadow-card border border-border ${tableClassName}`}
+      >
         {loading || data.length === 0 ? (
           <div className="w-full flex items-center justify-center border-border border rounded h-24 text-text text-3xl">
             {loading ? <LoaderBar /> : `No ${objectsName}`}
