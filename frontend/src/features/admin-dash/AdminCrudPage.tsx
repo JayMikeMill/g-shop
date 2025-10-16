@@ -3,17 +3,13 @@ import { useState } from "react";
 
 import type { QueryObject } from "@shared/types";
 
-import {
-  Button,
-  CircleSpinner,
-  DynamicTable,
-  type TableColumn,
-} from "@components/ui";
+import { Button, CircleSpinner, DynamicTable, Input } from "@components/ui";
 
 import type { CrudEditorInterface } from "@features/admin-dash/CrudEditorInterface";
 
 import { useDataApi } from "@api";
 import type { TableLayout } from "./AdminTableLayouts";
+import { Search } from "lucide-react";
 
 interface AdminCrudPageProps<T extends { id?: string }> {
   objectsName: string;
@@ -34,7 +30,6 @@ function AdminCrudPage<T extends { id?: string }>({
   Editor,
   preSaveHook,
   pageSize = 10,
-  searchable = true,
 }: AdminCrudPageProps<T>) {
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
@@ -112,7 +107,7 @@ function AdminCrudPage<T extends { id?: string }>({
   const handleRowClick = (item: T) => setEditingItemId(item.id!);
 
   return (
-    <div className="pt-lg pb-lg">
+    <div className="flex flex-col h-[85%]">
       {/* Editor Dialog */}
       {Editor && (
         <Editor
@@ -135,10 +130,38 @@ function AdminCrudPage<T extends { id?: string }>({
         </div>
       )}
 
+      {/* Header */}
+      <div className="flex flex-row w-full bg-background border-b items-center gap-sm p-sm">
+        <Button
+          className="px-4 py-2 border rounded bg-blue-600 text-white"
+          onClick={handleAddClick}
+        >
+          {`Add ${objectName}`}
+        </Button>
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            () => setPage(1);
+          }}
+          className="relative w-full h-full"
+        >
+          <Input
+            type="text"
+            placeholder={objectsName ? `Search ${objectsName}...` : "Search..."}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Search
+            className="text-text absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer"
+            size={20}
+            onClick={() => setPage(1)}
+          />
+        </form>
+      </div>
+
       {/* Table */}
       <DynamicTable<T>
-        className="sm:px-md"
-        tableClassName="rounded-none sm:rounded-card"
         objectsName={objectsName}
         columns={columns}
         data={items}
@@ -146,19 +169,7 @@ function AdminCrudPage<T extends { id?: string }>({
         page={page}
         totalPages={totalPages}
         onPageChange={setPage}
-        searchable={searchable}
-        searchValue={search}
-        onSearchChange={setSearch}
-        onSearchSubmit={() => setPage(1)}
         onRowClick={handleRowClick}
-        headerButton={
-          <Button
-            className="px-4 py-2 border rounded bg-blue-600 text-white"
-            onClick={handleAddClick}
-          >
-            {`Add ${objectName}`}
-          </Button>
-        }
       />
     </div>
   );

@@ -38,11 +38,11 @@ export const productTable: TableLayout<Product> = {
           <div className="flex items-center justify-center">
             <img
               src={p.images[0].thumbnail}
-              className="w-20 h-20 object-cover rounded"
+              className="w-16 h-16 object-cover rounded"
             />
           </div>
         ) : (
-          <div className="w-20 h-20 flex items-center justify-center bg-light rounded text-xs">
+          <div className="w-16 h-16 flex items-center justify-center bg-light rounded text-xs">
             No Image
           </div>
         ),
@@ -67,12 +67,16 @@ export const productTable: TableLayout<Product> = {
           <span className="font-semibold text-center text-base">
             ${toMajorPriceString(p.price)}
           </span>
-          <span className="font-semibold text-center text-red-400">
-            -{getProductDiscountLabel(p)}
-          </span>
-          <span className="font-semibold text-center text-base">
-            ${getFinalPriceString(p)}
-          </span>
+          {p.discount && (
+            <>
+              <span className="text-center text-red-400">
+                -{getProductDiscountLabel(p)}
+              </span>
+              <span className="font-bold text-center text-base">
+                ${getFinalPriceString(p)}
+              </span>
+            </>
+          )}
         </div>
       ),
     },
@@ -129,7 +133,7 @@ export const orderTable: TableLayout<Order> = {
     {
       id: "createdAt",
       label: "Created/Status",
-      width: "140px",
+      width: "200px",
       render: (o: Order) => (
         <div className="flex flex-col items-center justify-center">
           <span style={{ whiteSpace: "pre-line" }}>
@@ -150,7 +154,7 @@ export const orderTable: TableLayout<Order> = {
     {
       id: "total",
       label: "Total",
-      width: "80px",
+      width: "120px",
       render: (o: Order) => (
         <div className="flex flex-col items-center justify-center">
           <span className="font-semibold">Items: {getTotalOrderItems(o)}</span>
@@ -161,13 +165,13 @@ export const orderTable: TableLayout<Order> = {
     {
       id: "shipping",
       label: "Shipping",
-      width: "140px",
+      width: "250px",
       render: (o: Order) => (
         <div className="flex flex-col items-center justify-center">
           {o.shippingInfo?.tracking ? (
             <div className="flex flex-col">
               <span className="font-semibold whitespace-pre-wrap">
-                {`Tracking\n${o.shippingInfo.tracking}\nStatus:\n${o.shippingInfo.status}`}
+                {`${o.shippingInfo.tracking}\n${o.shippingInfo.status}`}
               </span>
               <Button
                 onClick={(e) => {
@@ -199,7 +203,7 @@ export const orderTable: TableLayout<Order> = {
     {
       id: "address",
       label: "Shipping Address",
-      width: "200px",
+      width: "360px",
       render: (o: Order) => (
         <span className="font-semibold text-center whitespace-pre-wrap">
           {formatAddress(o.shippingInfo?.address)}

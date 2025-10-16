@@ -3,17 +3,21 @@ import { Navigate, Route } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { UserRoleKeys } from "@shared/types/PrismaTypes";
 
-// Default exports → just lazy import
+// Lazy imports (default exports)
 const AdminLoginPage = lazy(() => import("@pages/admin/AdminLoginPage"));
 const AdminDashboardPage = lazy(
   () => import("@pages/admin/AdminDashboardPage")
 );
 const AdminProductsPage = lazy(() => import("@pages/admin/AdminProductsPage"));
-const AdminCatalogPageWrapper = lazy(
-  () => import("@pages/admin/AdminCatalogPage")
+const AdminOrdersPage = lazy(() => import("@pages/admin/AdminOrdersPage"));
+const AdminUsersPage = lazy(() => import("@pages/admin/AdminUsersPage"));
+
+// Wrappers
+const AdminSectionWrapper = lazy(
+  () => import("@pages/admin/AdminSectionWrapper")
 );
 
-// Named exports → wrap in default
+// Named exports → wrap to default
 const AdminCategoriesPage = lazy(() =>
   import("@pages/admin/AdminCatalogPage").then((mod) => ({
     default: mod.AdminCategoriesPage,
@@ -26,28 +30,23 @@ const AdminCollectionsPage = lazy(() =>
   }))
 );
 
-const AdminOrdersPage = lazy(() => import("@pages/admin/AdminOrdersPage"));
-const AdminUsersPage = lazy(() => import("@pages/admin/AdminUsersPage"));
-
-const AdminSettingsPageWrapper = lazy(
-  () => import("@pages/admin/AdminSettingsPage")
-);
-
-// Named exports → wrap in default
-const AdminAdminSettingsPage = lazy(() =>
-  import("@pages/admin/AdminSettingsPage").then((mod) => ({
-    default: mod.AdminAdminSettingsPage,
-  }))
-);
-
 const AdminSiteSettingsPage = lazy(() =>
   import("@pages/admin/AdminSettingsPage").then((mod) => ({
     default: mod.AdminSiteSettingsPage,
   }))
 );
 
+const AdminAdminSettingsPage = lazy(() =>
+  import("@pages/admin/AdminSettingsPage").then((mod) => ({
+    default: mod.AdminAdminSettingsPage,
+  }))
+);
+
 export const adminRoutes: JSX.Element[] = [
+  // Login route
   <Route key="login" path="/admin-login" element={<AdminLoginPage />} />,
+
+  // Protected admin dashboard
   <Route
     key="dashboard"
     path="/admin"
@@ -57,16 +56,23 @@ export const adminRoutes: JSX.Element[] = [
       </ProtectedRoute>
     }
   >
-    <Route index element={<Navigate to="products" replace />} />
-    <Route path="products" element={<AdminProductsPage />} />
-    <Route path="catalog" element={<AdminCatalogPageWrapper />}>
-      <Route index element={<Navigate to="categories" replace />} />
+    {/* Default redirect */}
+    <Route index element={<Navigate to="catalog" replace />} />
+
+    {/* Catalog parent route with default */}
+    <Route path="catalog">
+      <Route index element={<Navigate to="products" replace />} />
+      <Route path="products" element={<AdminProductsPage />} />
       <Route path="categories" element={<AdminCategoriesPage />} />
       <Route path="collections" element={<AdminCollectionsPage />} />
     </Route>
+
+    {/* Other routes */}
     <Route path="orders" element={<AdminOrdersPage />} />
     <Route path="users" element={<AdminUsersPage />} />
-    <Route path="settings" element={<AdminSettingsPageWrapper />}>
+
+    {/* Settings parent route with default */}
+    <Route path="settings">
       <Route index element={<Navigate to="site" replace />} />
       <Route path="site" element={<AdminSiteSettingsPage />} />
       <Route path="admin" element={<AdminAdminSettingsPage />} />

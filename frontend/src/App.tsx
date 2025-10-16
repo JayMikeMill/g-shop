@@ -11,17 +11,17 @@ export default function App() {
   const location = useLocation();
 
   // Do not show footer on admin routes
-  const showFooter = !location.pathname.startsWith("/admin");
+  const adminPages = location.pathname.startsWith("/admin");
 
   return (
     <div>
-      <SiteHeader />
+      {!adminPages && <SiteHeader />}
       <main>
         <div className="bg-background">
           <AppRoutes />
         </div>
       </main>
-      {showFooter && <SiteFooter />}
+      {!adminPages && <SiteFooter />}
     </div>
   );
 }

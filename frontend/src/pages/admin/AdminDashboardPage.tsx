@@ -1,33 +1,47 @@
 import { Outlet } from "react-router-dom";
+import { Button } from "@components/ui";
 import { useUser } from "@features/user/useUser";
-import { Button, NavButton } from "@components/ui";
+import { DesktopNav, MobileNav } from "./AdminNav";
+import { useNavigate } from "react-router-dom";
 
 export default function AdminDashboardPage() {
   const { logoutUser } = useUser();
+  const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col w-full max-w-full font-sans bg-background">
-      {/* Header */}
-      <header className="flex justify-between items-center border-b border-border flex-shrink-0 px-sm py-md">
-        <h1 className="text-3xl text-text">Dashboard</h1>
-        <Button variant="destructive" onClick={logoutUser}>
-          Logout
-        </Button>
+    <div className="flex flex-col h-screen w-full bg-background">
+      {/* Header (sticky on top) */}
+      <header className="sticky top-0 z-20 flex justify-between items-center p-4 border-b border-border bg-background">
+        <h1 className="text-2xl font-bold sm:hidden">Admin-Dash</h1>
+        <h1 className="text-2xl font-bold hidden sm:flex">Admin Dashboard</h1>
+        <div className="flex flex-row gap-2">
+          <Button className="w-20" onClick={() => navigate("/")}>
+            Home
+          </Button>
+          <Button className="w-20" variant="destructive" onClick={logoutUser}>
+            Logout
+          </Button>
+        </div>
       </header>
 
-      {/* Navigation */}
-      <nav className="flex flex-row h-12 border-border overflow-x-auto whitespace-nowrap">
-        <NavButton to="/admin/products" label="Products" className="w-full" />
-        <NavButton to="/admin/catalog" label="Catalog" className="w-full" />
-        <NavButton to="/admin/orders" label="Orders" className="w-full" />
-        <NavButton to="/admin/users" label="Users" className="w-full" />
-        <NavButton to="/admin/settings" label="Settings" className="w-full" />
-      </nav>
+      {/* Mobile top nav (sticky below header) */}
+      <div className="sm:hidden sticky top-16 z-10 bg-background">
+        <MobileNav />
+      </div>
 
-      {/* Main content */}
-      <main className="flex-grow overflow-y-auto">
-        <Outlet />
-      </main>
+      {/* Main layout */}
+      <div className="flex flex-1 flex-col sm:flex-row overflow-hidden">
+        {/* Desktop sidebar (sticky) */}
+        <aside className="hidden sm:flex sm:flex-col sm:w-60 border-r border-border p-3 overflow-y-auto sticky top-16">
+          <h2 className="text-lg font-semibold text-center mb-2">Navigation</h2>
+          <DesktopNav />
+        </aside>
+
+        {/* Main content scrollable only */}
+        <main className="flex flex-1 flex-col overflow-hidden">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 }

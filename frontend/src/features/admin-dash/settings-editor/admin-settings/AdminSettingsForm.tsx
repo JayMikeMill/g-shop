@@ -34,7 +34,7 @@ const AdminSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
         className="flex flex-col gap-sm w-full sm:flex-row sm:gap-lg"
         onSubmit={handleSave}
       >
-        <div className="flex flex-col w-full gap-sm sm:gap-md">
+        <div className="flex flex-col w-full sm:w-1/2">
           <AnimatedDropdownBox
             className=" gap-lg p-md w-full"
             title="Contact Settings"
@@ -50,7 +50,7 @@ const AdminSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
             <AdminSettingsShippingOriginForm />
           </AnimatedDropdownBox>
         </div>
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full sm:w-1/2">
           <AnimatedDropdownBox
             className=" gap-lg p-md w-full"
             title="Features Settings"

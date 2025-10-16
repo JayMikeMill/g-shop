@@ -1,15 +1,13 @@
 import type { ReactNode } from "react";
-import { Search } from "lucide-react";
-import { Input, LoaderBar } from "@components/ui";
-import "./dynamic-table.css";
+import { LoaderBar } from "@components/ui";
 
 export interface TableColumn<T> {
   id: string;
   label: string;
   sortable?: boolean;
-  render?: (row: T) => ReactNode; // render a cell
-  renderHeader?: () => ReactNode; // render the header
-  width?: string; // e.g. "200px" or "15%"
+  render?: (row: T) => ReactNode;
+  renderHeader?: () => ReactNode;
+  width?: string;
   className?: string;
   headerClassName?: string;
 }
@@ -21,15 +19,8 @@ export interface DynamicTableProps<T> {
   page?: number;
   totalPages?: number;
   onPageChange?: (page: number) => void;
-  searchable?: boolean;
-  searchValue?: string;
-  onSearchChange?: (value: string) => void;
-  onSearchSubmit?: () => void;
   onRowClick?: (row: T) => void;
-  headerButton?: ReactNode;
   objectsName?: string;
-  className?: string;
-  tableClassName?: string;
 }
 
 export const DynamicTable = <T extends { id?: string }>({
@@ -39,100 +30,72 @@ export const DynamicTable = <T extends { id?: string }>({
   page = 1,
   totalPages = 1,
   onPageChange,
-  searchable = true,
-  searchValue = "",
-  onSearchChange,
-  onSearchSubmit,
   onRowClick,
-  headerButton,
   objectsName = "Objects",
-  className = "",
-  tableClassName = "",
 }: DynamicTableProps<T>) => {
   return (
-    <div className={`flex flex-col gap-4 ${className}`}>
-      {/* Header */}
-      <div className="flex flex-row w-full gap-2 items-center px-md">
-        {headerButton && <div className="h-full">{headerButton}</div>}
-
-        {searchable && onSearchChange && onSearchSubmit && (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              onSearchSubmit();
-            }}
-            className="relative w-full h-full"
-          >
-            <Input
-              type="text"
-              placeholder={
-                objectsName ? `Search ${objectsName}...` : "Search..."
-              }
-              value={searchValue}
-              onChange={(e) => onSearchChange(e.target.value)}
-            />
-            <Search
-              className="text-text absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer"
-              size={20}
-              onClick={onSearchSubmit}
-            />
-          </form>
-        )}
-      </div>
-
-      {/* Table */}
-      <div
-        className={`overflow-x-auto w-full shadow-card border border-border ${tableClassName}`}
-      >
-        {loading || data.length === 0 ? (
-          <div className="w-full flex items-center justify-center border-border border rounded h-24 text-text text-3xl">
-            {loading ? <LoaderBar /> : `No ${objectsName}`}
-          </div>
-        ) : (
-          <table className="table w-full">
-            <thead>
+    <div className="flex flex-col h-full">
+      <div className="overflow-auto shadow-card border border-border rounded  h-full">
+        {/* Table wrapper */}
+        <table className="table w-full border-collapse table-fixed font-sans">
+          <thead className="sticky top-0 z-10 bg-primary text-primary-foreground">
+            <tr>
+              {columns.map((col) => (
+                <th
+                  key={col.id}
+                  className={`font-bold uppercase text-center text-sm px-md py-sm
+							border-b border-l border-border cursor-pointer
+							transition-colors duration-200
+							${col.sortable ? "hover:bg-primary-400 hover:text-primary-foreground" : ""}
+							${col.headerClassName || ""}`}
+                  style={{ width: col.width || "120px" }}
+                >
+                  {col.renderHeader ? col.renderHeader() : col.label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {loading || data.length === 0 ? (
               <tr>
-                {columns.map((col) => (
-                  <th
-                    key={col.id}
-                    className={col.headerClassName || ""}
-                    style={
-                      col.width ? { width: col.width } : { width: "120px" }
-                    }
-                  >
-                    {col.renderHeader ? col.renderHeader() : col.label}
-                  </th>
-                ))}
+                <td
+                  colSpan={columns.length}
+                  className="w-full flex items-center justify-center h-24 border border-border text-text text-3xl"
+                >
+                  {loading ? <LoaderBar /> : `No ${objectsName}`}
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {data.map((row) => (
+            ) : (
+              data.map((row, i) => (
                 <tr
                   key={row.id}
                   onClick={() => onRowClick?.(structuredClone(row))}
+                  className={`transition-colors duration-300 border-b
+							${i % 2 === 0 ? "bg-background" : "bg-card"} hover:bg-primary-50`}
                 >
                   {columns.map((col) => (
                     <td
                       key={col.id}
-                      className={col.className || ""}
-                      style={
-                        col.width ? { width: col.width } : { width: "120px" }
-                      }
+                      className={`px-md py-sm border-r border-border text-center break-words ${col.className || ""}`}
+                      style={{ width: col.width || "120px" }}
                     >
                       {col.render ? col.render(row) : (row as any)[col.id]}
                     </td>
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
-
       {/* Pagination */}
       {totalPages > 1 && onPageChange && (
-        <div className="table-pagination">
-          <button disabled={page === 1} onClick={() => onPageChange(page - 1)}>
+        <div className="flex justify-center gap-2 p-md">
+          <button
+            disabled={page === 1}
+            onClick={() => onPageChange(page - 1)}
+            className="cursor-pointer transition-all duration-200 px-4 py-2 rounded border border-border bg-card text-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:enabled:bg-primary hover:enabled:text-primary-foreground hover:enabled:border-primary"
+          >
             Prev
           </button>
           <span className="flex items-center text-text">
@@ -141,6 +104,7 @@ export const DynamicTable = <T extends { id?: string }>({
           <button
             disabled={page === totalPages}
             onClick={() => onPageChange(page + 1)}
+            className="cursor-pointer transition-all duration-200 px-4 py-2 rounded border border-border bg-card text-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:enabled:bg-primary hover:enabled:text-primary-foreground hover:enabled:border-primary"
           >
             Next
           </button>
@@ -149,4 +113,5 @@ export const DynamicTable = <T extends { id?: string }>({
     </div>
   );
 };
+
 export default DynamicTable;

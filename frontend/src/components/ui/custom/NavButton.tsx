@@ -1,26 +1,36 @@
-import { NavLink } from "react-router-dom";
+import React from "react";
 
 interface NavButtonProps {
-  to: string;
+  to?: string; // optional if you want to handle navigation manually
   label: string;
   className?: string;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-const NavButton: React.FC<NavButtonProps> = ({ to, label, className }) => {
-  const navClassName = (isActive: boolean) =>
-    `flex border text-center items-center justify-center text-xl
+const NavButton: React.FC<NavButtonProps> = ({
+  to,
+  label,
+  className,
+  onClick,
+}) => {
+  const btnClassName = `flex border text-center items-center justify-center text-xl
 		hover:bg-primary-400 hover:text-accent-foreground transition-colors duration-200
-		${isActive ? "font-bold text-2xl" : ""}`;
+		${className || ""}`;
+
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (onClick) onClick(e);
+
+    // Optional: handle navigation manually if `to` is provided
+    if (to) {
+      window.location.href = to;
+    }
+  };
 
   return (
-    <NavLink
-      to={to}
-      className={({ isActive }) =>
-        navClassName(isActive) + ` ${className || ""}`
-      }
-    >
+    <button onClick={handleClick} className={btnClassName}>
       {label}
-    </NavLink>
+    </button>
   );
 };
+
 export { NavButton };

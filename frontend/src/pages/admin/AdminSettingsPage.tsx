@@ -1,50 +1,14 @@
-// AdminSettingsPage.tsx
-import { Outlet } from "react-router-dom";
-import { NavButton } from "@components/ui";
-
-// API
+// src/pages/admin/AdminSettingsPages.tsx
 import { useEffect, useState } from "react";
 import { useApi } from "@api";
-
-// Editors
 import SiteSettingsForm from "@features/admin-dash/settings-editor/site-settings/SiteSettingsForm";
 import AdminSettingsForm from "@features/admin-dash/settings-editor/admin-settings/AdminSettingsForm";
-
-// Types
 import type {
   SiteSettings,
   AdminSettings,
   SystemSettingsScope,
   AnySystemSettings,
 } from "@shared/settings";
-
-/**
- * Wrapper with secondary navigation for settings sections
- */
-export default function AdminSettingsPageWrapper() {
-  return (
-    <div className="flex flex-col w-full h-full">
-      {/* Secondary Settings Navigation */}
-      <nav className="flex justify-center h-12 overflow-x-auto whitespace-nowrap">
-        <NavButton
-          to="/admin/settings/site"
-          label="Site Settings"
-          className=" w-1/2 sm:w-60"
-        />
-        <NavButton
-          to="/admin/settings/admin"
-          label="Admin Settings"
-          className=" w-1/2 sm:w-60"
-        />
-      </nav>
-
-      {/* Nested settings content */}
-      <div className="flex-grow overflow-y-auto p-2 max-w-6xl mx-auto w-full">
-        <Outlet />
-      </div>
-    </div>
-  );
-}
 
 /**
  * Generic page component for any settings type
@@ -74,12 +38,13 @@ function GenericSettingsPage<T>({
     setCurrentSettings(newSettings);
   };
 
-  return <Editor settings={currentSettings} onSave={handleSave} />;
+  return (
+    <div className="flex-1 overflow-y-auto sm:p-md">
+      <Editor settings={currentSettings} onSave={handleSave} />
+    </div>
+  );
 }
 
-/**
- * Individual pages for each settings section
- */
 export function AdminSiteSettingsPage() {
   return (
     <GenericSettingsPage<SiteSettings>
