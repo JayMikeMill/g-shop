@@ -58,15 +58,15 @@ export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
     show: {
       transition: {
         staggerChildren: 0.05,
-        delayChildren: 0.1, // wait until menu slide-in finishes
+        delayChildren: 0.05, // wait until menu slide-in finishes
       },
     },
   };
 
   const itemVariants: Variants = {
-    hidden: { opacity: 0, x: -20 },
-    show: { opacity: 1, x: 0, transition: { duration: 0.25 } },
-    exit: { opacity: 0, x: -20, transition: { duration: 0.2 } },
+    hidden: { opacity: 0, x: -300 },
+    show: { opacity: 1, x: 0, transition: { duration: 0.3 } },
+    exit: { opacity: 0, x: -300, transition: { duration: 0.3 } },
   };
 
   return (

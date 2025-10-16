@@ -18,14 +18,16 @@ const SiteSettingsSocialForm: React.FC = () => {
   return (
     <div className="flex flex-col gap-md">
       {handles.map((h) => (
-        <Label key={h}>
-          {h}
-          <Input {...register(h)} />
-        </Label>
+        <div key={h} className="flex flex-col">
+          <Label htmlFor={h}>{h}</Label>
+          <Input id={h} {...register(h)} />
+        </div>
       ))}
-      <Label>
-        Other Social Handles (JSON)
+
+      <div className="flex flex-col">
+        <Label htmlFor="otherSocialHandles">Other Social Handles (JSON)</Label>
         <Input
+          id="otherSocialHandles"
           {...register("otherSocialHandles", {
             setValueAs: (v) => {
               if (Array.isArray(v)) return v;
@@ -37,7 +39,7 @@ const SiteSettingsSocialForm: React.FC = () => {
             },
           })}
         />
-      </Label>
+      </div>
     </div>
   );
 };

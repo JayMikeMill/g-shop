@@ -18,8 +18,8 @@ const SiteSettingsEcommerceForm: React.FC = () => {
   return (
     <div className="flex flex-col gap-md">
       <div className="flex flex-col gap-md w-full sm:flex-row">
-        <Label className="text-center w-full sm:w-1/2">
-          Items Per Page
+        <div className="flex flex-col w-full sm:w-1/2">
+          <Label>Items Per Page</Label>
           <NumberInput
             variant="wholeNumber"
             controlProps={{
@@ -28,9 +28,9 @@ const SiteSettingsEcommerceForm: React.FC = () => {
               rules: { valueAsNumber: true },
             }}
           />
-        </Label>
-        <Label className="text-center w-full sm:w-1/2">
-          Max Cart Items
+        </div>
+        <div className="flex flex-col w-full sm:w-1/2">
+          <Label>Max Cart Items</Label>
           <NumberInput
             variant="wholeNumber"
             controlProps={{
@@ -39,7 +39,7 @@ const SiteSettingsEcommerceForm: React.FC = () => {
               rules: { valueAsNumber: true },
             }}
           />
-        </Label>
+        </div>
       </div>
 
       <div className="flex flex-col gap-md w-full sm:flex-row">
@@ -72,16 +72,19 @@ const SiteSettingsEcommerceForm: React.FC = () => {
           checked={watch("enableSubscriptions") ?? false}
           onToggle={(v) => setValue("enableSubscriptions", v)}
         >
-          {`Subscriptions ${watch("enableSubscriptions") ? "Enabled" : "Disabled"}`}
+          {`Subscriptions ${
+            watch("enableSubscriptions") ? "Enabled" : "Disabled"
+          }`}
         </Toggle>
       </div>
 
-      <Label>
-        Default Currency
+      <div className="flex flex-col">
+        <Label>Default Currency</Label>
         <Input {...register("defaultCurrency")} />
-      </Label>
-      <Label>
-        Tax Rate (%)
+      </div>
+
+      <div className="flex flex-col">
+        <Label>Tax Rate (%)</Label>
         <NumberInput
           variant="percent"
           controlProps={{
@@ -90,9 +93,10 @@ const SiteSettingsEcommerceForm: React.FC = () => {
             rules: { valueAsNumber: true },
           }}
         />
-      </Label>
-      <Label>
-        Free Shipping Threshold
+      </div>
+
+      <div className="flex flex-col">
+        <Label>Free Shipping Threshold</Label>
         <NumberInput
           variant="currency"
           controlProps={{
@@ -101,9 +105,10 @@ const SiteSettingsEcommerceForm: React.FC = () => {
             rules: { valueAsNumber: true },
           }}
         />
-      </Label>
-      <Label>
-        Flat Shipping Rate
+      </div>
+
+      <div className="flex flex-col">
+        <Label>Flat Shipping Rate</Label>
         <NumberInput
           variant="currency"
           controlProps={{
@@ -112,30 +117,40 @@ const SiteSettingsEcommerceForm: React.FC = () => {
             rules: { valueAsNumber: true },
           }}
         />
-      </Label>
+      </div>
 
       {/* Payment Methods */}
       {paymentMethodsFields.map((field, index) => (
-        <Label key={field.id}>
-          Payment Method #{index + 1}
+        <div key={field.id} className="flex flex-col">
+          <Label>Payment Method #{index + 1}</Label>
           <Input {...register(`paymentMethods.${index}`)} />
-          <button type="button" onClick={() => removePaymentMethod(index)}>
+          <button
+            type="button"
+            onClick={() => removePaymentMethod(index)}
+            className="text-sm text-destructive mt-1"
+          >
             Remove
           </button>
-        </Label>
+        </div>
       ))}
-      <button type="button" onClick={() => appendPaymentMethod("")}>
+
+      <button
+        type="button"
+        onClick={() => appendPaymentMethod("")}
+        className="self-start mt-1 text-sm text-accent"
+      >
         Add Payment Method
       </button>
 
-      <Label>
-        Default Shipping Method
+      <div className="flex flex-col">
+        <Label>Default Shipping Method</Label>
         <Input {...register("defaultShippingMethod")} />
-      </Label>
-      <Label>
-        Default Payment Method
+      </div>
+
+      <div className="flex flex-col">
+        <Label>Default Payment Method</Label>
         <Input {...register("defaultPaymentMethod")} />
-      </Label>
+      </div>
     </div>
   );
 };

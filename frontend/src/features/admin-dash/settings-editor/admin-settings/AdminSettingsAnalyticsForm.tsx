@@ -7,20 +7,23 @@ const AdminSettingsAnalyticsForm: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-md">
-      <Label>
-        Google Analytics ID
+      <div className="flex flex-col">
+        <Label>Admin Emails</Label>
         <Input {...register("googleAnalyticsID")} />
-      </Label>
-      <Label>
-        Facebook Pixel ID
+      </div>
+
+      <div className="flex flex-col">
+        <Label>Facebook Pixel ID</Label>
         <Input {...register("facebookPixelID")} />
-      </Label>
-      <Label>
-        Hotjar ID
+      </div>
+
+      <div className="flex flex-col">
+        <Label>Hotjar ID</Label>
         <Input {...register("hotjarID")} />
-      </Label>
-      <Label>
-        Custom Tracking Scripts (JSON Array)
+      </div>
+
+      <div className="flex flex-col">
+        <Label>Custom Tracking Scripts (JSON Array)</Label>
         <Input
           {...register("customTrackingScripts", {
             setValueAs: (v) => {
@@ -33,7 +36,7 @@ const AdminSettingsAnalyticsForm: React.FC = () => {
             },
           })}
         />
-      </Label>
+      </div>
     </div>
   );
 };

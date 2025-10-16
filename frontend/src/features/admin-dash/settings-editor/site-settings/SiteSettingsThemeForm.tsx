@@ -18,14 +18,15 @@ const SiteSettingsThemeForm: React.FC = () => {
   return (
     <div className="flex flex-col gap-md">
       {colorKeys.map((key) => (
-        <Label key={key}>
-          {key}
-          <Input type="color" {...register(key)} />
-        </Label>
+        <div key={key} className="flex flex-col">
+          <Label htmlFor={key}>{key}</Label>
+          <Input id={key} type="color" {...register(key)} />
+        </div>
       ))}
+
       {numberKeys.map((key) => (
-        <Label key={key}>
-          {key}
+        <div key={key} className="flex flex-col">
+          <Label htmlFor={key}>{key}</Label>
           <NumberInput
             variant="wholeNumber"
             controlProps={{
@@ -34,7 +35,7 @@ const SiteSettingsThemeForm: React.FC = () => {
               rules: { valueAsNumber: true },
             }}
           />
-        </Label>
+        </div>
       ))}
     </div>
   );

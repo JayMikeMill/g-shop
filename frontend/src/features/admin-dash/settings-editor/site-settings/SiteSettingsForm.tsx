@@ -56,18 +56,20 @@ const SiteSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
             <SiteSettingsSocialForm />
           </AnimatedDropdownBox>
         </div>
-        <AnimatedDropdownBox
-          className=" gap-lg p-md w-full"
-          title="E-Commerce Settings"
-          openInitially={true}
-        >
-          <div className="flex flex-col h-auto">
-            <SiteSettingsEcommerceForm />
-          </div>
-        </AnimatedDropdownBox>
-        <button className="btn btn-primary mt-lg" type="submit">
-          Save Settings
-        </button>
+        <div className="flex flex-col  w-full">
+          <AnimatedDropdownBox
+            className=" gap-lg p-md w-full"
+            title="E-Commerce Settings"
+            openInitially={true}
+          >
+            <div className="flex flex-col">
+              <SiteSettingsEcommerceForm />
+            </div>
+          </AnimatedDropdownBox>
+          <button className="btn btn-primary mt-lg" type="submit">
+            Save Settings
+          </button>
+        </div>
       </form>
     </FormProvider>
   );

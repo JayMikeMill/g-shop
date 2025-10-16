@@ -7,30 +7,35 @@ const SiteSettingsBasicInfoForm: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-md">
-      <Label>
-        Site Name
+      <div className="flex flex-col">
+        <Label>Site Name</Label>
         <Input {...register("siteName")} required />
-      </Label>
-      <Label>
-        Site Description
+      </div>
+
+      <div className="flex flex-col">
+        <Label>Site Description</Label>
         <Textarea {...register("siteDescription")} />
-      </Label>
-      <Label>
-        Site Tagline
+      </div>
+
+      <div className="flex flex-col">
+        <Label>Site Tagline</Label>
         <Input {...register("siteTagline")} />
-      </Label>
-      <Label>
-        Banner URL
+      </div>
+
+      <div className="flex flex-col">
+        <Label>Banner URL</Label>
         <Input {...register("bannerURL")} />
-      </Label>
-      <Label>
-        Banner Message
+      </div>
+
+      <div className="flex flex-col">
+        <Label>Banner Message</Label>
         <Input {...register("bannerMessage")} />
-      </Label>
-      <Label>
-        Logo URL
+      </div>
+
+      <div className="flex flex-col">
+        <Label>Logo URL</Label>
         <Input {...register("logoURL")} />
-      </Label>
+      </div>
     </div>
   );
 };

@@ -7,16 +7,16 @@ const AdminSettingsContactForm: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-md">
-      <Label>
-        Admin Email
+      <div className="flex flex-col">
+        <Label>Admin Email</Label>
         <Input {...register("adminEmail")} />
-      </Label>
-      <Label>
-        Admin Phone
+      </div>
+      <div className="flex flex-col">
+        <Label>Admin Phone</Label>
         <Input {...register("adminPhone")} />
-      </Label>
-      <Label>
-        Super Admin Emails (JSON)
+      </div>
+      <div className="flex flex-col">
+        <Label>Admin Emails</Label>
         <Input
           {...register("superAdminEmails", {
             setValueAs: (v) => {
@@ -29,7 +29,7 @@ const AdminSettingsContactForm: React.FC = () => {
             },
           })}
         />
-      </Label>
+      </div>
     </div>
   );
 };
