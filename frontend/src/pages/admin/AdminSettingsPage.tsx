@@ -1,6 +1,6 @@
 // AdminSettingsPage.tsx
-import { NavLink, Outlet } from "react-router-dom";
-import { buttonVariants } from "@components/ui";
+import { Outlet } from "react-router-dom";
+import { NavButton } from "@components/ui";
 
 // API
 import { useEffect, useState } from "react";
@@ -25,25 +25,17 @@ export default function AdminSettingsPageWrapper() {
   return (
     <div className="flex flex-col w-full h-full">
       {/* Secondary Settings Navigation */}
-      <nav className="flex gap-2 p-2 py-4 justify-center border-b border-border overflow-x-auto whitespace-nowrap">
-        <NavLink
-          to="site"
-          className={({ isActive }) =>
-            buttonVariants({ variant: isActive ? "raised" : "default" }) +
-            " w-1/2 sm:w-40"
-          }
-        >
-          Site Settings
-        </NavLink>
-        <NavLink
-          to="admin"
-          className={({ isActive }) =>
-            buttonVariants({ variant: isActive ? "raised" : "default" }) +
-            " w-1/2 sm:w-40"
-          }
-        >
-          Admin Settings
-        </NavLink>
+      <nav className="flex justify-center h-12 overflow-x-auto whitespace-nowrap">
+        <NavButton
+          to="/admin/settings/site"
+          label="Site Settings"
+          className=" w-1/2 sm:w-60"
+        />
+        <NavButton
+          to="/admin/settings/admin"
+          label="Admin Settings"
+          className=" w-1/2 sm:w-60"
+        />
       </nav>
 
       {/* Nested settings content */}

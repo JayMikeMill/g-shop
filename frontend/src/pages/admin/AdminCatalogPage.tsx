@@ -1,6 +1,6 @@
 // AdminCatalogPage.tsx
 // Components
-import { buttonVariants } from "@components/ui";
+import { NavButton } from "@components/ui";
 
 import {
   AdminCrudPage,
@@ -13,35 +13,27 @@ import type { Category, Collection } from "@shared/types";
 import { uploadCollectionImages } from "@utils/dataImagesProcessing";
 
 // API hook
-import { NavLink, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
 export default function AdminCatalogPageWrapper() {
   return (
     <div className="flex flex-col w-full h-full">
       {/* Secondary Catalog Navigation */}
-      <nav className="flex gap-2 p-2 py-4 justify-center border-b border-border overflow-x-auto whitespace-nowrap">
-        <NavLink
-          to="categories"
-          className={({ isActive }) =>
-            buttonVariants({ variant: isActive ? "raised" : "default" }) +
-            " w-1/2 sm:w-40"
-          }
-        >
-          Categories
-        </NavLink>
-        <NavLink
-          to="collections"
-          className={({ isActive }) =>
-            buttonVariants({ variant: isActive ? "raised" : "default" }) +
-            " w-1/2 sm:w-40"
-          }
-        >
-          Collections
-        </NavLink>
+      <nav className="flex justify-center border-b h-12 overflow-x-auto whitespace-nowrap">
+        <NavButton
+          to="/admin/catalog/categories"
+          label="Categories"
+          className=" w-1/2 sm:w-60"
+        />
+        <NavButton
+          to="/admin/catalog/collections"
+          label="Collections"
+          className=" w-1/2 sm:w-60"
+        />
       </nav>
 
       {/* Nested catalog content */}
-      <div className="flex-grow overflow-y-auto p-2">
+      <div className="flex-grow overflow-y-auto">
         <Outlet />
       </div>
     </div>
