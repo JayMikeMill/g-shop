@@ -36,7 +36,12 @@ export default defineConfig({
     },
   },
   server: {
-    host: "0.0.0.0", // allow access from phone or other devices
-    port: 5000, // change to any port you like
+    proxy: {
+      "/api": {
+        target: "http://localhost:3000", // backend
+        changeOrigin: true,
+        secure: false, // HTTP ok for dev
+      },
+    },
   },
 });

@@ -11,17 +11,15 @@ export default function CheckoutPage() {
   const onSubmit = async (order: any, paymentMethod: any) => {
     setLoading(true);
     setMessage(null);
-    placeOrder(paymentMethod, order)
-      .then(() => {
-        setMessage("Order placed successfully!");
-      })
-      .catch((error: unknown) => {
-        console.error("Error placing order:", error);
-        setMessage("Error placing order");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    const { success, error } = await placeOrder(paymentMethod, order);
+
+    if (success) {
+      setMessage("Order placed successfully!");
+    } else {
+      setMessage("Error placing order" + error!);
+    }
+
+    setLoading(false);
   };
 
   return (

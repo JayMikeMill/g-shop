@@ -22,6 +22,8 @@ export const login = controllerHandler({
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     });
 
+    console.log("Set auth_token cookie", token);
+
     return user;
   },
 });

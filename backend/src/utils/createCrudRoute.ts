@@ -1,15 +1,16 @@
 // src/routes/crudRouter.ts
 import { Router, Request, Response, NextFunction } from "express";
-import { requireRole } from "@middleware/authorization";
-import type { Role } from "@middleware/authorization";
+import { dataAuth } from "@middleware/dataAuthorization";
+import type { AuthRole } from "@middleware/authorization";
 import type { CrudInterface } from "@shared/interfaces";
 import { parseQueryType } from "@shared/types";
 
-export type CRUDRouteAuth = Role[];
+export type CRUDRouteAuth = AuthRole[];
 
 export type CRUDRouteOptions = {
   create?: CRUDRouteAuth;
-  read?: CRUDRouteAuth;
+  readOne?: CRUDRouteAuth;
+  readMany?: CRUDRouteAuth;
   update?: CRUDRouteAuth;
   delete?: CRUDRouteAuth;
 };
@@ -20,12 +21,13 @@ export const reqAdminEdit: CRUDRouteOptions = {
   delete: ["ADMIN"],
 };
 
-export const reqOwnerEdit: CRUDRouteOptions = {
+export const reqOwnerAll: CRUDRouteOptions = {
   create: ["ADMIN", "OWNER"],
+  readOne: ["ADMIN", "OWNER"],
+  readMany: ["ADMIN"], // Only admin can list all
   update: ["ADMIN", "OWNER"],
   delete: ["ADMIN", "OWNER"],
 };
-
 export function createCrudRoute(
   crud: CrudInterface<any>,
   options?: CRUDRouteOptions
@@ -45,39 +47,39 @@ export function createCrudRoute(
   // ---------------- CREATE ----------------
   const createHandler = wrapHandler((req) => crud.create(req.body));
   if (options?.create?.length)
-    router.post("/", requireRole(options.create), createHandler);
+    router.post("/", dataAuth(options.create), createHandler);
   else router.post("/", createHandler);
 
   // ---------------- READ ----------------
-  // getMany
-  const getManyHandler = wrapHandler((req) =>
-    crud.getMany(parseQueryType(req.query))
-  );
-  if (options?.read?.length)
-    router.get("/", requireRole(options.read), getManyHandler);
-  else router.get("/", getManyHandler);
-
   // getOne
   const getOneHandler = wrapHandler((req) => {
     return crud.getOne(parseQueryType(req.query) ?? {});
   });
 
-  if (options?.read?.length)
-    router.get("/one/", requireRole(options.read), getOneHandler);
+  if (options?.readOne?.length)
+    router.get("/one/", dataAuth(options.readOne), getOneHandler);
   else router.get("/one/", getOneHandler);
+
+  // getMany
+  const getManyHandler = wrapHandler((req) =>
+    crud.getMany(parseQueryType(req.query))
+  );
+  if (options?.readMany?.length)
+    router.get("/", dataAuth(options.readMany), getManyHandler);
+  else router.get("/", getManyHandler);
 
   // ---------------- UPDATE ----------------
   const updateHandler = wrapHandler((req) =>
     crud.update({ ...req.body, id: req.params.id })
   );
   if (options?.update?.length)
-    router.put("/:id", requireRole(options.update), updateHandler);
+    router.put("/:id", dataAuth(options.update), updateHandler);
   else router.put("/:id", updateHandler);
 
   // ---------------- DELETE ----------------
   const deleteHandler = wrapHandler((req) => crud.delete(req.params.id));
   if (options?.delete?.length)
-    router.delete("/:id", requireRole(options.delete), deleteHandler);
+    router.delete("/:id", dataAuth(options.delete), deleteHandler);
   else router.delete("/:id", deleteHandler);
 
   return router;

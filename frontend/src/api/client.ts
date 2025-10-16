@@ -4,7 +4,7 @@ import axios from "axios";
 const API_BASE = import.meta.env.VITE_API_URL;
 
 export const apiClient = axios.create({
-  baseURL: API_BASE,
+  baseURL: "/api/v1", // Use relative URL to leverage Vite proxy
   withCredentials: true, // ✅ automatically send cookies with requests
 });
 

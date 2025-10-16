@@ -35,13 +35,13 @@ import {
 } from "@controllers/systemSettingsController";
 
 // Middleware
-import { requireRole as roles } from "@middleware/authorization";
+import { reqAdmin } from "@middleware/authorization";
+
 import {
   deleteFile,
   uploadFile,
   uploadImage,
 } from "@controllers/storageController";
-const reqAdmin = roles(["ADMIN"]);
 
 // Initialize Multer
 const upload = multer({ storage: multer.memoryStorage() });

@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { createCrudRoute as CR, reqAdminEdit, reqOwnerEdit } from "@utils";
+import { createCrudRoute as CR, reqAdminEdit, reqOwnerAll } from "@utils";
 
 import { db } from "@adapters/services";
 
@@ -18,10 +18,10 @@ router.use("/catalog/categories", CR(db.categories, reqAdminEdit));
 router.use("/catalog/collections", CR(db.collections, reqAdminEdit));
 
 // ---------------- Orders ----------------
-router.use("/orders", CR(db.orders, { read: ["ADMIN", "OWNER"] }));
+router.use("/orders", CR(db.orders, reqOwnerAll));
 
 // ---------------- Users ----------------
-router.use(`/users/reviews`, CR(db.productReviews, reqOwnerEdit));
-router.use("/users", CR(db.users, reqOwnerEdit));
+router.use(`/users/reviews`, CR(db.productReviews, reqOwnerAll));
+router.use("/users", CR(db.users, reqOwnerAll));
 
 export default router;
