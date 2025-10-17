@@ -15,7 +15,7 @@ export default function AdminOrdersPage() {
       apiKey="orders"
       tableLayout={orderTable}
       Editor={OrderEditorDialog}
-      pageSize={10}
+      pageSize={3}
       searchable={true}
     />
   );

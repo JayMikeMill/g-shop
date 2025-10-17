@@ -79,6 +79,7 @@ export const productTable: TableLayout<Product> = {
     {
       id: "price",
       label: "Price",
+      width: "120px",
       sortable: true,
       render: (p: Product) => (
         <div className="flex flex-col items-center justify-center">

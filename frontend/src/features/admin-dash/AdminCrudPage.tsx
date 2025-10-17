@@ -107,7 +107,7 @@ function AdminCrudPage<T extends { id?: string }>({
   const handleRowClick = (item: T) => setEditingItemId(item.id!);
 
   return (
-    <div className="flex flex-col h-[85%]">
+    <div className="flex flex-col h-full min-h-0 w-full min-w-0">
       {/* Editor Dialog */}
       {Editor && (
         <Editor
@@ -161,16 +161,18 @@ function AdminCrudPage<T extends { id?: string }>({
       </div>
 
       {/* Table */}
-      <DynamicTable<T>
-        objectsName={objectsName}
-        columns={columns}
-        data={items}
-        loading={isLoading}
-        page={page}
-        totalPages={totalPages}
-        onPageChange={setPage}
-        onRowClick={handleRowClick}
-      />
+      <div className="flex-1 min-h-0 overflow-auto">
+        <DynamicTable<T>
+          objectsName={objectsName}
+          columns={columns}
+          data={items}
+          loading={isLoading}
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          onRowClick={handleRowClick}
+        />
+      </div>
     </div>
   );
 }

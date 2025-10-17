@@ -24,7 +24,7 @@ export function ProtectedRoute({
   const notAuth = !user || !user.role || !allowedRoles.includes(user.role);
 
   if (notAuth) {
-    navigate("/login");
+    navigate("/");
     return null;
   }
 
