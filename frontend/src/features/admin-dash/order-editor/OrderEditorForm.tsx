@@ -66,7 +66,11 @@ const OrderEditorForm: React.FC<Props> = ({
           <AnimatedDropdownBox title="Order Info" openInitially={true}>
             <OrderInfoForm />
           </AnimatedDropdownBox>
-          <AnimatedDropdownBox title="Items" openInitially={true}>
+          <AnimatedDropdownBox
+            className="p-0"
+            title="Items"
+            openInitially={true}
+          >
             <OrderItemsForm />
           </AnimatedDropdownBox>
           <AnimatedDropdownBox title="Shipping Info" openInitially={true}>

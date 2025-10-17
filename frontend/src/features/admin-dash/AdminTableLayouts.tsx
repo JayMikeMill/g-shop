@@ -1,4 +1,10 @@
-import type { Collection, Order, Product, QueryObject } from "@shared/types";
+import type {
+  Collection,
+  Order,
+  Product,
+  QueryObject,
+  User,
+} from "@shared/types";
 import {
   formatAddress,
   getProductDiscountLabel,
@@ -13,6 +19,18 @@ import { buyOrderShipping } from "./order-editor/buyOrderShipping";
 export type TableLayout<T> = {
   query: QueryObject<T>; // fields to select from DB for this table
   columns: TableColumn<T>[];
+};
+
+// ----- Users -----
+export const userTable: TableLayout<User> = {
+  query: {
+    select: ["id", "email", "role"],
+  },
+  columns: [
+    { id: "id", label: "User ID", render: (row: User) => row.id },
+    { id: "email", label: "Email", render: (row: User) => row.email },
+    { id: "role", label: "Role", render: (row: User) => row.role },
+  ],
 };
 
 // ----- Products -----
@@ -183,7 +201,7 @@ export const orderTable: TableLayout<Order> = {
                   );
                 }}
               >
-                Label
+                View Label
               </Button>
             </div>
           ) : (

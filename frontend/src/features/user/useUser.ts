@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "@app/hooks";
-import { setLoading, setUser, clearUser, type UserData } from "./userSlice";
+import { setLoading, setUser, clearUser } from "./userSlice";
 import { useCallback, useEffect } from "react";
 import { useApi } from "@api";
 import type { User } from "@shared/types";
@@ -16,7 +16,7 @@ export function useUser() {
     const storedUser = localStorage.getItem(USER_STORAGE_KEY);
     if (storedUser) {
       try {
-        const parsedUser = JSON.parse(storedUser) as UserData;
+        const parsedUser = JSON.parse(storedUser) as User;
         dispatch(setUser(parsedUser));
       } catch {
         localStorage.removeItem(USER_STORAGE_KEY);
@@ -25,15 +25,18 @@ export function useUser() {
   }, [dispatch]);
 
   const registerUser = useCallback(
-    (user: User, password: string) => {
+    (user: User, password: string): Promise<User> => {
       dispatch(setLoading(true));
-      register(user, password)
+      return register(user, password)
         .then((newUser) => {
-          dispatch(setUser(newUser as UserData));
-          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(newUser));
+          const userData = newUser as User;
+          dispatch(setUser(userData));
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
+          return userData;
         })
         .catch((error) => {
           console.error("Registration failed:", error);
+          throw error;
         })
         .finally(() => {
           dispatch(setLoading(false));
@@ -43,17 +46,20 @@ export function useUser() {
   );
 
   const loginUser = useCallback(
-    (email: string, password: string) => {
+    (email: string, password: string): Promise<User> => {
       dispatch(setLoading(true));
-      login(email, password)
-        .then((user) => {
-          if (!user) throw new Error("Invalid login response");
-          dispatch(setUser(user as UserData));
-          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
-          console.log("Logged in successfully", user);
+      return login(email, password)
+        .then((loggedInUser) => {
+          if (!loggedInUser) throw new Error("Invalid login response");
+          const userData = loggedInUser as User;
+          dispatch(setUser(userData));
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
+          console.log("Logged in successfully", userData);
+          return userData;
         })
         .catch((error) => {
           console.error("Login failed:", error);
+          throw error; // important: propagate error
         })
         .finally(() => {
           dispatch(setLoading(false));
@@ -62,8 +68,8 @@ export function useUser() {
     [dispatch, login]
   );
 
-  const logoutUser = useCallback(() => {
-    logout(user?.id || "")
+  const logoutUser = useCallback((): Promise<void> => {
+    return logout(user?.id || "")
       .then(() => {
         console.log("Logged out successfully");
         dispatch(clearUser());
@@ -71,8 +77,9 @@ export function useUser() {
       })
       .catch((error) => {
         console.error("Logout failed:", error);
+        throw error;
       });
-  }, [dispatch, logout]);
+  }, [dispatch, logout, user?.id]);
 
   return {
     user,

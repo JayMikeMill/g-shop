@@ -12,7 +12,7 @@ interface SiteMenuProps {
 }
 
 export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
-  const { user } = useUser();
+  const { user, logoutUser } = useUser();
   const { categories } = useDataApi();
 
   const { data: categoryData } = categories.getMany({
@@ -50,6 +50,17 @@ export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
   const handleNavigate = (path: string) => {
     navigate(path);
     handleClose();
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      navigate("/login");
+      handleClose();
+    } catch (error) {
+      console.error("Failed to logout:", error);
+      handleClose();
+    }
   };
 
   // Variants for staggered menu items
@@ -142,6 +153,15 @@ export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
                     </MenuItem>
                   ))}
                 </div>
+              )}
+
+              {user && (
+                <MenuItem
+                  variants={itemVariants}
+                  onClick={() => handleLogout()}
+                >
+                  Logout
+                </MenuItem>
               )}
 
               <MenuItem

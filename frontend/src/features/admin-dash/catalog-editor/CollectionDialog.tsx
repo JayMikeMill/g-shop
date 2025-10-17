@@ -14,6 +14,7 @@ function CollectionDialogBase<T extends Collection>({
   item,
   onCreate,
   onModify,
+  onDelete,
   onCancel,
   typeLabel,
 }: CollectionDialogProps<T>) {
@@ -32,6 +33,7 @@ function CollectionDialogBase<T extends Collection>({
         isAdding={isAdding}
         onCreate={onCreate as (item: Collection) => void}
         onModify={onModify as (item: Collection) => void}
+        onDelete={onDelete as (id: string) => void}
         onCancel={onCancel}
         typeLabel={typeLabel}
       />

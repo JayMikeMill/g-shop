@@ -12,10 +12,10 @@ const OrderShippingForm: React.FC = () => {
       <AddressForm formContext={formContext} rootName="shippingInfo.address" />
 
       {/* Shipping carrier options */}
-      <Label>Carrier: ${getValues("shippingInfo.carrier")}</Label>
+      <Label>Carrier: {getValues("shippingInfo.carrier")}</Label>
 
       {/* Shipping method options */}
-      <Label>Method: ${getValues("shippingInfo.method")}</Label>
+      <Label>Method: {getValues("shippingInfo.method")}</Label>
 
       <Input
         type="text"

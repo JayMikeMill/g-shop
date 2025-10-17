@@ -6,6 +6,8 @@ export * from "./catalog-editor/CollectionImagesProcessor";
 
 export * from "./order-editor/OrderEditorDialog";
 
+export * from "./user-editor/UserEditorDialog";
+
 export * from "./CrudEditorInterface";
 export * from "./AdminCrudPage";
 

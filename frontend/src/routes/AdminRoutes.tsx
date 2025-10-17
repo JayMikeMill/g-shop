@@ -12,11 +12,6 @@ const AdminProductsPage = lazy(() => import("@pages/admin/AdminProductsPage"));
 const AdminOrdersPage = lazy(() => import("@pages/admin/AdminOrdersPage"));
 const AdminUsersPage = lazy(() => import("@pages/admin/AdminUsersPage"));
 
-// Wrappers
-const AdminSectionWrapper = lazy(
-  () => import("@pages/admin/AdminSectionWrapper")
-);
-
 // Named exports → wrap to default
 const AdminCategoriesPage = lazy(() =>
   import("@pages/admin/AdminCatalogPage").then((mod) => ({

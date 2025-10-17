@@ -10,6 +10,7 @@ interface CollectionEditorFormProps {
   isAdding?: boolean;
   onCreate: (data: Collection) => void;
   onModify: (data: Collection) => void;
+  onDelete?: (id: string) => void;
   onCancel: () => void;
   typeLabel: string;
 }
@@ -28,6 +29,7 @@ const CollectionEditorForm: React.FC<CollectionEditorFormProps> = ({
   isAdding,
   onCreate,
   onModify,
+  onDelete,
   onCancel,
   typeLabel,
 }) => {
@@ -67,13 +69,19 @@ const CollectionEditorForm: React.FC<CollectionEditorFormProps> = ({
           <CircleSpinner text={`Saving ${typeLabel}...`} />
         </div>
       )}
-      <form
-        onSubmit={handleSave}
-        className="flex flex-1 flex-col gap-4 overflow-y-auto py-4 w-auto px-1"
-      >
-        <CollectionFields setIsProcessingImages={setIsProcessingImages} />
-        <div className="w-full flex flex-row gap-2 px-0 sm:px-0 items-center py-4 border-t flex-shrink-0">
-          <Button type="button" className="w-full h-12" onClick={onCancel}>
+      <form onSubmit={handleSave} className="flex flex-col flex-1 h-0">
+        <div className="flex flex-col overflow-y-auto py-sm w-auto px-1 gap-md">
+          <CollectionFields setIsProcessingImages={setIsProcessingImages} />
+        </div>
+        <div className="w-full flex flex-row gap-2 px-0 sm:px-0 items-center py-4 border-t">
+          <Button
+            variant="destructive"
+            className="w-full h-12"
+            onClick={onDelete && (() => onDelete(item?.id!))}
+          >
+            Delete
+          </Button>
+          <Button variant="flat" className="w-full h-12" onClick={onCancel}>
             Cancel
           </Button>
           <Button
