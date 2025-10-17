@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { Button, Input, Label } from "@components/ui";
 import { useUser } from "@features/user/useUser";
 import { NavLink, useNavigate } from "react-router-dom";
-import type { AuthStatus } from "@shared/interfaces/ServiceApis";
+import type { AuthStatus } from "shared/interfaces/ServiceApis";
 
 type LoginFormInputs = {
   email: string;

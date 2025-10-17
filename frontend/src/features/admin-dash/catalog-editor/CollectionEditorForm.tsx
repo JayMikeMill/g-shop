@@ -3,7 +3,7 @@ import { useForm, FormProvider, useFormContext } from "react-hook-form";
 import { Button, Input, Textarea, CircleSpinner } from "@components/ui";
 import { ImageEditor } from "@components/ui";
 import CollectionImageProcessor from "./CollectionImagesProcessor";
-import type { SafeType, Collection, CollectionImageSet } from "@shared/types";
+import type { SafeType, Collection, CollectionImageSet } from "shared/types";
 
 interface CollectionEditorFormProps {
   item?: Collection;

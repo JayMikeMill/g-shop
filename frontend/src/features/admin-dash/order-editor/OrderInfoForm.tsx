@@ -1,6 +1,6 @@
 import { useFormContext } from "react-hook-form";
 import { AnimatedSelect, Label } from "@components/ui";
-import { OrderStatusKeys, type OrderStatus } from "@shared/types";
+import { OrderStatusKeys, type OrderStatus } from "shared/types";
 
 const OrderInfoForm: React.FC = () => {
   const { watch, control } = useFormContext();

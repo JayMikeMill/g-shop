@@ -1,4 +1,4 @@
-import type { CollectionImageSet } from "@shared/types";
+import type { CollectionImageSet } from "shared/types";
 import imageCompression from "browser-image-compression";
 
 const MAX_FILE_SIZE_MB = 2; // 2MB

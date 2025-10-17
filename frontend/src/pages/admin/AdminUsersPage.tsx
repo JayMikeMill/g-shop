@@ -4,7 +4,7 @@ import {
   UserEditorDialog,
   userTable,
 } from "@features/admin-dash";
-import type { User } from "@shared/types";
+import type { User } from "shared/types";
 
 // Orders page using AdminCrudPage
 export default function AdminOrdersPage() {

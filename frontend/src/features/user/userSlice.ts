@@ -1,5 +1,5 @@
 // src/store/userSlice.ts
-import type { SafeType, User } from "@shared/types";
+import type { SafeType, User } from "shared/types";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export interface AuthState {

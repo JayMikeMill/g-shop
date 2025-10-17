@@ -4,14 +4,14 @@ import type {
   Product,
   QueryObject,
   User,
-} from "@shared/types";
+} from "shared/types";
 import {
   formatAddress,
   getProductDiscountLabel,
   getFinalPriceString,
   getTotalOrderItems,
   toMajorPriceString,
-} from "@shared/utils";
+} from "shared/utils";
 
 import { Button, TagBox, type TableColumn } from "@components/ui";
 import { buyOrderShipping } from "./order-editor/buyOrderShipping";

@@ -6,7 +6,7 @@ import {
   OrderStatusKeys,
   type Order,
   type Cart,
-} from "@shared/types";
+} from "shared/types";
 
 export async function createOrder(
   cart: Cart,

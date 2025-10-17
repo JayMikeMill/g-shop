@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 
-import type { Order, ShippingInfo } from "@shared/types";
+import type { Order, ShippingInfo } from "shared/types";
 
 import { useCart } from "@features/cart/useCart";
 import { createOrder } from "./createOrder";

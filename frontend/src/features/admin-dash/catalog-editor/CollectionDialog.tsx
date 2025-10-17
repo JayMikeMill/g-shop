@@ -1,6 +1,6 @@
 // src/components/CatalogDialog.tsx
 import type { CrudEditorInterface } from "../CrudEditorInterface";
-import { type Collection, type Category, emptyCollection } from "@shared/types";
+import { type Collection, type Category, emptyCollection } from "shared/types";
 import { AnimatedDialog } from "@components/ui";
 import CollectionEditorForm from "./CollectionEditorForm";
 

@@ -1,4 +1,4 @@
-import type { Product, ProductOption, ProductVariant } from "@shared/types";
+import type { Product, ProductOption, ProductVariant } from "shared/types";
 
 // -------------------------
 // Product utility functions

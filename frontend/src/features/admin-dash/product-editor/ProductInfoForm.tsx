@@ -7,7 +7,7 @@ import {
   NumberInput,
   Textarea,
 } from "@components/ui";
-import type { DiscountType, Product } from "@shared/types";
+import type { DiscountType, Product } from "shared/types";
 
 export const ProductInfoForm: React.FC = () => {
   const { register, watch, control } = useFormContext<Product>();

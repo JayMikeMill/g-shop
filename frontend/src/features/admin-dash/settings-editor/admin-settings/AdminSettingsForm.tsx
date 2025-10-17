@@ -7,8 +7,8 @@ import AdminSettingsShippingOriginForm from "./AdminSettingsShippingOriginForm";
 import AdminSettingsFeaturesForm from "./AdminSettingsFeaturesForm";
 import AdminSettingsAnalyticsForm from "./AdminSettingsAnalyticsForm";
 import { AnimatedDropdownBox } from "@components/ui/custom/AnimatedDropdownBox";
-import type { AdminSettings } from "@shared/settings";
-import type { SafeType } from "@shared/types";
+import type { AdminSettings } from "shared/settings";
+import type { SafeType } from "shared/types";
 
 interface Props {
   settings: AdminSettings;

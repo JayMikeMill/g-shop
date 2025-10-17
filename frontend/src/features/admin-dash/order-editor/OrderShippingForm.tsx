@@ -1,7 +1,7 @@
 import { useFormContext } from "react-hook-form";
 import AddressForm from "@components/ui/custom/AddressForm";
 import { Input, Label } from "@components/ui";
-import { type Order } from "@shared/types";
+import { type Order } from "shared/types";
 
 const OrderShippingForm: React.FC = () => {
   const formContext = useFormContext<Order>();

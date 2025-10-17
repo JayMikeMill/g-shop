@@ -27,7 +27,7 @@
     "baseUrl": "./", // root for imports
     "paths": {
       // aliases
-      "@shared/*": ["../shared/*"],
+      "shared/*": ["../shared/*"],
       "@pages/*": ["src/pages/*"],
       "@components/*": ["src/components/*"],
       "@contexts/*": ["src/contexts/*"],
@@ -45,5 +45,7 @@
     }
   },
 
-  "include": ["./src", "vite-env.d.ts", "global.d.ts", "tailwind.config.js"] // files to include
+  "include": ["./src", "vite-env.d.ts", "global.d.ts", "tailwind.config.js"],
+
+  "references": [{ "path": "../shared" }]
 }

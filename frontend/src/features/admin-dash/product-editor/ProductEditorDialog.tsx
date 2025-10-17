@@ -1,4 +1,4 @@
-import type { Product } from "@shared/types";
+import type { Product } from "shared/types";
 
 import type { CrudEditorInterface } from "../CrudEditorInterface";
 import { ProductEditorForm } from "./ProductEditorForm";

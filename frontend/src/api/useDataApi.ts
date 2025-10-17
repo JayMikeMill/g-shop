@@ -10,7 +10,7 @@ import type {
   Category,
   Order,
   User,
-} from "@shared/types";
+} from "shared/types";
 
 export function useDataApi() {
   return {

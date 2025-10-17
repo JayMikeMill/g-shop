@@ -1,7 +1,7 @@
 import React from "react";
 import { AnimatedDialog, Button } from "@components/ui";
 import type { CrudEditorInterface } from "@features/admin-dash";
-import type { User } from "@shared/types/PrismaTypes";
+import type { User } from "shared/types/PrismaTypes";
 
 // --- Main Dialog ---
 export const UserEditorDialog: React.FC<CrudEditorInterface<User>> = ({

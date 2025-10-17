@@ -4,13 +4,13 @@ import { useNavigate } from "react-router-dom";
 
 import { TagBox } from "@components/ui";
 
-import type { Product } from "@shared/types";
+import type { Product } from "shared/types";
 
 import {
   getProductDiscountPercent,
   getProductFinalPrice,
   toMajorUnit,
-} from "@shared/utils";
+} from "shared/utils";
 
 interface ProductCardProps {
   product: Product;

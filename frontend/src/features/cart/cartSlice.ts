@@ -1,6 +1,6 @@
 // src/features/cart/cartSlice.ts
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { Cart, CartItem, SafeType } from "@shared/types";
+import type { Cart, CartItem, SafeType } from "shared/types";
 
 // -------------------- Helpers --------------------
 

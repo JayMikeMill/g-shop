@@ -7,7 +7,7 @@ import SiteSettingsThemeForm from "./SiteSettingsThemeForm";
 import SiteSettingsSocialForm from "./SiteSettingsSocialForm";
 import SiteSettingsEcommerceForm from "./SiteSettingsEcommerceForm";
 import { AnimatedDropdownBox } from "@components/ui/custom/AnimatedDropdownBox";
-import type { SiteSettings } from "@shared/settings";
+import type { SiteSettings } from "shared/settings";
 
 interface Props {
   settings: SiteSettings;

@@ -1,7 +1,7 @@
 // AdminCrudPage.tsx
 import { useState } from "react";
 
-import type { QueryObject } from "@shared/types";
+import type { QueryObject } from "shared/types";
 
 import { Button, CircleSpinner, DynamicTable, Input } from "@components/ui";
 

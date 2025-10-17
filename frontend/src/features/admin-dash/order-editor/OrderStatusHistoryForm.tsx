@@ -6,7 +6,7 @@ import {
   Label,
   XButton,
 } from "@components/ui";
-import { OrderStatusKeys, type Order, type OrderStatus } from "@shared/types";
+import { OrderStatusKeys, type Order, type OrderStatus } from "shared/types";
 
 const OrderStatusHistoryForm: React.FC = () => {
   const { control } = useFormContext<Order>();

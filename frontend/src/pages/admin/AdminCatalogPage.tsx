@@ -5,7 +5,7 @@ import {
   CollectionDialog,
   collectionTable,
 } from "@features/admin-dash";
-import type { Category, Collection } from "@shared/types";
+import type { Category, Collection } from "shared/types";
 import { uploadCollectionImages } from "@utils/dataImagesProcessing";
 
 export function AdminCategoriesPage() {

@@ -1,7 +1,7 @@
 import React from "react";
 import { useFormContext } from "react-hook-form";
 import { Label, NumberInput } from "@components/ui";
-import type { Product } from "@shared/types";
+import type { Product } from "shared/types";
 
 export const ProductDimensionsForm: React.FC = () => {
   const { control } = useFormContext<Product>();

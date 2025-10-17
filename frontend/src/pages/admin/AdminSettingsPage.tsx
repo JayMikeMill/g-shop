@@ -8,7 +8,7 @@ import type {
   AdminSettings,
   SystemSettingsScope,
   AnySystemSettings,
-} from "@shared/settings";
+} from "shared/settings";
 
 /**
  * Generic page component for any settings type

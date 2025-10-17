@@ -11,7 +11,7 @@ import {
 } from "@stripe/react-stripe-js";
 
 import { inputStyle } from "@components/ui";
-import type { Address } from "@shared/types";
+import type { Address } from "shared/types";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
 
 // Types
-import type { Product, ProductImageSet, SafeType } from "@shared/types";
+import type { Product, ProductImageSet, SafeType } from "shared/types";
 
 // UI Components
 import { AnimatedDropdownBox, Button } from "@components/ui";

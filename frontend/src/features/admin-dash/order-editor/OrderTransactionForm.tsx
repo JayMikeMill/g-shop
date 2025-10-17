@@ -8,7 +8,7 @@ import {
   type Order,
   type PaymentMethod,
   type TransactionStatus,
-} from "@shared/types";
+} from "shared/types";
 
 const OrderTransactionForm: React.FC = () => {
   const { register, control } = useFormContext<Order>();

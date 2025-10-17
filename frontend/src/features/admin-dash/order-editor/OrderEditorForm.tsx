@@ -5,7 +5,7 @@ import { Button, AnimatedDropdownBox } from "@components/ui";
 // import { zodResolver } from "@hookform/resolvers/zod";
 // import { OrderSchema, OrderFormType } from "./OrderSchema";
 
-import type { SafeType, Order } from "@shared/types";
+import type { SafeType, Order } from "shared/types";
 
 import OrderInfoForm from "./OrderInfoForm";
 import OrderItemsForm from "./OrderItemsForm";

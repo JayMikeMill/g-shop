@@ -1,7 +1,7 @@
 import React from "react";
 import { useFormContext } from "react-hook-form";
 import { Toggle } from "@components/ui";
-import type { AdminSettings } from "@shared/settings";
+import type { AdminSettings } from "shared/settings";
 
 const AdminSettingsFeaturesForm: React.FC = () => {
   const { setValue, watch } = useFormContext<AdminSettings>();

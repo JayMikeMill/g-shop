@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import { useUser } from "@features/user/useUser";
 import { useNavigate } from "react-router-dom";
-import type { UserRole } from "@shared/types";
+import type { UserRole } from "shared/types";
 
 interface ProtectedRouteProps {
   allowedRoles: UserRole[];

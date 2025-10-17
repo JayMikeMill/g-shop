@@ -5,21 +5,26 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "prisma:generate": "prisma generate --schema=./schema.prisma",
-    "prisma:push": "prisma db push --schema=./schema.prisma",
-    "prisma:push:force": "prisma db push --schema=./schema.prisma --force",
-    "prisma:push:force:reset": "prisma db push --schema=./schema.prisma --force-reset",
-    "prisma:migrate": "prisma migrate dev --schema=./schema.prisma --name init"
+    "build:shared": "cd ../shared && tsc",
+    "build": "npm run build:shared && tsc",
+    "start": "node -r tsconfig-paths/register dist/index.js"
+  },
+  "_moduleAliases": {
+    "@config": "dist/config",
+    "@adapters": "dist/adapters",
+    "@controllers": "dist/controllers",
+    "@routes": "dist/routes",
+    "@middleware": "dist/middleware",
+    "@services": "dist/services",
+    "@utils": "dist/utils"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "shared": "*",
     "@easypost/api": "^8.2.0",
-    "@my-store/shared": "*",
     "@prisma/client": "^6.16.3",
     "argon2": "^0.44.0",
     "better-sqlite3": "^12.2.0",
@@ -29,9 +34,11 @@
     "express": "^5.1.0",
     "firebase-admin": "^13.5.0",
     "jsonwebtoken": "^9.0.2",
+    "module-alias": "^2.2.3",
     "multer": "^2.0.2",
     "sqlite3": "^5.1.7",
-    "stripe": "^18.5.0"
+    "stripe": "^18.5.0",
+    "ts-node-dev": "^2.0.0"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
@@ -40,7 +47,6 @@
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.0.0",
-    "nodemon": "^3.1.10",
     "prisma": "^6.16.2",
     "prisma-generator-typescript-interfaces": "^3.1.0",
     "ts-node": "^10.9.2",

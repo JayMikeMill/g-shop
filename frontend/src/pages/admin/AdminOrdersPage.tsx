@@ -4,7 +4,7 @@ import {
   OrderEditorDialog,
   orderTable,
 } from "@features/admin-dash";
-import type { Order } from "@shared/types";
+import type { Order } from "shared/types";
 
 // Orders page using AdminCrudPage
 export default function AdminOrdersPage() {

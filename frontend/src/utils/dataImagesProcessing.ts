@@ -1,4 +1,4 @@
-import type { Collection, Product, ProductImageSet } from "@shared/types";
+import type { Collection, Product, ProductImageSet } from "shared/types";
 import imageCompression from "browser-image-compression";
 import { useApi } from "@api";
 

@@ -1,7 +1,7 @@
 import { lazy, type JSX } from "react";
 import { Navigate, Route } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
-import { UserRoleKeys } from "@shared/types/PrismaTypes";
+import { UserRoleKeys } from "shared/types/PrismaTypes";
 
 // Lazy imports (default exports)
 const AdminDashboardPage = lazy(

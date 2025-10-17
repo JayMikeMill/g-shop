@@ -6,7 +6,7 @@ import {
   productTable,
 } from "@features/admin-dash";
 
-import type { Product } from "@shared/types";
+import type { Product } from "shared/types";
 import { uploadProductImages } from "@utils/dataImagesProcessing";
 
 export default function AdminProductsPage() {

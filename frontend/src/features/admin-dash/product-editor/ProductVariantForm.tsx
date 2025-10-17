@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { useFormContext, useFieldArray, useWatch } from "react-hook-form";
 import { NumberInput } from "@components/ui";
-import type { Product } from "@shared/types";
-import { parseVariantOptions } from "@shared/utils";
+import type { Product } from "shared/types";
+import { parseVariantOptions } from "shared/utils";
 import { generateVariants } from "@utils/productUtils";
 
 export const ProductVariantForm: React.FC = () => {

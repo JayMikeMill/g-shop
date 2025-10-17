@@ -8,13 +8,13 @@ import type {
   ShipmentRate,
   AddressVerificationResult,
   ShipmentTrackingResult,
-} from "@shared/types";
+} from "shared/types";
 
 import type {
   AnySystemSettings,
   SiteSettings,
   SystemSettingsScope,
-} from "@shared/settings";
+} from "shared/settings";
 
 import type {
   AuthResponse,
@@ -23,7 +23,7 @@ import type {
   ShippingApi,
   SystemSettingsApi,
   StorageApi,
-} from "@shared/interfaces";
+} from "shared/interfaces";
 
 export function useApi(): {
   auth: AuthApi;

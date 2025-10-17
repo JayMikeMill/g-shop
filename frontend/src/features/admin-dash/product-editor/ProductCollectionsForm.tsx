@@ -1,7 +1,7 @@
 import React from "react";
 import { XButton, TagBox, AnimatedSelect } from "@components/ui";
 
-import type { Category, Collection, Product } from "@shared/types";
+import type { Category, Collection, Product } from "shared/types";
 
 import { useDataApi } from "@api";
 import { useFieldArray, useFormContext } from "react-hook-form";

@@ -5,7 +5,7 @@ import {
   type Path,
 } from "react-hook-form";
 import { Input, Label, CountrySelect } from "@components/ui";
-import { emptyAddress, type Address, type SafeType } from "@shared/types";
+import { emptyAddress, type Address, type SafeType } from "shared/types";
 
 interface AddressFormProps {
   className?: string;

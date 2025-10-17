@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { Button, Input, Label } from "@components/ui";
 import { useUser } from "@features/user/useUser";
 import { NavLink, useNavigate } from "react-router-dom";
-import type { User } from "@shared/types";
+import type { User } from "shared/types";
 
 type SignupFormInputs = {
   firstName: string;

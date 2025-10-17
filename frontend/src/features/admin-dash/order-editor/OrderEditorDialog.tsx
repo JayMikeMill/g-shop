@@ -1,7 +1,7 @@
 import React from "react";
 import { AnimatedDialog } from "@components/ui";
 import type { CrudEditorInterface } from "@features/admin-dash";
-import { type Order } from "@shared/types";
+import { type Order } from "shared/types";
 import OrderEditorForm from "./OrderEditorForm";
 
 // --- Main Dialog ---

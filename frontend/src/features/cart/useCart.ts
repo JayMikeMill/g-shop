@@ -6,7 +6,7 @@ import {
   selectCart,
   calculateCartTotals,
 } from "./cartSlice";
-import type { CartItem } from "@shared/types";
+import type { CartItem } from "shared/types";
 import { useMemo, useCallback } from "react";
 
 export function useCart() {

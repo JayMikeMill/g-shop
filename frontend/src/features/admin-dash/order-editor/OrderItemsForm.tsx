@@ -1,7 +1,7 @@
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { DynamicTable, Label } from "@components/ui";
-import { toMajorUnit } from "@shared/utils";
-import type { Order } from "@shared/types";
+import { toMajorUnit } from "shared/utils";
+import type { Order } from "shared/types";
 
 const OrderItemsForm: React.FC = () => {
   const { control } = useFormContext<Order>();

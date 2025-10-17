@@ -7,7 +7,7 @@ import type {
   Product,
   ProductOption,
   ProductOptionsPreset,
-} from "@shared/types";
+} from "shared/types";
 import { useDataApi } from "@api";
 
 const ProductOptionsForm: React.FC = () => {
