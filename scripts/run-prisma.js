@@ -29,7 +29,7 @@ try {
   }
 
   // Always run your post-type-gen
-  execSync("ts-node ./shared/utils/PostTypeGen.ts", { stdio: "inherit" });
+  execSync("node ./scripts/post-typegen.js", { stdio: "inherit" });
 
   console.log("\n✅ Prisma command complete and post-type-gen ran!");
 } catch (err) {
