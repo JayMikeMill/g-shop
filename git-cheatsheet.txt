@@ -1,0 +1,114 @@
+# ==============================
+#       GIT CHEAT SHEET
+# ==============================
+
+# ------------------------------
+# 1. Configuration
+# ------------------------------
+git config --global user.name "Your Name"        # Set your Git username
+git config --global user.email "you@example.com" # Set your Git email
+git config --global core.editor "code --wait"   # Set default editor (VS Code)
+git config --global --list                       # Show all Git config settings
+
+# ------------------------------
+# 2. Initialize & Clone
+# ------------------------------
+git init                 # Initialize a new local Git repository
+git clone <repo_url>     # Clone a remote repository to your local machine
+
+# ------------------------------
+# 3. Branching & Switching
+# ------------------------------
+git branch               # List all local branches
+git branch -a            # List all local and remote branches
+git branch <name>        # Create a new local branch
+git checkout <branch>    # Switch to an existing branch
+git checkout -b <name>   # Create a new branch and switch to it immediately
+git push -u origin <branch> # Push a new branch to remote and set upstream
+git branch --set-upstream-to=origin/<branch> <branch> # Link an existing local branch to remote
+git merge <branch>       # Merge another branch into the current branch
+git branch -d <branch>   # Delete a local branch
+git push origin --delete <branch> # Delete a branch on remote
+
+# ------------------------------
+# 4. Staging & Committing
+# ------------------------------
+git status               # Show the status of files (staged, modified, untracked)
+git add <file>           # Stage a specific file for commit
+git add .                # Stage all changed files for commit
+git commit -m "Message"  # Commit staged changes with a message
+git commit -am "Message" # Stage all tracked files and commit in one command
+git commit --amend       # Modify the last commit (change message or add changes)
+
+# ------------------------------
+# 5. Viewing History
+# ------------------------------
+git log                  # Show detailed commit history
+git log --oneline         # Show simplified, one-line-per-commit history
+git log --graph --oneline --all # Visual graph of all branches
+git show <commit_hash>    # Show detailed info about a specific commit
+
+# ------------------------------
+# 6. Remote Repositories
+# ------------------------------
+git remote -v            # Show all remote repositories
+git remote add origin <url> # Add a new remote repository named "origin"
+git fetch origin         # Fetch changes from the remote repository without merging
+git pull origin <branch> # Fetch and merge changes from remote branch
+git push origin <branch> # Push local branch to remote repository
+git push                 # Push local branch if upstream is set
+
+# ------------------------------
+# 7. Undoing Changes
+# ------------------------------
+git checkout -- <file>    # Discard local changes in a file
+git restore <file>        # Modern way to discard local changes in a file
+git reset <file>          # Unstage a file (keep changes in working directory)
+git reset --hard <commit> # Reset branch to a specific commit, discarding all changes
+git revert <commit>       # Create a new commit that undoes the changes of a previous commit
+
+# ------------------------------
+# 8. Stashing Changes
+# ------------------------------
+git stash                 # Save current changes temporarily
+git stash list            # Show all stashed changes
+git stash apply           # Apply the latest stash without removing it
+git stash pop             # Apply the latest stash and remove it from the stash list
+git stash drop            # Delete a specific stash
+
+# ------------------------------
+# 9. Comparing & Diffing
+# ------------------------------
+git diff                  # Show changes in working directory compared to last commit
+git diff --staged          # Show changes staged for commit
+git diff <branch1> <branch2> # Compare two branches
+
+# ------------------------------
+# 10. Tags
+# ------------------------------
+git tag                    # List all tags
+git tag <tagname>           # Create a new tag
+git push origin <tagname>   # Push tag to remote repository
+git push origin --tags       # Push all tags
+
+# ------------------------------
+# 11. Branch Tracking & Upstream
+# ------------------------------
+git branch -vv             # Show branches and their upstream tracking
+git push -u origin <branch> # Set upstream while pushing first time
+git branch --set-upstream-to=origin/<branch> <branch> # Set upstream later
+
+# ------------------------------
+# 12. Cleaning
+# ------------------------------
+git clean -n               # Show which untracked files will be removed
+git clean -f               # Remove untracked files
+git clean -fd              # Remove untracked files and directories
+
+# ------------------------------
+# 13. Useful Shortcuts
+# ------------------------------
+git pull --rebase          # Pull remote changes and rebase instead of merge
+git push --force            # Force push (overwrites remote branch, use carefully)
+git reflog                 # Show a log of all branch changes (useful for recovery)
+git bisect start/end        # Binary search for bug commits

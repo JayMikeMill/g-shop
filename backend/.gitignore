@@ -1,9 +1,0 @@
-node_modules
-dist
-dev.db
-
-# Keep environment variables out of version control
-.env
-
-# Backend environment variables
-/src/adapters/firebase/config/NailStoreFirebaseServiceAccount.json
