@@ -14,7 +14,6 @@ import ShippingForm from "./ShippingForm";
 import OrderSummary from "./OrderSummary";
 import StripePaymentForm from "./PaymentFormStripe";
 import type { StripePaymentFormHandle } from "./PaymentFormStripe";
-import { th } from "zod/v4/locales";
 
 interface CheckoutFormProps {
   onSubmit: (order: Order, paymentMethod: any) => void;

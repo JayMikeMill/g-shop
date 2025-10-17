@@ -17,6 +17,7 @@ import AboutPage from "@pages/AboutPage";
 import SignupPage from "@pages/SignupPage";
 import LoginPage from "@pages/LoginPage";
 import AccountPage from "@pages/AccountPage";
+import OrderConfirmationPage from "@pages/OrderConfirmationPage";
 
 export default function AppRoutes() {
   return (
@@ -26,6 +27,7 @@ export default function AppRoutes() {
         <Route path="/" element={<HomePage />} />
         <Route path="/product/:id" element={<ProductPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />

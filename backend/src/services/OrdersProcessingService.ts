@@ -22,7 +22,9 @@ class OrderProcessingService implements OrderProcessingApi {
     try {
       // 1. Check stock for all items in the order
       if (!(await stockAvailable(order, db))) {
-        throw new Error("One or more items are out of stock");
+        throw new Error(
+          "One or more items are out of stock. Your cart has been updated."
+        );
       }
 
       // 2a Create metadata for payment
@@ -47,7 +49,7 @@ class OrderProcessingService implements OrderProcessingApi {
 
       if (paymentResult.status !== "AUTHORIZED") {
         throw new Error(
-          "Payment authorization failed: " + paymentResult.status
+          "Payment authorization failed. Try another payment method."
         );
       }
 

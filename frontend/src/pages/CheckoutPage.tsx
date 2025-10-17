@@ -1,20 +1,24 @@
 import { useState } from "react";
-import CheckoutForm from "../features/checkout/CheckoutForm";
+import { useNavigate } from "react-router-dom";
+import CheckoutForm from "@features/checkout/CheckoutForm";
 import { useApi } from "@api";
 
 export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const { placeOrder } = useApi().orders;
 
   const onSubmit = async (order: any, paymentMethod: any) => {
     setLoading(true);
     setMessage(null);
+
     const { success, error } = await placeOrder(paymentMethod, order);
 
     if (success) {
       setMessage("Order placed successfully!");
+      navigate("/order-confirmation");
     } else {
       setMessage("Error placing order" + error!);
     }
