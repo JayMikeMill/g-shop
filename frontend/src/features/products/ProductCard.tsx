@@ -7,8 +7,6 @@ import { TagBox } from "@components/ui";
 import type { Product } from "@shared/types";
 
 import {
-  getProductDiscount,
-  getProductDiscountLabel,
   getProductDiscountPercent,
   getProductFinalPrice,
   toMajorUnit,

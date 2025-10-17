@@ -6,7 +6,7 @@ import { parseVariantOptions } from "@shared/utils";
 import { generateVariants } from "@utils/productUtils";
 
 export const ProductVariantForm: React.FC = () => {
-  const { control, watch, setValue, getValues } = useFormContext<Product>();
+  const { control, setValue, getValues } = useFormContext<Product>();
 
   const { fields: variants } = useFieldArray({
     control,

@@ -13,7 +13,7 @@ const SiteSettingsEcommerceForm: React.FC = () => {
     name: "paymentMethods",
   });
 
-  const carrierShippingRates = watch("carrierShippingRates") || {};
+  // const carrierShippingRates = watch("carrierShippingRates") || {};
 
   return (
     <div className="flex flex-col gap-md">

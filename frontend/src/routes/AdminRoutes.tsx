@@ -4,7 +4,6 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import { UserRoleKeys } from "@shared/types/PrismaTypes";
 
 // Lazy imports (default exports)
-const AdminLoginPage = lazy(() => import("@pages/admin/AdminLoginPage"));
 const AdminDashboardPage = lazy(
   () => import("@pages/admin/AdminDashboardPage")
 );
@@ -38,9 +37,6 @@ const AdminAdminSettingsPage = lazy(() =>
 );
 
 export const adminRoutes: JSX.Element[] = [
-  // Login route
-  <Route key="login" path="/admin-login" element={<AdminLoginPage />} />,
-
   // Protected admin dashboard
   <Route
     key="dashboard"

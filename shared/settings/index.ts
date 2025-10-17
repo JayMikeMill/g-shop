@@ -1,5 +1,5 @@
 // System Settings
-export { SystemSettings, SystemSettingsScope } from "../types";
+export type { SystemSettings, SystemSettingsScope } from "../types";
 
 export * from "./SiteSettings";
 export * from "./defaultSiteSettings";

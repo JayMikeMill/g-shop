@@ -4,7 +4,7 @@ import { Toggle } from "@components/ui";
 import type { AdminSettings } from "@shared/settings";
 
 const AdminSettingsFeaturesForm: React.FC = () => {
-  const { register, setValue, watch } = useFormContext<AdminSettings>();
+  const { setValue, watch } = useFormContext<AdminSettings>();
   const userRegistrationEnabled = watch("userRegistrationEnabled");
   const orderProcessingEnabled = watch("orderProcessingEnabled");
   const maintenanceMode = watch("maintenanceMode");

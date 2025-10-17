@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, type ReactNode } from "react";
-import { motion, AnimatePresence, m } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { type Control, Controller } from "react-hook-form";
 
 interface SelectItem<T> {

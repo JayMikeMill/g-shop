@@ -1,4 +1,4 @@
-import { AdminSettings } from "./";
+import type { AdminSettings } from "./";
 
 export const defaultAdminSettings: AdminSettings = {
   // ------------------

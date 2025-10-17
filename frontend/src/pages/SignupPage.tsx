@@ -13,7 +13,7 @@ type SignupFormInputs = {
 };
 
 export default function SignupPage() {
-  const { registerUser, loading } = useUser();
+  const { register: registerUser, login: loginUser, loading } = useUser();
   const navigate = useNavigate();
 
   const {
@@ -31,17 +31,34 @@ export default function SignupPage() {
     }
 
     try {
-      const newUser = await registerUser(
+      const {
+        user: newUser,
+        success,
+        status,
+        message,
+      } = await registerUser(
         {
           firstName: data.firstName,
           lastName: data.lastName,
           email: data.email,
+          role: "ADMIN",
         } as User,
         data.password
       );
 
-      // Success → redirect user
-      if (newUser?.role === "ADMIN") navigate("/admin");
+      if (!success || !newUser) {
+        switch (status) {
+          case "USER_EXISTS":
+            throw new Error("An account with this email already exists");
+          case "ERROR":
+            console.error("Registration error:", message);
+            throw new Error("Registration error");
+        }
+      }
+
+      // Success → login -> redirect user
+      await loginUser(newUser!.email, data.password);
+      if (newUser!.role === "ADMIN") navigate("/admin");
       else navigate("/");
     } catch (err: any) {
       setError("confirmPassword", {

@@ -1,15 +1,15 @@
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { DynamicTable, Label } from "@components/ui";
-import { toMajorPriceString, toMajorUnit } from "@shared/utils";
+import { toMajorUnit } from "@shared/utils";
 import type { Order } from "@shared/types";
 
 const OrderItemsForm: React.FC = () => {
   const { control } = useFormContext<Order>();
   const {
     fields: items,
-    append,
-    remove,
-    update,
+    // append,
+    //remove,
+    //update,
   } = useFieldArray({
     control,
     name: "items",

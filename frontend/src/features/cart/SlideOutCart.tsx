@@ -16,13 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { Button, TagBox, XButton } from "@components/ui";
 import { useCart } from "@features/cart/useCart";
-import {
-  getProductDiscount,
-  getProductFinalPrice,
-  parseVariantOptions,
-  toMajorPriceString,
-  toMajorUnit,
-} from "@shared/utils";
+import { parseVariantOptions, toMajorUnit } from "@shared/utils";
 import { Plus, Minus } from "lucide-react";
 import type { CartItem as CartItemView } from "@shared/types";
 import { Label } from "@radix-ui/react-label";

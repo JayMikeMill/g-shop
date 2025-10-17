@@ -1,4 +1,4 @@
-import { SiteSettings } from "./";
+import type { SiteSettings } from "./";
 
 export const defaultSiteSettings: SiteSettings = {
   // ------------------

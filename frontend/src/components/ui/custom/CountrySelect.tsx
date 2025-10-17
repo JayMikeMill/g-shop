@@ -39,7 +39,6 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
       onChange={onChange}
       className={className}
       menuClassName={menuClassName}
-      placeholder="Select Country"
       noItemsText="No countries"
     />
   );

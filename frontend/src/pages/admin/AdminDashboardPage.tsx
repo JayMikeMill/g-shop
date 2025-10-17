@@ -5,7 +5,7 @@ import { DesktopNav, MobileNav } from "./AdminNav";
 import { useNavigate } from "react-router-dom";
 
 export default function AdminDashboardPage() {
-  const { logoutUser } = useUser();
+  const { logout } = useUser();
   const navigate = useNavigate();
 
   return (
@@ -18,7 +18,7 @@ export default function AdminDashboardPage() {
           <Button className="w-20" onClick={() => navigate("/")}>
             Home
           </Button>
-          <Button className="w-20" variant="destructive" onClick={logoutUser}>
+          <Button className="w-20" variant="destructive" onClick={logout}>
             Logout
           </Button>
         </div>

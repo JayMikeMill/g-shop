@@ -1,7 +1,6 @@
 import type {
   User,
   Order,
-  Product,
   Collection,
   Category,
   Cart,

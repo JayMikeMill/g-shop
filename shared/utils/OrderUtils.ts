@@ -1,4 +1,4 @@
-import { Order } from "../types";
+import type { Order } from "../types";
 
 export const getTotalOrderItems = (order: Order) => {
   return order.items?.reduce((sum, item) => sum + item.quantity, 0) ?? 0;

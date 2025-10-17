@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function OrderConfirmationPage() {
   return (
     <div className="surface-box p-8 text-center">

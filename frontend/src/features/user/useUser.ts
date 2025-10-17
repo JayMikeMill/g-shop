@@ -3,89 +3,119 @@ import { setLoading, setUser, clearUser } from "./userSlice";
 import { useCallback, useEffect } from "react";
 import { useApi } from "@api";
 import type { User } from "@shared/types";
+import type { AuthApi, AuthResponse } from "@shared/interfaces";
 
 const USER_STORAGE_KEY = "userData";
 
-export function useUser() {
+export function useUser(): AuthApi & { user: User | null; loading: boolean } {
   const dispatch = useAppDispatch();
   const { user, loading } = useAppSelector((state) => state.user);
-  const { register, login, logout } = useApi().auth;
+  const {
+    register: apiRegister,
+    login: apiLogin,
+    logout: apiLogout,
+  } = useApi().auth;
 
+  //==================================================
   // Load user from localStorage on mount
+  //==================================================
   useEffect(() => {
     const storedUser = localStorage.getItem(USER_STORAGE_KEY);
     if (storedUser) {
       try {
-        const parsedUser = JSON.parse(storedUser) as User;
-        dispatch(setUser(parsedUser));
+        dispatch(setUser(JSON.parse(storedUser) as User));
       } catch {
         localStorage.removeItem(USER_STORAGE_KEY);
       }
     }
   }, [dispatch]);
 
-  const registerUser = useCallback(
-    (user: User, password: string): Promise<User> => {
+  //==================================================
+  // Register
+  //==================================================
+  const register = useCallback(
+    async (newUser: User, password: string): Promise<AuthResponse> => {
       dispatch(setLoading(true));
-      return register(user, password)
-        .then((newUser) => {
-          const userData = newUser as User;
-          dispatch(setUser(userData));
-          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
-          return userData;
-        })
-        .catch((error) => {
-          console.error("Registration failed:", error);
-          throw error;
-        })
-        .finally(() => {
-          dispatch(setLoading(false));
-        });
+      try {
+        const response = await apiRegister(newUser, password);
+        if (response.success && response.user) {
+          dispatch(setUser(response.user));
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(response.user));
+        }
+        return response;
+      } catch (err) {
+        console.error("Registration failed:", err);
+        return {
+          user: null,
+          success: false,
+          status: "ERROR",
+          message: (err as Error).message,
+        };
+      } finally {
+        dispatch(setLoading(false));
+      }
     },
-    [dispatch, register]
+    [dispatch, apiRegister]
   );
 
-  const loginUser = useCallback(
-    (email: string, password: string): Promise<User> => {
+  //==================================================
+  // Login
+  //==================================================
+  const login = useCallback(
+    async (email: string, password: string): Promise<AuthResponse> => {
       dispatch(setLoading(true));
-      return login(email, password)
-        .then((loggedInUser) => {
-          if (!loggedInUser) throw new Error("Invalid login response");
-          const userData = loggedInUser as User;
-          dispatch(setUser(userData));
-          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
-          console.log("Logged in successfully", userData);
-          return userData;
-        })
-        .catch((error) => {
-          console.error("Login failed:", error);
-          throw error; // important: propagate error
-        })
-        .finally(() => {
-          dispatch(setLoading(false));
-        });
+      try {
+        const response = await apiLogin(email, password);
+        if (response.success && response.user) {
+          dispatch(setUser(response.user));
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(response.user));
+        }
+        return response;
+      } catch (err) {
+        console.error("Login failed:", err);
+        return {
+          user: null,
+          success: false,
+          status: "ERROR",
+          message: (err as Error).message,
+        };
+      } finally {
+        dispatch(setLoading(false));
+      }
     },
-    [dispatch, login]
+    [dispatch, apiLogin]
   );
 
-  const logoutUser = useCallback((): Promise<void> => {
-    return logout(user?.id || "")
-      .then(() => {
-        console.log("Logged out successfully");
-        dispatch(clearUser());
-        localStorage.removeItem(USER_STORAGE_KEY);
-      })
-      .catch((error) => {
-        console.error("Logout failed:", error);
-        throw error;
-      });
-  }, [dispatch, logout, user?.id]);
+  //==================================================
+  // Logout
+  //==================================================
+  const logout = useCallback(async (): Promise<AuthResponse> => {
+    if (!user)
+      return {
+        user: null,
+        success: false,
+        status: "ERROR",
+        message: "No user to logout",
+      };
 
-  return {
-    user,
-    loading,
-    registerUser,
-    loginUser,
-    logoutUser,
-  };
+    dispatch(setLoading(true));
+    try {
+      const response = await apiLogout();
+      dispatch(clearUser());
+      localStorage.removeItem(USER_STORAGE_KEY);
+      return response;
+    } catch (err) {
+      console.error("Logout failed:", err);
+      return {
+        user: null,
+        success: false,
+        status: "ERROR",
+        message: (err as Error).message,
+      };
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }, [dispatch, apiLogout]);
+
+  return { user, loading, register, login, logout };
 }

@@ -5,9 +5,9 @@ import type { Product } from "@shared/types";
 
 export const ProductDimensionsForm: React.FC = () => {
   const { control } = useFormContext<Product>();
-  const system = "imperial";
-  const weightPrefix = system === "imperial" ? "oz" : "gm";
-  const sizePrefix = system === "imperial" ? "in" : "cm";
+  // const system = "imperial";
+  // const weightPrefix = system === "imperial" ? "oz" : "gm";
+  // const sizePrefix = system === "imperial" ? "in" : "cm";
 
   return (
     <div className="grid grid-cols-4 gap-xs w-full sm:gap-md">

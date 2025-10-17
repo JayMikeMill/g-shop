@@ -1,4 +1,4 @@
-import { EngineSettings } from "./";
+import type { EngineSettings } from "./";
 
 export const defaultEngineSettings: EngineSettings = {
   // ------------------

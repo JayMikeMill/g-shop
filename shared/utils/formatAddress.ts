@@ -1,4 +1,4 @@
-import { Address } from "../types";
+import type { Address } from "../types";
 
 export function formatAddress(address?: Address | null): string {
   if (!address) return "";

@@ -5,7 +5,7 @@ import { type Order } from "@shared/types";
 
 const OrderShippingForm: React.FC = () => {
   const formContext = useFormContext<Order>();
-  const { register, control, getValues } = formContext;
+  const { register, getValues } = formContext;
 
   return (
     <div className="flex flex-col gap-2">

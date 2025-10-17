@@ -1,6 +1,6 @@
 // -------------------- Admin Settings --------------------
 
-import { Address } from "../types";
+import type { Address } from "../types";
 
 export interface AdminSettings {
   // ------------------
