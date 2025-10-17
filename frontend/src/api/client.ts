@@ -1,10 +1,10 @@
 // frontend/src/api/client.ts
 import axios from "axios";
 
-const API_BASE = import.meta.env.VITE_API_URL;
+const API_BASE = ""; //import.meta.env.VITE_API_URL;
 
 export const apiClient = axios.create({
-  baseURL: "/api/v1", // Use relative URL to leverage Vite proxy
+  baseURL: API_BASE + "/api/v1", // Use relative URL to leverage Vite proxy
   withCredentials: true, // ✅ automatically send cookies with requests
 });
 

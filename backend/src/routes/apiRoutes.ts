@@ -6,12 +6,7 @@ import multer from "multer";
 // ===============================
 
 // Auth
-import {
-  register,
-  login,
-  verifyToken,
-  logout,
-} from "@controllers/authController";
+import { register, login, logout } from "@controllers/authController";
 
 // Orders
 import {
@@ -35,7 +30,7 @@ import {
 } from "@controllers/systemSettingsController";
 
 // Middleware
-import { reqAdmin } from "@middleware/authorization";
+import { getAuthUser, reqAdmin } from "@middleware/authorization";
 
 import {
   deleteFile,
@@ -50,9 +45,8 @@ const upload = multer({ storage: multer.memoryStorage() });
 const router = Router();
 
 // ---------------- Auth ----------------
-router.post("/auth/register", register);
+router.post("/auth/register", getAuthUser, register);
 router.post("/auth/login", login);
-router.get("/auth/verify", verifyToken);
 router.post("/auth/logout", logout);
 
 // ---------------- Order  ----------------

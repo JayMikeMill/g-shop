@@ -12,7 +12,7 @@ interface SiteMenuProps {
 }
 
 export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
-  const { user, logoutUser } = useUser();
+  const { user, logout } = useUser();
   const { categories } = useDataApi();
 
   const { data: categoryData } = categories.getMany({
@@ -54,7 +54,7 @@ export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
 
   const handleLogout = async () => {
     try {
-      await logoutUser();
+      await logout();
       navigate("/login");
       handleClose();
     } catch (error) {

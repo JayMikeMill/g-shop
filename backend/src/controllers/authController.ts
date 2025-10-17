@@ -1,18 +1,31 @@
 import { controllerHandler } from "@utils";
 import { AuthService as S } from "@services";
+import { AuthResponse } from "@shared/interfaces";
 
 export const register = controllerHandler({
-  handler: ({ user, password }) => S.register(user, password),
+  handler: async ({ user, password }, req): Promise<AuthResponse> => {
+    // Prevent non-admins from creating admin accounts
+    if (user.role === "ADMIN" && req.user?.role !== "ADMIN") {
+      return {
+        user: null,
+        success: false,
+        status: "ERROR",
+        message: "Only admins can create admin accounts",
+      };
+    }
+
+    return S.register(user, password);
+  },
 });
 
 export const login = controllerHandler({
-  handler: async ({ email, password }, req, res) => {
-    const { token, user } = await S.authenticate(email, password);
+  handler: async ({ email, password }, req, res): Promise<AuthResponse> => {
+    const { token, user, success, status, message } = await S.authenticate(
+      email,
+      password
+    );
 
-    if (!user) {
-      res.status(401).json({ error: "Invalid credentials" });
-      return null;
-    }
+    if (!success) return { user, success, status, message };
 
     // Set HTTP-only cookie
     res.cookie("auth_token", token, {
@@ -22,29 +35,20 @@ export const login = controllerHandler({
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     });
 
-    console.log("Set auth_token cookie", token);
-
-    return user;
-  },
-});
-
-export const verifyToken = controllerHandler({
-  handler: async (_, req, res) => {
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token) return res.status(401).json({ error: "No token provided" });
-
-    const user = await S.verify(token);
-    if (!user) return res.status(401).json({ error: "Invalid token" });
-
-    return user;
+    return { user, success, status, message };
   },
 });
 
 export const logout = controllerHandler({
-  handler: async ({ id }, req, res) => {
-    await S.logout(id);
+  handler: async (id, req, res): Promise<AuthResponse> => {
+    await S.logout();
     // Clear cookie
     res.clearCookie("auth_token");
-    return { message: "User logged out" };
+    return {
+      user: null,
+      success: true,
+      status: "SUCCESS",
+      message: "User logged out",
+    };
   },
 });

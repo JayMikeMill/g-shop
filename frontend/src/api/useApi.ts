@@ -17,6 +17,7 @@ import type {
 } from "@shared/settings";
 
 import type {
+  AuthResponse,
   AuthApi,
   OrderProcessingApi,
   ShippingApi,
@@ -37,11 +38,16 @@ export function useApi(): {
     // ===============================
     auth: {
       register: (user: User, password: string) =>
-        post<User | null>(`/auth/register`, { user, password }),
+        post<AuthResponse>(`/auth/register`, {
+          user,
+          password,
+        }),
       login: (email: string, password: string) =>
-        post<User | null>(`/auth/login`, { email, password }),
-      verify: (token: string) => post<User | null>(`/auth/verify`, { token }),
-      logout: (userId: string) => post<void>(`/auth/logout`, { userId }),
+        post<AuthResponse>(`/auth/login`, {
+          email,
+          password,
+        }),
+      logout: () => post<AuthResponse>(`/auth/logout`),
     },
 
     // ===============================

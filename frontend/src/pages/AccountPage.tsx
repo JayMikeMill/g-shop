@@ -2,11 +2,11 @@ import React from "react";
 import { useUser } from "@features/user/useUser";
 import { useNavigate } from "react-router-dom";
 const AccountPage: React.FC = () => {
-  const { user, logoutUser } = useUser();
+  const { user, logout } = useUser();
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    logoutUser();
+    logout();
     navigate("/");
   };
   return (

@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { Button, Input, Label } from "@components/ui";
 import { useUser } from "@features/user/useUser";
 import { NavLink, useNavigate } from "react-router-dom";
+import type { AuthStatus } from "@shared/interfaces/ServiceApis";
 
 type LoginFormInputs = {
   email: string;
@@ -9,7 +10,12 @@ type LoginFormInputs = {
 };
 
 export default function LoginPage() {
-  const { logoutUser, loginUser, loading } = useUser();
+  const {
+    user: currentUser,
+    logout: logoutUser,
+    login: loginUser,
+    loading,
+  } = useUser();
   const navigate = useNavigate();
 
   const {
@@ -17,22 +23,36 @@ export default function LoginPage() {
     handleSubmit,
     formState: { errors },
     setError,
+    clearErrors,
   } = useForm<LoginFormInputs>();
+
+  const errorMessages: Record<AuthStatus, string> = {
+    USER_NOT_FOUND: "email not found",
+    INVALID_PASSWORD: "password is incorrect",
+    ERROR: "Login failed. Please try again",
+    SUCCESS: "",
+    USER_EXISTS: "",
+  };
 
   const onSubmit = async (data: LoginFormInputs) => {
     try {
       // Optional: logout first
-      await logoutUser();
+      if (currentUser) await logoutUser();
 
       // Login
-      const loggedInUser = await loginUser(data.email, data.password);
+      const { user, status } = await loginUser(data.email, data.password);
+
+      if (status !== "SUCCESS" && !user) {
+        const field = status === "USER_NOT_FOUND" ? "email" : "password";
+        setError(field, { message: errorMessages[status] });
+        return;
+      }
 
       // Clear previous errors
-      setError("email", { message: "" });
-      setError("password", { message: "" });
+      clearErrors();
 
       // Navigate based on role
-      if (loggedInUser.role === "ADMIN") navigate("/admin");
+      if (user!.role === "ADMIN") navigate("/admin");
       else navigate("/");
     } catch (err: any) {
       // Show error from login

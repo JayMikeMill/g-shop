@@ -32,11 +32,19 @@ export const getAuthUser = async (
 
     const token = req.cookies.auth_token;
 
-    if (!token)
-      return res.status(401).json({ error: "Error retrieving token" });
+    if (!token) {
+      req.user = undefined;
+      return next();
+    } else {
+      const { user, success, message } = await auth.verifyToken(token);
 
-    const user: User | null = await auth.verifyToken(token);
-    if (user) req.user = { id: user.id!, role: user.role };
+      if (success && user) {
+        req.user = { id: user.id!, role: user.role };
+        console.log("Authenticated user:", req.user);
+      } else {
+        throw new Error(message || "Token verification failed");
+      }
+    }
 
     next();
   } catch (err) {

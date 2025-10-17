@@ -12,11 +12,24 @@ import type {
 import type { AnySystemSettings, SiteSettings } from "../settings";
 
 // Authentication interface
+export type AuthStatus =
+  | "SUCCESS"
+  | "USER_EXISTS"
+  | "INVALID_PASSWORD"
+  | "USER_NOT_FOUND"
+  | "ERROR";
+
+export type AuthResponse = {
+  user: User | null;
+  success: boolean;
+  status: AuthStatus;
+  message?: string;
+};
+
 export interface AuthApi {
-  register(user: User, password: string): Promise<User | null>;
-  login(email: string, password: string): Promise<User | null>;
-  verify(token: string): Promise<User | null>;
-  logout(userId: string): Promise<void>;
+  register(user: User, password: string): Promise<AuthResponse>;
+  login(email: string, password: string): Promise<AuthResponse>;
+  logout(): Promise<AuthResponse>;
 }
 
 //  File Storage interface
