@@ -4,7 +4,7 @@
     "module": "commonjs", // Node-friendly module system
     "moduleResolution": "node", // resolve modules like Node
     "rootDir": "../", // preserve folder structure for TS source
-    "outDir": "dist", // compiled JS output folder
+    "outDir": "./dist", // compiled JS output folder
     "esModuleInterop": true, // fix CommonJS imports (like cors, express)
     "allowSyntheticDefaultImports": true, // allow default imports from non-ES modules
     "strict": true, // enable strict type checking
@@ -28,7 +28,6 @@
 
   "include": [
     "./src/**/*.ts", // include all TS files in backend
-    "../shared/**/*.ts", // include shared TS files
-    "src/services/index"
+    "../shared/**/*.ts" // include shared TS files
   ]
 }
