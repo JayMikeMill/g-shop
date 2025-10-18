@@ -104,7 +104,6 @@ const CollectionSelect: React.FC<CollectionSelectProps> = ({
 
   const collections = data?.data ?? [];
 
-  console.log("collections", data);
   const handleSelect = (collection: Collection | Category) => {
     onSelect(collection);
   };
