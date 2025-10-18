@@ -32,7 +32,7 @@ export const login = controllerHandler({
     res.cookie("auth_token", token, {
       httpOnly: true,
       secure: isProduction, // true in production
-      sameSite: isProduction ? "lax" : "none",
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     });
 
