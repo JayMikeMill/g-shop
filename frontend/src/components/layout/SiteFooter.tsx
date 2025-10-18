@@ -6,7 +6,7 @@ const SiteFooter: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <footer className="bg-card text-text font-sans py-8">
+    <footer className="bg-surface text-text font-sans py-8">
       <div className="max-w-[1200px] mx-auto px-8 flex flex-col md:flex-row justify-between gap-8 flex-wrap">
         {/* Logo / Info */}
         <div className="flex-1 min-w-[250px] mb-6 md:mb-0">

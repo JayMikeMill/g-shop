@@ -48,6 +48,7 @@ class SystemSettingsService implements SystemSettingsApi {
     scope: SystemSettingsScope,
     settings: T
   ): Promise<T> {
+    console.log("Updating settings for scope:", scope, settings);
     const existing = await db.systemSettings.getOne({ scope });
 
     let updated: SystemSettings;
@@ -77,7 +78,7 @@ class SystemSettingsService implements SystemSettingsApi {
     await this.setDefaults("ENGINE", defaultEngineSettings);
   }
 
-  async resetToDefaultSettings() {
+  async resetDefaultSettings() {
     await this.updateSettings("SITE", defaultSiteSettings);
     await this.updateSettings("ADMIN", defaultAdminSettings);
     await this.updateSettings("ENGINE", defaultEngineSettings);

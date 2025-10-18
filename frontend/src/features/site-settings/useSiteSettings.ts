@@ -17,6 +17,7 @@ export function useSiteSettings() {
     setLoading(true);
     try {
       const settings = await getSiteSettings();
+      console.log("Fetched site settings:", settings);
       if (settings) {
         setSiteSettings(settings);
         localStorage.setItem(
@@ -28,12 +29,28 @@ export function useSiteSettings() {
         localStorage.removeItem(SITE_SETTINGS_STORAGE_KEY);
       }
 
-      applyThemeColors({
-        primary: settings?.primaryColor || "#59c2ff",
-        secondary: settings?.secondaryColor || "#6D28D9",
-        accent: settings?.accentColor || "#10B981",
-        destructive: "#EF4444",
-      });
+      console.log("Applying theme colors with settings:", settings);
+      applyThemeColors(
+        {
+          background: settings?.backgroundColor || "#ffffff",
+          backgroundAlt: settings?.backgroundAltColor || "#f0f0f0",
+          foreground: settings?.foregroundColor || "#f5f5f5",
+          foregroundAlt: settings?.foregroundAltColor || "#333333",
+          surface: settings?.surfaceColor || "#ffffff",
+          surfaceAlt: settings?.surfaceAltColor || "#f5f5f5",
+          primary: settings?.primaryColor || "#59c2ff",
+          secondary: settings?.secondaryColor || "#6D28D9",
+          border: settings?.borderColor || "#e0e0e0",
+          accent: settings?.accentColor || "#10B981",
+          destructive: "#EF4444",
+        },
+        {
+          primary: true,
+          secondary: true,
+          accent: true,
+          destructive: true,
+        }
+      );
     } catch {
       setSiteSettings(null);
       localStorage.removeItem(SITE_SETTINGS_STORAGE_KEY);

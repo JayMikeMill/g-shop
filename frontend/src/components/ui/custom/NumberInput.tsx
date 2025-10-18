@@ -84,7 +84,7 @@ export const NumberInput: React.FC<NumberInputProps & NumericFormatProps> = ({
         }}
         placeholder="-"
         allowNegative={false}
-        className={inputStyle + " " + className + " text-center "}
+        className={inputStyle + className + " text-center "}
         {...formatProp[variant]}
         {...props}
       />

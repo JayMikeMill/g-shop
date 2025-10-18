@@ -27,7 +27,7 @@ app.use("/api/v1", routes);
 app.use(errorHandler);
 
 // set default settings
-SystemSettingsService.resetToDefaultSettings().catch((err: unknown) => {
+SystemSettingsService.setDefaultSettings().catch((err: unknown) => {
   console.error("Error setting default system settings:", err);
 });
 

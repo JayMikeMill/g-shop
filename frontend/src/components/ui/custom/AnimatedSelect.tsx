@@ -68,7 +68,7 @@ export const AnimatedSelect = <T,>({
       <div ref={ref} className={`relative ${className ?? ""}`}>
         <button
           type="button"
-          className={`bg-background text-base shadow-sm h-9 transition-all 
+          className={`bg-backgroundAlt text-base shadow-sm h-9 transition-all 
 						rounded-md border px-2 py-1 w-full text-left flex justify-between
 						${open ? "ring-2 ring-ring" : ""}`}
           onClick={() => setOpen((p) => !p)}
@@ -85,7 +85,7 @@ export const AnimatedSelect = <T,>({
               exit={{ opacity: 0, y: -30 }}
               transition={{ duration: 0.25, ease: "easeInOut" }}
               className={`absolute top-full left-0 z-10 mt-1 w-full 
-								max-h-60 overflow-y-auto bg-background shadow-none
+								max-h-60 overflow-y-auto bg-backgroundAlt shadow-none
 								border border-border rounded-md shadow-sm
 								${menuClassName ?? ""}`}
             >

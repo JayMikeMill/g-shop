@@ -15,10 +15,19 @@ export interface SiteSettings {
   // Theme & Appearance
   // ------------------
   backgroundColor?: string;
+  backgroundAltColor?: string;
+  foregroundColor?: string;
+  foregroundAltColor?: string;
+  surfaceColor?: string;
+  surfaceAltColor?: string;
   primaryColor?: string;
   secondaryColor?: string;
   accentColor?: string;
-  textColor?: string;
+  borderColor?: string;
+
+  // ------------------
+  // Typography
+  // ------------------
   headingFont?: string;
   bodyFont?: string;
   fontFamily?: string;

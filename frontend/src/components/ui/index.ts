@@ -15,6 +15,7 @@ export * from "./custom/NumberInput";
 export * from "./custom/DateTimeInput";
 export * from "./custom/LoaderBar";
 export * from "./custom/NavButton";
+export * from "./custom/ColorPickerButton";
 
 // Primitives
 export * from "./primitives/Label";

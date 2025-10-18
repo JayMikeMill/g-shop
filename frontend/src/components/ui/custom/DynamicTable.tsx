@@ -36,7 +36,7 @@ export const DynamicTable = <T extends { id?: string }>({
   // If loading, return the overlay loader immediately
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-full w-full shadow-card border border-border rounded bg-background">
+      <div className="flex items-center justify-center h-full w-full shadow-surface border border-border rounded bg-background">
         <LoaderBar />
       </div>
     );
@@ -45,7 +45,7 @@ export const DynamicTable = <T extends { id?: string }>({
   // If no data, show empty state
   if (data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full w-full shadow-card border border-border rounded bg-background text-text text-3xl">
+      <div className="flex items-center justify-center h-full w-full shadow-surface border border-border rounded bg-background text-text text-3xl">
         No {objectsName}
       </div>
     );
@@ -53,7 +53,7 @@ export const DynamicTable = <T extends { id?: string }>({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="overflow-auto shadow-card border border-border rounded h-full">
+      <div className="overflow-auto shadow-surface border border-border rounded h-full">
         <table className="table w-full border-collapse table-fixed font-sans">
           <thead className="sticky top-0 bg-primary text-primary-foreground z-10">
             <tr>
@@ -78,7 +78,7 @@ export const DynamicTable = <T extends { id?: string }>({
                 key={row.id}
                 onClick={() => onRowClick?.(structuredClone(row))}
                 className={`transition-colors duration-300 border-b
-									${i % 2 === 0 ? "bg-background" : "bg-card"} hover:bg-primary-50`}
+									${i % 2 === 0 ? "bg-background" : "bg-surface"} hover:bg-primary-50`}
               >
                 {columns.map((col) => (
                   <td
@@ -101,7 +101,7 @@ export const DynamicTable = <T extends { id?: string }>({
           <button
             disabled={page === 1}
             onClick={() => onPageChange(page - 1)}
-            className="cursor-pointer transition-all duration-200 px-4 py-2 rounded border border-border bg-card text-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:enabled:bg-primary hover:enabled:text-primary-foreground hover:enabled:border-primary"
+            className="cursor-pointer transition-all duration-200 px-4 py-2 rounded border border-border bg-surface text-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:enabled:bg-primary hover:enabled:text-primary-foreground hover:enabled:border-primary"
           >
             Prev
           </button>
@@ -111,7 +111,7 @@ export const DynamicTable = <T extends { id?: string }>({
           <button
             disabled={page === totalPages}
             onClick={() => onPageChange(page + 1)}
-            className="cursor-pointer transition-all duration-200 px-4 py-2 rounded border border-border bg-card text-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:enabled:bg-primary hover:enabled:text-primary-foreground hover:enabled:border-primary"
+            className="cursor-pointer transition-all duration-200 px-4 py-2 rounded border border-border bg-surface text-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:enabled:bg-primary hover:enabled:text-primary-foreground hover:enabled:border-primary"
           >
             Next
           </button>

@@ -9,6 +9,7 @@ import AdminSettingsAnalyticsForm from "./AdminSettingsAnalyticsForm";
 import { AnimatedDropdownBox } from "@components/ui/custom/AnimatedDropdownBox";
 import type { AdminSettings } from "shared/settings";
 import type { SafeType } from "shared/types";
+import { Button } from "@components/ui";
 
 interface Props {
   settings: AdminSettings;
@@ -31,10 +32,10 @@ const AdminSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
   return (
     <FormProvider {...methods}>
       <form
-        className="flex flex-col gap-sm w-full sm:flex-row sm:gap-lg"
+        className="flex flex-col gap-sm w-full p-sm sm:p-md sm:flex-row sm:gap-lg"
         onSubmit={handleSave}
       >
-        <div className="flex flex-col w-full sm:w-1/2">
+        <div className="flex flex-col w-full gap-sm sm:w-1/2 sm:gap-md">
           <AnimatedDropdownBox
             className=" gap-lg p-md w-full"
             title="Contact Settings"
@@ -50,7 +51,7 @@ const AdminSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
             <AdminSettingsShippingOriginForm />
           </AnimatedDropdownBox>
         </div>
-        <div className="flex flex-col w-full sm:w-1/2">
+        <div className="flex flex-col w-full gap-sm sm:w-1/2 sm:gap-md">
           <AnimatedDropdownBox
             className=" gap-lg p-md w-full"
             title="Features Settings"
@@ -70,6 +71,12 @@ const AdminSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
           </button>
         </div>
       </form>
+      {/* Action buttons */}
+      <div className="sticky flex justify-center bg-transparent bottom-0 h-20 py-md">
+        <Button className="flex h-full w-auto text-xl" type="submit">
+          Save Admin Settings
+        </Button>
+      </div>
     </FormProvider>
   );
 };

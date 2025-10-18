@@ -40,7 +40,6 @@ export const getAuthUser = async (
 
       if (success && user) {
         req.user = { id: user.id!, role: user.role };
-        console.log("Authenticated user:", req.user);
       } else {
         throw new Error(message || "Token verification failed");
       }

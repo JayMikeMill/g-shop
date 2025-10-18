@@ -99,7 +99,7 @@ export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
 
           {/* Slide-out menu */}
           <motion.div
-            className="relative bg-card w-2/3 max-w-sm h-full shadow-lg flex flex-col"
+            className="relative bg-surface w-2/3 max-w-sm h-full shadow-lg flex flex-col"
             initial={{ x: "-100%" }}
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
@@ -192,19 +192,20 @@ const MenuItem = ({ children, onClick, variants }: MenuItemProps) => {
         onClick={onClick}
         className={`
 					group w-full text-xl py-lg justify-between px-4 rounded
-					hover:bg-primary-50 dark:hover:bg-primary/20 hover:scale-[1.02]
+					hover:bg-primary-50 hover:scale-[1.02]
 					border-b transition-colors flex items-center 
           transition-all duration-300
           shadow-none
           bg-transparent text-foreground
           hover:shadow-none 
           active:translate-none active:shadow-none
+          active:text-foregroundAlt
 				`}
       >
         <span>{children}</span>
         <ChevronRight
           size={20}
-          className="text-black transition-transform duration-200 group-hover:translate-x-1"
+          className="text-foreground transition-transform duration-200 group-hover:translate-x-1"
         />
       </Button>
     </motion.div>

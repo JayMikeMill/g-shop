@@ -7,6 +7,7 @@ import {
   AnimatedDialog,
   Label,
   Input,
+  ColorPickerButton,
 } from "@components/ui";
 import type { Product, ProductTagPreset } from "shared/types";
 import { useDataApi } from "@api";
@@ -247,54 +248,3 @@ export const ProductTagDialog: React.FC<ProductTagDialogProps> = ({
     </AnimatedDialog>
   );
 };
-
-interface ColorPickerButtonProps {
-  color: string;
-  onChange: (color: string) => void;
-  className?: string;
-}
-
-export function ColorPickerButton({
-  color,
-  onChange,
-  className,
-}: ColorPickerButtonProps) {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <>
-      {/* The button */}
-      <Button
-        onClick={() => setOpen(true)}
-        className={className}
-        style={{ backgroundColor: color }}
-      />
-
-      {/* Dialog */}
-      <AnimatedDialog
-        showHeader={false}
-        open={open}
-        onClose={() => setOpen(false)}
-        className="p-2"
-      >
-        <div className="flex flex-col items-center">
-          <div className="text-text font-semibold mb-2 text-lg">
-            Select Color
-          </div>
-          <HexColorPicker color={color} onChange={onChange} />
-
-          <Input
-            type="text"
-            value={color}
-            onFocus={(e) => e.target.select()}
-            onChange={(e) => onChange(e.target.value)}
-            className="px-2 py-1 w-auto mt-2 text-center"
-          />
-          <Button className="w-auto mt-2" onClick={() => setOpen(false)}>
-            Select Color
-          </Button>
-        </div>
-      </AnimatedDialog>
-    </>
-  );
-}

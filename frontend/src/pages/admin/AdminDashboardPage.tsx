@@ -9,7 +9,7 @@ export default function AdminDashboardPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col h-screen w-full bg-background">
+    <div className="flex flex-col h-[100dvh] w-full bg-background">
       {/* Header (sticky on top) */}
       <header className="sticky top-0 z-20 flex justify-between items-center p-4 border-b border-border bg-background">
         <h1 className="text-2xl font-bold sm:hidden">Admin-Dash</h1>

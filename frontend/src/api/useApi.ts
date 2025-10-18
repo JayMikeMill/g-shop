@@ -129,7 +129,7 @@ export function useApi(): {
         scope: SystemSettingsScope,
         settings: AnySystemSettings
       ): Promise<AnySystemSettings | null> =>
-        put<AnySystemSettings | null>(`/settings/admin/${scope}`, { settings }),
+        put<AnySystemSettings | null>(`/settings/admin/${scope}`, settings),
     },
   };
 }

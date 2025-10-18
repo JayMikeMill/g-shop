@@ -40,7 +40,7 @@ export default function OrderSummary() {
               <img
                 src={imgSrc}
                 alt={name}
-                className="w-16 h-16 object-cover rounded-card bg-surface"
+                className="w-16 h-16 object-cover rounded-surface bg-surface"
               />
 
               <div className="flex-1 min-w-0">

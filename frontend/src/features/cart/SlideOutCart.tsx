@@ -83,7 +83,7 @@ export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
           {/* Slide-out cart panel */}
           <motion.div
             className={`fixed top-0 right-0 h-full w-full sm:w-[600px] 
-              flex flex-col bg-card shadow-xl rounded-none sm:rounded-l-lg`}
+              flex flex-col bg-surface shadow-xl rounded-none sm:rounded-l-lg`}
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
@@ -185,7 +185,7 @@ function CartContents({ onProceedToCheckout }: CartContentsProps) {
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 300, opacity: 0 }}
         transition={{ duration: animateDuraation / 2, ease: "easeOut" }}
-        className="flex flex-col  h-48 border-t bg-card p-md"
+        className="flex flex-col  h-48 border-t bg-surface p-md"
       >
         <div className="flex justify-between font-semibold text-text">
           <span>Subtotal</span>

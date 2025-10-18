@@ -8,11 +8,11 @@
   :root {
     /* 🎨 Base surfaces */
     --background: #ffffff; /* app/page background */
+    --backgroundAlt: #ffffff; /* app/page background */
     --foreground: #1f2937; /* default text */
-    --card: #fafafa; /* card/dialog/panel background */
-    --card-foreground: #1f2937; /* text on cards */
-    --popover: #ffffff; /* dropdowns, tooltips, floating layers */
-    --popover-foreground: #1f2937; /* text on popovers */
+    --foregroundAlt: #4b5563; /* secondary text */
+    --surface: #ffffff; /* cards, dialogs, panels */
+    --surfaceAlt: #f9fafb; /* alternate surface */
 
     /* 🌈 Brand colors */
     --primary: #3b82f6;
@@ -88,36 +88,6 @@
     --trans-func-ease-linear: linear;
     --trans-func-ease-in-out: ease-in-out;
   }
-
-  /* 🌙 Dark mode overrides */
-  .dark {
-    --background: #1f2937;
-    --foreground: #f3f4f6;
-    --card: #111827;
-    --card-foreground: #f3f4f6;
-    --popover: #111827;
-    --popover-foreground: #f3f4f6;
-
-    --primary: #3b82f6;
-    --primary-foreground: #ffffff;
-    --secondary: #facc15;
-    --secondary-foreground: #111827;
-    --accent: #6366f1;
-    --accent-foreground: #ffffff;
-
-    --destructive: #ef4444;
-    --destructive-foreground: #ffffff;
-
-    --border: #374151;
-    --input: #747474;
-    --ring: #3b82f6;
-
-    --chart-1: #3b82f6;
-    --chart-2: #10b981;
-    --chart-3: #f59e0b;
-    --chart-4: #8b5cf6;
-    --chart-5: #ec4899;
-  }
 }
 
 @layer base {
@@ -132,7 +102,7 @@
 /* Custom component styles */
 @layer components {
   .surface-box {
-    @apply bg-card rounded-lg shadow-xl;
+    @apply bg-surface rounded-lg shadow-xl;
   }
 
   .tag-box {

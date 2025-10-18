@@ -80,7 +80,7 @@ export const AnimatedDialog: React.FC<AnimatedDialogProps> = ({
           <motion.div
             ref={dialogRef}
             className={`rounded-lg shadow-xl border border-border 
-              bg-card relative z-10 ${className ?? ""}`}
+              bg-surface relative z-10 ${className ?? ""}`}
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}

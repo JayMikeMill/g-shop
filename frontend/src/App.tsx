@@ -1,24 +1,31 @@
-// App.tsx
 import { useLocation } from "react-router-dom";
 import SiteHeader from "@components/layout/SiteHeader";
 import SiteFooter from "@components/layout/SiteFooter";
 import AppRoutes from "./routes/AppRoutes";
 
 import { useSiteSettings } from "@features/site-settings/useSiteSettings";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function App() {
   const { refreshSettings } = useSiteSettings();
+  const [loading, setLoading] = useState(true);
+
+  const location = useLocation();
+  const adminPages = location.pathname.startsWith("/admin");
 
   // Refresh settings once on first load
   useEffect(() => {
-    refreshSettings();
-  }, [refreshSettings]);
+    const loadSettings = async () => {
+      await refreshSettings(); // wait for settings to refresh
+      setLoading(false); // done loading
+    };
+    loadSettings();
+  }, []);
 
-  const location = useLocation();
-
-  // Do not show footer on admin routes
-  const adminPages = location.pathname.startsWith("/admin");
+  if (loading) {
+    // Show a placeholder / spinner while settings load
+    return null;
+  }
 
   return (
     <div>

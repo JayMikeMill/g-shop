@@ -24,7 +24,7 @@ export default function SiteHeader() {
   };
 
   return (
-    <header className="bg-card shadow sticky top-0 z-30">
+    <header className="bg-surface shadow sticky top-0 z-30">
       {/* Header row */}
       <div className="w-full flex items-center h-14 justify-between px-md py-sm">
         {/* Left: Menu button (mobile) */}

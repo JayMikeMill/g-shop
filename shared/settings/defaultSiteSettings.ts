@@ -15,10 +15,16 @@ export const defaultSiteSettings: SiteSettings = {
   // Theme & Appearance
   // ------------------
   backgroundColor: "#ffffff",
+  backgroundAltColor: "#ffffff",
+  foregroundColor: "#000000",
+  foregroundAltColor: "#333333",
+  surfaceColor: "#ffffff",
+  surfaceAltColor: "#f5f5f5",
   primaryColor: "#0070f3",
   secondaryColor: "#1c1c1c",
   accentColor: "#ff4081",
-  textColor: "#333333",
+  borderColor: "#e0e0e0",
+
   headingFont: "Arial, sans-serif",
   bodyFont: "Verdana, sans-serif",
   fontFamily: "Arial, sans-serif",

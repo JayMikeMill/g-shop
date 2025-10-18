@@ -2,7 +2,7 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@components/lib/utils";
 
-export const inputStyle = `bg-background text-base shadow-sm h-9
+export const inputStyle = `bg-backgroundAlt text-base shadow-sm h-9
 	transition-all placeholder:text-muted-foreground rounded-md border
 	focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
 	disabled:cursor-not-allowed disabled:opacity-50 appearance-none`;

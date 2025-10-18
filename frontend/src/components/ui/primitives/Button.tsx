@@ -37,7 +37,7 @@ const buttonVariants = cva("", {
         baseButton +
         `
         border border-input bg-background shadow-sm 
-        hover:bg-card`,
+        hover:bg-surface`,
       secondary:
         baseButton +
         `

@@ -49,10 +49,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <img
             src={product.images[0].preview}
             alt={product.name}
-            className="absolute top-0 left-0 w-full h-full object-cover rounded-card"
+            className="absolute top-0 left-0 w-full h-full object-cover rounded-surface"
           />
         ) : (
-          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-surfaceAlt text-textSecondary rounded-card">
+          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-surfaceAlt text-textSecondary rounded-surface">
             No Image Available
           </div>
         )}

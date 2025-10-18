@@ -18,7 +18,7 @@ const NavButton: React.FC<NavButtonProps> = ({
     <button
       onClick={onClick}
       className={`flex items-center justify-center border text-center text-xl transition-colors duration-200
-				${isActive ? "bg-primary text-accent-foreground font-bold" : ""}
+				${isActive ? "bg-primary text-foregroundAlt font-bold" : ""}
 				${className || ""}`}
     >
       {label}

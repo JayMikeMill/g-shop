@@ -9,16 +9,11 @@ export default {
       colors: {
         /* Base / Background */
         background: "var(--background)",
+        backgroundAlt: "var(--backgroundAlt)",
         foreground: "var(--foreground)",
-
-        card: {
-          DEFAULT: "var(--card)",
-          foreground: "var(--card-foreground)",
-        },
-        popover: {
-          DEFAULT: "var(--popover)",
-          foreground: "var(--popover-foreground)",
-        },
+        foregroundAlt: "var(--foregroundAlt)",
+        surface: "var(--surface)",
+        surfaceAlt: "var(--surfaceAlt)",
 
         /* Primary & Accent */
         primary: {
