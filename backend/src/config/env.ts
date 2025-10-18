@@ -3,6 +3,7 @@ import path from "path";
 
 // Load .env files based on NODE_ENV
 console.log("Environment:", process.env.NODE_ENV);
+
 const isProduction = process.env.NODE_ENV?.trim() === "production";
 
 if (isProduction) {
@@ -14,4 +15,4 @@ if (isProduction) {
 // Export environment variables with defaults
 const env = process.env;
 
-export { env };
+export { env, isProduction };

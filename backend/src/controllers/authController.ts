@@ -1,6 +1,7 @@
 import { controllerHandler } from "@utils";
 import { AuthService as S } from "@services";
 import { AuthResponse } from "shared/interfaces";
+import { isProduction } from "@config";
 
 export const register = controllerHandler({
   handler: async ({ user, password }, req): Promise<AuthResponse> => {
@@ -30,8 +31,8 @@ export const login = controllerHandler({
     // Set HTTP-only cookie
     res.cookie("auth_token", token, {
       httpOnly: true,
-      secure: false, // true in production
-      sameSite: "lax",
+      secure: isProduction, // true in production
+      sameSite: isProduction ? "lax" : "none",
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     });
 

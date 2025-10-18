@@ -1,4 +1,6 @@
 import "./utils/aliases";
+import "./config/env";
+
 import http from "http";
 import app from "./app";
 import { env } from "@config";
