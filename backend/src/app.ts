@@ -49,13 +49,20 @@ app.use("/api/v1", routes);
 // ------------------------------
 // Error-handling middleware
 // ------------------------------
-app.use((err: any, res: express.Response) => {
-  console.error("💥 500 Error:", err);
+app.use(
+  (
+    err: any,
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    console.error("💥 500 Error:", err);
 
-  res.status(500).json({
-    status: "error",
-    message: err.message || "Internal Server Error",
-  });
-});
+    res.status(500).json({
+      status: "error",
+      message: err.message || "Internal Server Error",
+    });
+  }
+);
 
 export default app;
