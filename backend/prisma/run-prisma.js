@@ -13,11 +13,13 @@ const command = args[0];
 
 try {
   if (command === "gen") {
-    execSync("npx prisma generate", { cwd: "backend", stdio: "inherit" });
+    execSync("npx prisma generate", { cwd: "prisma", stdio: "inherit" });
+  } else if (command === "push") {
+    execSync("npx prisma db push", { cwd: "prisma", stdio: "inherit" });
   } else if (command === "push-force") {
-    execSync("npx prisma push --force", { cwd: "backend", stdio: "inherit" });
+    execSync("npx prisma dbpush --force", { cwd: "prisma", stdio: "inherit" });
   } else if (command === "push-reset") {
-    execSync("npx prisma push --force --reset", {
+    execSync("npx prisma db push --force --reset", {
       cwd: "backend",
       stdio: "inherit",
     });
@@ -29,7 +31,7 @@ try {
   }
 
   // Always run your post-type-gen
-  execSync("node ./scripts/post-typegen.js", { stdio: "inherit" });
+  execSync("node post-typegen.js", { cwd: "prisma", stdio: "inherit" });
 
   console.log("\n✅ Prisma command complete and post-type-gen ran!");
 } catch (err) {

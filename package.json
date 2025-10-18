@@ -18,9 +18,8 @@
     "shared"
   ],
   "scripts": {
-    "build": "npm --prefix frontend run build",
     "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
-    "prisma": "node scripts/run-prisma.js",
+    "prisma": "npm run prisma --prefix backend",
     "merge-gshop": "node scripts/merge-gshop.js",
     "test": "jest"
   },

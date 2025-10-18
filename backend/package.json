@@ -7,7 +7,8 @@
     "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/index.ts",
     "build:shared": "cd ../shared && tsc",
     "build": "npm run build:shared && tsc",
-    "start": "node -r module-alias/register dist/index.js"
+    "start": "node -r module-alias/register dist/index.js",
+    "prisma": "node prisma/run-prisma.js"
   },
   "_moduleDirectories": [
     "node_modules_custom"
@@ -53,6 +54,7 @@
     "@types/multer": "^2.0.0",
     "prisma": "^6.16.2",
     "prisma-generator-typescript-interfaces": "^3.1.0",
+    "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0"
   }

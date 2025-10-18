@@ -6,7 +6,7 @@ const path = require("path");
 const separator = "//" + "=".repeat(70);
 
 // Path to your generated TS file
-const filePath = path.join(__dirname, "../shared/types/PrismaTypes.ts");
+const filePath = path.join(__dirname, "../../shared/types/PrismaTypes.ts");
 
 // Read file content
 let content = fs.readFileSync(filePath, "utf-8");
