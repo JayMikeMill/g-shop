@@ -19,8 +19,6 @@ export function ProtectedRoute({
     return null; // or a spinner while auth is being checked
   }
 
-  console.log("User in ProtectedRoute:", user);
-
   const notAuth = !user || !user.role || !allowedRoles.includes(user.role);
 
   if (notAuth) {

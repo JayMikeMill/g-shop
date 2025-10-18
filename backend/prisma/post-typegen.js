@@ -59,5 +59,3 @@ content = content.replace(
 
 // Write back the modified file
 fs.writeFileSync(filePath, content, "utf-8");
-
-console.log("✅ Headers and replacements applied successfully!");

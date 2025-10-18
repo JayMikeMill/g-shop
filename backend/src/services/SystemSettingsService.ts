@@ -1,13 +1,10 @@
-import type {
-  SystemSettings,
-  AnySystemSettings,
-  SystemSettingsScope,
-  SiteSettings,
-  AdminSettings,
-  EngineSettings,
-} from "shared";
-
 import {
+  type SystemSettings,
+  type AnySystemSettings,
+  type SystemSettingsScope,
+  type SiteSettings,
+  type AdminSettings,
+  type EngineSettings,
   defaultSiteSettings,
   defaultAdminSettings,
   defaultEngineSettings,

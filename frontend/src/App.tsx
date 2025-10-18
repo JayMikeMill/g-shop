@@ -4,10 +4,17 @@ import SiteHeader from "@components/layout/SiteHeader";
 import SiteFooter from "@components/layout/SiteFooter";
 import AppRoutes from "./routes/AppRoutes";
 
-import { applyTheme } from "./styles/theme";
+import { useSiteSettings } from "@features/site-settings/useSiteSettings";
+import { useEffect } from "react";
 
 export default function App() {
-  applyTheme("light");
+  const { refreshSettings } = useSiteSettings();
+
+  // Refresh settings once on first load
+  useEffect(() => {
+    refreshSettings();
+  }, [refreshSettings]);
+
   const location = useLocation();
 
   // Do not show footer on admin routes

@@ -33,7 +33,10 @@ try {
   // Always run your post-type-gen
   execSync("node post-typegen.js", { cwd: "prisma", stdio: "inherit" });
 
-  console.log("\n✅ Prisma command complete and post-type-gen ran!");
+  const commandText = command === "gen" ? "generation" : "push";
+  console.log(
+    "\n✅ Prisma " + commandText + " complete and types updated successfully!"
+  );
 } catch (err) {
   console.error("Error:", err.message);
   process.exit(1);

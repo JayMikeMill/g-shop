@@ -117,15 +117,18 @@ export function useApi(): {
     //  System Settings
     // ===============================
     settings: {
-      getSiteSettings: () => get<SiteSettings | null>(`/settings/site`),
+      getSiteSettings: (): Promise<SiteSettings | null> =>
+        get<SiteSettings | null>(`/settings/site`),
 
-      getSettings: (scope: SystemSettingsScope) =>
+      getSettings: (
+        scope: SystemSettingsScope
+      ): Promise<AnySystemSettings | null> =>
         get<AnySystemSettings | null>(`/settings/admin/${scope}`),
 
       updateSettings: (
         scope: SystemSettingsScope,
         settings: AnySystemSettings
-      ) =>
+      ): Promise<AnySystemSettings | null> =>
         put<AnySystemSettings | null>(`/settings/admin/${scope}`, { settings }),
     },
   };
