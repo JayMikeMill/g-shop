@@ -19,6 +19,8 @@ frontend/.vercel
 frontend/dist
 frontend/node_modules
 frontend/.env
+frontend/.env.development
+frontend/.env.production
 
 # Logs
 logs

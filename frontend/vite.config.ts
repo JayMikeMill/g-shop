@@ -6,6 +6,9 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import { visualizer } from "rollup-plugin-visualizer";
 import path from "path";
 
+// Use environment variable if set, fallback to localhost
+const API_URL = process.env.VITE_API_URL || "http://localhost:3000";
+
 export default defineConfig({
   base: "/",
   plugins: [
@@ -36,13 +39,13 @@ export default defineConfig({
     },
   },
   server: {
-    host: "0.0.0.0", // allow access from phone or other devices
-    port: 5000, // change to any port you like
+    host: "0.0.0.0", // allow access from other devices on your network
+    port: 5000, // dev server port
     proxy: {
       "/api": {
-        target: "http://localhost:3000", // backend
+        target: API_URL, // proxy /api requests to your backend
         changeOrigin: true,
-        secure: false, // HTTP ok for dev
+        secure: false, // ok for HTTP in dev
       },
     },
   },
