@@ -8,10 +8,7 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
-const allowedOrigins = [
-  "http://localhost:5000", // Frontend origin
-  "http://192.168.0.105:5000", // Frontend origin
-];
+const allowedOrigins = (process.env.FRONTEND_URLS || "").split(",");
 
 // Allow requests from your frontend origin
 app.use(
