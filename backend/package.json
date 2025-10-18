@@ -7,23 +7,24 @@
     "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/index.ts",
     "build:shared": "cd ../shared && tsc",
     "build": "npm run build:shared && tsc",
-    "start": "node -r tsconfig-paths/register dist/index.js"
+    "start": "node -r module-alias/register dist/index.js"
   },
+  "_moduleDirectories": [
+    "node_modules_custom"
+  ],
   "_moduleAliases": {
-    "@config": "dist/config",
-    "@adapters": "dist/adapters",
-    "@controllers": "dist/controllers",
-    "@routes": "dist/routes",
-    "@middleware": "dist/middleware",
-    "@services": "dist/services",
-    "@utils": "dist/utils"
+    "@root": ".",
+    "@config": "/config",
+    "@adapters": "/adapters",
+    "@middleware": "/middleware",
+    "@services": "/services",
+    "@utils": "/utils"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "shared": "*",
     "@easypost/api": "^8.2.0",
     "@prisma/client": "^6.16.3",
     "argon2": "^0.44.0",
@@ -36,6 +37,7 @@
     "jsonwebtoken": "^9.0.2",
     "module-alias": "^2.2.3",
     "multer": "^2.0.2",
+    "shared": "*",
     "sqlite3": "^5.1.7",
     "stripe": "^18.5.0",
     "ts-node-dev": "^2.0.0"
@@ -46,6 +48,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/module-alias": "^2.0.4",
     "@types/multer": "^2.0.0",
     "prisma": "^6.16.2",
     "prisma-generator-typescript-interfaces": "^3.1.0",

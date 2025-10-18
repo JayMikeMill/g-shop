@@ -1,8 +1,6 @@
-import "module-alias/register";
-
+import "./utils/aliases";
 import http from "http";
 import app from "./app";
-
 import { env } from "@config";
 
 let currentApp = app;
