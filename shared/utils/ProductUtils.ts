@@ -17,7 +17,7 @@ export const getProductDiscountLabel = (product: Product) => {
 };
 
 export const getProductFinalPrice = (product: Product) => {
-  if (!product.discount || !product.price) return 0;
+  if (!product.discount) return product.price;
 
   const discount = product.discount || 0;
   if (discount <= 0) return product.price;

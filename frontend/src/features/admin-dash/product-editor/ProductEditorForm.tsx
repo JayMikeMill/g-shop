@@ -23,6 +23,7 @@ import ProductCollectionsForm from "./ProductCollectionsForm";
 export const newProduct: SafeType<Product> = {
   name: "",
   price: 0,
+  finalPrice: 0,
   description: "",
   status: "ACTIVE", // or whichever default makes sense
 };

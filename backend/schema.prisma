@@ -184,9 +184,10 @@ model Product {
   id             String             @id @default(uuid())
   name           String
   sku            String?            @unique
-  price          Int
+  price          Int                @default(0)
   discount       Int?
   discountType   DiscountType?
+  finalPrice     Int                @default(0)
   description    String
   stock          Int?
   reviewCount    Int?               @default(0) @map("review_count")

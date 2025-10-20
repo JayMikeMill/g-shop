@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import {
   AnimatedSelect,
@@ -8,12 +8,20 @@ import {
   Textarea,
 } from "@components/ui";
 import type { DiscountType, Product } from "shared/types";
+import { getProductFinalPrice } from "shared/utils";
 
 export const ProductInfoForm: React.FC = () => {
-  const { register, watch, control } = useFormContext<Product>();
+  const { register, getValues, watch, control, setValue } =
+    useFormContext<Product>();
 
-  const discountType = watch("discountType");
+  const [price, discount, discountType] = watch([
+    "price",
+    "discount",
+    "discountType",
+  ]);
+
   const discountTypeSymbol = discountType === "PERCENTAGE" ? "%" : "$";
+  setValue("finalPrice", getProductFinalPrice(getValues()));
 
   return (
     <div className="flex flex-col flex-1 gap-md overflow-hidden p-0.5">
@@ -21,11 +29,12 @@ export const ProductInfoForm: React.FC = () => {
         <Label>Name</Label>
         <Input placeholder="Product Name" {...register("name")} required />
       </div>
-      <div className="flex gap-md justify-left">
-        <div className="flex flex-col w-32">
-          <Label>Price</Label>
+      <div className="flex flex-row flex-1 gap-md">
+        <div className="flex flex-col w-1/4">
+          <Label className="text-center">Price</Label>
           <NumberInput
             variant="currency"
+            nonNullable
             controlProps={{
               control,
               name: "price",
@@ -33,35 +42,57 @@ export const ProductInfoForm: React.FC = () => {
             }}
           />
         </div>
-        <div className="flex items-end gap-sm">
-          <div className="flex flex-col w-32">
-            <Label>Discount</Label>
+
+        <div className="flex flex-1 flex-col w-1/3">
+          <Label className="text-center">Discount</Label>
+          <div className="flex flex-1 flex-row gap-xs min-w-0">
             <NumberInput
+              className="flex flex-1"
               variant={discountTypeSymbol === "%" ? "percent" : "currency"}
-              className="text-center w-32"
               controlProps={{
                 control,
                 name: "discount",
                 rules: { valueAsNumber: true },
               }}
             />
+            <AnimatedSelect<DiscountType>
+              className="flex-none w-10"
+              items={[
+                {
+                  value: "FIXED_AMOUNT",
+                  label: "$",
+                  render: () => <span>$</span>,
+                },
+                {
+                  value: "PERCENTAGE",
+                  label: "%",
+                  render: () => <span>%</span>,
+                },
+              ]}
+              controlProps={{
+                control,
+                name: "discountType",
+              }}
+            />
           </div>
-          <AnimatedSelect<DiscountType>
-            items={[
-              {
-                value: "FIXED_AMOUNT",
-                label: "$",
-                render: () => <span>$</span>,
-              },
-              { value: "PERCENTAGE", label: "%", render: () => <span>%</span> },
-            ]}
+        </div>
+        {/* Select (stays small / fixed) */}
+
+        <div className="flex flex-col w-1/4">
+          <Label className="text-center">Final</Label>
+          <NumberInput
+            className="min-w-0 disabled:opacity-100 disabled:bg-background"
+            readOnly
+            variant="currency"
             controlProps={{
               control,
-              name: "discountType",
+              name: "finalPrice",
+              rules: { valueAsNumber: true },
             }}
           />
         </div>
       </div>
+
       <div className="flex flex-col">
         <Label>Description</Label>
         <Textarea

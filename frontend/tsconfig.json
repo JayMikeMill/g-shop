@@ -46,6 +46,6 @@
   },
 
   "include": ["./src", "vite-env.d.ts", "global.d.ts", "tailwind.config.js"],
-
+  "exclude": ["node_modules", "dist", "build"],
   "references": [{ "path": "../shared" }]
 }

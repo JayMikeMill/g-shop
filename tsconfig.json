@@ -4,5 +4,6 @@
     { "path": "shared" },
     { "path": "backend" },
     { "path": "frontend" }
-  ]
+  ],
+  "exclude": ["node_modules"]
 }

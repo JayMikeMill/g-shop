@@ -16,6 +16,7 @@ interface NumberInputProps {
   value?: number; // for standalone usage
   onChange?: (value: number | null) => void; // for standalone usage
   className?: string;
+  nonNullable?: boolean;
 }
 
 const formatProp = {
@@ -57,6 +58,7 @@ export const NumberInput: React.FC<NumberInputProps & NumericFormatProps> = ({
   value,
   onChange,
   className,
+  nonNullable = false,
   ...props
 }) => {
   const renderInput = (
@@ -80,11 +82,16 @@ export const NumberInput: React.FC<NumberInputProps & NumericFormatProps> = ({
                 ? values.floatValue * 100
                 : values.floatValue
               : null;
-          inputOnChange(newValue);
+          // If nonNullable is true, set empty to 0
+          if (nonNullable && newValue == null) {
+            inputOnChange(0);
+          } else {
+            inputOnChange(newValue);
+          }
         }}
         placeholder="-"
         allowNegative={false}
-        className={inputStyle + className + " text-center "}
+        className={inputStyle + className + " text-center min-w-0"}
         {...formatProp[variant]}
         {...props}
       />

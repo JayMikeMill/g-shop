@@ -41,7 +41,7 @@ export default function SignupPage() {
           firstName: data.firstName,
           lastName: data.lastName,
           email: data.email,
-          role: "ADMIN",
+          role: "USER",
         } as User,
         data.password
       );

@@ -206,6 +206,7 @@ export interface Product {
   price: number;
   discount?: number | null;
   discountType?: DiscountType | null;
+  finalPrice: number;
   description: string;
   stock?: number | null;
   reviewCount?: number | null;

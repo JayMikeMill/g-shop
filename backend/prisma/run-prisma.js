@@ -17,7 +17,7 @@ try {
   } else if (command === "push") {
     execSync("npx prisma db push", { cwd: "prisma", stdio: "inherit" });
   } else if (command === "push-force") {
-    execSync("npx prisma dbpush --force", { cwd: "prisma", stdio: "inherit" });
+    execSync("npx prisma db push --force", { cwd: "prisma", stdio: "inherit" });
   } else if (command === "push-reset") {
     execSync("npx prisma db push --force --reset", {
       cwd: "backend",
