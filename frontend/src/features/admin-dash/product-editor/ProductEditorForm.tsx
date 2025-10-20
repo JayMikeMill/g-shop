@@ -20,7 +20,7 @@ import ProductTagsForm from "./ProductTagsForm";
 import ProductInfoForm from "./ProductInfoForm";
 import ProductCollectionsForm from "./ProductCollectionsForm";
 
-export const newProduct: SafeType<Product> = {
+const newProduct: SafeType<Product> = {
   name: "",
   price: 0,
   finalPrice: 0,
@@ -42,6 +42,7 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
   // --------------------------
   // Form Setup
   // --------------------------
+
   const methods = useForm<Product>({
     defaultValues: item ?? newProduct,
     mode: "onChange",

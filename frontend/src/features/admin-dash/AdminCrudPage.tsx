@@ -59,9 +59,13 @@ function AdminCrudPage<T extends { id?: string }>({
   // Fetch single item if editing
   const editingItemId =
     editorMode.type === "editing" ? editorMode.id : undefined;
+
+  console.log("editorMode", editorMode, "editingItemId", editingItemId);
   const { data: editingItem, isFetching: isItemLoading } = api.getOne({
     id: editingItemId,
   });
+
+  console.log("editingItem", editingItem);
 
   const items: T[] = data?.data ?? [];
   const totalPages = data?.total ? Math.ceil(data.total / pageSize) : 1;

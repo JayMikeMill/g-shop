@@ -111,6 +111,11 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
   // -------------------- GET ONE --------------------
   //===================================================
   async getOne(query: QueryType<T>): Promise<T | null> {
+    // No query: return null
+    if (!query || Object.keys(query).length === 0) {
+      return null;
+    }
+
     // If query has `id`, use findUnique
     if ("id" in query && query.id) {
       return this.client.findUnique({

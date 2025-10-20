@@ -118,7 +118,8 @@ export const ProductVariantHeader: React.FC = () => {
       <NumberInput
         variant="wholeNumber"
         className="flex-none w-24 h-[28px] disabled:opacity-100"
-        disabled={hasVariants}
+        readOnly={hasVariants}
+        onClick={(e) => e.stopPropagation()}
         controlProps={{
           control,
           name: "stock",

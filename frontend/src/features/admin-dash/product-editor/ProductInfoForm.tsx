@@ -14,11 +14,8 @@ export const ProductInfoForm: React.FC = () => {
   const { register, getValues, watch, control, setValue } =
     useFormContext<Product>();
 
-  const [price, discount, discountType] = watch([
-    "price",
-    "discount",
-    "discountType",
-  ]);
+  const discountType = watch("discountType");
+  watch(["price", "discount"]);
 
   const discountTypeSymbol = discountType === "PERCENTAGE" ? "%" : "$";
   setValue("finalPrice", getProductFinalPrice(getValues()));
@@ -29,8 +26,8 @@ export const ProductInfoForm: React.FC = () => {
         <Label>Name</Label>
         <Input placeholder="Product Name" {...register("name")} required />
       </div>
-      <div className="flex flex-row flex-1 gap-md">
-        <div className="flex flex-col w-1/4">
+      <div className="flex flex-col flex-1 gap-xs sm:gap-md">
+        <div className="flex flex-col">
           <Label className="text-center">Price</Label>
           <NumberInput
             variant="currency"
@@ -43,11 +40,11 @@ export const ProductInfoForm: React.FC = () => {
           />
         </div>
 
-        <div className="flex flex-1 flex-col w-1/3">
+        <div className="flex flex-1 flex-col">
           <Label className="text-center">Discount</Label>
           <div className="flex flex-1 flex-row gap-xs min-w-0">
             <NumberInput
-              className="flex flex-1"
+              className="flex flex-1 pl-10"
               variant={discountTypeSymbol === "%" ? "percent" : "currency"}
               controlProps={{
                 control,
@@ -78,7 +75,7 @@ export const ProductInfoForm: React.FC = () => {
         </div>
         {/* Select (stays small / fixed) */}
 
-        <div className="flex flex-col w-1/4">
+        <div className="flex flex-col">
           <Label className="text-center">Final</Label>
           <NumberInput
             className="min-w-0 disabled:opacity-100 disabled:bg-background"
