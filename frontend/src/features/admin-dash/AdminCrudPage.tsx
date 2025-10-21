@@ -1,7 +1,6 @@
 // AdminCrudPage.tsx
 import { useState, useCallback } from "react";
 
-import type { QueryObject } from "shared/types";
 import { Button, CircleSpinner, DynamicTable, Input } from "@components/ui";
 import type { CrudEditorInterface } from "@features/admin-dash/CrudEditorInterface";
 import { useDataApi } from "@api";
@@ -54,7 +53,7 @@ function AdminCrudPage<T extends { id?: string }>({
     limit: pageSize,
     orderBy: "createdAt",
     order: "desc",
-  } as QueryObject<T>);
+  });
 
   // Fetch single item if editing
   const editingItemId =

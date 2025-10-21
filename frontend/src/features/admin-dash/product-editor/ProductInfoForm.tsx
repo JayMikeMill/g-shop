@@ -14,12 +14,15 @@ export const ProductInfoForm: React.FC = () => {
   const { register, getValues, watch, control, setValue } =
     useFormContext<Product>();
 
+  const price = watch("price");
+  const discount = watch("discount");
   const discountType = watch("discountType");
-  watch(["price", "discount"]);
 
   const discountTypeSymbol = discountType === "PERCENTAGE" ? "%" : "$";
-  setValue("finalPrice", getProductFinalPrice(getValues()));
 
+  useEffect(() => {
+    setValue("finalPrice", getProductFinalPrice(getValues()));
+  }, [price, discount, discountType, setValue, getValues]);
   return (
     <div className="flex flex-col flex-1 gap-md overflow-hidden p-0.5">
       <div className="flex flex-col">

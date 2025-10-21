@@ -4,7 +4,7 @@ import "yet-another-react-lightbox/styles.css";
 import { Zoom } from "yet-another-react-lightbox/plugins";
 import { CropDialog, Input, XButton } from "@components/ui";
 
-// --- ImageSlot Component ---
+/** -------------------- Types -------------------- */
 interface ImageSlotProps {
   index: number;
   src?: string;
@@ -18,6 +18,19 @@ interface ImageSlotProps {
   emptyText?: string;
 }
 
+export interface ImageEditorProps<T extends Record<string, any>> {
+  className?: string;
+  images: T[];
+  onImagesChange: (images: T[]) => void;
+  setIsProcessingImages: (v: boolean) => void;
+  processor: (file: File, onProgress?: (percent: number) => void) => Promise<T>;
+  getPreview?: (item: T) => string;
+  single?: boolean;
+  emptyText?: string;
+  cropping?: boolean; // default false
+}
+
+/** -------------------- ImageSlot -------------------- */
 function ImageSlot({
   index,
   src,
@@ -33,7 +46,6 @@ function ImageSlot({
   const emptyBorder = src ? "" : "border-2 border-dashed border-gray-300";
   return (
     <div
-      key={index}
       draggable={draggable}
       onDragStart={onDragStart}
       onDragEnter={onDragEnter}
@@ -41,12 +53,10 @@ function ImageSlot({
       onDragOver={(e) => e.preventDefault()}
       onClick={onClick}
       className={`relative rounded-lg overflow-hidden flex-shrink-0 w-[100px] h-[100px]
-			 md:w-full md:h-[100px] select-none cursor-pointer flex items-center 
-			 justify-center ${emptyBorder} hover:bg-gray-100 
-			 transition`}
+				md:w-full md:h-[100px] select-none cursor-pointer flex items-center 
+				justify-center ${emptyBorder} hover:bg-gray-100 
+				transition`}
     >
-      {/* Preview */}
-      {/* Preview */}
       {src ? (
         <img
           src={src}
@@ -60,41 +70,26 @@ function ImageSlot({
         </span>
       )}
 
-      {/* Spinner */}
       {processing && (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="w-6 h-6 border-4 border-gray-200 border-t-primary rounded-full animate-spin" />
         </div>
       )}
 
-      {/* Remove */}
       {src && (
         <XButton
           onClick={(e) => {
             e.stopPropagation();
             onRemove();
           }}
-          className={`absolute top-1 right-1 w-6 h-6 flex cursor-pointer z-10 
-          bg-black/50 text-white p-0`}
+          className="absolute top-1 right-1 w-6 h-6 flex cursor-pointer z-10 bg-black/50 text-white p-0"
         />
       )}
     </div>
   );
 }
 
-// --- Types ---
-export interface ImageEditorProps<T extends Record<string, any>> {
-  className?: string;
-  images: T[];
-  onImagesChange: (images: T[]) => void;
-  setIsProcessingImages: (v: boolean) => void;
-  processor: (file: File, onProgress?: (percent: number) => void) => Promise<T>;
-  getPreview?: (item: T) => string;
-  single?: boolean; // if true → single-image editor
-  emptyText?: string;
-}
-
-// --- BaseImageEditor (shared) ---
+/** -------------------- BaseImageEditor -------------------- */
 function BaseImageEditor<T extends Record<string, any>>({
   className,
   images,
@@ -104,6 +99,7 @@ function BaseImageEditor<T extends Record<string, any>>({
   getPreview,
   emptyText = "+ Add Image",
   single = false,
+  cropping = false,
 }: ImageEditorProps<T>) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const dragItem = useRef<number | null>(null);
@@ -117,10 +113,33 @@ function BaseImageEditor<T extends Record<string, any>>({
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  // File input
+  /** -------------------- File input -------------------- */
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    if (files.length > 0) setPendingCropFiles((prev) => [...prev, ...files]);
+    if (!files.length) return;
+
+    if (cropping) {
+      setPendingCropFiles((prev) => [...prev, ...files]);
+    } else {
+      // no cropping → process immediately
+      files.forEach(async (file, idx) => {
+        const index = targetSlotIndex ?? idx;
+        setProcessingIndexes((prev) => [...prev, index]);
+        setTargetSlotIndex(null);
+        try {
+          const processed = await processor(file);
+          const updated = [...images];
+          if (single) updated[0] = processed;
+          else updated[index] = processed;
+          onImagesChange(updated);
+        } catch (err: any) {
+          alert(err?.message || "Error processing image");
+        } finally {
+          setProcessingIndexes((prev) => prev.filter((i) => i !== index));
+        }
+      });
+    }
+
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -131,12 +150,7 @@ function BaseImageEditor<T extends Record<string, any>>({
     }
   }, [pendingCropFile, pendingCropFiles]);
 
-  const handleAddClick = (index: number) => {
-    setTargetSlotIndex(index);
-    fileInputRef.current?.click();
-  };
-
-  // Crop
+  /** -------------------- Crop -------------------- */
   const handleCropComplete = async (
     croppedBlob: Blob,
     originalName?: string
@@ -144,67 +158,42 @@ function BaseImageEditor<T extends Record<string, any>>({
     if (targetSlotIndex === null) return;
     const index = targetSlotIndex;
 
-    // Create a temporary URL for immediate display
     const tempUrl = URL.createObjectURL(croppedBlob);
-
-    // Create a temporary object for parent, but keep original properties
-    const updatedImages = [...images];
-    updatedImages[index] = { ...updatedImages[index] }; // keep full object
-    onImagesChange(updatedImages); // triggers parent re-render
-
-    // Set temporary preview without touching the original image object
     setPreviews((prev) => ({ ...prev, [index]: tempUrl }));
-
     setProcessingIndexes((prev) => [...prev, index]);
-    setPendingCropFile(null);
-    setIsProcessingImages(true);
     setTargetSlotIndex(null);
 
     try {
       const file = new File([croppedBlob], originalName || "cropped.webp", {
         type: "image/webp",
       });
-
       const processedItem = await processor(file);
 
-      let updated = [...images];
-      if (single) {
-        updated = [processedItem];
-      } else {
-        updated[index] = processedItem;
-      }
-
+      const updated = [...images];
+      if (single) updated[0] = processedItem;
+      else updated[index] = processedItem;
       onImagesChange(updated);
     } catch (err: any) {
       alert(err?.message || "Error processing cropped image");
     } finally {
       setProcessingIndexes((prev) => prev.filter((i) => i !== index));
-
-      // Remove temporary preview
       setPreviews((prev) => {
         const copy = { ...prev };
         delete copy[index];
         return copy;
       });
-
-      setIsProcessingImages(false);
     }
   };
 
   const handleCropCancel = () => setPendingCropFile(null);
 
-  // Remove
+  /** -------------------- Remove -------------------- */
   const removeImage = (index: number) => {
-    let updated = [...images];
-    if (single) {
-      updated = [];
-    } else {
-      updated.splice(index, 1);
-    }
+    const updated = single ? [] : images.filter((_, i) => i !== index);
     onImagesChange(updated);
   };
 
-  // Drag & Drop
+  /** -------------------- Drag & Drop -------------------- */
   const handleDragStart = (index: number) => {
     dragItem.current = index;
     setIsDragging(true);
@@ -232,22 +221,29 @@ function BaseImageEditor<T extends Record<string, any>>({
     dragOverItem.current = null;
   };
 
-  // Render slots
+  /** -------------------- Slot rendering -------------------- */
   const renderSlot = (value: T | undefined, index: number) => {
-    let src: string | undefined;
-    if (previews[index]) {
-      src = previews[index]; // temporary blob URL
-    } else if (value) {
-      src = getPreview ? getPreview(value) : (value as any).main;
-    }
-
+    const src =
+      previews[index] ??
+      (value
+        ? getPreview
+          ? getPreview(value)
+          : (value as any).main
+        : undefined);
     return (
       <ImageSlot
         key={index}
         index={index}
         src={src}
         processing={processingIndexes.includes(index)}
-        onClick={() => (src ? setLightboxIndex(index) : handleAddClick(index))}
+        onClick={() => {
+          if (src) {
+            setLightboxIndex(index);
+          } else {
+            setTargetSlotIndex(index);
+            fileInputRef.current?.click();
+          }
+        }}
         onRemove={() => removeImage(index)}
         onDragStart={() => handleDragStart(index)}
         onDragEnter={() => handleDragEnter(index)}
@@ -268,10 +264,10 @@ function BaseImageEditor<T extends Record<string, any>>({
   return (
     <div className={single ? singleClass : multiClass}>
       {/* Crop dialog */}
-      {pendingCropFile && (
+      {pendingCropFile && cropping && (
         <CropDialog
           file={pendingCropFile}
-          open={!!pendingCropFile}
+          open
           onCropComplete={(blob) =>
             handleCropComplete(blob, pendingCropFile?.name)
           }
@@ -315,10 +311,12 @@ function BaseImageEditor<T extends Record<string, any>>({
       ) : (
         <>
           {images.map((img, idx) => renderSlot(img, idx))}
-          {/* Add button */}
           <div
             className="w-[100px] h-[100px] md:w-full md:h-[100px] flex-shrink-0 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-500 cursor-pointer hover:bg-gray-100 transition"
-            onClick={() => handleAddClick(images.length)}
+            onClick={() => {
+              setTargetSlotIndex(images.length);
+              fileInputRef.current?.click();
+            }}
           >
             <span className="text-center text-sm font-medium">{emptyText}</span>
           </div>
@@ -328,22 +326,21 @@ function BaseImageEditor<T extends Record<string, any>>({
   );
 }
 
-// --- Public Editors ---
+/** -------------------- Public Editors -------------------- */
 export function MultiImageEditor<T extends Record<string, any>>(
   props: Omit<ImageEditorProps<T>, "single">
 ) {
   return <BaseImageEditor {...props} single={false} />;
 }
 
-// --- Single Image Editor ---
 export function ImageEditor<T extends Record<string, any>>({
   image,
   onImageChange,
   ...rest
-}: {
-  image?: T;
-  onImageChange: (image?: T) => void;
-} & Omit<ImageEditorProps<T>, "images" | "onImagesChange" | "single">) {
+}: { image?: T; onImageChange: (image?: T) => void } & Omit<
+  ImageEditorProps<T>,
+  "images" | "onImagesChange" | "single"
+>) {
   return (
     <BaseImageEditor
       {...rest}

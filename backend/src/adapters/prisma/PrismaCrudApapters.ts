@@ -42,6 +42,7 @@ const CrudProps: CrudPropsType = {
       name: { search },
       description: { search },
       images: { owned, include },
+      products: { manyToMany },
     },
   },
 
@@ -51,6 +52,7 @@ const CrudProps: CrudPropsType = {
       name: { search },
       description: { search },
       images: { owned, include },
+      products: { manyToMany },
     },
   },
 

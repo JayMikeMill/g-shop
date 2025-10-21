@@ -3,7 +3,6 @@ import { Router, Request, Response, NextFunction } from "express";
 import { dataAuth } from "@middleware/dataAuth";
 import type { AuthRole } from "@middleware/authorization";
 import type { CrudInterface } from "shared/interfaces";
-import { parseQueryType } from "shared/types";
 
 export type CRUDRouteAuth = AuthRole[];
 
@@ -53,7 +52,7 @@ export function createCrudRoute(
   // ---------------- READ ----------------
   // getOne
   const getOneHandler = wrapHandler((req) => {
-    return crud.getOne(req.query);
+    return crud.getOne(req.body);
   });
 
   if (options?.readOne?.length)
@@ -61,7 +60,7 @@ export function createCrudRoute(
   else router.post("/one/", getOneHandler);
 
   // getMany
-  const getManyHandler = wrapHandler((req) => crud.getMany(req.query));
+  const getManyHandler = wrapHandler((req) => crud.getMany(req.body));
   if (options?.readMany?.length)
     router.post("/many", dataAuth(options.readMany), getManyHandler);
   else router.post("/many", getManyHandler);

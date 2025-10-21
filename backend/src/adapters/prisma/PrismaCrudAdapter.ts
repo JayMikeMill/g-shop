@@ -110,7 +110,9 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
   //===================================================
   // -------------------- GET ONE --------------------
   //===================================================
+
   async getOne(query: QueryType<T>): Promise<T | null> {
+    console.log("Query:", query);
     // No query: return null
     if (!query || Object.keys(query).length === 0) {
       return null;
@@ -125,7 +127,7 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
     }
 
     // If query is a QueryObject, use Prisma query builder
-    console.log("Query:", query);
+
     if (isQueryObject(query)) {
       const queryParams = buildPrismaQuery(
         query as QueryObject<T>,

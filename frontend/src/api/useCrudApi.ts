@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { CrudInterface } from "shared/interfaces";
-import { toQueryString, type QueryType } from "shared/types";
+import { type QueryType } from "shared/types";
 import { get, post, put, del } from "./client";
 
 export function CRUD<T extends { id?: string }>(
@@ -33,6 +33,7 @@ export function useCrudApi<T extends { id?: string }>(
       return useQuery({
         queryKey: [resource, query],
         queryFn: () => crud.getOne(query),
+        refetchOnWindowFocus: false,
       });
     },
 
@@ -40,6 +41,7 @@ export function useCrudApi<T extends { id?: string }>(
       return useQuery({
         queryKey: [resource, query],
         queryFn: () => crud.getMany(query),
+        refetchOnWindowFocus: false,
       });
     },
 
