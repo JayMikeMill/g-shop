@@ -49,8 +49,8 @@ export interface QueryObject<T> {
   select?: (DeepDotKeyof<T> | string)[];
   include?: (DeepDotKeyof<T> | string)[];
   conditions?: QueryCondition<T>[];
-  sortBy?: DeepDotKeyof<T>;
-  sortOrder?: "asc" | "desc";
+  orderBy?: DeepDotKeyof<T>;
+  order?: "asc" | "desc";
   limit?: number;
   page?: number;
 }
@@ -63,6 +63,8 @@ export const isQueryObject = <T>(q: any): q is QueryObject<T> =>
     q.include ||
     q.search ||
     q.limit ||
+    q.orderBy ||
+    q.order ||
     q.page ||
     q.includeFields);
 
@@ -76,8 +78,8 @@ export function toQueryString<T>(query?: QueryType<T>): string {
 
   if (query.limit !== undefined) params.limit = query.limit;
   if (query.page !== undefined) params.page = query.page;
-  if (query.sortBy) params.sortBy = query.sortBy;
-  if (query.sortOrder) params.sortOrder = query.sortOrder;
+  if (query.orderBy) params.sortBy = query.orderBy;
+  if (query.order) params.sortOrder = query.order;
   if (query.search) params.search = query.search;
 
   if (query.conditions?.length) {
@@ -97,12 +99,23 @@ export function toQueryString<T>(query?: QueryType<T>): string {
 
 // -------------------- Parse Query Type --------------------
 export function parseQueryType<T>(
-  query: Record<string, any> | Record<string, any>[]
+  rawQuery: string | Record<string, any> | Record<string, any>[]
 ): QueryType<T> | undefined {
-  if (!query || Object.keys(query).length === 0) return undefined;
+  if (!rawQuery) return undefined;
 
-  const q = Array.isArray(query) ? query[0] : query;
+  // If rawQuery is a string (like from req.url), parse it first
+  let parsedQuery: Record<string, any>;
+  if (typeof rawQuery === "string") {
+    parsedQuery = qs.parse(rawQuery, { depth: 2 });
+  } else if (Array.isArray(rawQuery)) {
+    parsedQuery = qs.parse(qs.stringify(rawQuery), { depth: 2 });
+  } else {
+    parsedQuery = qs.parse(qs.stringify(rawQuery), { depth: 2 });
+  }
 
+  const q = parsedQuery;
+
+  // Detect if this is a QueryObject
   const queryKeys = [
     "limit",
     "page",
@@ -110,9 +123,8 @@ export function parseQueryType<T>(
     "sortOrder",
     "search",
     "searchFields",
-    "searchFields[]",
     "select",
-    "select[]",
+    "include",
     "conditions",
   ];
   const hasQueryKeys = queryKeys.some((k) => k in q);
@@ -132,42 +144,40 @@ export function parseQueryType<T>(
 
   // --- Sort
   if (q.sortBy !== undefined)
-    options.sortBy = String(q.sortBy) as DeepDotKeyof<T>;
+    options.orderBy = String(q.sortBy) as DeepDotKeyof<T>;
 
   if (q.sortOrder !== undefined) {
     const order = String(q.sortOrder).toLowerCase();
     if (order === "asc" || order === "desc")
-      options.sortOrder = order as "asc" | "desc";
+      options.order = order as "asc" | "desc";
   }
 
   // --- Search
   if (q.search !== undefined) options.search = String(q.search);
 
-  // --- Normalize input into string arrays
+  // --- Helper to normalize arrays
   const toStringArray = (input: any): string[] => {
     if (!input) return [];
-    if (Array.isArray(input)) return input.map((v) => String(v));
-    if (typeof input === "object")
-      return Object.values(input).map((v) => String(v));
-    if (typeof input === "string") {
+    if (Array.isArray(input)) return input.map(String);
+    if (typeof input === "object") return Object.values(input).map(String);
+    if (typeof input === "string")
       return input
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean);
-    }
     return [];
   };
 
-  // --- Handle select and searchFields variants
+  // --- Select / Include / SearchFields
   const rawSelect = q.select ?? q["select[]"];
-  const rawSearchFields = q.searchFields ?? q["searchFields[]"];
-
   const select = toStringArray(rawSelect);
   if (select.length) options.select = select as DeepDotKeyof<T>[];
 
-  const include = toStringArray(q.include);
+  const rawInclude = q.include ?? q["include[]"];
+  const include = toStringArray(rawInclude);
   if (include.length) options.include = include as DeepDotKeyof<T>[];
 
+  const rawSearchFields = q.searchFields ?? q["searchFields[]"];
   const searchFields = toStringArray(rawSearchFields);
   if (searchFields.length)
     options.searchFields = searchFields as DeepDotKeyof<T>[];
@@ -177,6 +187,7 @@ export function parseQueryType<T>(
     const rawConditions = Array.isArray(q.conditions)
       ? q.conditions
       : Object.values(q.conditions);
+
     options.conditions = rawConditions.map((c: any) => ({
       field: String(c.field) as DeepDotKeyof<T>,
       operator: c.operator as QueryCondition<T>["operator"],
@@ -186,4 +197,5 @@ export function parseQueryType<T>(
 
   return options;
 }
+
 export type QueryType<T> = QueryObject<T> | Partial<T>;

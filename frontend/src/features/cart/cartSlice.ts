@@ -33,7 +33,8 @@ export const calculateCartTotals = (items: CartItem[]) => {
     0
   );
   const total = subtotal; // add taxes/shipping/discounts here if needed
-  return { subtotal, total, items: items.length };
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  return { subtotal, total, items: totalItems };
 };
 
 // -------------------- Slice --------------------

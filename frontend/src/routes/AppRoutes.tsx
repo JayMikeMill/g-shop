@@ -18,6 +18,7 @@ import SignupPage from "@pages/SignupPage";
 import LoginPage from "@pages/LoginPage";
 import AccountPage from "@pages/AccountPage";
 import OrderConfirmationPage from "@pages/OrderConfirmationPage";
+import CollectionPage from "@pages/CollectionPage";
 
 export default function AppRoutes() {
   return (
@@ -25,6 +26,8 @@ export default function AppRoutes() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/category/:slug" element={<CollectionPage />} />
+        <Route path="/collection/:slug" element={<CollectionPage />} />
         <Route path="/product/:id" element={<ProductPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/order-confirmation" element={<OrderConfirmationPage />} />

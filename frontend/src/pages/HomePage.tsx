@@ -21,10 +21,7 @@ export default function HomePage() {
         Find the perfect products for you, from our wide range of items.
       </p>
 
-      {isLoading ? <LoaderBar /> : <ProductCardList products={products} />}
-      {error && (
-        <div className="text-red-500 mt-md">Failed to load products</div>
-      )}
+      <ProductCardList products={products} isLoading={isLoading} />
     </div>
   );
 }

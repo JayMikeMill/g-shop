@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 
-// import { useCart } from "@features/cart/useCart";
+import { useCart } from "@features/cart/useCart";
 
-import { TagBox } from "@components/ui";
+import { Button, TagBox } from "@components/ui";
 
 import type { Product } from "shared/types";
 
@@ -19,16 +19,17 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const navigate = useNavigate();
 
-  // const { addItem } = useCart();
-  //
-  // const handleAddToCart = (e: React.MouseEvent) => {
-  //   e.stopPropagation();
-  //   addItem({
-  //     product: product,
-  //     quantity: 1,
-  //     price: product.price,
-  //   });
-  // };
+  const { addItem } = useCart();
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    addItem({
+      productId: product.id,
+      product: product,
+      quantity: 1,
+      price: product.price,
+    });
+  };
 
   const handleCardClick = () => {
     navigate(`/Product/${product.id}`);
@@ -41,7 +42,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   return (
     <div
-      className="overflow-hidden cursor-pointer transition-all duration-300"
+      className={`overflow-hidden cursor-pointer transition-all duration-300
+         border rounded-lg shadow-sm hover:shadow-lg bg-surface hover:scale-[1.02]`}
       onClick={handleCardClick}
     >
       <div className="relative w-full pt-[100%]">
@@ -49,7 +51,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <img
             src={product.images[0].preview}
             alt={product.name}
-            className="absolute top-0 left-0 w-full h-full object-cover rounded-surface"
+            className="absolute top-0 left-0 w-full h-full object-cover rounded-lg rounded-b-none"
           />
         ) : (
           <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-surfaceAlt text-textSecondary rounded-surface">
@@ -79,25 +81,31 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
 
       <div className="p-md">
-        <h3 className="text-xl font-semibold mb-2 text-text">{product.name}</h3>
+        <h3 className="text-xl font-semibold mb-2 whitespace-nowrap">
+          {product.name}
+        </h3>
 
         {/* Price display with discount handling */}
         <div className="flex items-center justify-center gap-2">
           {product.discount ? (
             <>
-              <span className="text-xl text-muted line-through">
+              <span className="text-md text-muted line-through">
                 {discountLabel}
               </span>
-              <span className="text-2xl text-text font-bold">
-                ${priceLabel}
-              </span>
+              <span className="text-lg  font-bold">${priceLabel}</span>
             </>
           ) : (
-            <span className="text-2xl text-blue-600 font-bold">
-              ${priceLabel}
-            </span>
+            <span className="text-lg font-bold">${priceLabel}</span>
           )}
         </div>
+
+        {/* Add to Cart Button */}
+        <Button
+          onClick={handleAddToCart}
+          className="mt-4 w-full bg-primary text-white hover:bg-primaryDark"
+        >
+          Add to Cart
+        </Button>
       </div>
     </div>
   );

@@ -286,7 +286,7 @@ function CartItemView({ item, addToCart, removeFromCart }: CartItemViewProps) {
         </div>
 
         <TagBox
-          className="h-6 text-sm bg-accent text-primary-foreground"
+          className="h-6 text-sm bg-accent text-foreground"
           text={`SAVE $${toMajorUnit(ogPrice - finalPrice).toFixed(2)}`}
         />
       </div>

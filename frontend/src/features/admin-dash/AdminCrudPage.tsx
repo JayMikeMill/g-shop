@@ -52,8 +52,8 @@ function AdminCrudPage<T extends { id?: string }>({
     include: query.include,
     page,
     limit: pageSize,
-    sortBy: "createdAt",
-    sortOrder: "desc",
+    orderBy: "createdAt",
+    order: "desc",
   } as QueryObject<T>);
 
   // Fetch single item if editing
