@@ -8,15 +8,19 @@ import SlideOutCart from "@features/cart/SlideOutCart";
 import SiteMenu from "./SiteMenu";
 import { Button } from "@components/ui";
 import { useUser } from "@features/user/useUser";
+import { useCart } from "@features/cart/useCart";
 
 export default function SiteHeader() {
   const navigate = useNavigate();
   const { user } = useUser(); // 👈 current user context
+  const { totals } = useCart(); // 👈 current cart contex
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  const cartItemsCount = totals.items;
 
   const handleUserClick = () => {
     if (user) navigate("/account");
@@ -63,11 +67,22 @@ export default function SiteHeader() {
 
           {/* Cart button */}
           <Button
-            variant={"flat"}
-            className="w-12 h-full p-0"
+            variant="flat"
+            className="w-12 h-full p-0 relative"
             onClick={() => setIsCartOpen(true)}
           >
             <ShoppingCart className="text-text" size={28} />
+
+            {/* Item count badge */}
+            {cartItemsCount > 0 && (
+              <span
+                className={`absolute -top-1 -right-1 inline-flex 
+                  items-center justify-center w-5 h-5 text-xs font-bold 
+                  text-foreground bg-accent rounded-full`}
+              >
+                {cartItemsCount}
+              </span>
+            )}
           </Button>
         </div>
       </div>
