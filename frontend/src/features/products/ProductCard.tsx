@@ -54,10 +54,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         )}
         {/* Tags overlay */}
         {product.tags && product.tags.length > 0 && (
-          <div className="absolute top-2 left-2 flex gap-1">
+          <div className="absolute top-2 left-2 flex gap-1 flex-wrap">
             {product.tags.map((tag, index) => (
               <TagBox
-                className="h-8 text-lg"
+                className="h-6 text-md font-normal  whitespace-nowrap"
                 key={index}
                 text={tag.name}
                 color={tag.color || "accent"}
@@ -65,7 +65,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               />
             ))}
             <TagBox
-              className="h-8 text-lg bg-accent"
+              className="h-6 text-md font-normal bg-accent whitespace-nowrap"
               key="discount"
               text={discountPercent + " OFF!"}
               color="accent"
@@ -77,7 +77,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
       {/* Content */}
       <div className="p-md">
-        <h3 className="text-xl font-semibold mb-2 whitespace-nowrap">
+        <h3 className="text-md font-semibold line-clamp-2 h-12">
           {product.name}
         </h3>
 

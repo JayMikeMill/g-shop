@@ -183,6 +183,7 @@ model CollectionImageSet {
 model Product {
   id             String             @id @default(uuid())
   name           String
+  longName       String?
   sku            String?            @unique
   price          Int                @default(0)
   discount       Int?

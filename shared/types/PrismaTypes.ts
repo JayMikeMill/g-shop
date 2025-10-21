@@ -202,6 +202,7 @@ export interface CollectionImageSet {
 export interface Product {
   id?: string;
   name: string;
+  longName?: string | null;
   sku?: string | null;
   price: number;
   discount?: number | null;

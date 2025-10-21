@@ -125,7 +125,7 @@ const TagPresetsSelect: React.FC<TagPresetsSelectProps> = ({
     value: p,
     label: p.name,
     render: (preset: ProductTagPreset) => (
-      <div className="flex gap-2 items-center w-auto cursor-pointer hover:bg-backgroundAlt">
+      <div className="flex gap-2 items-center w-auto cursor-pointer">
         <TagBox
           className="w-full h-6 self-center"
           text={preset.name}

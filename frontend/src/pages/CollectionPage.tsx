@@ -11,9 +11,9 @@ export default function CollectionPage() {
   const { categories, collections } = useDataApi();
 
   // Directly call the query hook with a filter for the collection/category
-  const { data, isLoading, error } = collections.getOne({
+  const { data, isLoading, error } = categories.getOne({
     conditions: [{ field: "slug", operator: "=", value: slug }],
-    include: ["products"],
+    include: ["products.images"],
   });
 
   console.log("CollectionPage data:", data, isLoading, error, slug);

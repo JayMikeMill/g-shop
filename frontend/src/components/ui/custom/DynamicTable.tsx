@@ -83,7 +83,7 @@ export const DynamicTable = <T extends { id?: string }>({
                 {columns.map((col) => (
                   <td
                     key={col.id}
-                    className={`px-md py-sm border-r border-border text-center break-words ${col.className || ""}`}
+                    className={`border-r border-border text-center break-words ${col.className || ""}`}
                     style={{ width: col.width || "120px" }}
                   >
                     {col.render ? col.render(row) : (row as any)[col.id]}

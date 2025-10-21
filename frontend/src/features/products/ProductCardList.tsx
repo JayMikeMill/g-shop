@@ -12,7 +12,7 @@ export default function ProductCardList({
   isLoading,
 }: ProductCardListProps) {
   return (
-    <div className="grid grid-cols-2 gap-sm sm:gap-md sm:grid-cols-4 lg:gap-lg p-0">
+    <div className="grid grid-cols-2 gap-sm sm:gap-md sm:grid-cols-4 lg:gap-lg px-sm sm:px-md">
       {isLoading
         ? Array.from({ length: 4 }).map((_, index) => (
             <ProductCardSkeleton key={index} />

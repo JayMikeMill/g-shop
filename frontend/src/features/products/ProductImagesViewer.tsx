@@ -1,16 +1,14 @@
 import { useState, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Thumbs } from "swiper/modules";
+
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/thumbs";
 
-import Lightbox from "yet-another-react-lightbox";
-import { Zoom } from "yet-another-react-lightbox/plugins";
-import "yet-another-react-lightbox/styles.css";
-
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { ProductImageSet } from "shared/types";
+import { Lightbox } from "@components/ui";
 
 interface ProductImagesViewerProps {
   images: ProductImageSet[];
@@ -22,31 +20,25 @@ export const ProductImagesViewer: React.FC<ProductImagesViewerProps> = ({
   const [activeIndex, setActiveIndex] = useState(0);
   const [thumbsSwiper, setThumbsSwiper] = useState<any>(null);
 
-  // Lightbox state
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
-  // Navigation refs
   const prevRef = useRef<HTMLDivElement>(null);
   const nextRef = useRef<HTMLDivElement>(null);
+
+  const scrollButtonClass = `custom-swiper-next absolute top-1/2 
+	-translate-y-1/2 z-10 w-12 h-12 flex items-center cursor-pointer 
+	opacity-60 md:hover:opacity-100`;
 
   return (
     <div className="flex flex-col items-center w-full max-w-md md:max-w-lg">
       {/* Main Swiper */}
       <div className="w-full relative">
-        <div
-          ref={prevRef}
-          className="custom-swiper-prev absolute left-0 top-1/2 -translate-y-1/2 z-10 
-					w-12 h-12 flex items-center cursor-pointer opacity-50 md:hover:opacity-100"
-        >
-          <ArrowLeft className="text-accent" size={38} />
+        <div ref={prevRef} className={scrollButtonClass + " left-0"}>
+          <ChevronLeft className="text-primary" size={38} />
         </div>
-        <div
-          ref={nextRef}
-          className="custom-swiper-next absolute right-0 top-1/2 -translate-y-1/2 z-10 
-					w-12 h-12 flex items-center cursor-pointer opacity-50 md:hover:opacity-100"
-        >
-          <ArrowRight className="text-accent" size={38} />
+        <div ref={nextRef} className={scrollButtonClass + " right-0"}>
+          <ChevronRight className="text-primary" size={38} />
         </div>
 
         <Swiper
@@ -94,6 +86,9 @@ export const ProductImagesViewer: React.FC<ProductImagesViewerProps> = ({
           onSwiper={setThumbsSwiper}
           spaceBetween={10}
           slidesPerView={3}
+          centeredSlides
+          centeredSlidesBounds
+          slideToClickedSlide
           watchSlidesProgress
           className="!w-auto"
         >
@@ -103,11 +98,8 @@ export const ProductImagesViewer: React.FC<ProductImagesViewerProps> = ({
                 src={img.preview}
                 alt={`Thumb ${idx}`}
                 className={`object-contain w-20 h-20 cursor-pointer border rounded-md transition-all ${
-                  idx === activeIndex ? "border-accent border-4" : ""
+                  idx === activeIndex ? "border-primary border-4" : ""
                 }`}
-                onClick={() => {
-                  if (thumbsSwiper) thumbsSwiper.slideTo(idx);
-                }}
               />
             </SwiperSlide>
           ))}
@@ -120,10 +112,7 @@ export const ProductImagesViewer: React.FC<ProductImagesViewerProps> = ({
           open={lightboxOpen}
           index={lightboxIndex}
           slides={images.map((img) => ({ src: img.main }))}
-          close={() => setLightboxOpen(false)}
-          plugins={[Zoom]}
-          styles={{ container: { backgroundColor: "rgba(0,0,0,0.5)" } }}
-          zoom={{ scrollToZoom: true, maxZoomPixelRatio: 2 }}
+          onClose={() => setLightboxOpen(false)}
         />
       )}
     </div>

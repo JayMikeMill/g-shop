@@ -234,7 +234,7 @@ function CartItemView({ item, addToCart, removeFromCart }: CartItemViewProps) {
       <img
         src={imgSrc}
         alt={name}
-        className="w-20 h-20 rounded-md bg-transparent"
+        className="w-20 h-20 rounded-md bg-transparent object-contain"
       />
 
       <div className="flex flex-1 flex-col justify-center items-center sm:flex-row sm:gap-md sm:px-md ">
@@ -276,11 +276,11 @@ function CartItemView({ item, addToCart, removeFromCart }: CartItemViewProps) {
 
       {/* Item total price */}
       <div className="flex  flex-col items-center sm:flex-1">
-        <div className="flex flex-col sm:flex-row items-center">
+        <div className="flex flex-col sm:flex-row items-center sm:gap-md">
           <p className="text-md text-muted w-16 text-center line-through">
             ${toMajorUnit(ogPrice).toFixed(2)}
           </p>
-          <p className="text-lg font-semibold text-center w-16">
+          <p className="text-lg font-semibold text-center w-16 pl-0">
             ${toMajorUnit(finalPrice).toFixed(2)}
           </p>
         </div>

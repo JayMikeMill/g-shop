@@ -78,13 +78,8 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
 
   const handleDelete = async () => {
     const product = methods.getValues();
-    if (!product.id) {
-      alert("Cannot delete a product that hasn't been created yet.");
-      return;
-    }
-    if (!window.confirm(`Are you sure you want to delete ${product.name}?`))
-      return;
-    onDelete(product.id);
+
+    onDelete(product.id!);
   };
 
   const onSubmit: SubmitHandler<Product> = async (data) => {

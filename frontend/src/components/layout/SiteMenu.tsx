@@ -146,7 +146,7 @@ export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
                       key={category.id}
                       variants={itemVariants}
                       onClick={() =>
-                        handleNavigate(`/categories/${category.slug}`)
+                        handleNavigate(`/category/${category.slug}`)
                       }
                     >
                       {category.name}

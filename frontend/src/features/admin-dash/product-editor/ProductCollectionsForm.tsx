@@ -112,7 +112,7 @@ const CollectionSelect: React.FC<CollectionSelectProps> = ({
     value: c,
     label: c.name,
     render: (c: Collection | Category) => (
-      <div className="flex gap-2 items-center w-auto cursor-pointer hover:bg-backgroundAlt">
+      <div className="flex gap-2 items-center w-auto cursor-pointer">
         <span>{c.name}</span>
       </div>
     ),

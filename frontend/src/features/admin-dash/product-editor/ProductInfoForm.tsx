@@ -29,6 +29,10 @@ export const ProductInfoForm: React.FC = () => {
         <Label>Name</Label>
         <Input placeholder="Product Name" {...register("name")} required />
       </div>
+      <div className="flex flex-col">
+        <Label>Long Name</Label>
+        <Input placeholder="Product Name" {...register("longName")} required />
+      </div>
       <div className="flex flex-col flex-1 gap-xs sm:gap-md">
         <div className="flex flex-col">
           <Label className="text-center">Price</Label>

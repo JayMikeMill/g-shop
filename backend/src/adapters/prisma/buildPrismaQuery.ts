@@ -116,40 +116,50 @@ function mapOperator(op: QueryCondition["operator"]): string {
 //============================================================
 // Build Nested Prisma Select/Include
 //============================================================
+//============================================================
+// Build Nested Prisma Select/Include from dot paths or NestedInclude
+//============================================================
 export function buildNestedPrisma(
   fields: (string | NestedInclude<any>)[]
 ): any {
   const root: any = {};
 
   for (const field of fields) {
-    // If field is string, just build normal path
+    // Handle simple string include/select path like "products.images"
     if (typeof field === "string") {
       const parts = field.split(".");
       let current = root;
 
       for (let i = 0; i < parts.length; i++) {
-        const leaf = i === parts.length - 1;
         const key = parts[i];
+        const isLeaf = i === parts.length - 1;
 
-        if (leaf) current[key] = true;
-        else {
-          if (!current[key]) current[key] = {};
-          current = current[key];
+        if (!current[key]) {
+          current[key] = isLeaf ? true : { include: {} };
+        } else if (!isLeaf && current[key] === true) {
+          current[key] = { include: {} };
         }
+
+        if (!isLeaf) current = current[key].include;
       }
-    } else {
-      // field is NestedInclude
-      const parts = String(field).split(".");
+    }
+
+    // Handle NestedInclude objects
+    else {
+      const parts = String(field.field).split(".");
       let current = root;
 
       for (let i = 0; i < parts.length; i++) {
-        const leaf = i === parts.length - 1;
         const key = parts[i];
+        const isLeaf = i === parts.length - 1;
 
-        if (!current[key]) current[key] = {};
+        if (!current[key]) {
+          current[key] = isLeaf ? {} : { include: {} };
+        } else if (!isLeaf && current[key] === true) {
+          current[key] = { include: {} };
+        }
 
-        if (leaf) {
-          // Apply NestedInclude options
+        if (isLeaf) {
           current[key] = {
             select: field.select
               ? buildNestedPrisma(field.select.map(String))
@@ -164,8 +174,6 @@ export function buildNestedPrisma(
               : undefined,
           };
         } else {
-          if (!("include" in current[key]))
-            current[key] = { include: current[key] };
           current = current[key].include;
         }
       }

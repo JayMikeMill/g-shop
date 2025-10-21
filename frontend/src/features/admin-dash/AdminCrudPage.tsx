@@ -32,7 +32,10 @@ function AdminCrudPage<T extends { id?: string }>({
   pageSize = 10,
 }: AdminCrudPageProps<T>) {
   const [editorMode, setEditorMode] = useState<EditorMode>({ type: "idle" });
-  const [isSaving, setIsSaving] = useState(false);
+  const [currentAction, setCurrentAction] = useState<
+    "creating" | "updating" | "deleting" | null
+  >(null);
+
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
 
@@ -58,13 +61,9 @@ function AdminCrudPage<T extends { id?: string }>({
   // Fetch single item if editing
   const editingItemId =
     editorMode.type === "editing" ? editorMode.id : undefined;
-
-  console.log("editorMode", editorMode, "editingItemId", editingItemId);
   const { data: editingItem, isFetching: isItemLoading } = api.getOne({
     id: editingItemId,
   });
-
-  console.log("editingItem", editingItem);
 
   const items: T[] = data?.data ?? [];
   const totalPages = data?.total ? Math.ceil(data.total / pageSize) : 1;
@@ -74,15 +73,19 @@ function AdminCrudPage<T extends { id?: string }>({
   const updateItem = api.update();
   const deleteItem = api.delete();
 
-  const withSaving = useCallback(
-    async (fn: () => Promise<void>) => {
-      setIsSaving(true);
+  // Wrap actions to show spinner with currentAction
+  const withAction = useCallback(
+    async (
+      fn: () => Promise<void>,
+      action: "creating" | "updating" | "deleting"
+    ) => {
+      setCurrentAction(action);
       try {
         await fn();
       } catch (err: any) {
         alert(err?.message ?? "Operation failed");
       } finally {
-        setIsSaving(false);
+        setCurrentAction(null);
         setEditorMode({ type: "idle" });
         refetch();
       }
@@ -92,17 +95,26 @@ function AdminCrudPage<T extends { id?: string }>({
 
   const handleSave = useCallback(
     (item: T, isNew: boolean) =>
-      withSaving(async () => {
-        if (preSaveHook) item = await preSaveHook(item, isNew);
-        if (isNew) await createItem.mutateAsync(item);
-        else await updateItem.mutateAsync(item as any);
-      }),
-    [createItem, updateItem, preSaveHook, withSaving]
+      withAction(
+        async () => {
+          if (preSaveHook) item = await preSaveHook(item, isNew);
+          if (isNew) await createItem.mutateAsync(item);
+          else await updateItem.mutateAsync(item as any);
+        },
+        isNew ? "creating" : "updating"
+      ),
+    [createItem, updateItem, preSaveHook, withAction]
   );
 
   const handleDelete = useCallback(
-    (id: string) => withSaving(() => deleteItem.mutateAsync(id)),
-    [deleteItem, withSaving]
+    async (id: string) => {
+      const confirmed = window.confirm(
+        `Are you sure you want to delete this ${objectName}? This action cannot be undone.`
+      );
+      if (!confirmed) return;
+      await withAction(() => deleteItem.mutateAsync(id), "deleting");
+    },
+    [deleteItem, withAction, objectName]
   );
 
   // Event handlers
@@ -131,10 +143,12 @@ function AdminCrudPage<T extends { id?: string }>({
           />
         ))}
 
-      {/* Saving Spinner */}
-      {isSaving && (
+      {/* Action Spinner */}
+      {currentAction && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30">
-          <CircleSpinner text={`Saving ${objectName}...`} />
+          <CircleSpinner
+            text={`${currentAction[0].toUpperCase() + currentAction.slice(1)} ${objectName}...`}
+          />
         </div>
       )}
 

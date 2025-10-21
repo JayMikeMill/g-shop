@@ -53,14 +53,11 @@ export const productTable: TableLayout<Product> = {
       width: "120px",
       render: (p: Product) =>
         p.images?.[0] ? (
-          <div className="flex items-center justify-center">
-            <img
-              src={p.images[0].thumbnail}
-              className="w-16 h-16 object-cover rounded"
-            />
+          <div className="flex items-center justify-center rounded">
+            <img src={p.images[0].thumbnail} className="object-contain" />
           </div>
         ) : (
-          <div className="w-16 h-16 flex items-center justify-center bg-light rounded text-xs">
+          <div className="flex items-center justify-center bg-light rounded text-xs">
             No Image
           </div>
         ),
@@ -122,10 +119,8 @@ export const productTable: TableLayout<Product> = {
       label: "Description",
       width: "300px",
       render: (p: Product) => (
-        <div className="flex items-top justify-left">
-          <span className="font-semibold text-center text-text">
-            {p.description}
-          </span>
+        <div className="flex items-start justify-start">
+          <span className="font-semibold text-text pp">{p.description}</span>
         </div>
       ),
     },

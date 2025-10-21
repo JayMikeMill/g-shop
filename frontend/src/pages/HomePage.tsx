@@ -13,7 +13,7 @@ export default function HomePage() {
 
   console.log("HomePage products:", products);
   return (
-    <div className="text-center py-xl px-md font-sans text-text">
+    <div className="text-center py-xl font-sans text-text">
       <h1 className="text-heading-lg font-bold text-title mb-md">
         Explore Our Collection
       </h1>

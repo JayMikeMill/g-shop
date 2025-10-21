@@ -1,8 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import Lightbox from "yet-another-react-lightbox";
-import "yet-another-react-lightbox/styles.css";
-import { Zoom } from "yet-another-react-lightbox/plugins";
-import { CropDialog, Input, XButton } from "@components/ui";
+import { CropDialog, Input, XButton, Lightbox } from "@components/ui";
 
 /** -------------------- Types -------------------- */
 interface ImageSlotProps {
@@ -121,17 +118,17 @@ function BaseImageEditor<T extends Record<string, any>>({
     if (cropping) {
       setPendingCropFiles((prev) => [...prev, ...files]);
     } else {
-      // no cropping → process immediately
-      files.forEach(async (file, idx) => {
-        const index = targetSlotIndex ?? idx;
+      const updatedImages = [...images];
+
+      files.forEach(async (file) => {
+        const index = updatedImages.length; // always append at the end
         setProcessingIndexes((prev) => [...prev, index]);
-        setTargetSlotIndex(null);
+
         try {
           const processed = await processor(file);
-          const updated = [...images];
-          if (single) updated[0] = processed;
-          else updated[index] = processed;
-          onImagesChange(updated);
+
+          updatedImages.push(processed);
+          onImagesChange([...updatedImages]); // update state after each file
         } catch (err: any) {
           alert(err?.message || "Error processing image");
         } finally {
@@ -142,7 +139,6 @@ function BaseImageEditor<T extends Record<string, any>>({
 
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
-
   useEffect(() => {
     if (!pendingCropFile && pendingCropFiles.length > 0) {
       setPendingCropFile(pendingCropFiles[0]);
@@ -283,14 +279,10 @@ function BaseImageEditor<T extends Record<string, any>>({
           onPointerDown={(e) => e.preventDefault()}
         >
           <Lightbox
-            open
-            close={() => setLightboxIndex(null)}
-            slides={lightBoxSlides}
+            open={lightboxIndex !== null}
             index={lightboxIndex ?? 0}
-            plugins={[Zoom]}
-            styles={{ container: { backgroundColor: "rgba(0,0,0,0.5)" } }}
-            controller={{ closeOnBackdropClick: true }}
-            portal={{ root: document.body }}
+            slides={lightBoxSlides}
+            onClose={() => setLightboxIndex(null)}
           />
         </div>
       )}
