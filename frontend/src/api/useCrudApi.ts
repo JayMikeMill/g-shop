@@ -7,14 +7,14 @@ export function CRUD<T extends { id?: string }>(
   name: string
 ): CrudInterface<T> {
   return {
-    create: (data: Partial<T>) => post<T>(`/${name}`, data),
-    getOne: (query: QueryType<T>) =>
-      get<T | null>(`/${name}/one${toQueryString(query)}`),
-    getMany: (query?: QueryType<T>) =>
-      get<{ data: T[]; total: number }>(`/${name}${toQueryString(query)}`),
-    update: (updates: Partial<T> & { id: string }) =>
+    create: (data: Partial<T>): Promise<T> => post<T>(`/${name}`, data),
+    getOne: (query: QueryType<T>): Promise<T | null> =>
+      post<T | null>(`/${name}/one`, query),
+    getMany: (query?: QueryType<T>): Promise<{ data: T[]; total: number }> =>
+      post<{ data: T[]; total: number }>(`/${name}/many`, query),
+    update: (updates: Partial<T> & { id: string }): Promise<T> =>
       put<T>(`/${name}/${updates.id}`, updates),
-    delete: (id: string) => del<T>(`/${name}/${id}`),
+    delete: (id: string): Promise<T> => del<T>(`/${name}/${id}`),
   };
 }
 

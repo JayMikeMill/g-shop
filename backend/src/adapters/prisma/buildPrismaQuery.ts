@@ -83,8 +83,8 @@ export function buildPrismaQuery<T>(
   }
 
   // Sorting and pagination
-  const orderBy = queryObj.sortBy
-    ? { [queryObj.sortBy]: queryObj.sortOrder === "desc" ? "desc" : "asc" }
+  const orderBy = queryObj.orderBy
+    ? { [queryObj.orderBy]: queryObj.order === "desc" ? "desc" : "asc" }
     : undefined;
   const take = queryObj.limit;
   const skip =

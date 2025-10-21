@@ -53,20 +53,18 @@ export function createCrudRoute(
   // ---------------- READ ----------------
   // getOne
   const getOneHandler = wrapHandler((req) => {
-    return crud.getOne(parseQueryType(req.query) ?? {});
+    return crud.getOne(req.query);
   });
 
   if (options?.readOne?.length)
-    router.get("/one/", dataAuth(options.readOne), getOneHandler);
-  else router.get("/one/", getOneHandler);
+    router.post("/one/", dataAuth(options.readOne), getOneHandler);
+  else router.post("/one/", getOneHandler);
 
   // getMany
-  const getManyHandler = wrapHandler((req) =>
-    crud.getMany(parseQueryType(req.query))
-  );
+  const getManyHandler = wrapHandler((req) => crud.getMany(req.query));
   if (options?.readMany?.length)
-    router.get("/", dataAuth(options.readMany), getManyHandler);
-  else router.get("/", getManyHandler);
+    router.post("/many", dataAuth(options.readMany), getManyHandler);
+  else router.post("/many", getManyHandler);
 
   // ---------------- UPDATE ----------------
   const updateHandler = wrapHandler((req) =>

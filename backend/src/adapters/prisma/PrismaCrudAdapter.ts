@@ -124,6 +124,17 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
       });
     }
 
+    // If query is a QueryObject, use Prisma query builder
+    console.log("Query:", query);
+    if (isQueryObject(query)) {
+      const queryParams = buildPrismaQuery(
+        query as QueryObject<T>,
+        this.modelMetadata
+      );
+
+      return this.client.findFirst(queryParams);
+    }
+
     // Otherwise, use findFirst
     const where: any = {};
     for (const key in query) {
