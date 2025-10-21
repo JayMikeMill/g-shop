@@ -44,6 +44,8 @@ export const productTable: TableLayout<Product> = {
       "discountType",
       "tags",
       "description",
+      "categories",
+      "collections",
     ],
   },
   columns: [
@@ -54,7 +56,10 @@ export const productTable: TableLayout<Product> = {
       render: (p: Product) =>
         p.images?.[0] ? (
           <div className="flex items-center justify-center rounded">
-            <img src={p.images[0].thumbnail} className="object-contain" />
+            <img
+              src={p.images[0].thumbnail}
+              className="object-contain h-[80px]"
+            />
           </div>
         ) : (
           <div className="flex items-center justify-center bg-light rounded text-xs">
@@ -97,18 +102,50 @@ export const productTable: TableLayout<Product> = {
       ),
     },
     {
+      id: "categories",
+      label: "Categories",
+      width: "120px",
+      render: (p: Product) => (
+        <div className="flex flex-wrap items-center justify-center gap-sm">
+          {p.categories?.map((cat, index) => (
+            <TagBox
+              key={index}
+              text={cat.name}
+              className="h-6 bg-surface text-md font-normal whitespace-nowrap"
+            />
+          ))}
+        </div>
+      ),
+    },
+    {
+      id: "collections",
+      label: "Collections",
+      width: "120px",
+      render: (p: Product) => (
+        <div className="flex flex-wrap items-center justify-center gap-sm">
+          {p.collections?.map((col, index) => (
+            <TagBox
+              key={index}
+              text={col.name}
+              className="h-6 bg-surface text-md font-normal whitespace-nowrap"
+            />
+          ))}
+        </div>
+      ),
+    },
+    {
       id: "tags",
       label: "Tags",
       width: "120px",
       render: (p: Product) => (
-        <div className="flex flex-wrap items-center justify-center">
+        <div className="flex flex-wrap items-center justify-center gap-sm">
           {p.tags?.map((tag, index) => (
             <TagBox
               key={index}
               text={tag.name}
               color={tag.color ?? "accent"}
               textColor={tag.textColor ?? "primary-foreground"}
-              className="m-1"
+              className="h-6 text-md font-normal  whitespace-nowrap"
             />
           ))}
         </div>
@@ -120,7 +157,9 @@ export const productTable: TableLayout<Product> = {
       width: "300px",
       render: (p: Product) => (
         <div className="flex items-start justify-start">
-          <span className="font-semibold text-text pp">{p.description}</span>
+          <span className="font-semibold text-text line-clamp-3">
+            {p.description}
+          </span>
         </div>
       ),
     },

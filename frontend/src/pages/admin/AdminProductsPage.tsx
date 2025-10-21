@@ -17,9 +17,8 @@ export default function AdminProductsPage() {
       apiKey="products"
       tableLayout={productTable}
       Editor={ProductEditorDialog}
-      pageSize={6}
+      pageSize={5}
       preSaveHook={uploadProductImages}
-      searchable={true}
     />
   );
 }

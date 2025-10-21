@@ -40,7 +40,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       onClick={handleCardClick}
     >
       {/* Image container with static height */}
-      <div className="relative w-full h-60 overflow-hidden rounded-t-lg bg-surfaceAlt flex items-center justify-center">
+      <div className="relative w-full h-60 p-sm overflow-hidden rounded-t-lg bg-surfaceAlt flex items-center justify-center">
         {product.images && product.images.length > 0 ? (
           <img
             src={product.images[0].preview}

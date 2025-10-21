@@ -1,5 +1,5 @@
 // AdminCrudPage.tsx
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 import { Button, CircleSpinner, DynamicTable, Input } from "@components/ui";
 import type { CrudEditorInterface } from "@features/admin-dash/CrudEditorInterface";
@@ -29,7 +29,7 @@ function AdminCrudPage<T extends { id?: string }>({
   tableLayout,
   Editor,
   preSaveHook,
-  pageSize = 10,
+  pageSize = 3,
 }: AdminCrudPageProps<T>) {
   const [editorMode, setEditorMode] = useState<EditorMode>({ type: "idle" });
   const [currentAction, setCurrentAction] = useState<
@@ -38,6 +38,8 @@ function AdminCrudPage<T extends { id?: string }>({
 
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [items, setItems] = useState<T[]>([]); // keep full list for infinite scroll
+  const [loadingNextPage, setLoadingNextPage] = useState(false); // NEW
 
   const api = useDataApi()[apiKey] as any;
   const { query, columns } = tableLayout;
@@ -58,15 +60,32 @@ function AdminCrudPage<T extends { id?: string }>({
     order: "desc",
   });
 
+  // Track loadingNextPage state
+  useEffect(() => {
+    if (isListLoading) {
+      if (page > 1) setLoadingNextPage(true);
+    } else {
+      setLoadingNextPage(false);
+    }
+  }, [isListLoading, page]);
+
+  const totalPages = data?.total ? Math.ceil(data.total / pageSize) : 1;
+
+  // Append new data on page change
+  useEffect(() => {
+    if (data?.data) {
+      if (page === 1)
+        setItems(data.data); // first page replaces
+      else setItems((prev) => [...prev, ...data.data]); // append next pages
+    }
+  }, [data?.data, page]);
+
   // Fetch single item if editing
   const editingItemId =
     editorMode.type === "editing" ? editorMode.id : undefined;
   const { data: editingItem, isFetching: isItemLoading } = api.getOne({
     id: editingItemId,
   });
-
-  const items: T[] = data?.data ?? [];
-  const totalPages = data?.total ? Math.ceil(data.total / pageSize) : 1;
 
   // Mutations
   const createItem = api.create();
@@ -179,11 +198,16 @@ function AdminCrudPage<T extends { id?: string }>({
           objectsName={objectsName}
           columns={columns}
           data={items}
-          loading={isListLoading}
+          loading={page === 1 && isListLoading}
+          loadingNextPage={loadingNextPage}
           page={page}
           totalPages={totalPages}
           onPageChange={setPage}
           onRowClick={openEdit}
+          onEndReached={() => {
+            if (page < totalPages && !isListLoading)
+              setPage((prev) => prev + 1);
+          }}
         />
       </div>
     </div>

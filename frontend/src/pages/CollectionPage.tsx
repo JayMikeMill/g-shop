@@ -4,29 +4,38 @@
 
 import ProductCardList from "@features/products/ProductCardList";
 import { useDataApi } from "@api";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 
 export default function CollectionPage() {
   const { slug } = useParams<{ slug: string }>();
-  const { categories, collections } = useDataApi();
+  const location = useLocation();
+
+  // Determine if it's a category or collection based on the path
+  const domain = location.pathname.startsWith("/category/")
+    ? "categories"
+    : "collections";
+
+  const api = useDataApi()[domain];
 
   // Directly call the query hook with a filter for the collection/category
-  const { data, isLoading, error } = categories.getOne({
+  const { data, isLoading, error } = api.getOne({
     conditions: [{ field: "slug", operator: "=", value: slug }],
-    include: ["products.images"],
+    include: ["products.images", "products.tags"],
   });
 
   console.log("CollectionPage data:", data, isLoading, error, slug);
   const products = data?.products || [];
+
+  const collectionName = data?.name || "Collection";
 
   if (error) {
     return <div className="text-center py-xl">Failed to load products.</div>;
   }
 
   return (
-    <div className="text-center py-xl px-md font-sans text-text">
+    <div className="text-center py-xl font-sans text-text">
       <h1 className="text-heading-lg font-bold text-title mb-md">
-        {slug ? `Collection: ${slug}` : "Collection"}
+        {`${collectionName}`}
       </h1>
       <p className="text-body-lg text-text-secondary mb-lg">
         Explore the products in this collection.

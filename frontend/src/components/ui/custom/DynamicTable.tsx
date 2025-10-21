@@ -1,5 +1,25 @@
 import type { ReactNode } from "react";
-import { LoaderBar } from "@components/ui";
+import { useEffect, useRef } from "react";
+// Skeleton row helper
+function TableSkeletonRow({ columns }: { columns: TableColumn<any>[] }) {
+  return (
+    <tr className="animate-pulse">
+      {columns.map((col) => (
+        <td
+          key={col.id}
+          className={`border-r border-b border-border text-center break-words ${col.className || ""}`}
+          style={{ width: col.width || "120px", minHeight: "40px" }} // <- force row height
+        >
+          <div className="flex flex-col gap-sm p-sm">
+            <div className="h-md w-3/4 mx-auto bg-border rounded" />
+            <div className="h-md w-3/4 mx-auto bg-border rounded" />
+            <div className="h-md w-3/4 mx-auto bg-border rounded" />
+          </div>
+        </td>
+      ))}
+    </tr>
+  );
+}
 
 export interface TableColumn<T> {
   id: string;
@@ -15,34 +35,81 @@ export interface TableColumn<T> {
 export interface DynamicTableProps<T> {
   columns: TableColumn<T>[];
   data: T[];
-  loading?: boolean;
+  loading?: boolean; // initial load
+  loadingNextPage?: boolean; // loading next page only
   page?: number;
   totalPages?: number;
   onPageChange?: (page: number) => void;
   onRowClick?: (row: T) => void;
   objectsName?: string;
+  onEndReached?: () => void; // fire when scroll near bottom
 }
 
 export const DynamicTable = <T extends { id?: string }>({
   columns,
   data,
   loading = false,
+  loadingNextPage = false,
   page = 1,
   totalPages = 1,
   onPageChange,
   onRowClick,
   objectsName = "Objects",
+  onEndReached,
 }: DynamicTableProps<T>) => {
-  // If loading, return the overlay loader immediately
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Check if table is full and trigger loading if not
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el || loading || loadingNextPage || !onEndReached) return;
+    // If table is not scrollable and more pages exist, load more
+    if (el.scrollHeight <= el.clientHeight + 10 && page < totalPages) {
+      onEndReached();
+    }
+  }, [data, loading, loadingNextPage, page, totalPages, onEndReached]);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const target = e.currentTarget;
+    if (target.scrollHeight - target.scrollTop <= target.clientHeight + 50) {
+      onEndReached?.();
+    }
+  };
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-full w-full shadow-surface border border-border rounded bg-background">
-        <LoaderBar />
+      <div className="w-full h-full shadow-surface border border-border rounded bg-background">
+        <table className="table w-full border-collapse table-fixed font-sans">
+          <thead className="sticky top-0 bg-primary text-primary-foreground z-10">
+            <tr>
+              {columns.map((col) => (
+                <th
+                  key={col.id}
+                  className={`font-bold uppercase text-center text-sm px-md py-sm
+                    border-b border-l border-border cursor-pointer
+                    transition-colors duration-200
+                    ${col.sortable ? "hover:bg-primary-400 hover:text-primary-foreground" : ""}
+                    ${col.headerClassName || ""}`}
+                  style={{ width: col.width || "120px" }}
+                >
+                  {col.renderHeader ? col.renderHeader() : col.label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {Array.from({ length: 3 }).map((_, idx) => (
+              <TableSkeletonRow
+                columns={columns}
+                key={"skeleton-full-" + idx}
+              />
+            ))}
+          </tbody>
+        </table>
       </div>
     );
   }
 
-  // If no data, show empty state
   if (data.length === 0) {
     return (
       <div className="flex items-center justify-center h-full w-full shadow-surface border border-border rounded bg-background text-text text-3xl">
@@ -53,7 +120,11 @@ export const DynamicTable = <T extends { id?: string }>({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="overflow-auto shadow-surface border border-border rounded h-full">
+      <div
+        ref={scrollRef}
+        className="overflow-auto shadow-surface border border-border rounded h-full"
+        onScroll={handleScroll}
+      >
         <table className="table w-full border-collapse table-fixed font-sans">
           <thead className="sticky top-0 bg-primary text-primary-foreground z-10">
             <tr>
@@ -61,10 +132,10 @@ export const DynamicTable = <T extends { id?: string }>({
                 <th
                   key={col.id}
                   className={`font-bold uppercase text-center text-sm px-md py-sm
-										border-b border-l border-border cursor-pointer
-										transition-colors duration-200
-										${col.sortable ? "hover:bg-primary-400 hover:text-primary-foreground" : ""}
-										${col.headerClassName || ""}`}
+                    border-b border-l border-border cursor-pointer
+                    transition-colors duration-200
+                    ${col.sortable ? "hover:bg-primary-400 hover:text-primary-foreground" : ""}
+                    ${col.headerClassName || ""}`}
                   style={{ width: col.width || "120px" }}
                 >
                   {col.renderHeader ? col.renderHeader() : col.label}
@@ -78,7 +149,7 @@ export const DynamicTable = <T extends { id?: string }>({
                 key={row.id}
                 onClick={() => onRowClick?.(structuredClone(row))}
                 className={`transition-colors duration-300 border-b
-									${i % 2 === 0 ? "bg-background" : "bg-surface"} hover:bg-primary-50`}
+                  ${i % 2 === 0 ? "bg-background" : "bg-surface"} hover:bg-primary-50`}
               >
                 {columns.map((col) => (
                   <td
@@ -91,32 +162,14 @@ export const DynamicTable = <T extends { id?: string }>({
                 ))}
               </tr>
             ))}
+            {/* Skeleton rows for next page loading */}
+            {loadingNextPage &&
+              Array.from({ length: 3 }).map((_, idx) => (
+                <TableSkeletonRow columns={columns} key={"skeleton-" + idx} />
+              ))}
           </tbody>
         </table>
       </div>
-
-      {/* Pagination */}
-      {totalPages > 1 && onPageChange && (
-        <div className="flex justify-center gap-2 p-md">
-          <button
-            disabled={page === 1}
-            onClick={() => onPageChange(page - 1)}
-            className="cursor-pointer transition-all duration-200 px-4 py-2 rounded border border-border bg-surface text-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:enabled:bg-primary hover:enabled:text-primary-foreground hover:enabled:border-primary"
-          >
-            Prev
-          </button>
-          <span className="flex items-center text-text">
-            Page {page} of {totalPages}
-          </span>
-          <button
-            disabled={page === totalPages}
-            onClick={() => onPageChange(page + 1)}
-            className="cursor-pointer transition-all duration-200 px-4 py-2 rounded border border-border bg-surface text-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:enabled:bg-primary hover:enabled:text-primary-foreground hover:enabled:border-primary"
-          >
-            Next
-          </button>
-        </div>
-      )}
     </div>
   );
 };
