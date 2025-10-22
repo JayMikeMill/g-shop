@@ -27,7 +27,7 @@ const corsMiddleware = cors({
 
       // Wildcard match like *.jaymikemills-projects.vercel.app
       if (pattern.startsWith("*.")) {
-        const suffix = pattern.slice(1); // remove "*"
+        const suffix = pattern.slice(2); // remove "*"
         return hostname.endsWith(suffix);
       }
 
