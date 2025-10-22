@@ -84,7 +84,7 @@ export const AnimatedSelect = <T,>({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -30 }}
               transition={{ duration: 0.25, ease: "easeInOut" }}
-              className={`absolute top-full left-0 z-10 mt-1 w-full 
+              className={`absolute top-full left-0 z-20 mt-1 w-full 
 								max-h-60 overflow-y-auto bg-backgroundAlt shadow-none
 								border border-border rounded-md shadow-sm
 								${menuClassName ?? ""}`}

@@ -19,7 +19,6 @@ export interface ImageEditorProps<T extends Record<string, any>> {
   className?: string;
   images: T[];
   onImagesChange: (images: T[]) => void;
-  setIsProcessingImages: (v: boolean) => void;
   processor: (file: File, onProgress?: (percent: number) => void) => Promise<T>;
   getPreview?: (item: T) => string;
   single?: boolean;
@@ -29,7 +28,6 @@ export interface ImageEditorProps<T extends Record<string, any>> {
 
 /** -------------------- ImageSlot -------------------- */
 function ImageSlot({
-  index,
   src,
   processing,
   onClick,
@@ -51,8 +49,7 @@ function ImageSlot({
       onClick={onClick}
       className={`relative rounded-lg overflow-hidden flex-shrink-0 w-[100px] h-[100px]
 				md:w-full md:h-[100px] select-none cursor-pointer flex items-center 
-				justify-center ${emptyBorder} hover:bg-gray-100 
-				transition`}
+				justify-center ${emptyBorder} hover:bg-gray-100 transition`}
     >
       {src ? (
         <img
@@ -91,7 +88,6 @@ function BaseImageEditor<T extends Record<string, any>>({
   className,
   images,
   onImagesChange,
-  setIsProcessingImages,
   processor,
   getPreview,
   emptyText = "+ Add Image",
@@ -110,67 +106,20 @@ function BaseImageEditor<T extends Record<string, any>>({
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  /** -------------------- File input -------------------- */
-  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (!files.length) return;
-
-    if (cropping) {
-      setPendingCropFiles((prev) => [...prev, ...files]);
-    } else {
-      const updatedImages = [...images];
-
-      files.forEach(async (file) => {
-        const index = updatedImages.length; // always append at the end
-        setProcessingIndexes((prev) => [...prev, index]);
-
-        try {
-          const processed = await processor(file);
-
-          updatedImages.push(processed);
-          onImagesChange([...updatedImages]); // update state after each file
-        } catch (err: any) {
-          alert(err?.message || "Error processing image");
-        } finally {
-          setProcessingIndexes((prev) => prev.filter((i) => i !== index));
-        }
-      });
-    }
-
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  };
-  useEffect(() => {
-    if (!pendingCropFile && pendingCropFiles.length > 0) {
-      setPendingCropFile(pendingCropFiles[0]);
-      setPendingCropFiles((prev) => prev.slice(1));
-    }
-  }, [pendingCropFile, pendingCropFiles]);
-
-  /** -------------------- Crop -------------------- */
-  const handleCropComplete = async (
-    croppedBlob: Blob,
-    originalName?: string
-  ) => {
-    if (targetSlotIndex === null) return;
-    const index = targetSlotIndex;
-
-    const tempUrl = URL.createObjectURL(croppedBlob);
-    setPreviews((prev) => ({ ...prev, [index]: tempUrl }));
+  /** -------------------- Generic file processor -------------------- */
+  const processFile = async (file: File, index: number) => {
     setProcessingIndexes((prev) => [...prev, index]);
-    setTargetSlotIndex(null);
+    setPreviews((prev) => ({ ...prev, [index]: URL.createObjectURL(file) }));
 
     try {
-      const file = new File([croppedBlob], originalName || "cropped.webp", {
-        type: "image/webp",
-      });
       const processedItem = await processor(file);
-
       const updated = [...images];
-      if (single) updated[0] = processedItem;
+      if (single) updated[0] = { ...updated[0], ...processedItem };
       else updated[index] = processedItem;
+
       onImagesChange(updated);
     } catch (err: any) {
-      alert(err?.message || "Error processing cropped image");
+      alert(err?.message || "Error processing image");
     } finally {
       setProcessingIndexes((prev) => prev.filter((i) => i !== index));
       setPreviews((prev) => {
@@ -179,6 +128,40 @@ function BaseImageEditor<T extends Record<string, any>>({
         return copy;
       });
     }
+  };
+
+  /** -------------------- File input -------------------- */
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    if (cropping) {
+      setPendingCropFiles((prev) => [...prev, ...files]);
+    } else {
+      files.forEach((file) => {
+        const index = images.length;
+        processFile(file, index);
+      });
+    }
+
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  useEffect(() => {
+    if (!pendingCropFile && pendingCropFiles.length > 0) {
+      setPendingCropFile(pendingCropFiles[0]);
+      setPendingCropFiles((prev) => prev.slice(1));
+    }
+  }, [pendingCropFile, pendingCropFiles]);
+
+  /** -------------------- Crop -------------------- */
+  const handleCropComplete = (croppedBlob: Blob, originalName?: string) => {
+    if (targetSlotIndex === null) return;
+    const file = new File([croppedBlob], originalName || "cropped.webp", {
+      type: "image/webp",
+    });
+    processFile(file, targetSlotIndex);
+    setTargetSlotIndex(null);
   };
 
   const handleCropCancel = () => setPendingCropFile(null);
@@ -233,9 +216,8 @@ function BaseImageEditor<T extends Record<string, any>>({
         src={src}
         processing={processingIndexes.includes(index)}
         onClick={() => {
-          if (src) {
-            setLightboxIndex(index);
-          } else {
+          if (src) setLightboxIndex(index);
+          else {
             setTargetSlotIndex(index);
             fileInputRef.current?.click();
           }

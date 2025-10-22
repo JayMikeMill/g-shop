@@ -180,7 +180,6 @@ const CollectionFields: React.FC<{
           }
           getPreview={(img) => img?.preview || ""}
           processor={CollectionImageProcessor.processPreview}
-          setIsProcessingImages={setIsProcessingImages}
           emptyText="+ Add Preview Image"
           className="w-32 aspect-[1/1]"
         />
@@ -192,7 +191,6 @@ const CollectionFields: React.FC<{
           }
           getPreview={(img) => img?.banner || ""}
           processor={CollectionImageProcessor.processBanner}
-          setIsProcessingImages={setIsProcessingImages}
           emptyText="+ Add Banner Image"
           className="flex-1"
         />

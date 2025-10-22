@@ -87,7 +87,7 @@ const OrderEditorForm: React.FC<Props> = ({
           </AnimatedDropdownBox>
         </div>
         {/* Action buttons */}
-        <div className="sticky bottom-0 bg-surface py-md flex gap-2 px-md justify-center border-t">
+        <div className="sticky bottom-0 z-10 bg-surface py-md flex gap-2 px-md justify-center border-t">
           {methods.watch("id") && (
             <Button
               className="flex flex-1"

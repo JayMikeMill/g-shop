@@ -1,13 +1,19 @@
-// AdminCrudPage.tsx
-import { useState, useCallback, useEffect } from "react";
-
-import { Button, CircleSpinner, DynamicTable, Input } from "@components/ui";
+import { useState, useEffect, useCallback } from "react";
+import { Button, DynamicTable, Input, KebabMenu } from "@components/ui";
+import { Search } from "lucide-react";
 import type { CrudEditorInterface } from "@features/admin-dash/CrudEditorInterface";
 import { useDataApi } from "@api";
 import type { TableLayout } from "./AdminTableLayouts";
-import { Search } from "lucide-react";
 
-interface AdminCrudPageProps<T extends { id?: string }> {
+import { CrudEditorWrapper } from "./CrudEditorWrapper";
+import { useRowActions } from "./useRowActions";
+
+export type EditorMode =
+  | { type: "idle" }
+  | { type: "editing"; id: string }
+  | { type: "creating" };
+
+interface Props<T extends { id?: string }> {
   objectsName: string;
   objectName: string;
   apiKey: keyof ReturnType<typeof useDataApi>;
@@ -17,12 +23,7 @@ interface AdminCrudPageProps<T extends { id?: string }> {
   pageSize?: number;
 }
 
-type EditorMode =
-  | { type: "idle" }
-  | { type: "editing"; id: string }
-  | { type: "creating" };
-
-function AdminCrudPage<T extends { id?: string }>({
+export function AdminCrudPage<T extends { id?: string }>({
   objectsName,
   objectName,
   apiKey,
@@ -30,26 +31,26 @@ function AdminCrudPage<T extends { id?: string }>({
   Editor,
   preSaveHook,
   pageSize = 3,
-}: AdminCrudPageProps<T>) {
+}: Props<T>) {
   const [editorMode, setEditorMode] = useState<EditorMode>({ type: "idle" });
-  const [currentAction, setCurrentAction] = useState<
-    "creating" | "updating" | "deleting" | null
-  >(null);
-
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [items, setItems] = useState<T[]>([]); // keep full list for infinite scroll
-  const [loadingNextPage, setLoadingNextPage] = useState(false); // NEW
+  const [items, setItems] = useState<T[]>([]);
+  const [loadingNextPage, setLoadingNextPage] = useState(false);
 
   const api = useDataApi()[apiKey] as any;
   const { query, columns } = tableLayout;
 
-  // Fetch list
-  const {
-    data,
-    isFetching: isListLoading,
-    refetch,
-  } = api.getMany({
+  const { rowsLoading, withRowAction, setRowsLoading } = useRowActions();
+
+  // --- Event handlers ---
+  const openCreate = () => setEditorMode({ type: "creating" });
+  const openEdit = (item: T) =>
+    setEditorMode({ type: "editing", id: item.id! });
+  const closeEditor = () => setEditorMode({ type: "idle" });
+
+  // --- Fetch list ---
+  const { data, isFetching: isListLoading } = api.getMany({
     search,
     searchFields: query.searchFields,
     select: query.select ? [...query.select, "id"] : undefined,
@@ -60,115 +61,138 @@ function AdminCrudPage<T extends { id?: string }>({
     order: "desc",
   });
 
-  // Track loadingNextPage state
-  useEffect(() => {
-    if (isListLoading) {
-      if (page > 1) setLoadingNextPage(true);
-    } else {
-      setLoadingNextPage(false);
-    }
-  }, [isListLoading, page]);
+  useEffect(
+    () => setLoadingNextPage(isListLoading && page > 1),
+    [isListLoading, page]
+  );
 
   const totalPages = data?.total ? Math.ceil(data.total / pageSize) : 1;
 
-  // Append new data on page change
   useEffect(() => {
-    if (data?.data) {
-      if (page === 1)
-        setItems(data.data); // first page replaces
-      else setItems((prev) => [...prev, ...data.data]); // append next pages
-    }
+    if (!data?.data) return;
+    setItems((prev) => (page === 1 ? data.data : [...prev, ...data.data]));
   }, [data?.data, page]);
 
-  // Fetch single item if editing
+  // --- Fetch single item for editing ---
   const editingItemId =
     editorMode.type === "editing" ? editorMode.id : undefined;
   const { data: editingItem, isFetching: isItemLoading } = api.getOne({
     id: editingItemId,
   });
 
-  // Mutations
+  // --- Mutations ---
   const createItem = api.create();
   const updateItem = api.update();
   const deleteItem = api.delete();
 
-  // Wrap actions to show spinner with currentAction
-  const withAction = useCallback(
-    async (
-      fn: () => Promise<void>,
-      action: "creating" | "updating" | "deleting"
-    ) => {
-      setCurrentAction(action);
-      try {
-        await fn();
-      } catch (err: any) {
-        alert(err?.message ?? "Operation failed");
-      } finally {
-        setCurrentAction(null);
-        setEditorMode({ type: "idle" });
-        refetch();
+  const handleSave = useCallback(
+    async (item: T, isNew: boolean) => {
+      // Close editor immediately
+      closeEditor();
+
+      if (isNew) {
+        const tempId = "__new__";
+        setItems((prev) => [{ ...item, id: tempId }, ...prev]);
+        setRowsLoading((map) => ({
+          ...map,
+          [tempId]: `Creating ${objectName}...`,
+        }));
+
+        if (preSaveHook) item = await preSaveHook(item, true);
+
+        try {
+          const saved = await createItem.mutateAsync(item);
+          setItems((prev) => prev.map((it) => (it.id === tempId ? saved : it)));
+        } finally {
+          setRowsLoading((map) => {
+            const newMap = { ...map };
+            delete newMap[tempId];
+            return newMap;
+          });
+        }
+      } else {
+        await withRowAction(
+          async () => {
+            if (preSaveHook) item = await preSaveHook(item, false);
+            await updateItem.mutateAsync(item as any);
+            setItems((prev) =>
+              prev.map((it) => (it.id === item.id ? item : it))
+            );
+          },
+          item.id!,
+          `Updating ${objectName}...`
+        );
       }
     },
-    [refetch]
-  );
-
-  const handleSave = useCallback(
-    (item: T, isNew: boolean) =>
-      withAction(
-        async () => {
-          if (preSaveHook) item = await preSaveHook(item, isNew);
-          if (isNew) await createItem.mutateAsync(item);
-          else await updateItem.mutateAsync(item as any);
-        },
-        isNew ? "creating" : "updating"
-      ),
-    [createItem, updateItem, preSaveHook, withAction]
+    [
+      createItem,
+      updateItem,
+      preSaveHook,
+      withRowAction,
+      closeEditor,
+      setRowsLoading,
+    ]
   );
 
   const handleDelete = useCallback(
     async (id: string) => {
-      const confirmed = window.confirm(
-        `Are you sure you want to delete this ${objectName}? This action cannot be undone.`
+      if (!window.confirm(`Delete ${objectName}? This cannot be undone.`))
+        return;
+
+      // Close editor immediately
+      closeEditor();
+
+      await withRowAction(
+        async () => {
+          await deleteItem.mutateAsync(id);
+          setItems((prev) => prev.filter((it) => it.id !== id));
+        },
+        id,
+        `Deleting ${objectName}...`
       );
-      if (!confirmed) return;
-      await withAction(() => deleteItem.mutateAsync(id), "deleting");
     },
-    [deleteItem, withAction, objectName]
+    [deleteItem, withRowAction, objectName, closeEditor]
   );
 
-  // Event handlers
-  const openCreate = () => setEditorMode({ type: "creating" });
-  const openEdit = (item: T) =>
-    setEditorMode({ type: "editing", id: item.id! });
-  const closeEditor = () => setEditorMode({ type: "idle" });
+  // --- Render ---
+  const columnsWithMenu = [
+    {
+      id: "menu",
+      label: "",
+      width: "48px",
+      render: (row: T) => (
+        <KebabMenu
+          options={[
+            {
+              label: "Edit",
+              onClick: () => openEdit(row),
+            },
+            {
+              label: "Delete",
+              onClick: () => handleDelete(row.id!),
+              className: "text-red-600",
+            },
+          ]}
+        />
+      ),
+    },
+    ...columns,
+  ];
 
   return (
     <div className="flex flex-col h-full min-h-0 w-full min-w-0">
-      {/* Editor Dialog */}
-      {Editor &&
-        editorMode.type !== "idle" &&
-        (isItemLoading ? (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30">
-            <CircleSpinner text={`Loading ${objectName}...`} />
-          </div>
-        ) : (
-          <Editor
-            open={true}
-            item={editingItem}
-            onCreate={(item) => handleSave(item, true)}
-            onModify={(item) => handleSave(item, false)}
-            onDelete={handleDelete}
-            onCancel={closeEditor}
-          />
-        ))}
-
-      {/* Action Spinner */}
-      {currentAction && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30">
-          <CircleSpinner
-            text={`${currentAction[0].toUpperCase() + currentAction.slice(1)} ${objectName}...`}
-          />
-        </div>
+      {/* Editor */}
+      {Editor && (
+        <CrudEditorWrapper
+          objectName={objectName}
+          Editor={Editor}
+          editorMode={editorMode}
+          editingItem={editingItem}
+          isItemLoading={isItemLoading}
+          handleSave={handleSave}
+          handleDelete={handleDelete}
+          closeEditor={closeEditor}
+        />
       )}
 
       {/* Header */}
@@ -177,7 +201,7 @@ function AdminCrudPage<T extends { id?: string }>({
         <div className="relative w-full">
           <Input
             type="text"
-            placeholder={objectsName ? `Search ${objectsName}...` : "Search..."}
+            placeholder={`Search ${objectsName}...`}
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -196,13 +220,13 @@ function AdminCrudPage<T extends { id?: string }>({
       <div className="flex-1 min-h-0 overflow-auto">
         <DynamicTable<T>
           objectsName={objectsName}
-          columns={columns}
+          columns={columnsWithMenu}
           data={items}
           loading={page === 1 && isListLoading}
           loadingNextPage={loadingNextPage}
+          rowsLoading={rowsLoading}
           page={page}
           totalPages={totalPages}
-          onPageChange={setPage}
           onRowClick={openEdit}
           onEndReached={() => {
             if (page < totalPages && !isListLoading)
@@ -213,5 +237,3 @@ function AdminCrudPage<T extends { id?: string }>({
     </div>
   );
 }
-
-export { AdminCrudPage };

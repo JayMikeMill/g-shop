@@ -17,6 +17,7 @@ export * from "./custom/LoaderBar";
 export * from "./custom/NavButton";
 export * from "./custom/ColorPickerButton";
 export * from "./custom/Lightbox";
+export * from "./custom/KebabMenu";
 
 // Primitives
 export * from "./primitives/Label";

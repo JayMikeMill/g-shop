@@ -25,10 +25,7 @@ export class CollectionImageProcessor {
 
     const bannerURL = URL.createObjectURL(bannerBlob);
     return {
-      id: "",
       banner: bannerURL,
-      preview: "",
-      thumbnail: "",
     };
   }
 
@@ -52,11 +49,9 @@ export class CollectionImageProcessor {
     onProgress?.(100);
 
     const previewURL = URL.createObjectURL(previewBlob);
+    console.log("previewURL", previewURL);
     return {
-      id: "",
-      banner: "",
       preview: previewURL,
-      thumbnail: "",
     };
   }
 }

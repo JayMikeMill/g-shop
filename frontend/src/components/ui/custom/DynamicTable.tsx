@@ -37,9 +37,9 @@ export interface DynamicTableProps<T> {
   data: T[];
   loading?: boolean; // initial load
   loadingNextPage?: boolean; // loading next page only
+  rowsLoading?: Record<string, string>;
   page?: number;
   totalPages?: number;
-  onPageChange?: (page: number) => void;
   onRowClick?: (row: T) => void;
   objectsName?: string;
   onEndReached?: () => void; // fire when scroll near bottom
@@ -50,9 +50,9 @@ export const DynamicTable = <T extends { id?: string }>({
   data,
   loading = false,
   loadingNextPage = false,
+  rowsLoading = {},
   page = 1,
   totalPages = 1,
-  onPageChange,
   onRowClick,
   objectsName = "Objects",
   onEndReached,
@@ -132,7 +132,7 @@ export const DynamicTable = <T extends { id?: string }>({
                 <th
                   key={col.id}
                   className={`font-bold uppercase text-center text-sm px-md py-sm
-                    border-b border-l border-border cursor-pointer
+                    border-b border-l cursor-pointer
                     transition-colors duration-200
                     ${col.sortable ? "hover:bg-primary-400 hover:text-primary-foreground" : ""}
                     ${col.headerClassName || ""}`}
@@ -144,27 +144,46 @@ export const DynamicTable = <T extends { id?: string }>({
             </tr>
           </thead>
           <tbody>
-            {data.map((row, i) => (
-              <tr
-                key={row.id}
-                onClick={() => onRowClick?.(structuredClone(row))}
-                className={`transition-colors duration-300 border-b
-                  ${i % 2 === 0 ? "bg-background" : "bg-surface"} hover:bg-primary-50`}
-              >
-                {columns.map((col) => (
-                  <td
-                    key={col.id}
-                    className={`border-r border-border text-center break-words ${col.className || ""}`}
-                    style={{ width: col.width || "120px" }}
-                  >
-                    {col.render ? col.render(row) : (row as any)[col.id]}
-                  </td>
-                ))}
-              </tr>
-            ))}
+            {data.map((row, i) => {
+              const loadingMsg = rowsLoading[row.id ?? ""];
+              const backgroundColor =
+                i % 2 === 0 ? "bg-background" : "bg-surface";
+              return (
+                <tr
+                  key={row.id}
+                  className={`relative ${backgroundColor} border-b hover:bg-primary-50`}
+                  onClick={() =>
+                    !loadingMsg && onRowClick?.(structuredClone(row))
+                  }
+                >
+                  {columns.map((col) => (
+                    <td
+                      key={col.id}
+                      className="border-r border-border text-center break-words relative"
+                      style={{ width: col.width || "120px", minHeight: "40px" }}
+                    >
+                      {col.render ? col.render(row) : (row as any)[col.id]}
+                    </td>
+                  ))}
+
+                  {/* Row overlay */}
+                  {loadingMsg && (
+                    <td
+                      colSpan={columns.length}
+                      className="absolute inset-0 flex items-center justify-left pointer-events-none bg-black/20 animate-pulse"
+                      style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.5)" }}
+                    >
+                      <span className="font-bold text-2xl text-white animate-pulse p-xl">
+                        {loadingMsg}
+                      </span>
+                    </td>
+                  )}
+                </tr>
+              );
+            })}
             {/* Skeleton rows for next page loading */}
             {loadingNextPage &&
-              Array.from({ length: 3 }).map((_, idx) => (
+              Array.from({ length: 1 }).map((_, idx) => (
                 <TableSkeletonRow columns={columns} key={"skeleton-" + idx} />
               ))}
           </tbody>
