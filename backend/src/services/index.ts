@@ -4,3 +4,4 @@ export { default as OrdersProcessingService } from "./OrdersProcessingService";
 export { default as AuthService } from "./AuthService";
 export { default as ShippingService } from "./ShippingService";
 export { default as StorageService } from "./StorageService";
+export { default as HealthService } from "./HealthService";

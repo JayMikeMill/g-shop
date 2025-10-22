@@ -1,3 +1,4 @@
+import { DatabaseService } from "@services/DatabaseService";
 import {
   type SystemSettings,
   type AnySystemSettings,
@@ -10,7 +11,7 @@ import {
   defaultEngineSettings,
 } from "shared/settings";
 
-import { db } from "@adapters/services";
+import { DatabaseService as dbs } from "@services";
 import { SystemSettingsApi } from "shared/interfaces/ServiceApis";
 
 class SystemSettingsService implements SystemSettingsApi {
@@ -33,7 +34,7 @@ class SystemSettingsService implements SystemSettingsApi {
     // Return cached settings if available
     if (this.cache[scope]) return this.cache[scope]!;
 
-    const result = await db.systemSettings.getOne({ scope });
+    const result = await dbs.systemSettings.getOne({ scope });
     if (!result) return null;
 
     const parsed = parseSystemSettings(result);
@@ -49,18 +50,18 @@ class SystemSettingsService implements SystemSettingsApi {
     settings: T
   ): Promise<T> {
     console.log("Updating settings for scope:", scope, settings);
-    const existing = await db.systemSettings.getOne({ scope });
+    const existing = await dbs.systemSettings.getOne({ scope });
 
     let updated: SystemSettings;
     if (!existing) {
       // Create new settings
-      updated = await db.systemSettings.create({
+      updated = await dbs.systemSettings.create({
         scope,
         settings,
       } as SystemSettings);
     } else {
       // Update existing settings
-      updated = await db.systemSettings.update({
+      updated = await dbs.systemSettings.update({
         ...existing,
         settings,
       } as SystemSettings & { id: string });

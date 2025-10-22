@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import argon2 from "argon2";
 import { AuthAdapter } from "@adapters/types";
-import { db } from "@adapters/services";
+import { DatabaseService as DBS } from "@services";
 import { User } from "shared/types";
 import { AuthResponse } from "shared/interfaces";
 
@@ -14,7 +14,7 @@ export class JwtAuthAdapter implements AuthAdapter {
   //==================================================
   async register(user: User, password: string): Promise<AuthResponse> {
     try {
-      const existingUser = await db.users.getOne({ email: user.email });
+      const existingUser = await DBS.users.getOne({ email: user.email });
       if (existingUser)
         return { user: null, success: false, status: "USER_EXISTS" };
 
@@ -27,7 +27,7 @@ export class JwtAuthAdapter implements AuthAdapter {
       });
 
       const newUser = { ...user, passwordHash };
-      const createdUser = await db.users.create(newUser);
+      const createdUser = await DBS.users.create(newUser);
 
       const { passwordHash: _, ...userWithoutPassword } = createdUser;
       return {
@@ -49,7 +49,7 @@ export class JwtAuthAdapter implements AuthAdapter {
     password: string
   ): Promise<{ token: string | null } & AuthResponse> {
     try {
-      const userRecord = await db.users.getOne({ email });
+      const userRecord = await DBS.users.getOne({ email });
 
       if (!userRecord)
         return {
@@ -110,7 +110,7 @@ export class JwtAuthAdapter implements AuthAdapter {
   async verifyToken(token: string): Promise<AuthResponse> {
     try {
       const payload = jwt.verify(token, JWT_SECRET) as { userId: string };
-      const userRecord = await db.users.getOne({ id: payload.userId });
+      const userRecord = await DBS.users.getOne({ id: payload.userId });
 
       if (!userRecord)
         return {

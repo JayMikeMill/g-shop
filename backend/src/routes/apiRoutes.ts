@@ -33,7 +33,7 @@ import {
 import { getAuthUser, reqAdmin } from "@middleware/authorization";
 
 // Services
-import { DatabaseService } from "@services";
+import { HealthService } from "@services";
 
 import {
   deleteFile,
@@ -73,14 +73,14 @@ router.get("/settings/admin/:scope", reqAdmin, getSettings);
 router.put("/settings/admin/:scope", reqAdmin, updateSettings);
 
 //------------Health Check------------------------------
-router.get("/health", (req, res) => {
-  DatabaseService.healthCheck().then((isHealthy) => {
-    if (isHealthy) {
-      res.status(200).json({ status: "OK" });
-    } else {
-      res.status(500).json({ status: "DB ERROR" });
-    }
-  });
+router.get("/health", async (req, res) => {
+  const result = await HealthService.check();
+
+  if (result.ok) {
+    res.status(200).json({ status: result.message });
+  } else {
+    res.status(500).json({ status: result.message });
+  }
 });
 
 export default router;

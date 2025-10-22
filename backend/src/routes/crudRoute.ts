@@ -2,7 +2,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { dataAuth } from "@middleware/dataAuth";
 import type { AuthRole } from "@middleware/authorization";
-import { DatabaseService as S } from "@services";
+import { DatabaseService as dbs } from "@services";
 import { DatabaseDomain } from "shared/interfaces/Database";
 
 export type CRUDRouteAuth = AuthRole[];
@@ -35,7 +35,7 @@ export function createCrudRoute(
   const router = Router();
 
   // Get the CRUD interface from the DatabaseService
-  const crud = (S as any)[domain];
+  const crud = (dbs as any)[domain];
 
   const wrapHandler =
     (handler: (req: Request) => Promise<any>) =>

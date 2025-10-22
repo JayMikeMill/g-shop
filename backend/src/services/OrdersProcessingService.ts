@@ -6,7 +6,7 @@ import {
   ProductVariant,
   QueryObject,
 } from "shared/types";
-import { DatabaseService as DB } from "@services";
+import { DatabaseService as dbs } from "@services";
 import { payment, shipping } from "@adapters/services";
 import { toMajorPriceString } from "shared/utils/PriceUtils";
 import { OrderProcessingApi } from "shared/interfaces";
@@ -38,7 +38,7 @@ class OrderProcessingService implements OrderProcessingApi {
       if (!order.items?.length) throw new Error("Order has no items");
 
       // 1️⃣ Check stock (optimized to fetch all products & variants in parallel)
-      await this.stockAvailable(order, DB);
+      await this.stockAvailable(order, dbs);
 
       // 2️⃣ Prepare metadata for payment
       const metadata: Record<string, string> = {};
@@ -66,7 +66,7 @@ class OrderProcessingService implements OrderProcessingApi {
 
       // 4️⃣ Create order and update stock in a transaction
       let newOrder: Order | undefined;
-      await DB.transaction(async (tx) => {
+      await dbs.transaction(async (tx) => {
         // Re-check stock in transaction to prevent race conditions
         await this.stockAvailable(order, tx);
 
@@ -99,7 +99,7 @@ class OrderProcessingService implements OrderProcessingApi {
    * Buy a shipping label for an order
    */
   async buyOrderShipping(orderId: string): Promise<Order | null> {
-    const order = await DB.orders.getOne({ id: orderId });
+    const order = await dbs.orders.getOne({ id: orderId });
     if (!order) throw new Error(`Order not found (id: ${orderId})`);
 
     const adminSettings = await SystemSettingsService.getAdminSettings();
@@ -146,7 +146,7 @@ class OrderProcessingService implements OrderProcessingApi {
       status: purchasedShipment.status,
     };
 
-    await DB.orders.update(order as Order & { id: string });
+    await dbs.orders.update(order as Order & { id: string });
 
     console.log("Shipping purchased:", purchasedShipment);
     return order;

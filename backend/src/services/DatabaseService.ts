@@ -1,4 +1,3 @@
-import { DatabaseCrudMap } from "shared/interfaces/Database";
 // src/services/DatabaseService.ts
 import { db } from "@adapters/services";
 import type { DBAdapter } from "@adapters/types";
