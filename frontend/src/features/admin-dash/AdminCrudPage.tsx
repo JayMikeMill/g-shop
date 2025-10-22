@@ -90,48 +90,38 @@ export function AdminCrudPage<T extends { id?: string }>({
       // Close editor immediately
       closeEditor();
 
-      if (isNew) {
-        const tempId = "__new__";
-        setItems((prev) => [{ ...item, id: tempId }, ...prev]);
-        setRowsLoading((map) => ({
-          ...map,
-          [tempId]: `Creating ${objectName}...`,
-        }));
+      let tempId = isNew ? "__new__" : item.id!;
 
-        if (preSaveHook) item = await preSaveHook(item, true);
+      // Optimistically add or update the item in the list
+      setItems((prev) => {
+        if (isNew) return [{ ...item, id: tempId }, ...prev];
+        return prev.map((it) => (it.id === tempId ? item : it));
+      });
 
-        try {
-          const saved = await createItem.mutateAsync(item);
-          setItems((prev) => prev.map((it) => (it.id === tempId ? saved : it)));
-        } finally {
-          setRowsLoading((map) => {
-            const newMap = { ...map };
-            delete newMap[tempId];
-            return newMap;
-          });
-        }
-      } else {
-        await withRowAction(
-          async () => {
-            if (preSaveHook) item = await preSaveHook(item, false);
-            await updateItem.mutateAsync(item as any);
-            setItems((prev) =>
-              prev.map((it) => (it.id === item.id ? item : it))
-            );
-          },
-          item.id!,
-          `Updating ${objectName}...`
-        );
+      // Show loading indicator
+      setRowsLoading((map) => ({
+        ...map,
+        [tempId]: `${isNew ? "Creating" : "Updating"} ${objectName}...`,
+      }));
+
+      if (preSaveHook) item = await preSaveHook(item, isNew);
+
+      try {
+        const saved = isNew
+          ? await createItem.mutateAsync(item)
+          : await updateItem.mutateAsync(item as any);
+
+        // Replace the optimistic item with the actual saved item
+        setItems((prev) => prev.map((it) => (it.id === tempId ? saved : it)));
+      } finally {
+        setRowsLoading((map) => {
+          const newMap = { ...map };
+          delete newMap[tempId];
+          return newMap;
+        });
       }
     },
-    [
-      createItem,
-      updateItem,
-      preSaveHook,
-      withRowAction,
-      closeEditor,
-      setRowsLoading,
-    ]
+    [createItem, updateItem, preSaveHook, closeEditor, setItems, setRowsLoading]
   );
 
   const handleDelete = useCallback(
