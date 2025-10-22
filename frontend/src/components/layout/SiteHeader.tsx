@@ -10,6 +10,8 @@ import { Button, Image } from "@components/ui";
 import { useUser } from "@features/user/useUser";
 import { useCart } from "@features/cart/useCart";
 
+import ProductSearch from "@features/product-search/ProductSearch";
+
 export default function SiteHeader() {
   const navigate = useNavigate();
   const { user } = useUser(); // 👈 current user context
@@ -17,6 +19,9 @@ export default function SiteHeader() {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  // Search panel state only
+  const [searchPanelOpen, setSearchPanelOpen] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -53,8 +58,15 @@ export default function SiteHeader() {
           />
         </div>
 
-        {/* Right: Login or User  Avatar + Cart */}
+        {/* Right: Search, Login/User, Cart */}
         <div className="flex h-full items-center gap-sm">
+          {/* Product search (handles all search UI and logic) */}
+          <ProductSearch
+            open={searchPanelOpen}
+            onOpen={() => setSearchPanelOpen(true)}
+            onClose={() => setSearchPanelOpen(false)}
+          />
+
           {/* User icon or Login link */}
           {user ? (
             <div
@@ -102,6 +114,7 @@ export default function SiteHeader() {
           onClose={() => setIsCartOpen(false)}
         />
       )}
+      {/* SearchPanel now handled by ProductSearch */}
     </header>
   );
 }

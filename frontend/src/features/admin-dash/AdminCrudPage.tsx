@@ -201,7 +201,7 @@ export function AdminCrudPage<T extends { id?: string }>({
             }}
           />
           <Search
-            className="text-text absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer"
+            className="text-primary absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer"
             size={20}
             onClick={() => setPage(1)}
           />

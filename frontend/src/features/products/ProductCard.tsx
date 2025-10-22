@@ -10,9 +10,15 @@ import {
 
 interface ProductCardProps {
   product: Product;
+  showAddToCartButton?: boolean;
+  onProductClick?: () => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+const ProductCard: React.FC<ProductCardProps> = ({
+  product,
+  showAddToCartButton = true,
+  onProductClick,
+}) => {
   const navigate = useNavigate();
   const { addItem } = useCart();
 
@@ -27,6 +33,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   const handleCardClick = () => {
+    if (onProductClick) onProductClick();
     navigate(`/Product/${product.id}`);
   };
 
@@ -81,7 +88,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           {product.name}
         </h3>
 
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex  gap-2">
           {product.discount ? (
             <>
               <span className="text-md text-muted line-through">
@@ -94,12 +101,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           )}
         </div>
 
-        <Button
-          onClick={handleAddToCart}
-          className="mt-4 w-full bg-primary text-white hover:bg-primaryDark"
-        >
-          Add to Cart
-        </Button>
+        {showAddToCartButton && (
+          <Button
+            onClick={handleAddToCart}
+            className="mt-4 w-full bg-primary text-white hover:bg-primaryDark"
+          >
+            Add to Cart
+          </Button>
+        )}
       </div>
     </div>
   );

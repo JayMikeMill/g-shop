@@ -68,6 +68,7 @@ export const uploadProductImages = async (item: Product): Promise<Product> => {
     for (let i = 0; i < item.images.length; i++) {
       // Remove id to preserve order on upsert
       delete item.images[i].id;
+      delete item.images[i].productId;
 
       if (
         item.images[i].main.startsWith("blob:") ||
