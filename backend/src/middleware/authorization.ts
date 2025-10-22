@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { auth } from "@adapters/services";
 import dotenv from "dotenv";
 import path from "path";
+
+import { AuthService } from "@services";
 import { UserRole } from "shared/types";
 
 // Load environment variables
@@ -36,7 +37,7 @@ export const getAuthUser = async (
       req.user = undefined;
       return next();
     } else {
-      const { user, success, message } = await auth.verifyToken(token);
+      const { user, success, message } = await AuthService.verifyToken(token);
 
       if (success && user) {
         req.user = { id: user.id!, role: user.role };

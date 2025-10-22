@@ -22,6 +22,10 @@ class AuthService implements AuthApi {
     return await auth.login(email, password);
   }
 
+  async verifyToken(token: string): Promise<AuthResponse> {
+    return auth.verifyToken(token);
+  }
+
   async logout(): Promise<AuthResponse> {
     return auth.logout("");
   }

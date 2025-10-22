@@ -34,6 +34,7 @@ import { FirebaseStorageAdapter } from "./firebase/FirebaseStorageAdapter";
 // Shipping adapters
 import { ShippingAdapter } from "./types/ShippingAdapter";
 import { EasyPostAdapter } from "./shipping/EasyPostAdapter";
+import { DatabaseService } from "@services";
 
 // --- Lazy factories ---
 export const authAdapters: Record<AuthAdapterType, () => AuthAdapter> = {
@@ -72,4 +73,6 @@ const storage = storageAdapters[config.adapters.storage]();
 const payment = paymentAdapters[config.adapters.payment]();
 const shipping = shippingAdapters[config.adapters.shipping]();
 
-export { auth, db, storage, payment, shipping };
+DatabaseService.setAdapter(db);
+
+export { auth, storage, payment, shipping };
