@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { AuthRole, getAuthUser } from "./authorization";
-import { parseQueryType, QueryType, QueryObject } from "shared/types";
+import { QueryType, QueryObject } from "shared/types";
 
 // Type guard to detect QueryObject
 function isQueryObject<T>(query: QueryType<T>): query is QueryObject<T> {
@@ -25,7 +25,7 @@ function dataAuthorization(roles: AuthRole[]) {
       // OWNER logic: only allow if querying self
       if (roles.includes("OWNER")) {
         // Parse query from request once
-        const query = parseQueryType<any>(req.query);
+        const query = req.body;
 
         if (
           query &&
