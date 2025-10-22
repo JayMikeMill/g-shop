@@ -104,9 +104,11 @@ export function AdminCrudPage<T extends { id?: string }>({
         [tempId]: `${isNew ? "Creating" : "Updating"} ${objectName}...`,
       }));
 
+      console.log("Saving itemssss:", item);
       if (preSaveHook) item = await preSaveHook(item, isNew);
 
       try {
+        console.log("Saving item:", item);
         const saved = isNew
           ? await createItem.mutateAsync(item)
           : await updateItem.mutateAsync(item as any);

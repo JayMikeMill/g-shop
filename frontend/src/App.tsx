@@ -23,7 +23,7 @@ export default function App() {
   }, []);
 
   if (loading) {
-    // Show a placeholder / spinner while settings load
+    // Show nothing
     return null;
   }
 

@@ -113,9 +113,11 @@ function BaseImageEditor<T extends Record<string, any>>({
 
     try {
       const processedItem = await processor(file);
-      const updated = [...images];
-      if (single) updated[0] = { ...updated[0], ...processedItem };
-      else updated[index] = processedItem;
+
+      // If the index already exists, replace it; else append
+      let updated = [...images];
+      if (index < updated.length) updated[index] = processedItem;
+      else updated = [...updated, processedItem];
 
       onImagesChange(updated);
     } catch (err: any) {
@@ -131,17 +133,44 @@ function BaseImageEditor<T extends Record<string, any>>({
   };
 
   /** -------------------- File input -------------------- */
-  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileInputChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
 
     if (cropping) {
       setPendingCropFiles((prev) => [...prev, ...files]);
     } else {
-      files.forEach((file) => {
-        const index = images.length;
-        processFile(file, index);
+      // Process all files and update images in one go
+      setProcessingIndexes((prev) => [
+        ...prev,
+        ...files.map((_, i) => images.length + i),
+      ]);
+      setPreviews((prev) => {
+        const copy = { ...prev };
+        files.forEach((file, i) => {
+          copy[images.length + i] = URL.createObjectURL(file);
+        });
+        return copy;
       });
+      try {
+        const processedItems = await Promise.all(
+          files.map((file) => processor(file))
+        );
+        onImagesChange([...images, ...processedItems]);
+      } catch (err: any) {
+        alert(err?.message || "Error processing image(s)");
+      } finally {
+        setProcessingIndexes((prev) => prev.filter((i) => i < images.length));
+        setPreviews((prev) => {
+          const copy = { ...prev };
+          files.forEach((_, i) => {
+            delete copy[images.length + i];
+          });
+          return copy;
+        });
+      }
     }
 
     if (fileInputRef.current) fileInputRef.current.value = "";

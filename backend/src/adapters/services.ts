@@ -18,8 +18,8 @@ import { JwtAuthAdapter } from "./auth/JwtAuthAdapter";
 
 // DB adapters
 import { DBAdapter } from "./types/DBAdapter";
-import { FirebaseDBAdapter } from "./firebase/FirebaseDBAdapter";
 import { PrismaDBAdapter } from "./prisma/PrismaDBAdapter";
+import { FirebaseDBAdapter } from "./firebase/FirebaseDBAdapter";
 
 // Payment adapters
 import { PaymentAdapter } from "./types/PaymentAdapter";
@@ -27,8 +27,9 @@ import { StripePaymentAdapter } from "./payment/StripePaymentAdapter";
 
 // Storage adapters
 import { StorageAdapter } from "./types/StorageAdapter";
-import { FirebaseStorageAdapter } from "./firebase/FirebaseStorageAdapter";
+import { SupabaseStorageAdapter } from "./storage/SupabaseStorageAdapter";
 import { ImgBBStorageAdapter } from "./storage/ImgBBStorageAdapter";
+import { FirebaseStorageAdapter } from "./firebase/FirebaseStorageAdapter";
 
 // Shipping adapters
 import { ShippingAdapter } from "./types/ShippingAdapter";
@@ -41,14 +42,15 @@ export const authAdapters: Record<AuthAdapterType, () => AuthAdapter> = {
 };
 
 export const dbAdapters: Record<DBAdapterType, () => DBAdapter> = {
-  FIREBASE: () => new FirebaseDBAdapter(),
   PRISMA: () => new PrismaDBAdapter(),
+  FIREBASE: () => new FirebaseDBAdapter(),
 };
 
 export const storageAdapters: Record<StorageAdapterType, () => StorageAdapter> =
   {
-    FIREBASE: () => new FirebaseStorageAdapter(),
+    SUPABASE: () => new SupabaseStorageAdapter(),
     IMGBB: () => new ImgBBStorageAdapter(),
+    FIREBASE: () => new FirebaseStorageAdapter(),
   };
 
 export const paymentAdapters: Record<PaymentAdapterType, () => PaymentAdapter> =

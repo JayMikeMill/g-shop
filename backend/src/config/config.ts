@@ -1,4 +1,16 @@
 // Central configuration for the entire application
+import dotenv from "dotenv";
+import path from "path";
+
+// Load .env files based on NODE_ENV
+console.log("Environment:", process.env.NODE_ENV);
+export const isProduction = process.env.NODE_ENV?.trim() === "production";
+
+if (isProduction) {
+  dotenv.config({ path: path.resolve(__dirname, "../../.env.production") });
+} else {
+  dotenv.config({ path: path.resolve(__dirname, "../../.env.development") });
+}
 
 // Import adapter types
 import {
@@ -24,7 +36,7 @@ const config: Config = {
   adapters: {
     auth: "JWT",
     db: "PRISMA",
-    storage: "IMGBB",
+    storage: "SUPABASE",
     payment: "STRIPE",
     shipping: "EASYPOST",
   },

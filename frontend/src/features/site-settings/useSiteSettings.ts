@@ -18,15 +18,11 @@ export function useSiteSettings() {
     try {
       const settings = await getSiteSettings();
       console.log("Fetched site settings:", settings);
+
       if (settings) {
         setSiteSettings(settings);
-        localStorage.setItem(
-          SITE_SETTINGS_STORAGE_KEY,
-          JSON.stringify(settings)
-        );
       } else {
         setSiteSettings(null);
-        localStorage.removeItem(SITE_SETTINGS_STORAGE_KEY);
       }
 
       console.log("Applying theme colors with settings:", settings);

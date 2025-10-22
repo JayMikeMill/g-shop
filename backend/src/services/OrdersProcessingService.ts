@@ -73,8 +73,8 @@ class OrderProcessingService implements OrderProcessingApi {
         // Create order
         newOrder = await tx.orders.create(order);
 
-        // Update stock for products & variants
-        await this.updateStock(order, tx);
+        // Update stock for products & variants sequentially for pool safety
+        await this.updateStockSafe(order, tx);
       });
 
       // 5️⃣ Capture payment
@@ -102,7 +102,6 @@ class OrderProcessingService implements OrderProcessingApi {
     const order = await db.orders.getOne({ id: orderId });
     if (!order) throw new Error(`Order not found (id: ${orderId})`);
 
-    // Get store origin address
     const adminSettings = await SystemSettingsService.getAdminSettings();
     const fromAddress: Address = {
       name: "My Store",
@@ -217,12 +216,12 @@ class OrderProcessingService implements OrderProcessingApi {
   }
 
   /**
-   * Update stock for all order items
-   * Optimized:
+   * Update stock for all order items safely
+   * Optimized for Supabase / small connection pools:
    *  - Aggregate updates
-   *  - Apply bulk updates in parallel
+   *  - Apply sequentially to prevent pool exhaustion
    */
-  private async updateStock(order: Order, dbAdapter: DBAdapter) {
+  private async updateStockSafe(order: Order, dbAdapter: DBAdapter) {
     const productUpdates: Record<string, number> = {};
     const variantUpdates: Record<string, number> = {};
 
@@ -239,27 +238,20 @@ class OrderProcessingService implements OrderProcessingApi {
       }
     }
 
-    const promises: Promise<any>[] = [];
-
+    // Sequential updates: safe for small connection pools
     for (const [variantId, qty] of Object.entries(variantUpdates)) {
-      promises.push(
-        dbAdapter.productVariants.update(
-          { id: variantId, stock: -qty },
-          { increment: true }
-        )
+      await dbAdapter.productVariants.update(
+        { id: variantId, stock: -qty },
+        { increment: true }
       );
     }
 
     for (const [productId, qty] of Object.entries(productUpdates)) {
-      promises.push(
-        dbAdapter.products.update(
-          { id: productId, stock: -qty },
-          { increment: true }
-        )
+      await dbAdapter.products.update(
+        { id: productId, stock: -qty },
+        { increment: true }
       );
     }
-
-    await Promise.all(promises);
   }
 }
 

@@ -66,18 +66,22 @@ export const uploadProductImages = async (item: Product): Promise<Product> => {
 
   try {
     for (let i = 0; i < item.images.length; i++) {
-      if (item.images[i].main.startsWith("blob:")) {
+      const prefix = `${item.name}_${i}`;
+      if (
+        item.images[i].main.startsWith("blob:") ||
+        !item.images[i].main.includes("supabase.co")
+      ) {
         item.images[i].main = await uploadBlobURL(
           item.images[i].main,
-          `${item.name}_main`
+          `${prefix}_main`
         );
         item.images[i].preview = await uploadBlobURL(
           item.images[i].preview,
-          `${item.name}_preview`
+          `${prefix}_preview`
         );
         item.images[i].thumbnail = await uploadBlobURL(
           item.images[i].thumbnail,
-          `${item.name}_thumbnail`
+          `${prefix}_thumbnail`
         );
       }
     }

@@ -12,13 +12,11 @@ import {
   ShipmentTrackingResult,
 } from "shared/types";
 
-import { env } from "@config";
-
 // Helper: convert EasyPost rate string to number in cents
 const dollarsToCents = (amount: string | number) =>
   Math.round(parseFloat(String(amount)) * 100);
 
-const apiKey = env.EASYPOST_API_KEY_TEST || "YOUR_EASYPOST_KEY";
+const apiKey = process.env.EASYPOST_API_KEY_TEST || "YOUR_EASYPOST_KEY";
 
 /**
  * Maps your internal Address type to EasyPost's expected address format.

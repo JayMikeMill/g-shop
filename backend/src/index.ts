@@ -1,13 +1,12 @@
+import "./config/config";
 import "./utils/aliases";
-import "./config/env";
-
 import http from "http";
 import app from "./app";
-import { env } from "@config";
 
 let currentApp = app;
 
-const PORT = Number(env.PORT) || Number(env.SERVER_PORT) || 3000;
+const PORT =
+  Number(process.env.PORT) || Number(process.env.SERVER_PORT) || 8080;
 
 const server = http.createServer((req, res) => currentApp(req, res));
 

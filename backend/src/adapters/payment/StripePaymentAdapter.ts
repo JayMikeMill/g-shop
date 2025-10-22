@@ -6,10 +6,9 @@ import {
   PaymentStatus,
 } from "shared/types";
 import Stripe from "stripe";
-import { env } from "@config";
 
 // Initialize Stripe client
-const stripe = new Stripe(env.STRIPE_SECRET_KEY as string, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: "2025-08-27.basil",
 });
 

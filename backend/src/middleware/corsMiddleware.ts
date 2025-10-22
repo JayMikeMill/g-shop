@@ -1,7 +1,6 @@
 import cors from "cors";
-import { env } from "@config";
 
-const allowedOrigins = (env.FRONTEND_URLS || "")
+const allowedOrigins = (process.env.FRONTEND_URLS || "")
   .split(",")
   .map((s) => s.trim())
   .filter(Boolean);

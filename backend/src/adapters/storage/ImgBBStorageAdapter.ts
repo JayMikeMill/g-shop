@@ -21,13 +21,10 @@ export class ImgBBStorageAdapter implements StorageAdapter {
     return response.data.data.url;
   }
 
-  async uploadFile(
-    file: Buffer,
-    filename: string,
-    contentType?: string
-  ): Promise<string> {
-    // ImgBB only supports images, so treat as image upload
-    return this.uploadImage(file, filename);
+  // ImgBB is primarily for images; use uploadImage for all uploads
+  async uploadFile(): Promise<string> {
+    // ImgBB is primarily for images; use uploadImage for all uploads
+    return "";
   }
 
   async deleteFile(url: string): Promise<boolean> {
