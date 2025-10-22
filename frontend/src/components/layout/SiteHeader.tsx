@@ -6,7 +6,7 @@ import { SITE } from "../../site-config";
 
 import SlideOutCart from "@features/cart/SlideOutCart";
 import SiteMenu from "./SiteMenu";
-import { Button } from "@components/ui";
+import { Button, Image } from "@components/ui";
 import { useUser } from "@features/user/useUser";
 import { useCart } from "@features/cart/useCart";
 
@@ -45,7 +45,7 @@ export default function SiteHeader() {
           className="flex flex-col items-center justify-center cursor-pointer"
           onClick={() => navigate("/")}
         >
-          <img src={SITE.logo} alt="Logo" className="max-h-10" />
+          <Image src={SITE.logo} alt="Logo" className="max-h-10" />
         </div>
 
         {/* Right: Login or User  Avatar + Cart */}

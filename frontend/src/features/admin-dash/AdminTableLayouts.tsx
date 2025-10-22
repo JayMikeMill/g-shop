@@ -13,7 +13,7 @@ import {
   toMajorPriceString,
 } from "shared/utils";
 
-import { Button, TagBox, type TableColumn } from "@components/ui";
+import { Button, TagBox, Image, type TableColumn } from "@components/ui";
 import { buyOrderShipping } from "./order-editor/buyOrderShipping";
 
 export type TableLayout<T> = {
@@ -56,7 +56,7 @@ export const productTable: TableLayout<Product> = {
       render: (p: Product) =>
         p.images?.[0] ? (
           <div className="flex items-center justify-center rounded">
-            <img
+            <Image
               src={p.images[0].thumbnail}
               className="object-contain h-[80px]"
             />

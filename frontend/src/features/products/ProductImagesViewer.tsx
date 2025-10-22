@@ -8,7 +8,7 @@ import "swiper/css/thumbs";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { ProductImageSet } from "shared/types";
-import { Lightbox } from "@components/ui";
+import { Image, Lightbox } from "@components/ui";
 
 interface ProductImagesViewerProps {
   images: ProductImageSet[];
@@ -62,7 +62,7 @@ export const ProductImagesViewer: React.FC<ProductImagesViewerProps> = ({
         >
           {images.map((img, idx) => (
             <SwiperSlide key={idx} className="flex justify-center items-center">
-              <img
+              <Image
                 src={img.main}
                 alt={`Product ${idx}`}
                 className="object-contain w-full h-96 cursor-pointer"
@@ -94,7 +94,7 @@ export const ProductImagesViewer: React.FC<ProductImagesViewerProps> = ({
         >
           {images.map((img, idx) => (
             <SwiperSlide key={idx} className="flex justify-center !w-auto">
-              <img
+              <Image
                 src={img.preview}
                 alt={`Thumb ${idx}`}
                 className={`object-contain w-20 h-20 cursor-pointer border rounded-md transition-all ${

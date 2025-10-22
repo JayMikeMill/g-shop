@@ -1,4 +1,5 @@
 // Cart state management
+import { Image } from "@components/ui";
 import { useCart } from "@features/cart/useCart";
 import { parseVariantOptions, toMajorUnit } from "shared/utils";
 
@@ -37,7 +38,7 @@ export default function OrderSummary() {
               key={key}
               className="flex items-center gap-md border-b border-divider pb-sm"
             >
-              <img
+              <Image
                 src={imgSrc}
                 alt={name}
                 className="w-16 h-16 object-cover rounded-surface bg-surface"

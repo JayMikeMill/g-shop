@@ -14,7 +14,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
-import { Button, TagBox, XButton } from "@components/ui";
+import { Button, Image, TagBox, XButton } from "@components/ui";
 import { useCart } from "@features/cart/useCart";
 import { parseVariantOptions, toMajorUnit } from "shared/utils";
 import { Plus, Minus } from "lucide-react";
@@ -231,7 +231,7 @@ function CartItemView({ item, addToCart, removeFromCart }: CartItemViewProps) {
   return (
     <div className="flex flex-row items-center border-b py-md">
       {/* Item image */}
-      <img
+      <Image
         src={imgSrc}
         alt={name}
         className="w-20 h-20 rounded-md bg-transparent object-contain"

@@ -29,3 +29,4 @@ export * from "./primitives/Dialog";
 export * from "./primitives/alert";
 export * from "./primitives/Tooltip";
 export * from "./primitives/Toggle";
+export * from "./primitives/Image";

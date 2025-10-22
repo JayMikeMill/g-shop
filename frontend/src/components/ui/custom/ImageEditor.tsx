@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { CropDialog, Input, XButton, Lightbox } from "@components/ui";
+import { CropDialog, Input, XButton, Lightbox, Image } from "@components/ui";
 
 /** -------------------- Types -------------------- */
 interface ImageSlotProps {
@@ -52,10 +52,10 @@ function ImageSlot({
 				justify-center ${emptyBorder} hover:bg-gray-100 transition`}
     >
       {src ? (
-        <img
+        <Image
           src={src}
           alt="Preview"
-          className="w-full h-full object-cover block pointer-events-none transition-opacity duration-200"
+          className="w-full h-full object-contain pointer-events-none transition-opacity duration-200"
           style={{ opacity: processing ? 0.5 : 1 }}
         />
       ) : (

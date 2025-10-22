@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@features/cart/useCart";
-import { Button, TagBox } from "@components/ui";
+import { Button, Image, TagBox } from "@components/ui";
 import type { Product } from "shared/types";
 import {
   getProductDiscountPercent,
@@ -42,7 +42,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       {/* Image container with static height */}
       <div className="relative w-full h-60 p-sm overflow-hidden rounded-t-lg bg-surfaceAlt flex items-center justify-center">
         {product.images && product.images.length > 0 ? (
-          <img
+          <Image
             src={product.images[0].preview}
             alt={product.name}
             className="w-full h-full object-contain"
