@@ -14,7 +14,7 @@ import {
   toMajorPriceString,
 } from "shared/utils";
 
-import { Button, TagBox, Image, type TableColumn } from "@components/ui";
+import { TagBox, Image, type TableColumn } from "@components/ui";
 import { buyOrderShipping } from "./order-editor/buyOrderShipping";
 
 // --- Helpers ---

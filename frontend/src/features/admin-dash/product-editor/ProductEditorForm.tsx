@@ -36,7 +36,7 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
   onCancel,
 }) => {
   const [isAdding, setIsAdding] = useState(false);
-  const [isProcessingImages, setIsProcessingImages] = useState(false);
+  const [isProcessingImages] = useState(false);
   const [isSavingProduct, setIsSavingProduct] = useState(false);
 
   // --------------------------
@@ -174,7 +174,6 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
               }
               processor={processProductImages}
               getPreview={(item: ProductImageSet) => item.preview}
-              setIsProcessingImages={setIsProcessingImages}
             />
 
             {/* Footer Buttons */}

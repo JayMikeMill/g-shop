@@ -1,12 +1,11 @@
 import ProductCardList from "@features/products/ProductCardList";
-import { LoaderBar } from "@components/ui";
 import { useDataApi } from "@api";
 
 export default function HomePage() {
   const { products: apiProducts } = useDataApi();
 
   // Call the query hook directly
-  const { data, isLoading, error } = apiProducts.getMany({ limit: 20 });
+  const { data, isLoading } = apiProducts.getMany({ limit: 20 });
 
   // Use default value if data is undefined
   const products = data?.data ?? [];

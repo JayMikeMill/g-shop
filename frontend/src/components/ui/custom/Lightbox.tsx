@@ -22,7 +22,7 @@ const Lightbox: React.FC<LightboxProps> = ({
     // Push dummy history state when lightbox opens
     history.pushState({ lightbox: true }, document.title);
 
-    const handlePopState = (e: PopStateEvent) => {
+    const handlePopState = () => {
       if (open) {
         onClose();
         // Remove dummy state to restore normal back behavior

@@ -16,7 +16,6 @@ export default function AdminOrdersPage() {
       tableLayout={orderTable}
       Editor={OrderEditorDialog}
       pageSize={3}
-      searchable={true}
     />
   );
 }

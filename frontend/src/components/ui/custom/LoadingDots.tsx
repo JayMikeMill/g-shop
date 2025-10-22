@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 
 export const LoadingDots: React.FC<{ speed?: number }> = ({ speed = 400 }) => {
   const [dotCount, setDotCount] = React.useState(1);

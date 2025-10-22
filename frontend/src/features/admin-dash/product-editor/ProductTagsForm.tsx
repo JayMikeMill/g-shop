@@ -12,7 +12,6 @@ import {
 import type { Product, ProductTagPreset } from "shared/types";
 import { useDataApi } from "@api";
 import { useFieldArray, useFormContext } from "react-hook-form";
-import { HexColorPicker } from "react-colorful";
 
 /* -------------------- ProductTagsEditor -------------------- */
 const ProductTagsForm: React.FC = () => {

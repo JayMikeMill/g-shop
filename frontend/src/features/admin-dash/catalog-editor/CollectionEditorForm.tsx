@@ -105,7 +105,7 @@ export default CollectionEditorForm;
 
 const CollectionFields: React.FC<{
   setIsProcessingImages: (v: boolean) => void;
-}> = ({ setIsProcessingImages }) => {
+}> = () => {
   const { register, setValue, watch } = useFormContext<Collection>();
   const images = watch("images") as CollectionImageSet;
   const watchSeoKeywords = watch("seoKeywords") ?? [];

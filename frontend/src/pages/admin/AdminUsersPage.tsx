@@ -16,7 +16,6 @@ export default function AdminOrdersPage() {
       tableLayout={userTable}
       Editor={UserEditorDialog}
       pageSize={10}
-      searchable={true}
     />
   );
 }
