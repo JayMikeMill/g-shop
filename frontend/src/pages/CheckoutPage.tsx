@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import CheckoutForm from "@features/checkout/CheckoutForm";
 import { useApi } from "@api";
 import { useCart } from "@features/cart/useCart";
+import { CircleSpinner } from "@components/ui";
 
 export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
@@ -34,9 +35,8 @@ export default function CheckoutPage() {
       <CheckoutForm onSubmit={onSubmit} />
 
       {loading && (
-        <div className="fixed inset-0 bg-overlay flex flex-col items-center justify-center z-[9999] text-text-on-overlay text-lg">
-          <div className="w-15 h-15 border-8 border-border border-t-8 border-t-primary rounded-full animate-spin mb-md"></div>
-          <span>Processing payment...</span>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30">
+          <CircleSpinner text={`Processing payment...`} />
         </div>
       )}
 

@@ -13,6 +13,11 @@ const SiteSettingsBasicInfoForm: React.FC = () => {
       </div>
 
       <div className="flex flex-col">
+        <Label>Logo URL</Label>
+        <Input {...register("logoURL")} />
+      </div>
+
+      <div className="flex flex-col">
         <Label>Site Description</Label>
         <Textarea {...register("siteDescription")} />
       </div>
@@ -30,11 +35,6 @@ const SiteSettingsBasicInfoForm: React.FC = () => {
       <div className="flex flex-col">
         <Label>Banner Message</Label>
         <Input {...register("bannerMessage")} />
-      </div>
-
-      <div className="flex flex-col">
-        <Label>Logo URL</Label>
-        <Input {...register("logoURL")} />
       </div>
     </div>
   );

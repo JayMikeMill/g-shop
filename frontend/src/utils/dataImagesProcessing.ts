@@ -66,11 +66,16 @@ export const uploadProductImages = async (item: Product): Promise<Product> => {
 
   try {
     for (let i = 0; i < item.images.length; i++) {
-      const prefix = `${item.name}_${i}`;
+      // Remove id to preserve order on upsert
+      delete item.images[i].id;
+
       if (
         item.images[i].main.startsWith("blob:") ||
         !item.images[i].main.includes("supabase.co")
       ) {
+        const prefix = `${item.name}_image_${i}`;
+
+        console.log("Uploading product image blobs...", item.images[i]);
         item.images[i].main = await uploadBlobURL(
           item.images[i].main,
           `${prefix}_main`
