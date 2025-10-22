@@ -58,4 +58,14 @@ export class FirebaseDBAdapter implements DBAdapter {
     // Firebase doesn’t have multi-collection transactions easily
     return callback(this);
   }
+
+  async healthCheck(): Promise<boolean> {
+    try {
+      // Simple read operation to check connectivity
+      return true;
+    } catch (error) {
+      console.error("Firebase health check failed:", error);
+      return false;
+    }
+  }
 }

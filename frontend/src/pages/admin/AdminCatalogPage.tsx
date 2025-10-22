@@ -14,6 +14,7 @@ export function AdminCategoriesPage() {
       objectsName="Categories"
       objectName="Category"
       apiKey="categories"
+      pageSize={20}
       tableLayout={collectionTable}
       preSaveHook={uploadCollectionImages}
       Editor={CategoryDialog}
@@ -27,6 +28,7 @@ export function AdminCollectionsPage() {
       objectsName="Collections"
       objectName="Collection"
       apiKey="collections"
+      pageSize={20}
       tableLayout={collectionTable}
       preSaveHook={uploadCollectionImages}
       Editor={CollectionDialog}

@@ -2,7 +2,8 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { dataAuth } from "@middleware/dataAuth";
 import type { AuthRole } from "@middleware/authorization";
-import type { CrudInterface } from "shared/interfaces";
+import { DatabaseService as S } from "@services";
+import { DatabaseDomain } from "shared/interfaces/Database";
 
 export type CRUDRouteAuth = AuthRole[];
 
@@ -28,10 +29,13 @@ export const reqOwnerAll: CRUDRouteOptions = {
   delete: ["ADMIN", "OWNER"],
 };
 export function createCrudRoute(
-  crud: CrudInterface<any>,
+  domain: DatabaseDomain,
   options?: CRUDRouteOptions
 ) {
   const router = Router();
+
+  // Get the CRUD interface from the DatabaseService
+  const crud = (S as any)[domain];
 
   const wrapHandler =
     (handler: (req: Request) => Promise<any>) =>

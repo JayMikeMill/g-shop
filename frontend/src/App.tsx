@@ -18,12 +18,13 @@ export default function App() {
     const loadSettings = async () => {
       await refreshSettings(); // wait for settings to refresh
       setLoading(false); // done loading
+      console.log("Site settings loaded.");
     };
+    console.log("Loading site settings...");
     loadSettings();
   }, []);
 
   if (loading) {
-    // Show nothing
     return null;
   }
 

@@ -2,12 +2,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CheckoutForm from "@features/checkout/CheckoutForm";
 import { useApi } from "@api";
+import { useCart } from "@features/cart/useCart";
 
 export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  const { clear: clearCart } = useCart();
   const { placeOrder } = useApi().orders;
 
   const onSubmit = async (order: any, paymentMethod: any) => {
@@ -17,6 +19,7 @@ export default function CheckoutPage() {
     const { success, error } = await placeOrder(paymentMethod, order);
 
     if (success) {
+      clearCart();
       setMessage("Order placed successfully!");
       navigate("/order-confirmation");
     } else {

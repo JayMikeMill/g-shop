@@ -18,24 +18,15 @@ import { FieldConfigDefaults } from "./ModelMetadata";
 //==================================================
 // CRUD Configuration
 //==================================================
-
 const { owned, manyToMany, json, include, search } = FieldConfigDefaults;
 
-const CrudProps: CrudPropsType = {
-  // ========================================
+export const CrudProps = {
   // Core user/auth
-  // ========================================
   users: {
     model: "user",
-    fieldMeta: {
-      email: { search },
-      settings: { json },
-    },
+    fieldMeta: { email: { search }, settings: { json } },
   },
-
-  // ========================================
   // Catalog & Products
-  // ========================================
   categories: {
     model: "category",
     fieldMeta: {
@@ -45,7 +36,6 @@ const CrudProps: CrudPropsType = {
       products: { manyToMany },
     },
   },
-
   collections: {
     model: "collection",
     fieldMeta: {
@@ -55,7 +45,6 @@ const CrudProps: CrudPropsType = {
       products: { manyToMany },
     },
   },
-
   products: {
     model: "product",
     fieldMeta: {
@@ -72,38 +61,22 @@ const CrudProps: CrudPropsType = {
       reviews: { owned, include },
     },
   },
-
   productVariants: {
     model: "productVariant",
-    fieldMeta: {
-      id: { search },
-      options: { json },
-    },
+    fieldMeta: { id: { search }, options: { json } },
   },
-
   productOptionsPresets: {
     model: "productOptionsPreset",
-    fieldMeta: {
-      name: { search },
-      options: { json },
-    },
+    fieldMeta: { name: { search }, options: { json } },
   },
-
   productTagsPresets: {
     model: "productTagPreset",
     fieldMeta: { name: { search } },
   },
-
-  productReviews: {
-    model: "productReview",
-  },
-
-  // ========================================
+  productReviews: { model: "productReview" },
   // Commerce
-  // ========================================
   orders: {
     model: "order",
-
     fieldMeta: {
       id: { search },
       userId: { search },
@@ -119,124 +92,46 @@ const CrudProps: CrudPropsType = {
       invoices: { owned, include },
     },
   },
-
-  // ========================================
   // System / Configuration
-  // ========================================
   systemSettings: {
     model: "systemSettings",
-    fieldMeta: {
-      scope: { search },
-      settings: { json },
-    },
+    fieldMeta: { scope: { search }, settings: { json } },
   },
-};
+} as const;
 
 //==================================================
 // Types
 //==================================================
+type CrudPropsType = typeof CrudProps;
 
-type CrudPropsType = {
-  users: PrismaCRUDAdapterProps<User>;
-  categories: PrismaCRUDAdapterProps<Category>;
-  collections: PrismaCRUDAdapterProps<Collection>;
-  products: PrismaCRUDAdapterProps<Product>;
-  productVariants: PrismaCRUDAdapterProps<ProductVariant>;
-  productOptionsPresets: PrismaCRUDAdapterProps<ProductOptionsPreset>;
-  productTagsPresets: PrismaCRUDAdapterProps<ProductTagPreset>;
-  productReviews: PrismaCRUDAdapterProps<ProductReview>;
-  orders: PrismaCRUDAdapterProps<Order>;
-  systemSettings: PrismaCRUDAdapterProps<SystemSettings>;
+type AdapterMap = {
+  users: PrismaCrudAdapter<User>;
+  categories: PrismaCrudAdapter<Category>;
+  collections: PrismaCrudAdapter<Collection>;
+  products: PrismaCrudAdapter<Product>;
+  productVariants: PrismaCrudAdapter<ProductVariant>;
+  productOptionsPresets: PrismaCrudAdapter<ProductOptionsPreset>;
+  productTagsPresets: PrismaCrudAdapter<ProductTagPreset>;
+  productReviews: PrismaCrudAdapter<ProductReview>;
+  orders: PrismaCrudAdapter<Order>;
+  systemSettings: PrismaCrudAdapter<SystemSettings>;
 };
 
 //==================================================
-// ----------------- Crud Adapters -----------------
+// Adapters Factory
 //==================================================
+export const createAdapters = (
+  prismaClient: PrismaClient,
+  isTx?: boolean
+): AdapterMap => {
+  const result = {} as AdapterMap;
 
-// ---------- Core user/auth ----------
-class UserCrud extends PrismaCrudAdapter<User> {
-  constructor(prismaClient: PrismaClient, isTx?: boolean) {
-    super(prismaClient, { ...CrudProps.users, isTx });
+  for (const key of Object.keys(CrudProps) as Array<keyof CrudPropsType>) {
+    result[key] = new PrismaCrudAdapter(prismaClient, {
+      ...CrudProps[key],
+      isTx,
+    }) as any;
   }
-}
 
-// ---------- Catalog & Products ----------
-class CategoryCrud extends PrismaCrudAdapter<Category> {
-  constructor(prismaClient: PrismaClient, isTx?: boolean) {
-    super(prismaClient, { ...CrudProps.categories, isTx });
-  }
-}
-
-class CollectionCrud extends PrismaCrudAdapter<Collection> {
-  constructor(prismaClient: PrismaClient, isTx?: boolean) {
-    super(prismaClient, { ...CrudProps.collections, isTx });
-  }
-}
-
-class ProductCrud extends PrismaCrudAdapter<Product> {
-  constructor(prismaClient: PrismaClient, isTx?: boolean) {
-    super(prismaClient, { ...CrudProps.products, isTx });
-  }
-}
-
-class ProductVariantCrud extends PrismaCrudAdapter<ProductVariant> {
-  constructor(prismaClient: PrismaClient, isTx?: boolean) {
-    super(prismaClient, { ...CrudProps.productVariants, isTx });
-  }
-}
-
-class ProductOptionPresetCrud extends PrismaCrudAdapter<ProductOptionsPreset> {
-  constructor(prismaClient: PrismaClient, isTx?: boolean) {
-    super(prismaClient, { ...CrudProps.productOptionsPresets, isTx });
-  }
-}
-
-class ProductTagPresetCrud extends PrismaCrudAdapter<ProductTagPreset> {
-  constructor(prismaClient: PrismaClient, isTx?: boolean) {
-    super(prismaClient, { ...CrudProps.productTagsPresets, isTx });
-  }
-}
-
-class ProductReviewCrud extends PrismaCrudAdapter<ProductReview> {
-  constructor(prismaClient: PrismaClient, isTx?: boolean) {
-    super(prismaClient, { ...CrudProps.productReviews, isTx });
-  }
-}
-
-// ---------- Commerce ----------
-class OrderCrud extends PrismaCrudAdapter<Order> {
-  constructor(prismaClient: PrismaClient, isTx?: boolean) {
-    super(prismaClient, { ...CrudProps.orders, isTx });
-  }
-}
-
-// ---------- System / Configuration ----------
-class SystemSettingsCrud extends PrismaCrudAdapter<SystemSettings> {
-  constructor(prismaClient: PrismaClient, isTx?: boolean) {
-    super(prismaClient, { ...CrudProps.systemSettings, isTx });
-  }
-}
-
-//==================================================
-// Exports
-//==================================================
-
-export {
-  // Core user/auth
-  UserCrud,
-
-  // Catalog & Products
-  CategoryCrud,
-  CollectionCrud,
-  ProductCrud,
-  ProductVariantCrud,
-  ProductOptionPresetCrud,
-  ProductTagPresetCrud,
-  ProductReviewCrud,
-
-  // Commerce
-  OrderCrud,
-
-  // System / Configuration
-  SystemSettingsCrud,
+  return result;
 };

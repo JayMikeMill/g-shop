@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 
-interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {}
+interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+  loader?: boolean; // optional prop to show/hide loader
+}
 
-export function Image({ ...props }: ImageProps) {
+export function Image({ loader = true, ...props }: ImageProps) {
   const [loaded, setLoaded] = useState(false);
 
   return (
-    <div className="relative">
+    <div className={`relative ${loader && !loaded ? "w-full h-full" : ""}`}>
       <img
         {...props}
-        className={`${props.className ?? ""}  transition-opacity duration-200 ${
+        className={`${props.className ?? ""} transition-opacity duration-200 ${
           loaded ? "opacity-100" : "opacity-0"
         }`}
         onLoad={(e) => {
@@ -17,9 +19,10 @@ export function Image({ ...props }: ImageProps) {
           if (props.onLoad) props.onLoad(e);
         }}
       />
-      {!loaded && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100/50">
-          <div className="w-6 h-6 border-4 border-gray-300 border-t-primary rounded-full animate-spin" />
+      {/* Only show loader if prop is true */}
+      {loader && !loaded && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-6 h-6 border-4 border-gray-200 border-t-primary rounded-full animate-spin" />
         </div>
       )}
     </div>

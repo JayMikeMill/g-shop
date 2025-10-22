@@ -129,7 +129,7 @@ export const DynamicTable = <T extends { id?: string }>({
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="text-center py-8 text-xl text-text"
+                  className="text-center py-8 text-3xl font-semibold text-muted-foreground"
                 >
                   No {objectsName}
                 </td>

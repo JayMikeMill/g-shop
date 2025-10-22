@@ -1,2 +1,2 @@
 export * from "./controllerHandler";
-export * from "./createCrudRoute";
+export * from "../routes/crudRoute";

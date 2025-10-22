@@ -6,8 +6,8 @@ import {
   ProductVariant,
   QueryObject,
 } from "shared/types";
-import { db, payment, shipping } from "@adapters/services";
-import { DBAdapter } from "@adapters/types/DBAdapter";
+import { DatabaseService as DB } from "@services";
+import { payment, shipping } from "@adapters/services";
 import { toMajorPriceString } from "shared/utils/PriceUtils";
 import { OrderProcessingApi } from "shared/interfaces";
 
@@ -38,7 +38,7 @@ class OrderProcessingService implements OrderProcessingApi {
       if (!order.items?.length) throw new Error("Order has no items");
 
       // 1️⃣ Check stock (optimized to fetch all products & variants in parallel)
-      await this.stockAvailable(order, db);
+      await this.stockAvailable(order, DB);
 
       // 2️⃣ Prepare metadata for payment
       const metadata: Record<string, string> = {};
@@ -66,7 +66,7 @@ class OrderProcessingService implements OrderProcessingApi {
 
       // 4️⃣ Create order and update stock in a transaction
       let newOrder: Order | undefined;
-      await db.transaction(async (tx) => {
+      await DB.transaction(async (tx) => {
         // Re-check stock in transaction to prevent race conditions
         await this.stockAvailable(order, tx);
 
@@ -99,7 +99,7 @@ class OrderProcessingService implements OrderProcessingApi {
    * Buy a shipping label for an order
    */
   async buyOrderShipping(orderId: string): Promise<Order | null> {
-    const order = await db.orders.getOne({ id: orderId });
+    const order = await DB.orders.getOne({ id: orderId });
     if (!order) throw new Error(`Order not found (id: ${orderId})`);
 
     const adminSettings = await SystemSettingsService.getAdminSettings();
@@ -146,7 +146,7 @@ class OrderProcessingService implements OrderProcessingApi {
       status: purchasedShipment.status,
     };
 
-    await db.orders.update(order as Order & { id: string });
+    await DB.orders.update(order as Order & { id: string });
 
     console.log("Shipping purchased:", purchasedShipment);
     return order;
@@ -165,22 +165,19 @@ class OrderProcessingService implements OrderProcessingApi {
    *  - Fetch all products & variants in parallel
    *  - Build maps for O(1) lookup
    */
-  private async stockAvailable(
-    order: Order,
-    dbAdapter: DBAdapter
-  ): Promise<boolean> {
+  private async stockAvailable(order: Order, dbService: any): Promise<boolean> {
     const productIds = order.items!.map((item) => item.product.id!);
     const variantIds = order
       .items!.map((item) => item.variant?.id)
       .filter(Boolean) as string[];
 
     const [productResult, variantResult] = await Promise.all([
-      dbAdapter.products.getMany({
+      dbService.products.getMany({
         conditions: [{ field: "id", operator: "in", value: productIds }],
         select: ["id", "name", "stock"],
       }),
       variantIds.length
-        ? dbAdapter.productVariants.getMany({
+        ? dbService.productVariants.getMany({
             conditions: [{ field: "id", operator: "in", value: variantIds }],
             select: ["id", "productId", "stock"],
           })
@@ -188,10 +185,10 @@ class OrderProcessingService implements OrderProcessingApi {
     ]);
 
     const productMap = Object.fromEntries(
-      (productResult?.data ?? []).map((p) => [p.id!, p])
+      (productResult?.data ?? []).map((p: any) => [p.id!, p])
     );
     const variantMap = Object.fromEntries(
-      (variantResult?.data ?? []).map((v) => [v.id!, v])
+      (variantResult?.data ?? []).map((v: any) => [v.id!, v])
     );
 
     for (const item of order.items!) {
@@ -221,7 +218,7 @@ class OrderProcessingService implements OrderProcessingApi {
    *  - Aggregate updates
    *  - Apply sequentially to prevent pool exhaustion
    */
-  private async updateStockSafe(order: Order, dbAdapter: DBAdapter) {
+  private async updateStockSafe(order: Order, dbService: any) {
     const productUpdates: Record<string, number> = {};
     const variantUpdates: Record<string, number> = {};
 
@@ -240,14 +237,14 @@ class OrderProcessingService implements OrderProcessingApi {
 
     // Sequential updates: safe for small connection pools
     for (const [variantId, qty] of Object.entries(variantUpdates)) {
-      await dbAdapter.productVariants.update(
+      await dbService.productVariants.update(
         { id: variantId, stock: -qty },
         { increment: true }
       );
     }
 
     for (const [productId, qty] of Object.entries(productUpdates)) {
-      await dbAdapter.products.update(
+      await dbService.products.update(
         { id: productId, stock: -qty },
         { increment: true }
       );

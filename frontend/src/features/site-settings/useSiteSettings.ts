@@ -4,8 +4,6 @@ import type { SiteSettings } from "shared/settings";
 import { useApi } from "@api";
 import { applyThemeColors } from "./theme";
 
-const SITE_SETTINGS_STORAGE_KEY = "settingsData";
-
 export function useSiteSettings() {
   const { getSiteSettings } = useApi().settings;
 
@@ -17,7 +15,6 @@ export function useSiteSettings() {
     setLoading(true);
     try {
       const settings = await getSiteSettings();
-      console.log("Fetched site settings:", settings);
 
       if (settings) {
         setSiteSettings(settings);
@@ -25,7 +22,6 @@ export function useSiteSettings() {
         setSiteSettings(null);
       }
 
-      console.log("Applying theme colors with settings:", settings);
       applyThemeColors(
         {
           background: settings?.backgroundColor || "#ffffff",
@@ -49,7 +45,6 @@ export function useSiteSettings() {
       );
     } catch {
       setSiteSettings(null);
-      localStorage.removeItem(SITE_SETTINGS_STORAGE_KEY);
     } finally {
       setLoading(false);
     }

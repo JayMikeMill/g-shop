@@ -1,25 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { DBAdapter } from "@adapters/types";
+import { createAdapters } from "./PrismaCrudApapters";
 
-import {
-  // Core user/auth
-  UserCrud,
-
-  // Catalog & Products
-  CategoryCrud,
-  CollectionCrud,
-  ProductCrud,
-  ProductVariantCrud,
-  ProductOptionPresetCrud,
-  ProductTagPresetCrud,
-  ProductReviewCrud,
-
-  // Commerce
-  OrderCrud,
-
-  // System / Configuration
-  SystemSettingsCrud,
-} from "./PrismaCrudApapters";
+import { DatabaseDomainKeys } from "shared/interfaces";
 
 //==================================================
 // PrismaDBAdapter
@@ -29,56 +12,31 @@ export class PrismaDBAdapter implements DBAdapter {
   private prisma: PrismaClient;
   public isTx?: boolean = false;
 
-  // ---------- Core user/auth ----------
-  public users: UserCrud;
-
-  // ---------- Catalog & Products ----------
-  public categories: CategoryCrud;
-  public collections: CollectionCrud;
-  public products: ProductCrud;
-  public productVariants: ProductVariantCrud;
-  public productOptionsPresets: ProductOptionPresetCrud;
-  public productTagsPresets: ProductTagPresetCrud;
-  public productReviews: ProductReviewCrud;
-
-  // ---------- Commerce ----------
-  public orders: OrderCrud;
-
-  // ---------- System / Configuration ----------
-  public systemSettings: SystemSettingsCrud;
+  // Explicitly declare CRUD properties for type safety and autocompletion
+  products: any;
+  productVariants: any;
+  productTagsPresets: any;
+  productOptionsPresets: any;
+  productReviews: any;
+  categories: any;
+  collections: any;
+  orders: any;
+  users: any;
+  systemSettings: any;
 
   constructor(prismaClient: PrismaClient = new PrismaClient(), isTx?: boolean) {
     this.prisma = prismaClient;
     this.isTx = isTx ?? false;
-
-    // ---------- Core user/auth ----------
-    this.users = new UserCrud(prismaClient, isTx);
-
-    // ---------- Catalog & Products ----------
-    this.categories = new CategoryCrud(prismaClient, isTx);
-    this.collections = new CollectionCrud(prismaClient, isTx);
-    this.products = new ProductCrud(prismaClient, isTx);
-    this.productVariants = new ProductVariantCrud(prismaClient, isTx);
-    this.productOptionsPresets = new ProductOptionPresetCrud(
-      prismaClient,
-      isTx
-    );
-    this.productTagsPresets = new ProductTagPresetCrud(prismaClient, isTx);
-    this.productReviews = new ProductReviewCrud(prismaClient, isTx);
-
-    // ---------- Commerce ----------
-    this.orders = new OrderCrud(prismaClient, isTx);
-
-    // ---------- System / Configuration ----------
-    this.systemSettings = new SystemSettingsCrud(prismaClient, isTx);
+    const allAdapters = createAdapters(this.prisma, this.isTx);
+    for (const domain of DatabaseDomainKeys) {
+      (this as any)[domain] = allAdapters[domain];
+    }
   }
 
   /**
    * Execute multiple DB operations atomically within a single transaction.
    */
-  async transaction<T>(
-    callback: (tx: PrismaDBAdapter) => Promise<T>
-  ): Promise<T> {
+  async transaction<T>(callback: (tx: DBAdapter) => Promise<T>): Promise<T> {
     return await this.prisma.$transaction(
       async (txClient: unknown) => {
         const txAdapter = new PrismaDBAdapter(
@@ -89,5 +47,16 @@ export class PrismaDBAdapter implements DBAdapter {
       },
       { timeout: 20000 }
     );
+  }
+
+  async healthCheck(): Promise<boolean> {
+    try {
+      // Simple read operation to check connectivity
+      await this.prisma.$queryRaw`SELECT 1`;
+      return true;
+    } catch (error) {
+      console.error("Prisma health check failed:", error);
+      return false;
+    }
   }
 }

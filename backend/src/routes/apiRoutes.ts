@@ -32,6 +32,9 @@ import {
 // Middleware
 import { getAuthUser, reqAdmin } from "@middleware/authorization";
 
+// Services
+import { DatabaseService } from "@services";
+
 import {
   deleteFile,
   uploadFile,
@@ -68,5 +71,16 @@ router.delete("/storage/:id", reqAdmin, deleteFile);
 router.get("/settings/site", getSiteSettings);
 router.get("/settings/admin/:scope", reqAdmin, getSettings);
 router.put("/settings/admin/:scope", reqAdmin, updateSettings);
+
+//------------Health Check------------------------------
+router.get("/health", (req, res) => {
+  DatabaseService.healthCheck().then((isHealthy) => {
+    if (isHealthy) {
+      res.status(200).json({ status: "OK" });
+    } else {
+      res.status(500).json({ status: "DB ERROR" });
+    }
+  });
+});
 
 export default router;
