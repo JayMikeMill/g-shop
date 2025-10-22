@@ -79,12 +79,15 @@ export class PrismaDBAdapter implements DBAdapter {
   async transaction<T>(
     callback: (tx: PrismaDBAdapter) => Promise<T>
   ): Promise<T> {
-    return await this.prisma.$transaction(async (txClient: unknown) => {
-      const txAdapter = new PrismaDBAdapter(
-        txClient as unknown as PrismaClient,
-        true
-      );
-      return await callback(txAdapter);
-    });
+    return await this.prisma.$transaction(
+      async (txClient: unknown) => {
+        const txAdapter = new PrismaDBAdapter(
+          txClient as unknown as PrismaClient,
+          true
+        );
+        return await callback(txAdapter);
+      },
+      { timeout: 20000 }
+    );
   }
 }

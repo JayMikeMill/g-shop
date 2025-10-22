@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type {
   Collection,
   Order,
@@ -16,24 +17,63 @@ import {
 import { Button, TagBox, Image, type TableColumn } from "@components/ui";
 import { buyOrderShipping } from "./order-editor/buyOrderShipping";
 
+// --- Helpers ---
+const renderTagArray = (
+  items?: { name: string; color?: string; textColor?: string }[]
+) => (
+  <div className="flex flex-wrap items-center justify-center gap-sm">
+    {items?.map((item, idx) => (
+      <TagBox
+        key={idx}
+        text={item.name}
+        color={item.color}
+        textColor={item.textColor}
+        className={`bg-${item.color ?? "surface"} text-${item.textColor ?? "foreground"} h-6 text-md font-normal whitespace-nowrap`}
+      />
+    ))}
+  </div>
+);
+
+const renderCenteredColumn = (children: ReactNode) => (
+  <div className="flex flex-col items-center justify-center">{children}</div>
+);
+
+const renderFlexStart = (children: ReactNode) => (
+  <div className="flex items-start justify-start">{children}</div>
+);
+
+const renderImageOrPlaceholder = (src?: string) =>
+  src ? (
+    <div className="flex items-center justify-center rounded">
+      <Image src={src} className="object-contain h-[80px]" />
+    </div>
+  ) : (
+    <div className="flex items-center justify-center bg-light rounded text-xs">
+      No Image
+    </div>
+  );
+
+// --- Type ---
 export type TableLayout<T> = {
-  query: QueryObject<T>; // fields to select from DB for this table
+  query: QueryObject<T>;
   columns: TableColumn<T>[];
 };
 
-// ----- Users -----
+//===========================================================================
+// Users
+//===========================================================================
 export const userTable: TableLayout<User> = {
-  query: {
-    select: ["id", "email", "role"],
-  },
+  query: { select: ["id", "email", "role"] },
   columns: [
-    { id: "id", label: "User ID", render: (row: User) => row.id },
-    { id: "email", label: "Email", render: (row: User) => row.email },
-    { id: "role", label: "Role", render: (row: User) => row.role },
+    { id: "id", label: "User ID", width: "200px", render: (row) => row.id },
+    { id: "email", label: "Email", width: "200px", render: (row) => row.email },
+    { id: "role", label: "Role", width: "120px", render: (row) => row.role },
   ],
 };
 
-// ----- Products -----
+//===========================================================================
+// Products
+//===========================================================================
 export const productTable: TableLayout<Product> = {
   query: {
     select: [
@@ -53,123 +93,88 @@ export const productTable: TableLayout<Product> = {
       id: "image",
       label: "Image",
       width: "120px",
-      render: (p: Product) =>
-        p.images?.[0] ? (
-          <div className="flex items-center justify-center rounded">
-            <Image
-              src={p.images[0].thumbnail}
-              className="object-contain h-[80px]"
-            />
-          </div>
-        ) : (
-          <div className="flex items-center justify-center bg-light rounded text-xs">
-            No Image
-          </div>
-        ),
+      render: (p) => renderImageOrPlaceholder(p.images?.[0]?.thumbnail),
     },
     {
       id: "name",
       label: "Name",
-      width: "120px",
+      width: "160px",
       sortable: true,
-      render: (p: Product) => (
-        <div className="flex items-center justify-center">
-          <span className="font-semibold text-center text-text">{p.name}</span>
-        </div>
-      ),
+      render: (p) =>
+        renderCenteredColumn(
+          <span className="font-semibold text-text">{p.name}</span>
+        ),
     },
     {
       id: "price",
       label: "Price",
       width: "120px",
       sortable: true,
-      render: (p: Product) => (
-        <div className="flex flex-col items-center justify-center">
-          <span className="font-semibold text-center text-base">
-            ${toMajorPriceString(p.price)}
-          </span>
-          {p.discount && (
-            <>
-              <span className="text-center text-red-400">
-                -{getProductDiscountLabel(p)}
-              </span>
-              <span className="font-bold text-center text-base">
-                ${getFinalPriceString(p)}
-              </span>
-            </>
-          )}
-        </div>
-      ),
-    },
-    {
-      id: "categories",
-      label: "Categories",
-      width: "120px",
-      render: (p: Product) => (
-        <div className="flex flex-wrap items-center justify-center gap-sm">
-          {p.categories?.map((cat, index) => (
-            <TagBox
-              key={index}
-              text={cat.name}
-              className="h-6 bg-surface text-md font-normal whitespace-nowrap"
-            />
-          ))}
-        </div>
-      ),
-    },
-    {
-      id: "collections",
-      label: "Collections",
-      width: "120px",
-      render: (p: Product) => (
-        <div className="flex flex-wrap items-center justify-center gap-sm">
-          {p.collections?.map((col, index) => (
-            <TagBox
-              key={index}
-              text={col.name}
-              className="h-6 bg-surface text-md font-normal whitespace-nowrap"
-            />
-          ))}
-        </div>
-      ),
+      render: (p) =>
+        renderCenteredColumn(
+          <>
+            <span className="font-semibold text-center text-base">
+              ${toMajorPriceString(p.price)}
+            </span>
+            {p.discount && (
+              <>
+                <span className="text-center text-red-400">
+                  -{getProductDiscountLabel(p)}
+                </span>
+                <span className="font-bold text-center text-base">
+                  ${getFinalPriceString(p)}
+                </span>
+              </>
+            )}
+          </>
+        ),
     },
     {
       id: "tags",
       label: "Tags",
-      width: "120px",
-      render: (p: Product) => (
-        <div className="flex flex-wrap items-center justify-center gap-sm">
-          {p.tags?.map((tag, index) => (
-            <TagBox
-              key={index}
-              text={tag.name}
-              color={tag.color ?? "accent"}
-              textColor={tag.textColor ?? "primary-foreground"}
-              className="h-6 text-md font-normal  whitespace-nowrap"
-            />
-          ))}
-        </div>
-      ),
+      width: "140px",
+      render: (p) =>
+        renderTagArray(
+          p.tags?.map((tag) => ({
+            name: tag.name,
+            color: tag.color ?? undefined,
+            textColor: tag.textColor ?? undefined,
+          }))
+        ),
     },
+    {
+      id: "categories",
+      label: "Categories",
+      width: "140px",
+      render: (p) => renderTagArray(p.categories),
+    },
+    {
+      id: "collections",
+      label: "Collections",
+      width: "140px",
+      render: (p) => renderTagArray(p.collections),
+    },
+
     {
       id: "description",
       label: "Description",
       width: "300px",
-      render: (p: Product) => (
-        <div className="flex items-start justify-start">
+      render: (p) =>
+        renderFlexStart(
           <span className="font-semibold text-text line-clamp-3">
             {p.description}
           </span>
-        </div>
-      ),
+        ),
     },
   ],
 };
 
-// ----- Orders -----
+//===========================================================================
+// Orders
+//===========================================================================
 export const orderTable: TableLayout<Order> = {
   query: {
-    include: ["shippingInfo.address"],
+    include: ["shippingInfo.address", "items"],
     searchFields: [
       "id",
       "userId",
@@ -187,77 +192,79 @@ export const orderTable: TableLayout<Order> = {
       id: "createdAt",
       label: "Created/Status",
       width: "200px",
-      render: (o: Order) => (
-        <div className="flex flex-col items-center justify-center">
-          <span style={{ whiteSpace: "pre-line" }}>
-            {new Date(o.createdAt ?? "").toLocaleString([], {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: true, // optional, 24-hour format
-            })}
-          </span>
-          <div className="border-b border-black w-full" />
-          <span className="font-semibold">{o.status}</span>
-        </div>
-      ),
+      render: (o) =>
+        renderCenteredColumn(
+          <>
+            <span style={{ whiteSpace: "pre-line" }}>
+              {new Date(o.createdAt ?? "").toLocaleString([], {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+              })}
+            </span>
+            <div className="border-b border-black w-full" />
+            <span className="font-semibold">{o.status}</span>
+          </>
+        ),
     },
     {
       id: "total",
       label: "Total",
       width: "120px",
-      render: (o: Order) => (
-        <div className="flex flex-col items-center justify-center">
-          <span className="font-semibold">Items: {getTotalOrderItems(o)}</span>
-          <span className="font-semibold">${(o.total / 100).toFixed(2)}</span>
-        </div>
-      ),
+      render: (o) =>
+        renderCenteredColumn(
+          <>
+            <span className="font-semibold">
+              Items: {getTotalOrderItems(o)}
+            </span>
+            <span className="font-semibold">${(o.total / 100).toFixed(2)}</span>
+          </>
+        ),
     },
     {
       id: "shipping",
       label: "Shipping",
       width: "250px",
-      render: (o: Order) => (
-        <div className="flex flex-col items-center justify-center">
-          {o.shippingInfo?.tracking ? (
-            <div className="flex flex-col">
+      render: (o) =>
+        renderCenteredColumn(
+          o.shippingInfo?.tracking ? (
+            <div className="flex flex-col items-center justify-center gap-1">
               <span className="font-semibold whitespace-pre-wrap">
                 {`${o.shippingInfo.tracking}\n${o.shippingInfo.status}`}
               </span>
-              <Button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  window.open(
-                    o.shippingInfo?.labelUrl || "",
-                    "_blank",
-                    "noopener,noreferrer"
-                  );
-                }}
+              <a
+                href={o.shippingInfo.labelUrl ?? "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 hover:underline"
               >
-                View Label
-              </Button>
+                Shipping Label
+              </a>
             </div>
           ) : (
-            <Button
-              className="primary"
-              onClick={(e) => {
-                e.stopPropagation();
-                buyOrderShipping(o.id!);
-              }}
-            >
-              Buy Shipping
-            </Button>
-          )}
-        </div>
-      ),
+            <div>
+              <a
+                href="#"
+                className="text-blue-500 hover:underline"
+                onClick={(e) => {
+                  e.preventDefault();
+                  buyOrderShipping(o.id!);
+                }}
+              >
+                Buy Shipping
+              </a>
+            </div>
+          )
+        ),
     },
     {
       id: "address",
       label: "Shipping Address",
       width: "360px",
-      render: (o: Order) => (
+      render: (o) => (
         <span className="font-semibold text-center whitespace-pre-wrap">
           {formatAddress(o.shippingInfo?.address)}
         </span>
@@ -266,18 +273,39 @@ export const orderTable: TableLayout<Order> = {
   ],
 };
 
-// ----- Collections -----
-export const collectionTable: TableLayout<Collection> = {
-  query: {
-    select: ["name", "slug", "description"],
-  },
+//===========================================================================
+// Categories
+//===========================================================================
+export const categoryTable: TableLayout<{
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+}> = {
+  query: { select: ["id", "name", "slug", "description"] },
   columns: [
-    { id: "name", label: "Name", render: (row: Collection) => row.name },
-    { id: "slug", label: "Slug", render: (row: Collection) => row.slug },
+    { id: "name", label: "Name", render: (row) => row.name },
+    { id: "slug", label: "Slug", render: (row) => row.slug },
     {
       id: "description",
       label: "Description",
-      render: (row: Collection) => row.description?.slice(0, 50) + "...",
+      render: (row) => row.description?.slice(0, 50) + "...",
+    },
+  ],
+};
+
+//===========================================================================
+// Collections
+//===========================================================================
+export const collectionTable: TableLayout<Collection> = {
+  query: { select: ["name", "slug", "description"] },
+  columns: [
+    { id: "name", label: "Name", render: (row) => row.name },
+    { id: "slug", label: "Slug", render: (row) => row.slug },
+    {
+      id: "description",
+      label: "Description",
+      render: (row) => row.description?.slice(0, 50) + "...",
     },
   ],
 };
