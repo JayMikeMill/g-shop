@@ -2,14 +2,18 @@
 import dotenv from "dotenv";
 import path from "path";
 
-// Load .env files based on NODE_ENV
-console.log("Environment:", process.env.NODE_ENV);
 export const isProduction = process.env.NODE_ENV?.trim() === "production";
 
 if (isProduction) {
-  dotenv.config({ path: path.resolve(__dirname, "../../.env.production") });
+  dotenv.config({
+    quiet: true,
+    path: path.resolve(__dirname, "../../.env.production"),
+  });
 } else {
-  dotenv.config({ path: path.resolve(__dirname, "../../.env.development") });
+  dotenv.config({
+    quiet: true,
+    path: path.resolve(__dirname, "../../.env.development"),
+  });
 }
 
 // Import adapter types

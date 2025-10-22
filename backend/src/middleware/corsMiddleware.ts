@@ -5,8 +5,6 @@ const allowedOrigins = (process.env.FRONTEND_URLS || "")
   .map((s) => s.trim())
   .filter(Boolean);
 
-console.log("CORS allowed origins:", allowedOrigins);
-
 const corsMiddleware = cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (like curl, Postman, etc.)
