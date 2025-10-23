@@ -12,11 +12,11 @@ import { type CheckoutFormType } from "./CheckoutSchema";
 import { Button, Label } from "@components/ui";
 
 import ShippingForm from "./ShippingForm";
-import OrderSummary from "./OrderSummary";
 
 import StripePaymentForm, {
   type StripePaymentFormHandle,
 } from "./PaymentFormStripe";
+import CartContents from "@features/cart/CartContents";
 
 interface CheckoutFormProps {
   onSubmit: (order: Order, paymentMethod: any) => void;
@@ -93,19 +93,24 @@ export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
     <FormProvider {...methods}>
       <form
         onSubmit={methods.handleSubmit(handleSubmit)}
-        className="flex flex-col gap-md sm:gap-lg"
+        className="flex flex-col gap-md sm:gap-lg py-md sm:py-lg"
       >
-        <div className="bg-surface p-md rounded-md shadow-md">
-          <OrderSummary />
+        <div className="flex flex-col bg-surface p-md gap-lg rounded-md shadow-md">
+          <Label className="text-2xl pt-md text-center font-semibold w-full">
+            Order Summary
+          </Label>
+          <div className="flex flex-col gap-4 bg-surface">
+            <CartContents isSummary />
+          </div>
         </div>
         <div className="flex flex-col bg-surface p-md gap-lg rounded-md shadow-md">
-          <Label className="text-xl text-center font-semibold w-full">
+          <Label className="text-2xl pt-md text-center font-semibold w-full">
             Shipping Information
           </Label>
           <ShippingForm />
         </div>
         <div className="flex flex-col bg-surface p-md gap-lg rounded-md shadow-md">
-          <Label className="text-xl text-center font-semibold w-full">
+          <Label className="text-2xl pt-md text-center font-semibold w-full">
             Payment Information
           </Label>
           <DemoLabel />

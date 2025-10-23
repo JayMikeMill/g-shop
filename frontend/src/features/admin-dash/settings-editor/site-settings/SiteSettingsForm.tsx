@@ -8,6 +8,7 @@ import SiteSettingsSocialForm from "./SiteSettingsSocialForm";
 import SiteSettingsEcommerceForm from "./SiteSettingsEcommerceForm";
 import { AnimatedDropdownBox } from "@components/ui/custom/AnimatedDropdownBox";
 import type { SiteSettings } from "shared/settings";
+import { useSiteSettings } from "@app/hooks";
 import { Button } from "@components/ui";
 import { uploadImageURL } from "@utils/dataImagesProcessing";
 
@@ -20,14 +21,7 @@ interface Props {
 }
 
 const SiteSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
-  // settings.backgroundColor = "#F5F6F2"; // soft off-white for main background
-  // settings.backgroundAlt = "#E6E8DE"; // subtle light olive for cards/sections
-  // settings.foregroundColor = "#2B3A2F";
-  // settings.surfaceColor = "#FFFFFF"; // clean white for panels/modals
-  // settings.primaryColor = "#4B6330"; // muted military green for primary buttons/links
-  // settings.secondaryColor = "#6B8450"; // softer green for secondary buttons/accents
-  // settings.borderColor = "#D7D9C9"; // light earthy border
-  // settings.accentColor = "#9CBF88"; // lighter army green for highlights/buttons
+  const { fetchSettings } = useSiteSettings();
 
   const methods = useForm<SiteSettings>({
     //resolver: zodResolver(SiteSettingsSchema),
@@ -73,6 +67,7 @@ const SiteSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
 
   const handleSave = async (data: SiteSettings) => {
     onSave(data, uploadImagesAndGetURLs);
+    fetchSettings();
   };
 
   return (

@@ -45,8 +45,10 @@ export default function CartContents({
   className,
 }: CartContentsProps) {
   const navigate = useNavigate();
-  const { cart, totals, addItem, removeItem, removeCompletely } = useCart();
 
+  const { cart, getTotals, addItem, removeItem, removeCompletely } = useCart();
+
+  const totals = getTotals();
   const freeShipping = totals.shipping === 0;
 
   const cartItems = cart.items || [];
@@ -79,15 +81,17 @@ export default function CartContents({
           show: { transition: { staggerChildren: staggerDuration } },
         }}
       >
-        {totals.freeShippingDist > 0 && !isSummary && (
-          <div className="sticky text-lg top-0 z-10 p-md my-md bg-primary text-foregroundAlt text-center rounded-md">
-            <p>
-              Add{" "}
-              <Label className="font-bold">
-                ${toMajorUnit(totals.freeShippingDist).toFixed(2)}
-              </Label>{" "}
-              for free shipping!
-            </p>
+        {totals.freeShippingDist > 0 && (
+          <div className="sticky flex top-md z-10  items-center justify-center">
+            <div className="font-semibold w-2/3 p-md mb-lg text-lg border bg-surface border-accent text-foreground text-center rounded-md">
+              <p>
+                Add{" "}
+                <Label className="font-bold text-xl">
+                  ${toMajorUnit(totals.freeShippingDist).toFixed(2)}
+                </Label>{" "}
+                for free shipping!
+              </p>
+            </div>
           </div>
         )}
         <div>

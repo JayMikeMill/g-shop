@@ -115,6 +115,7 @@ const cartSlice = createSlice({
       }
       const totals = calculateCartTotals(items);
       state.cart.items = items as any;
+      state.cart.totalItems = totals.items;
       state.cart.subtotal = totals.subtotal;
       state.cart.total = totals.total;
       saveCart(state.cart as SafeType<Cart>);
@@ -132,6 +133,7 @@ const cartSlice = createSlice({
       );
       const totals = calculateCartTotals(filteredItems);
       state.cart.items = filteredItems;
+      state.cart.totalItems = totals.items;
       state.cart.subtotal = totals.subtotal;
       state.cart.total = totals.total;
       saveCart(state.cart as SafeType<Cart>);

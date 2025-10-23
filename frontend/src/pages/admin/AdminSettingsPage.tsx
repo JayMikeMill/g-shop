@@ -21,7 +21,6 @@ function GenericSettingsPage<T>({
   emptySettings: T;
 }) {
   const { settings } = useApi();
-  const { refreshSettings } = useSiteSettings();
   const [currentSettings, setCurrentSettings] = useState<T>(emptySettings);
   const [isFetching, setIsFetching] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -57,7 +56,6 @@ function GenericSettingsPage<T>({
         newSettings as AnySystemSettings
       );
       fetchSettings();
-      refreshSettings();
     } catch (err) {
       alert("Failed to save settings");
       console.error(err);

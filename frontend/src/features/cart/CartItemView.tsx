@@ -95,8 +95,8 @@ export default function CartItemView({
       </div>
 
       {/* Item total price */}
-      <div className="flex  flex-col items-center sm:flex-1">
-        <div className="flex flex-col sm:flex-row items-center sm:gap-md">
+      <div className="flex  flex-col items-center">
+        <div className="flex flex-col sm:flex-row items-center sm:gap-sm">
           <p className="text-md text-muted w-16 text-center line-through">
             ${toMajorUnit(ogPrice).toFixed(2)}
           </p>

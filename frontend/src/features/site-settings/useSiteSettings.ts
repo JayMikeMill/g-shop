@@ -1,27 +1,26 @@
 // src/hooks/useSettings.ts
-import { useEffect, useState, useCallback } from "react";
-import type { SiteSettings } from "shared/settings";
+import { useCallback } from "react";
+import { useAppSelector, useAppDispatch } from "@app/hooks";
+
 import { useApi } from "@app/hooks";
+import { setSiteSettings, setLoading } from "./siteSettingsSlice";
 import { applyThemeColors } from "./theme";
 
 export function useSiteSettings() {
   const { getSiteSettings } = useApi().settings;
-
-  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
+  const siteSettings = useAppSelector(
+    (state) => state.siteSettings.siteSettings
+  );
+  const loading = useAppSelector((state) => state.siteSettings.loading);
 
   // Refresh settings from API
-  const refreshSettings = useCallback(async () => {
-    setLoading(true);
+  const fetchSettings = useCallback(async () => {
+    dispatch(setLoading(true));
+    console.log("Fetching site settings from API...");
     try {
       const settings = await getSiteSettings();
-
-      if (settings) {
-        setSiteSettings(settings);
-      } else {
-        setSiteSettings(null);
-      }
-
+      dispatch(setSiteSettings(settings ?? null));
       applyThemeColors(
         {
           background: settings?.backgroundColor || "#ffffff",
@@ -44,16 +43,11 @@ export function useSiteSettings() {
         }
       );
     } catch {
-      setSiteSettings(null);
+      dispatch(setSiteSettings(null));
     } finally {
-      setLoading(false);
+      dispatch(setLoading(false));
     }
-  }, []);
+  }, [dispatch, getSiteSettings]);
 
-  // On first load: always fetch from API
-  useEffect(() => {
-    refreshSettings();
-  }, [refreshSettings]);
-
-  return { siteSettings, loading, refreshSettings };
+  return { siteSettings, loading, fetchSettings };
 }

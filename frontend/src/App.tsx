@@ -4,27 +4,18 @@ import SiteFooter from "@components/layout/SiteFooter";
 import AppRoutes from "./routes/AppRoutes";
 
 import { useSiteSettings } from "@features/site-settings/useSiteSettings";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function App() {
-  const { refreshSettings } = useSiteSettings();
-  const [loading, setLoading] = useState(true);
-
+  const { siteSettings, fetchSettings } = useSiteSettings();
   const location = useLocation();
   const adminPages = location.pathname.startsWith("/admin");
 
-  // Refresh settings once on first load
   useEffect(() => {
-    const loadSettings = async () => {
-      await refreshSettings(); // wait for settings to refresh
-      setLoading(false); // done loading
-      console.log("Site settings loaded.");
-    };
-    console.log("Loading site settings...");
-    loadSettings();
+    fetchSettings();
   }, []);
 
-  if (loading) {
+  if (!siteSettings) {
     return null;
   }
 

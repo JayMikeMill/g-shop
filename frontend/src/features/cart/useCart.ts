@@ -1,3 +1,4 @@
+import { get } from "./../../api/client";
 import { useAppDispatch, useAppSelector, useSiteSettings } from "@app/hooks";
 
 import {
@@ -16,21 +17,13 @@ export function useCart() {
   const { siteSettings } = useSiteSettings();
 
   // Memoize totals to avoid recalculating on every render
-  const totals = useMemo(
-    () =>
-      calculateFinalCartTotals(
-        cart.items ?? [],
-        siteSettings?.freeShippingThreshold ?? 0,
-        siteSettings?.flatShippingRate ?? 0,
-        siteSettings?.taxRate ?? 0
-      ),
-    [
-      cart.items,
-      siteSettings?.freeShippingThreshold,
-      siteSettings?.flatShippingRate,
-      siteSettings?.taxRate,
-    ]
-  );
+  const getTotals = () =>
+    calculateFinalCartTotals(
+      cart.items ?? [],
+      siteSettings?.freeShippingThreshold ?? 0,
+      siteSettings?.flatShippingRate ?? 0,
+      siteSettings?.taxRate ?? 0
+    );
 
   // Wrap dispatch calls with useCallback for stable references
   const addItem = useCallback(
@@ -47,7 +40,7 @@ export function useCart() {
   );
   const clear = useCallback(() => dispatch(clearCart()), [dispatch]);
 
-  return { cart, totals, addItem, removeItem, removeCompletely, clear };
+  return { cart, getTotals, addItem, removeItem, removeCompletely, clear };
 }
 
 // Calculate subtotal & total
@@ -57,6 +50,7 @@ const calculateFinalCartTotals = (
   flatRate: number,
   taxRate: number
 ) => {
+  console.log("Calculating cart totals...", freeThreshold);
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const subtotal = items.reduce(
