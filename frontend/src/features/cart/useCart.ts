@@ -1,11 +1,11 @@
-import { useAppDispatch, useAppSelector } from "@app/hooks";
+import { useAppDispatch, useAppSelector, useSiteSettings } from "@app/hooks";
+
 import {
   addToCart,
   removeFromCart,
   removeAllFromCart,
   clearCart,
   selectCart,
-  calculateCartTotals,
 } from "./cartSlice";
 import type { CartItem } from "shared/types";
 import { useMemo, useCallback } from "react";
@@ -13,11 +13,23 @@ import { useMemo, useCallback } from "react";
 export function useCart() {
   const dispatch = useAppDispatch();
   const cart = useAppSelector(selectCart);
+  const { siteSettings } = useSiteSettings();
 
   // Memoize totals to avoid recalculating on every render
   const totals = useMemo(
-    () => calculateCartTotals(cart.items ?? []),
-    [cart.items]
+    () =>
+      calculateFinalCartTotals(
+        cart.items ?? [],
+        siteSettings?.freeShippingThreshold ?? 0,
+        siteSettings?.flatShippingRate ?? 0,
+        siteSettings?.taxRate ?? 0
+      ),
+    [
+      cart.items,
+      siteSettings?.freeShippingThreshold,
+      siteSettings?.flatShippingRate,
+      siteSettings?.taxRate,
+    ]
   );
 
   // Wrap dispatch calls with useCallback for stable references
@@ -37,3 +49,38 @@ export function useCart() {
 
   return { cart, totals, addItem, removeItem, removeCompletely, clear };
 }
+
+// Calculate subtotal & total
+const calculateFinalCartTotals = (
+  items: CartItem[],
+  freeThreshold: number,
+  flatRate: number,
+  taxRate: number
+) => {
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+
+  const subtotal = items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+
+  // How much more the customer needs to get free shipping
+  const freeShippingDist = Math.max(freeThreshold - subtotal, 0);
+
+  // Shipping cost
+  const shipping = freeShippingDist > 0 ? flatRate : 0;
+
+  // Cart total
+  const tax = taxRate / 100;
+
+  const total = (tax > 0 ? subtotal + subtotal * tax : subtotal) + shipping;
+
+  return {
+    items: totalItems,
+    subtotal,
+    shipping,
+    freeShippingDist,
+    tax,
+    total,
+  };
+};

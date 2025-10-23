@@ -13,7 +13,7 @@ import ProductSearch from "@features/product-search/ProductSearch";
 export default function SiteHeader() {
   const navigate = useNavigate();
   const { user } = useUser(); // 👈 current user context
-  const { totals } = useCart(); // 👈 current cart contex
+  const { cart } = useCart(); // 👈 current cart contex
   const { siteSettings } = useSiteSettings();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -24,7 +24,7 @@ export default function SiteHeader() {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const cartItemsCount = totals.items;
+  const cartItemsCount = cart.totalItems || 0;
 
   const handleUserClick = () => {
     if (user) navigate("/account");

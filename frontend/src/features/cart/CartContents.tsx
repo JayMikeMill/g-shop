@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Button } from "@components/ui";
+import { Button, Label } from "@components/ui";
 import { useCart, useSiteSettings, useNavigate } from "@app/hooks";
 import { toMajorUnit } from "shared/utils";
 
@@ -46,26 +46,8 @@ export default function CartContents({
 }: CartContentsProps) {
   const navigate = useNavigate();
   const { cart, totals, addItem, removeItem, removeCompletely } = useCart();
-  const { siteSettings } = useSiteSettings();
 
-  const subTotal = totals.total;
-
-  // Shipping calculation
-  const freeThreshold = siteSettings?.freeShippingThreshold ?? 0;
-  const flatRate = siteSettings?.flatShippingRate ?? 0;
-
-  // How much more the customer needs to get free shipping
-  const freeShippingDistance = Math.max(freeThreshold - subTotal, 0);
-
-  // Shipping cost
-  const shipping = freeShippingDistance > 0 ? flatRate : 0;
-  const freeShipping = shipping === 0;
-
-  // Cart total
-  const taxRate =
-    isSummary && siteSettings?.taxRate ? siteSettings?.taxRate / 100 : 0;
-
-  const cartTotal = taxRate > 0 ? subTotal + subTotal * taxRate : subTotal;
+  const freeShipping = totals.shipping === 0;
 
   const cartItems = cart.items || [];
 
@@ -97,6 +79,17 @@ export default function CartContents({
           show: { transition: { staggerChildren: staggerDuration } },
         }}
       >
+        {totals.freeShippingDist > 0 && !isSummary && (
+          <div className="sticky text-lg top-0 z-10 p-md my-md bg-primary text-foregroundAlt text-center rounded-md">
+            <p>
+              Add{" "}
+              <Label className="font-bold">
+                ${toMajorUnit(totals.freeShippingDist).toFixed(2)}
+              </Label>{" "}
+              for free shipping!
+            </p>
+          </div>
+        )}
         <div>
           {cartItems.map((item, i) => (
             <motion.div
@@ -131,18 +124,23 @@ export default function CartContents({
           <span>Shipping</span>
           <span className={`${freeShipping ? "font-bold text-green-700" : ""}`}>
             {" "}
-            {freeShipping ? "FREE!" : toMajorUnit(shipping).toFixed(2)}
+            {freeShipping ? "FREE!" : toMajorUnit(totals.shipping).toFixed(2)}
           </span>
         </div>
-        {taxRate > 0 && (
+        {isSummary && (
           <div className="flex justify-between font-semibold text-textSecondary">
             <span>Tax</span>
-            <span>${toMajorUnit(totals.total * taxRate).toFixed(2)}</span>
+            <span>${toMajorUnit(totals.subtotal * totals.tax).toFixed(2)}</span>
           </div>
         )}
         <div className="flex justify-between font-bold text-xl text-text">
           <span>Total</span>
-          <span>${toMajorUnit(cartTotal).toFixed(2)}</span>
+          <span>
+            $
+            {toMajorUnit(
+              isSummary ? totals.total : totals.subtotal + totals.shipping
+            ).toFixed(2)}
+          </span>
         </div>
         {!isSummary && (
           <Button

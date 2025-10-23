@@ -7,15 +7,16 @@ import type { Cart, CartItem, SafeType } from "shared/types";
 // Load cart from localStorage
 const loadCart = (): Cart => {
   if (typeof window === "undefined")
-    return { items: [], subtotal: 0, total: 0 };
+    return { items: [], totalItems: 0, subtotal: 0, total: 0 };
 
   const stored = localStorage.getItem("cart");
-  if (!stored) return { items: [], subtotal: 0, total: 0 };
+  if (!stored) return { items: [], totalItems: 0, subtotal: 0, total: 0 };
 
   const parsed = JSON.parse(stored) as Cart;
 
   return {
     items: parsed.items ?? [],
+    totalItems: parsed.totalItems ?? 0,
     subtotal: parsed.subtotal ?? 0,
     total: parsed.total ?? 0,
   };
@@ -32,7 +33,9 @@ export const calculateCartTotals = (items: CartItem[]) => {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+
   const total = subtotal; // add taxes/shipping/discounts here if needed
+
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   return { subtotal, total, items: totalItems };
 };
@@ -55,7 +58,7 @@ const cartSlice = createSlice({
       const item = action.payload;
 
       // Work on a local items array (never null)
-      const items: CartItem[] = state.cart.items
+      const items: SafeType<CartItem[]> = state.cart.items
         ? [...state.cart.items]
         : ([] as any);
 
@@ -87,7 +90,8 @@ const cartSlice = createSlice({
 
       // Recalculate totals
       const totals = calculateCartTotals(items);
-      state.cart.items = items as any;
+      state.cart.items = items;
+      state.cart.totalItems = totals.items;
       state.cart.subtotal = totals.subtotal;
       state.cart.total = totals.total;
 
@@ -119,7 +123,7 @@ const cartSlice = createSlice({
     removeAllFromCart: (state, action: PayloadAction<CartItem>) => {
       console.log("removeCompletely action called");
       const item = action.payload;
-      const items: CartItem[] = state.cart.items
+      const items: SafeType<CartItem[]> = state.cart.items
         ? [...state.cart.items]
         : ([] as any);
       const filteredItems = items.filter(
@@ -127,14 +131,14 @@ const cartSlice = createSlice({
           !(c.productId === item.productId && c.variantId === item.variantId)
       );
       const totals = calculateCartTotals(filteredItems);
-      state.cart.items = filteredItems as any;
+      state.cart.items = filteredItems;
       state.cart.subtotal = totals.subtotal;
       state.cart.total = totals.total;
       saveCart(state.cart as SafeType<Cart>);
     },
 
     clearCart: (state) => {
-      state.cart = { items: [], subtotal: 0, total: 0 };
+      state.cart = { items: [], totalItems: 0, subtotal: 0, total: 0 };
       localStorage.removeItem("cart");
     },
   },

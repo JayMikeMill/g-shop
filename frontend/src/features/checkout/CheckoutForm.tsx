@@ -24,7 +24,7 @@ interface CheckoutFormProps {
 export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const { cart, totals } = useCart();
+  const { cart } = useCart();
 
   const methods = useForm<CheckoutFormType>({
     defaultValues: {
@@ -80,7 +80,7 @@ export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
     }
   };
 
-  if (totals.items === 0) {
+  if (cart.totalItems === 0) {
     return (
       <div className="bg-surface p-md rounded-md shadow-md h-64 items-center justify-center flex">
         <div className="mx-auto text-center text-2xl">
