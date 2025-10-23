@@ -77,7 +77,7 @@ export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
 
           {/* Slide-out cart panel */}
           <motion.div
-            className={`fixed top-0 right-0 h-full w-full sm:w-[600px] 
+            className={`fixed top-0 right-0 flex flex-col h-full sm:w-[600px] 
               flex flex-col bg-surface shadow-xl rounded-none sm:rounded-l-lg`}
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
@@ -88,7 +88,12 @@ export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
               <span className="text-xl font-semibold px-md">Shopping Cart</span>
               <XButton className="self-end p-lg" onClick={handleClose} />
             </div>
-            <CartContents onProceedToCheckout={handleClose} isSummary={false} />
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <CartContents
+                onProceedToCheckout={handleClose}
+                isSummary={false}
+              />
+            </div>
           </motion.div>
         </div>
       )}

@@ -35,7 +35,7 @@ export default function CartItemView({
       {!readOnly && removeCompletely && (
         <Button
           variant="bare"
-          className="absolute top-2 right-2 p-1"
+          className="absolute top-0 right-0 p-1"
           onClick={() => removeCompletely(item)}
           aria-label={`Remove ${name} from cart`}
         >
@@ -88,7 +88,7 @@ export default function CartItemView({
         ) : (
           <div className="flex flex-row items-center h-9">
             <span className="flex-none justify-center text-center text-lg font-semibold px-2">
-              x{item.quantity}
+              {`$${toMajorUnit(item.product?.price ?? 0).toFixed(2)} x ${item.quantity}`}
             </span>
           </div>
         )}

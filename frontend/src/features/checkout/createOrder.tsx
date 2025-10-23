@@ -11,15 +11,17 @@ import {
 export async function createOrder(
   cart: Cart,
   shippingInfo: ShippingInfo
-): Promise<Order | null> {
+): Promise<{
+  order: Order | null;
+  error: "ADDRESS_VERIFICATION_FAILED" | null;
+}> {
   try {
     shippingInfo = await verifyAddress(shippingInfo);
   } catch (error) {
-    console.error("Error verifying address:", error);
-    return null;
-  } finally {
-    console.log("Address verified with EasyPost:", shippingInfo.address);
+    return { order: null, error: "ADDRESS_VERIFICATION_FAILED" };
   }
+
+  console.log("Address verified with EasyPost:", shippingInfo.address);
 
   // Calculate order totals
   const tax = cart.total * 0.065;
@@ -28,7 +30,7 @@ export async function createOrder(
 
   console.log("Creating order with totals:", { tax, shippingCost, total });
   // Return Order object
-  return {
+  const order: Order = {
     tax: tax,
     shippingCost,
     total: total,
@@ -57,6 +59,8 @@ export async function createOrder(
     },
     invoices: [{ createdAt: new Date(), invoiceNumber: `INV-${Date.now()}` }],
   };
+
+  return { order, error: null };
 }
 
 async function verifyAddress(

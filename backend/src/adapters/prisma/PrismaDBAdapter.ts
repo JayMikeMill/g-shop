@@ -4,9 +4,11 @@ import { createAdapters } from "./PrismaCrudApapters";
 
 import { DatabaseDomainKeys } from "shared/interfaces";
 import { VERBOSE_LOGGING } from "@config";
+
 //==================================================
 // PrismaDBAdapter
 //==================================================
+
 const DatabaseURL = process.env.DATABASE_URL || "(not set)";
 
 export class PrismaDBAdapter implements DBAdapter {
@@ -52,7 +54,7 @@ export class PrismaDBAdapter implements DBAdapter {
         );
         return await callback(txAdapter);
       },
-      { timeout: 20000 }
+      { timeout: 50000 }
     );
   }
 

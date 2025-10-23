@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Button } from "@components/ui";
-import { useCart, useNavigate } from "@app/hooks";
+import { useCart, useSiteSettings, useNavigate } from "@app/hooks";
 import { toMajorUnit } from "shared/utils";
 
 import CartItemView from "./CartItemView";
@@ -46,6 +46,27 @@ export default function CartContents({
 }: CartContentsProps) {
   const navigate = useNavigate();
   const { cart, totals, addItem, removeItem, removeCompletely } = useCart();
+  const { siteSettings } = useSiteSettings();
+
+  const subTotal = totals.total;
+
+  // Shipping calculation
+  const freeThreshold = siteSettings?.freeShippingThreshold ?? 0;
+  const flatRate = siteSettings?.flatShippingRate ?? 0;
+
+  // How much more the customer needs to get free shipping
+  const freeShippingDistance = Math.max(freeThreshold - subTotal, 0);
+
+  // Shipping cost
+  const shipping = freeShippingDistance > 0 ? flatRate : 0;
+  const freeShipping = shipping === 0;
+
+  // Cart total
+  const taxRate =
+    isSummary && siteSettings?.taxRate ? siteSettings?.taxRate / 100 : 0;
+
+  const cartTotal = taxRate > 0 ? subTotal + subTotal * taxRate : subTotal;
+
   const cartItems = cart.items || [];
 
   const handleCheckout = () => {
@@ -93,6 +114,8 @@ export default function CartContents({
           ))}
         </div>
       </motion.div>
+
+      {/* Totals and checkout button */}
       <motion.div
         initial={!isSummary ? { y: 300, opacity: 0 } : {}}
         animate={!isSummary ? { y: 0, opacity: 1 } : {}}
@@ -106,14 +129,26 @@ export default function CartContents({
         </div>
         <div className="flex justify-between font-semibold text-textSecondary">
           <span>Shipping</span>
-          <span>FREE</span>
+          <span className={`${freeShipping ? "font-bold text-green-700" : ""}`}>
+            {" "}
+            {freeShipping ? "FREE!" : toMajorUnit(shipping).toFixed(2)}
+          </span>
         </div>
+        {taxRate > 0 && (
+          <div className="flex justify-between font-semibold text-textSecondary">
+            <span>Tax</span>
+            <span>${toMajorUnit(totals.total * taxRate).toFixed(2)}</span>
+          </div>
+        )}
         <div className="flex justify-between font-bold text-xl text-text">
           <span>Total</span>
-          <span>${toMajorUnit(totals.total).toFixed(2)}</span>
+          <span>${toMajorUnit(cartTotal).toFixed(2)}</span>
         </div>
         {!isSummary && (
-          <Button onClick={handleCheckout} className="self-center  mt-sm">
+          <Button
+            onClick={handleCheckout}
+            className="h-12 w-64 self-center mt-md font-semibold text-xl"
+          >
             Proceed to Checkout
           </Button>
         )}

@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 
 import type { Order, ShippingInfo } from "shared/types";
@@ -9,23 +9,27 @@ import { createOrder } from "./createOrder";
 //import { zodResolver } from "@hookform/resolvers/zod";
 import { type CheckoutFormType } from "./CheckoutSchema";
 
-import { Button } from "@components/ui";
+import { Button, Label } from "@components/ui";
+
 import ShippingForm from "./ShippingForm";
 import OrderSummary from "./OrderSummary";
-import StripePaymentForm from "./PaymentFormStripe";
-import type { StripePaymentFormHandle } from "./PaymentFormStripe";
-import { Label } from "@radix-ui/react-label";
+
+import StripePaymentForm, {
+  type StripePaymentFormHandle,
+} from "./PaymentFormStripe";
 
 interface CheckoutFormProps {
   onSubmit: (order: Order, paymentMethod: any) => void;
 }
 export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
-  const { cart } = useCart();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const { cart, totals } = useCart();
 
   const methods = useForm<CheckoutFormType>({
     defaultValues: {
       shippingInfo: {
-        address: {},
+        address: demoAddress,
       },
       paymentMethod: {},
     },
@@ -38,11 +42,22 @@ export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
     console.log("Checking out with data:", data);
 
     try {
-      const newOrder = await createOrder(
+      const { order: newOrder, error } = await createOrder(
         cart,
         data.shippingInfo as ShippingInfo
       );
 
+      if (error) {
+        if (error === "ADDRESS_VERIFICATION_FAILED") {
+          setErrorMessage(
+            "Address verification failed. Please check your shipping address."
+          );
+        } else {
+          setErrorMessage("Error creating order: " + error);
+          throw new Error(error);
+        }
+        return;
+      }
       if (!newOrder) throw new Error("Order creation failed");
 
       console.log("Order created:", newOrder);
@@ -65,11 +80,20 @@ export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
     }
   };
 
+  if (totals.items === 0) {
+    return (
+      <div className="bg-surface p-md rounded-md shadow-md h-64 items-center justify-center flex">
+        <div className="mx-auto text-center text-2xl">
+          <p>Your cart is empty.</p>
+        </div>
+      </div>
+    );
+  }
   return (
     <FormProvider {...methods}>
       <form
         onSubmit={methods.handleSubmit(handleSubmit)}
-        className="flex flex-col gap-lg"
+        className="flex flex-col gap-md sm:gap-lg"
       >
         <div className="bg-surface p-md rounded-md shadow-md">
           <OrderSummary />
@@ -80,11 +104,53 @@ export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
           </Label>
           <ShippingForm />
         </div>
-        <StripePaymentForm formRef={stripeFormRef} />
-        <Button type="submit" className="btn btn-primary mt-4">
-          Place Order
-        </Button>
+        <div className="flex flex-col bg-surface p-md gap-lg rounded-md shadow-md">
+          <Label className="text-xl text-center font-semibold w-full">
+            Payment Information
+          </Label>
+          <DemoLabel />
+          <StripePaymentForm formRef={stripeFormRef} />
+          {errorMessage && (
+            <div className="text-red-600 text-center">{errorMessage}</div>
+          )}
+
+          <Button
+            type="submit"
+            className="h-12 btn btn-primary text-xl font-semibold"
+          >
+            Checkout
+          </Button>
+        </div>
       </form>
     </FormProvider>
+  );
+}
+
+// demo address
+const demoAddress = {
+  name: "John Doe",
+  email: "john.doe@example.com",
+  phone: "555-555-5555",
+  street1: "417 Montgomery Street",
+  street2: "5th Floor",
+  city: "San Francisco",
+  state: "CA",
+  postalCode: "94104",
+  country: "US",
+};
+// demo label code
+function DemoLabel() {
+  return (
+    <Label className="text-md text-center  w-full">
+      DEMO: Use card number
+      <br />
+      <Label className="font-bold">5555 5555 5555 4444</Label>
+      <br />
+      with any future date and CVC
+      <br />
+      (note: address is verified)
+      <br />
+      view the order in the administrator dashboard after checkout.
+    </Label>
   );
 }
