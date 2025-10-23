@@ -24,8 +24,6 @@ export * from "./primitives/Label";
 export * from "./primitives/Button";
 export * from "./primitives/Input";
 export * from "./primitives/Textarea";
-export * from "./primitives/Select";
 export * from "./primitives/alert";
-export * from "./primitives/Tooltip";
 export * from "./primitives/Toggle";
 export * from "./primitives/Image";

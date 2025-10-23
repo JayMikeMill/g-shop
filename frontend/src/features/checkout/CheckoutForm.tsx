@@ -17,6 +17,7 @@ import StripePaymentForm, {
   type StripePaymentFormHandle,
 } from "./PaymentFormStripe";
 import CartContents from "@features/cart/CartContents";
+import CartTotalsView from "@features/cart/CartTotalsView";
 
 interface CheckoutFormProps {
   onSubmit: (order: Order, paymentMethod: any) => void;
@@ -109,11 +110,12 @@ export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
           </Label>
           <ShippingForm />
         </div>
-        <div className="flex flex-col bg-surface p-md gap-lg rounded-md shadow-md">
+        <div className="flex flex-col bg-surface p-md gap-md rounded-md shadow-md">
           <Label className="text-2xl pt-md text-center font-semibold w-full">
             Payment Information
           </Label>
           <DemoLabel />
+          <CartTotalsView showTax className="pb-0" />
           <StripePaymentForm formRef={stripeFormRef} />
           {errorMessage && (
             <div className="text-red-600 text-center">{errorMessage}</div>
@@ -153,9 +155,7 @@ function DemoLabel() {
       <br />
       with any future date and CVC
       <br />
-      (note: address is verified)
-      <br />
-      view the order in the administrator dashboard after checkout.
+      view the order in the admin-dashboard.
     </Label>
   );
 }

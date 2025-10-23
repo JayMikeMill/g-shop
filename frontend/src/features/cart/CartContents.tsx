@@ -49,8 +49,6 @@ export default function CartContents({
 
   const { cart, totals, addItem, removeItem, removeCompletely } = useCart();
 
-  const freeShipping = totals.shipping === 0;
-
   const cartItems = cart.items || [];
 
   const handleCheckout = () => {

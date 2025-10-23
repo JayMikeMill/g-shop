@@ -1,6 +1,5 @@
 import { toMajorUnit } from "shared/utils";
 import { useCart } from "@app/hooks";
-import { Label } from "@components/ui";
 
 export interface CartTotalsViewProps {
   showTax?: boolean;
@@ -32,16 +31,13 @@ export default function CartTotalsView({
       {showTax && (
         <div className="flex justify-between font-semibold text-textSecondary">
           <span>Tax</span>
-          <span>${toMajorUnit(totals.subtotal * totals.tax).toFixed(2)}</span>
+          <span>${toMajorUnit(totals.tax).toFixed(2)}</span>
         </div>
       )}
       <div className="flex justify-between font-bold text-xl text-text">
         <span>Total</span>
         <span>
-          $
-          {toMajorUnit(
-            showTax ? totals.total : totals.subtotal + totals.shipping
-          ).toFixed(2)}
+          ${toMajorUnit(showTax ? totals.total : totals.subtotal).toFixed(2)}
         </span>
       </div>
     </div>

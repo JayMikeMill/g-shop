@@ -1,6 +1,5 @@
-import { Image, Button, TagBox } from "@components/ui";
+import { Image, Label, Button, TagBox } from "@components/ui";
 import { Minus, Plus, Trash2 } from "lucide-react";
-import { Label } from "@radix-ui/react-label";
 import { parseVariantOptions, toMajorUnit } from "shared/utils";
 import type { CartItem as CartItemViewType } from "shared/types";
 

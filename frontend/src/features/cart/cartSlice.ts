@@ -56,8 +56,8 @@ const calculateFinalCartTotals = (
     flatRate,
     taxRate,
   });
-  const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
+  const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const freeShippingDist = Math.max(freeThreshold - subtotal, 0);
   const shipping = freeShippingDist > 0 ? flatRate : 0;
   const tax = (taxRate / 100) * subtotal;
@@ -122,7 +122,7 @@ const cartSlice = createSlice({
       else {
         const price = item.variant?.price ?? item.product?.price ?? 0;
         items.push({
-          id: item.id ?? crypto.randomUUID(),
+          id: item.id ?? undefined,
           productId: item.productId!,
           variantId: item.variantId ?? null,
           product: item.product!,
