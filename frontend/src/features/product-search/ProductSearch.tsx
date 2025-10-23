@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useDataApi } from "@api";
+import { useDataApi } from "@app/hooks";
 import ProductSearchBar from "@features/product-search/ProductSearchBar";
 import ProductSearchOverlay from "@features/product-search/ProductSearchOverlay";
 import { Search } from "lucide-react";

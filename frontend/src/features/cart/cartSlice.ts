@@ -96,31 +96,40 @@ const cartSlice = createSlice({
 
     removeFromCart: (state, action: PayloadAction<CartItem>) => {
       const item = action.payload;
-
-      // Work on a local items array
       const items: CartItem[] = state.cart.items
         ? [...state.cart.items]
         : ([] as any);
-
       const existingIndex = items.findIndex(
         (c) => c.productId === item.productId && c.variantId === item.variantId
       );
-
       if (existingIndex === -1) return;
-
       const quantityToRemove = item.quantity ?? 1;
       if (items[existingIndex].quantity > quantityToRemove) {
         items[existingIndex].quantity -= quantityToRemove;
       } else {
         items.splice(existingIndex, 1);
       }
-
-      // Recalculate totals
       const totals = calculateCartTotals(items);
       state.cart.items = items as any;
       state.cart.subtotal = totals.subtotal;
       state.cart.total = totals.total;
+      saveCart(state.cart as SafeType<Cart>);
+    },
 
+    removeAllFromCart: (state, action: PayloadAction<CartItem>) => {
+      console.log("removeCompletely action called");
+      const item = action.payload;
+      const items: CartItem[] = state.cart.items
+        ? [...state.cart.items]
+        : ([] as any);
+      const filteredItems = items.filter(
+        (c) =>
+          !(c.productId === item.productId && c.variantId === item.variantId)
+      );
+      const totals = calculateCartTotals(filteredItems);
+      state.cart.items = filteredItems as any;
+      state.cart.subtotal = totals.subtotal;
+      state.cart.total = totals.total;
       saveCart(state.cart as SafeType<Cart>);
     },
 
@@ -139,5 +148,6 @@ export const selectCartItems = (state: { cart: CartState }) =>
 
 // -------------------- Exports --------------------
 
-export const { addToCart, removeFromCart, clearCart } = cartSlice.actions;
+export const { addToCart, removeFromCart, removeAllFromCart, clearCart } =
+  cartSlice.actions;
 export default cartSlice.reducer;

@@ -2,6 +2,7 @@ import { useAppDispatch, useAppSelector } from "@app/hooks";
 import {
   addToCart,
   removeFromCart,
+  removeAllFromCart,
   clearCart,
   selectCart,
   calculateCartTotals,
@@ -28,7 +29,11 @@ export function useCart() {
     (item: CartItem) => dispatch(removeFromCart(item)),
     [dispatch]
   );
+  const removeCompletely = useCallback(
+    (item: CartItem): any => dispatch(removeAllFromCart(item)),
+    [dispatch]
+  );
   const clear = useCallback(() => dispatch(clearCart()), [dispatch]);
 
-  return { cart, totals, addItem, removeItem, clear };
+  return { cart, totals, addItem, removeItem, removeCompletely, clear };
 }

@@ -1,5 +1,5 @@
 import ProductCardList from "@features/products/ProductCardList";
-import { useDataApi } from "@api";
+import { useDataApi } from "@app/hooks";
 
 export default function HomePage() {
   const { products: apiProducts } = useDataApi();

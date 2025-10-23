@@ -3,7 +3,7 @@
 // Supports loading state, filtering, and ordering
 
 import ProductCardList from "@features/products/ProductCardList";
-import { useDataApi } from "@api";
+import { useDataApi } from "@app/hooks";
 import { useParams, useLocation } from "react-router-dom";
 
 export default function CollectionPage() {

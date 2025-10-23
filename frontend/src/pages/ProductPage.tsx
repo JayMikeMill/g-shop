@@ -4,9 +4,7 @@ import { useState } from "react";
 import type { ProductVariant } from "shared/types";
 
 // Cart state management
-import { useCart } from "@features/cart/useCart";
-
-import { useDataApi } from "@api";
+import { useCart, useDataApi } from "@app/hooks";
 
 import ProductOptionSelector from "@features/products/ProductOptionsSelector";
 import ProductImagesViewer from "@features/products/ProductImagesViewer";

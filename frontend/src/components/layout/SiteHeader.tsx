@@ -6,9 +6,7 @@ import { useState } from "react";
 import SlideOutCart from "@features/cart/SlideOutCart";
 import SiteMenu from "./SiteMenu";
 import { Button, Image } from "@components/ui";
-import { useUser } from "@features/user/useUser";
-import { useCart } from "@features/cart/useCart";
-import { useSiteSettings } from "@features/site-settings/useSiteSettings";
+import { useUser, useCart, useSiteSettings } from "@app/hooks";
 
 import ProductSearch from "@features/product-search/ProductSearch";
 

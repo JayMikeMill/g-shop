@@ -1,7 +1,7 @@
-import { useAppDispatch, useAppSelector } from "@app/hooks";
+import { useAppDispatch, useAppSelector } from "@app/useApp";
 import { setLoading, setUser, clearUser } from "./userSlice";
 import { useCallback, useEffect } from "react";
-import { useApi } from "@api";
+import { useApi } from "@app/hooks";
 import type { User } from "shared/types";
 import type { AuthApi, AuthResponse } from "shared/interfaces";
 

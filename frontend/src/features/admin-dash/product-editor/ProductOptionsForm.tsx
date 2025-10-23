@@ -8,7 +8,7 @@ import type {
   ProductOption,
   ProductOptionsPreset,
 } from "shared/types";
-import { useDataApi } from "@api";
+import { useDataApi } from "@app/hooks";
 
 const ProductOptionsForm: React.FC = () => {
   const { control, register, setValue, getValues } = useFormContext<Product>();

@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import CheckoutForm from "@features/checkout/CheckoutForm";
-import { useApi } from "@api";
-import { useCart } from "@features/cart/useCart";
+import { useCart, useApi, useNavigate } from "@app/hooks";
 import { CircleSpinner } from "@components/ui";
 
 export default function CheckoutPage() {

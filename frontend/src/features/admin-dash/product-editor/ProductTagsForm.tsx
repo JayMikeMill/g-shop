@@ -10,7 +10,7 @@ import {
   ColorPickerButton,
 } from "@components/ui";
 import type { Product, ProductTagPreset } from "shared/types";
-import { useDataApi } from "@api";
+import { useDataApi } from "@app/hooks";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 /* -------------------- ProductTagsEditor -------------------- */

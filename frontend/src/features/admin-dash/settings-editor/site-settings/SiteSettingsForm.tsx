@@ -70,6 +70,7 @@ const SiteSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
       bannerURL: versionedBannerURL,
     };
   };
+
   const handleSave = async (data: SiteSettings) => {
     onSave(data, uploadImagesAndGetURLs);
   };

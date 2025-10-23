@@ -1,10 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
 import { X, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
-import { useNavigate } from "react-router-dom";
-import { useUser } from "@features/user/useUser";
 import { Button, XButton } from "@components/ui";
-import { useDataApi } from "@api";
+import { useDataApi, useUser, useNavigate } from "@app/hooks";
 
 interface SiteMenuProps {
   isOpen: boolean;

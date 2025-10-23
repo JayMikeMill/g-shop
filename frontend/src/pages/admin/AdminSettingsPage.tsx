@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useApi } from "@api";
-import { useSiteSettings } from "@features/site-settings/useSiteSettings";
+import { useApi, useSiteSettings } from "@app/hooks";
 
 import { CircleSpinner, LoaderBar } from "@components/ui";
 import SiteSettingsForm from "@features/admin-dash/settings-editor/site-settings/SiteSettingsForm";

@@ -1,4 +1,4 @@
-import { useApi } from "@api";
+import { useApi } from "@app/hooks";
 import {
   type ShippingInfo,
   TransactionStatusKeys,

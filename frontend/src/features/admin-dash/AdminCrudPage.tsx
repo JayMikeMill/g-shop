@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Button, DynamicTable, Input, KebabMenu } from "@components/ui";
 import { Search } from "lucide-react";
 import type { CrudEditorInterface } from "@features/admin-dash/CrudEditorInterface";
-import { useDataApi } from "@api";
+import { useDataApi } from "@app/hooks";
 import type { TableLayout } from "./AdminTableLayouts";
 
 import { CrudEditorWrapper } from "./CrudEditorWrapper";

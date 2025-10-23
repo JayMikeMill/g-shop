@@ -1,6 +1,6 @@
 import type { Collection, Product, ProductImageSet } from "shared/types";
 import imageCompression from "browser-image-compression";
-import { useApi } from "@api";
+import { useApi } from "@app/hooks";
 
 const MAX_FILE_SIZE_MB = 2; // 2MB
 const MAX_PREVIEW_FILE_SIZE_MB = 0.2; // 200KB

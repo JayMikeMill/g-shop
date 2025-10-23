@@ -1,13 +1,6 @@
-// src/store/hooks.ts
-import {
-  type TypedUseSelectorHook,
-  useDispatch,
-  useSelector,
-} from "react-redux";
-import type { RootState, AppDispatch } from "@app/store";
-
-// Use instead of plain `useDispatch`
-export const useAppDispatch = () => useDispatch<AppDispatch>();
-
-// Use instead of plain `useSelector`
-export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+export { useNavigate } from "react-router-dom";
+export { useAppDispatch, useAppSelector } from "./useApp";
+export { useApi, useDataApi } from "@api";
+export { useCart } from "@features/cart/useCart";
+export { useUser } from "@features/user/useUser";
+export { useSiteSettings } from "@features/site-settings/useSiteSettings";

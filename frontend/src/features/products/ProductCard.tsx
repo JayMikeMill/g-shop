@@ -1,5 +1,4 @@
-import { useNavigate } from "react-router-dom";
-import { useCart } from "@features/cart/useCart";
+import { useCart, useNavigate } from "@app/hooks";
 import { Button, Image, TagBox } from "@components/ui";
 import type { Product } from "shared/types";
 import {

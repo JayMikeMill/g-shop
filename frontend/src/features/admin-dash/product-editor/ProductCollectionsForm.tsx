@@ -3,7 +3,7 @@ import { XButton, TagBox, AnimatedSelect } from "@components/ui";
 
 import type { Category, Collection, Product } from "shared/types";
 
-import { useDataApi } from "@api";
+import { useDataApi } from "@app/hooks";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 /* -------------------- ProductTagsEditor -------------------- */

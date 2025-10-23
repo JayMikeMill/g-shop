@@ -3,7 +3,7 @@ import { useForm, FormProvider } from "react-hook-form";
 
 import type { Order, ShippingInfo } from "shared/types";
 
-import { useCart } from "@features/cart/useCart";
+import { useCart } from "@app/hooks";
 import { createOrder } from "./createOrder";
 
 //import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,6 +14,7 @@ import ShippingForm from "./ShippingForm";
 import OrderSummary from "./OrderSummary";
 import StripePaymentForm from "./PaymentFormStripe";
 import type { StripePaymentFormHandle } from "./PaymentFormStripe";
+import { Label } from "@radix-ui/react-label";
 
 interface CheckoutFormProps {
   onSubmit: (order: Order, paymentMethod: any) => void;
@@ -68,10 +69,17 @@ export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
     <FormProvider {...methods}>
       <form
         onSubmit={methods.handleSubmit(handleSubmit)}
-        className="flex flex-col gap-6"
+        className="flex flex-col gap-lg"
       >
-        <OrderSummary />
-        <ShippingForm />
+        <div className="bg-surface p-md rounded-md shadow-md">
+          <OrderSummary />
+        </div>
+        <div className="flex flex-col bg-surface p-md gap-lg rounded-md shadow-md">
+          <Label className="text-xl text-center font-semibold w-full">
+            Shipping Information
+          </Label>
+          <ShippingForm />
+        </div>
         <StripePaymentForm formRef={stripeFormRef} />
         <Button type="submit" className="btn btn-primary mt-4">
           Place Order

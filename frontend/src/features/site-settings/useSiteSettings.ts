@@ -1,7 +1,7 @@
 // src/hooks/useSettings.ts
 import { useEffect, useState, useCallback } from "react";
 import type { SiteSettings } from "shared/settings";
-import { useApi } from "@api";
+import { useApi } from "@app/hooks";
 import { applyThemeColors } from "./theme";
 
 export function useSiteSettings() {
