@@ -2,13 +2,13 @@
 import { useNavigate } from "react-router-dom";
 import { ShoppingCart, Menu } from "lucide-react";
 import { useState } from "react";
-import { SITE } from "../../site-config";
 
 import SlideOutCart from "@features/cart/SlideOutCart";
 import SiteMenu from "./SiteMenu";
 import { Button, Image } from "@components/ui";
 import { useUser } from "@features/user/useUser";
 import { useCart } from "@features/cart/useCart";
+import { useSiteSettings } from "@features/site-settings/useSiteSettings";
 
 import ProductSearch from "@features/product-search/ProductSearch";
 
@@ -16,6 +16,7 @@ export default function SiteHeader() {
   const navigate = useNavigate();
   const { user } = useUser(); // 👈 current user context
   const { totals } = useCart(); // 👈 current cart contex
+  const { siteSettings } = useSiteSettings();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -51,7 +52,7 @@ export default function SiteHeader() {
           onClick={() => navigate("/")}
         >
           <Image
-            src={SITE.logo}
+            src={siteSettings?.logoURL}
             loader={false}
             alt="Logo"
             className="max-h-10"
@@ -71,10 +72,12 @@ export default function SiteHeader() {
           {user ? (
             <div
               onClick={handleUserClick}
-              className="w-9 h-9 flex items-center justify-center rounded-full bg-primary text-white font-bold cursor-pointer hover:opacity-90 transition"
+              className={`w-9 h-9 flex min-w-9 items-center justify-center 
+                rounded-full bg-primary text-white font-bold cursor-pointer
+                 hover:opacity-90 transition`}
               title={`${user.firstName} ${user.lastName}`}
             >
-              {user.firstName?.[0]?.toUpperCase() || "?"}
+              {user.email?.[0]?.toUpperCase() || "?"}
             </div>
           ) : (
             <Button variant="flatLink" onClick={() => navigate("/login")}>
@@ -85,7 +88,7 @@ export default function SiteHeader() {
           {/* Cart button */}
           <Button
             variant="flat"
-            className="w-12 h-full p-0 relative"
+            className="w-12 min-w-12 h-full p-0 relative"
             onClick={() => setIsCartOpen(true)}
           >
             <ShoppingCart className="text-text" size={28} />

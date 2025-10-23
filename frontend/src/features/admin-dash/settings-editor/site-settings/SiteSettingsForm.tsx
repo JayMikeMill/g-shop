@@ -9,10 +9,14 @@ import SiteSettingsEcommerceForm from "./SiteSettingsEcommerceForm";
 import { AnimatedDropdownBox } from "@components/ui/custom/AnimatedDropdownBox";
 import type { SiteSettings } from "shared/settings";
 import { Button } from "@components/ui";
+import { uploadImageURL } from "@utils/dataImagesProcessing";
 
 interface Props {
   settings: SiteSettings;
-  onSave: (settings: SiteSettings) => void;
+  onSave: (
+    settings: SiteSettings,
+    preSaveHook?: (settings: SiteSettings) => Promise<SiteSettings>
+  ) => void;
 }
 
 const SiteSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
@@ -35,7 +39,40 @@ const SiteSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
     methods.reset(settings);
   }, [settings]);
 
-  const handleSave = methods.handleSubmit(onSave);
+  const uploadImagesAndGetURLs = async (
+    data: SiteSettings
+  ): Promise<SiteSettings> => {
+    // Upload logo
+    const logoURL = data.logoURL
+      ? await uploadImageURL(data.logoURL, "site-logo.png")
+      : undefined;
+
+    // Upload banner
+    const bannerURL = data.bannerURL
+      ? await uploadImageURL(data.bannerURL, "site-banner.png")
+      : undefined;
+
+    // Append a lightweight version query to force the viewer to update only
+    // if overwritten the image with the same URL
+    const versionedLogoURL = logoURL ? `${logoURL}?v=${Date.now()}` : undefined;
+    const versionedBannerURL = bannerURL
+      ? `${bannerURL}?v=${Date.now()}`
+      : undefined;
+
+    console.log("Uploaded image URLs:", {
+      logoURL: versionedLogoURL,
+      bannerURL: versionedBannerURL,
+    });
+
+    return {
+      ...data,
+      logoURL: versionedLogoURL,
+      bannerURL: versionedBannerURL,
+    };
+  };
+  const handleSave = async (data: SiteSettings) => {
+    onSave(data, uploadImagesAndGetURLs);
+  };
 
   return (
     <FormProvider {...methods}>
@@ -55,13 +92,6 @@ const SiteSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
           >
             <SiteSettingsThemeForm />
           </AnimatedDropdownBox>
-          <AnimatedDropdownBox
-            className=" gap-lg p-md w-full"
-            title="Social Media Settings"
-            openInitially={true}
-          >
-            <SiteSettingsSocialForm />
-          </AnimatedDropdownBox>
         </div>
         <div className="flex flex-col w-full gap-sm sm:w-1/2 sm:gap-md">
           <AnimatedDropdownBox
@@ -73,9 +103,13 @@ const SiteSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
               <SiteSettingsEcommerceForm />
             </div>
           </AnimatedDropdownBox>
-          <button className="btn btn-primary mt-lg" type="submit">
-            Save Settings
-          </button>
+          <AnimatedDropdownBox
+            className=" gap-lg p-md w-full"
+            title="Social Media Settings"
+            openInitially={true}
+          >
+            <SiteSettingsSocialForm />
+          </AnimatedDropdownBox>
         </div>
       </form>
 
@@ -83,7 +117,7 @@ const SiteSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
 
       <form
         className="sticky flex justify-center bg-transparent bottom-0 h-20 py-md"
-        onSubmit={handleSave}
+        onSubmit={methods.handleSubmit(handleSave)}
       >
         <Button className="flex h-full w-auto text-xl" type="submit">
           Save Site Settings

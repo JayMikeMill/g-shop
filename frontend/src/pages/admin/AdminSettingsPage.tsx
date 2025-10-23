@@ -43,10 +43,16 @@ function GenericSettingsPage<T>({
     fetchSettings();
   }, [fetchSettings]);
 
-  const handleSave = async (newSettings: T) => {
+  const handleSave = async (
+    newSettings: T,
+    preSaveHook?: (settings: T) => Promise<T>
+  ) => {
     console.log("Saving settings:", settingsScope, newSettings);
     setIsSaving(true);
     try {
+      if (preSaveHook) {
+        newSettings = await preSaveHook(newSettings);
+      }
       await settings.updateSettings(
         settingsScope,
         newSettings as AnySystemSettings

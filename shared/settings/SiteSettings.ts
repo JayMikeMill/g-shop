@@ -7,9 +7,10 @@ export interface SiteSettings {
   siteName: string;
   siteDescription?: string;
   siteTagline?: string;
+  logoURL?: string;
   bannerURL?: string;
   bannerMessage?: string;
-  logoURL?: string;
+  aboutPageContent?: string;
 
   // ------------------
   // Theme & Appearance

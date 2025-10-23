@@ -27,9 +27,11 @@ const ProductSearchOverlay: React.FC<ProductSearchPanelProps> = ({
 
   return (
     <div className="absolute left-0 right-0 top-full w-full z-20">
-      {/* Mobile search bar: only visible on mobile, full width, above results */}
+      {/* Overlay background for click-outside close */}
+      <div className="fixed inset-0  z-10" onClick={onClose} />
 
-      <div className="flex flex-row  md:hidden w-full bg-white px-4 py-3 flex items-center">
+      {/* Mobile search bar: only visible on mobile, full width, above results */}
+      <div className="flex flex-row md:hidden w-full bg-white px-4 py-3 flex items-center relative z-20">
         <div className="relative w-full">
           <Input
             placeholder="Search products..."
@@ -43,34 +45,41 @@ const ProductSearchOverlay: React.FC<ProductSearchPanelProps> = ({
         </div>
         <XButton
           className="ml-2 text-gray-500 hover:bg-transparent"
+          style={{ fontSize: 32, lineHeight: 1 }}
           onClick={onClose}
         />
       </div>
       <div
-        className="bg-surface shadow-lg rounded-b w-full max-w-full mx-auto flex flex-col gap-md"
+        className="bg-surface shadow-lg rounded-b w-full max-w-full mx-auto flex flex-col pb-xl  relative z-20"
         style={{ maxHeight: "80vh", overflowY: "auto" }}
       >
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-2 md:flex">
-            <span className="font-semibold text-lg">Search Results</span>
-          </div>
-          {isLoading || foundProducts ? (
-            <ProductCardList
-              products={products}
-              isLoading={isLoading ?? false}
-              showAddToCartButton={false}
-              onProductClick={onClose}
-            />
-          ) : !foundProducts ? (
-            <div className="text-gray-400 text-center py-8">
-              No products found.
-            </div>
-          ) : (
-            <div className="text-gray-400 text-center py-8">
-              Type to search products...
-            </div>
-          )}
+        <div className="flex items-center justify-between mb-2 md:flex">
+          <span className="font-semibold text-lg px-md">Search Results</span>
+          <button
+            className="hidden md:inline text-gray-500 hover:text-gray-700"
+            style={{ fontSize: 32, lineHeight: 1 }}
+            onClick={onClose}
+          >
+            ✕
+          </button>
         </div>
+        {isLoading || foundProducts ? (
+          <ProductCardList
+            products={products}
+            isLoading={isLoading ?? false}
+            showAddToCartButton={false}
+            onProductClick={onClose}
+          />
+        ) : !foundProducts ? (
+          <div className="text-gray-400 text-center py-8">
+            No products found.
+          </div>
+        ) : (
+          <div className="text-gray-400 text-center py-8">
+            Type to search products...
+          </div>
+        )}
+
         {/* Pagination controls will be added here when implemented */}
       </div>
     </div>

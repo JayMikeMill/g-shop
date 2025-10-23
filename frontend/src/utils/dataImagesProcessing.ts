@@ -53,11 +53,12 @@ export async function processProductImages(
   };
 }
 
-const uploadBlobURL = async (blobURL: string, name: string) => {
+export const uploadImageURL = async (file: string, name: string) => {
   const { uploadImage } = useApi().storage;
 
-  const blob = await fetch(blobURL).then((r) => r.blob());
+  const blob = await fetch(file).then((r) => r.blob());
   const uploaded = await uploadImage(blob, name);
+
   return uploaded;
 };
 
@@ -77,15 +78,15 @@ export const uploadProductImages = async (item: Product): Promise<Product> => {
         const prefix = `${item.name}_image_${i}`;
 
         console.log("Uploading product image blobs...", item.images[i]);
-        item.images[i].main = await uploadBlobURL(
+        item.images[i].main = await uploadImageURL(
           item.images[i].main,
           `${prefix}_main`
         );
-        item.images[i].preview = await uploadBlobURL(
+        item.images[i].preview = await uploadImageURL(
           item.images[i].preview,
           `${prefix}_preview`
         );
-        item.images[i].thumbnail = await uploadBlobURL(
+        item.images[i].thumbnail = await uploadImageURL(
           item.images[i].thumbnail,
           `${prefix}_thumbnail`
         );
@@ -104,13 +105,13 @@ export const uploadCollectionImages = async (item: Collection) => {
   console.log("Uploading collection images...", item.images);
   try {
     if (item.images.banner?.startsWith("blob:")) {
-      item.images.banner = await uploadBlobURL(
+      item.images.banner = await uploadImageURL(
         item.images.banner,
         `${item.name}_banner`
       );
     }
     if (item.images.preview?.startsWith("blob:")) {
-      item.images.preview = await uploadBlobURL(
+      item.images.preview = await uploadImageURL(
         item.images.preview,
         `${item.name}_preview`
       );

@@ -173,24 +173,20 @@ const CollectionFields: React.FC<{
       </label>
       <div className="flex flex-row gap-2">
         {/* Preview Image */}
-        <ImageEditor<CollectionImageSet>
-          image={images}
+        <ImageEditor
+          image={images.preview ?? undefined}
           onImageChange={(img) =>
-            setValue("images.preview", img?.preview, { shouldDirty: true })
+            setValue("images.preview", img ?? null, { shouldDirty: true })
           }
-          getPreview={(img) => img?.preview || ""}
-          processor={CollectionImageProcessor.processPreview}
           emptyText="+ Add Preview Image"
           className="w-32 aspect-[1/1]"
         />
         {/* Banner Image */}
-        <ImageEditor<CollectionImageSet>
-          image={images}
+        <ImageEditor
+          image={images.banner ?? undefined}
           onImageChange={(img) =>
-            setValue("images.banner", img?.banner, { shouldDirty: true })
+            setValue("images.banner", img ?? null, { shouldDirty: true })
           }
-          getPreview={(img) => img?.banner || ""}
-          processor={CollectionImageProcessor.processBanner}
           emptyText="+ Add Banner Image"
           className="flex-1"
         />

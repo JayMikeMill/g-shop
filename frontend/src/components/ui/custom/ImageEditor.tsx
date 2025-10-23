@@ -336,20 +336,29 @@ export function MultiImageEditor<T extends Record<string, any>>(
   return <BaseImageEditor {...props} single={false} />;
 }
 
-export function ImageEditor<T extends Record<string, any>>({
-  image,
-  onImageChange,
+// Single image editor
+export function ImageEditor({
+  image: url,
+  onImageChange: onUrlChange,
   ...rest
-}: { image?: T; onImageChange: (image?: T) => void } & Omit<
-  ImageEditorProps<T>,
-  "images" | "onImagesChange" | "single"
+}: {
+  image?: string;
+  onImageChange: (url?: string) => void;
+} & Omit<
+  ImageEditorProps<any>,
+  "images" | "onImagesChange" | "single" | "processor" | "getPreview"
 >) {
   return (
     <BaseImageEditor
       {...rest}
-      images={image ? [image] : []}
-      onImagesChange={(arr) => onImageChange(arr[0])}
+      images={url ? [{ url }] : []}
+      onImagesChange={(arr) => onUrlChange(arr[0]?.url)}
       single
+      getPreview={(item) => item.url as string}
+      processor={async (file) => {
+        // Convert File to URL string
+        return { url: URL.createObjectURL(file) };
+      }}
     />
   );
 }

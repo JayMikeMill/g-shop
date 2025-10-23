@@ -48,7 +48,6 @@ class SystemSettingsService implements SystemSettingsApi {
     scope: SystemSettingsScope,
     settings: T
   ): Promise<T> {
-    console.log("Updating settings for scope:", scope, settings);
     const existing = await dbs.systemSettings.getOne({ scope });
 
     let updated: SystemSettings;

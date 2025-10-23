@@ -1,17 +1,19 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { SITE } from "../../site-config";
+import { useSiteSettings } from "@features/site-settings/useSiteSettings";
 
 const SiteFooter: React.FC = () => {
   const navigate = useNavigate();
-
+  const { siteSettings } = useSiteSettings();
   return (
     <footer className="bg-surface text-text font-sans py-8">
       <div className="max-w-[1200px] mx-auto px-8 flex flex-col md:flex-row justify-between gap-8 flex-wrap">
         {/* Logo / Info */}
         <div className="flex-1 min-w-[250px] mb-6 md:mb-0">
-          <h2 className="text-title font-bold mb-4">{SITE.name}</h2>
-          <p className="text-secondary">{SITE.slogan}</p>
+          <h2 className="text-title font-bold mb-4">
+            {siteSettings?.siteName}
+          </h2>
+          <p className="text-secondary">{siteSettings?.siteTagline}</p>
         </div>
 
         {/* Quick Links */}
@@ -63,7 +65,8 @@ const SiteFooter: React.FC = () => {
       </div>
 
       <div className="mt-8 pt-4 border-t border-secondary text-center text-muted text-sm">
-        &copy; {new Date().getFullYear()} {SITE.name} | All Rights Reserved
+        &copy; {new Date().getFullYear()} {siteSettings?.siteName} | All Rights
+        Reserved
       </div>
     </footer>
   );

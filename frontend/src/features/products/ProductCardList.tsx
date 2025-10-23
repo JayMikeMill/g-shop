@@ -16,7 +16,7 @@ export default function ProductCardList({
   onProductClick,
 }: ProductCardListProps) {
   return (
-    <div className="grid grid-cols-2 gap-sm sm:gap-md sm:grid-cols-3 md:grid-cols-4 lg:gap-lg px-sm sm:px-md">
+    <div className="grid grid-cols-2 gap-sm sm:gap-md sm:grid-cols-3 lg:grid-cols-4 lg:gap-lg px-sm sm:px-md">
       {isLoading
         ? Array.from({ length: 4 }).map((_, index) => (
             <ProductCardSkeleton key={index} />

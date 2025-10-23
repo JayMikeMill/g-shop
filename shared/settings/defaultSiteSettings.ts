@@ -5,11 +5,12 @@ export const defaultSiteSettings: SiteSettings = {
   // Basic Info
   // ------------------
   siteName: "My Online Store",
-  siteDescription: "The best place to buy amazing products.",
   siteTagline: "Quality products, fast delivery",
+  siteDescription: "The best place to buy amazing products.",
   logoURL: "/assets/logo.png",
   bannerURL: "/assets/banner.jpg",
   bannerMessage: "Free shipping on orders over $50!",
+  aboutPageContent: "Welcome to My Online Store.",
 
   // ------------------
   // Theme & Appearance
