@@ -1,4 +1,3 @@
-import { get } from "./../../api/client";
 import { useAppDispatch, useAppSelector, useSiteSettings } from "@app/hooks";
 
 import {
@@ -9,7 +8,7 @@ import {
   selectCart,
 } from "./cartSlice";
 import type { CartItem } from "shared/types";
-import { useMemo, useCallback } from "react";
+import { useCallback } from "react";
 
 export function useCart() {
   const dispatch = useAppDispatch();

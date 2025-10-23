@@ -55,6 +55,7 @@ export const emptyCategory: Category = {
 
 export const emptyCart: Cart = {
   items: [],
+  totalItems: 0,
   total: 0,
   subtotal: 0,
 };

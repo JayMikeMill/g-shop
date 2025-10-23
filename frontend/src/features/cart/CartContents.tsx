@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Button, Label } from "@components/ui";
-import { useCart, useSiteSettings, useNavigate } from "@app/hooks";
+import { useCart, useNavigate } from "@app/hooks";
 import { toMajorUnit } from "shared/utils";
 
 import CartItemView from "./CartItemView";
