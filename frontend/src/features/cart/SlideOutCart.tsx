@@ -88,7 +88,7 @@ export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
               <span className="text-xl font-semibold px-md">Shopping Cart</span>
               <XButton className="self-end p-lg" onClick={handleClose} />
             </div>
-            <CartContents onProceedToCheckout={handleClose} readOnly={false} />
+            <CartContents onProceedToCheckout={handleClose} isSummary={false} />
           </motion.div>
         </div>
       )}

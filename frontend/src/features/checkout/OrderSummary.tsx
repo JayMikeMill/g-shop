@@ -16,7 +16,7 @@ export default function OrderSummary() {
   return (
     <div className="flex flex-col gap-4 bg-surface">
       <h3 className="text-center text-xl font-semibold">Order Summary</h3>
-      <CartContents readOnly />
+      <CartContents isSummary />
     </div>
   );
 }

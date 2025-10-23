@@ -35,15 +35,13 @@ const itemVariants: Variants = {
 
 export interface CartContentsProps {
   onProceedToCheckout?: () => void;
-  readOnly?: boolean;
-  showTaxDetails?: boolean;
+  isSummary?: boolean;
   className?: string;
 }
 
 export default function CartContents({
   onProceedToCheckout,
-  readOnly = false,
-  showTaxDetails = false,
+  isSummary = false,
   className,
 }: CartContentsProps) {
   const navigate = useNavigate();
@@ -89,16 +87,16 @@ export default function CartContents({
                 addToCart={addItem}
                 removeFromCart={removeItem}
                 removeCompletely={removeCompletely}
-                readOnly={readOnly}
+                readOnly={isSummary}
               />
             </motion.div>
           ))}
         </div>
       </motion.div>
       <motion.div
-        initial={{ y: 300, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 300, opacity: 0 }}
+        initial={!isSummary ? { y: 300, opacity: 0 } : {}}
+        animate={!isSummary ? { y: 0, opacity: 1 } : {}}
+        exit={!isSummary ? { y: 300, opacity: 0 } : {}}
         transition={{ duration: animateDuraation / 2, ease: "easeOut" }}
         className="flex flex-col border-t bg-surface p-md"
       >
@@ -114,7 +112,7 @@ export default function CartContents({
           <span>Total</span>
           <span>${toMajorUnit(totals.total).toFixed(2)}</span>
         </div>
-        {!readOnly && (
+        {!isSummary && (
           <Button onClick={handleCheckout} className="self-center  mt-sm">
             Proceed to Checkout
           </Button>

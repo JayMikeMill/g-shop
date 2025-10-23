@@ -11,15 +11,15 @@ import {
   ShippingAdapterType,
 } from "@adapters/types";
 
-// Auth adapters
-import { AuthAdapter } from "./types/AuthAdapter";
-import { FirebaseAuthAdapter } from "./firebase/FirebaseAuthAdapter";
-import { JwtAuthAdapter } from "./auth/JwtAuthAdapter";
-
 // DB adapters
 import { DBAdapter } from "./types/DBAdapter";
 import { PrismaDBAdapter } from "./prisma/PrismaDBAdapter";
 import { FirebaseDBAdapter } from "./firebase/FirebaseDBAdapter";
+
+// Auth adapters
+import { AuthAdapter } from "./types/AuthAdapter";
+import { FirebaseAuthAdapter } from "./firebase/FirebaseAuthAdapter";
+import { JwtAuthAdapter } from "./auth/JwtAuthAdapter";
 
 // Payment adapters
 import { PaymentAdapter } from "./types/PaymentAdapter";

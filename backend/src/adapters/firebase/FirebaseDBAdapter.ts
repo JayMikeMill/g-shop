@@ -59,13 +59,14 @@ export class FirebaseDBAdapter implements DBAdapter {
     return callback(this);
   }
 
-  async healthCheck(): Promise<boolean> {
+  async healthCheck(): Promise<{ status: "OK" | "ERROR"; latencyMs: number }> {
+    const start = Date.now();
     try {
       // Simple read operation to check connectivity
-      return true;
+      return { status: "OK", latencyMs: Date.now() - start };
     } catch (error) {
       console.error("Firebase health check failed:", error);
-      return false;
+      return { status: "ERROR", latencyMs: Date.now() - start };
     }
   }
 }
