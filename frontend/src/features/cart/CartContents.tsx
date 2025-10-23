@@ -7,6 +7,7 @@ import CartItemView from "./CartItemView";
 const animateDuraation = 0.7;
 
 import type { Variants } from "framer-motion";
+import CartTotalsView from "./CartTotalsView";
 const itemVariants: Variants = {
   hidden: { opacity: 0, x: 300 },
   show: {
@@ -46,9 +47,8 @@ export default function CartContents({
 }: CartContentsProps) {
   const navigate = useNavigate();
 
-  const { cart, getTotals, addItem, removeItem, removeCompletely } = useCart();
+  const { cart, totals, addItem, removeItem, removeCompletely } = useCart();
 
-  const totals = getTotals();
   const freeShipping = totals.shipping === 0;
 
   const cartItems = cart.items || [];
@@ -120,32 +120,7 @@ export default function CartContents({
         transition={{ duration: animateDuraation / 2, ease: "easeOut" }}
         className="flex flex-col border-t bg-surface p-md"
       >
-        <div className="flex justify-between font-semibold text-text">
-          <span>Subtotal</span>
-          <span>${toMajorUnit(totals.subtotal).toFixed(2)}</span>
-        </div>
-        <div className="flex justify-between font-semibold text-textSecondary">
-          <span>Shipping</span>
-          <span className={`${freeShipping ? "font-bold text-green-700" : ""}`}>
-            {" "}
-            {freeShipping ? "FREE!" : toMajorUnit(totals.shipping).toFixed(2)}
-          </span>
-        </div>
-        {isSummary && (
-          <div className="flex justify-between font-semibold text-textSecondary">
-            <span>Tax</span>
-            <span>${toMajorUnit(totals.subtotal * totals.tax).toFixed(2)}</span>
-          </div>
-        )}
-        <div className="flex justify-between font-bold text-xl text-text">
-          <span>Total</span>
-          <span>
-            $
-            {toMajorUnit(
-              isSummary ? totals.total : totals.subtotal + totals.shipping
-            ).toFixed(2)}
-          </span>
-        </div>
+        <CartTotalsView showTax={isSummary} />
         {!isSummary && (
           <Button
             onClick={handleCheckout}

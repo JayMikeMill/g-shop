@@ -1,159 +1,188 @@
 // src/features/cart/cartSlice.ts
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { Cart, CartItem, SafeType } from "shared/types";
+import { emptyCart } from "shared/types/Empties";
 
-// -------------------- Helpers --------------------
+export interface CartTotals {
+  items: number;
+  subtotal: number;
+  shipping: number;
+  freeShippingDist: number;
+  tax: number;
+  total: number;
+}
 
-// Load cart from localStorage
-const loadCart = (): Cart => {
-  if (typeof window === "undefined")
-    return { items: [], totalItems: 0, subtotal: 0, total: 0 };
+interface CartState {
+  cart: SafeType<Cart>;
+  totals: CartTotals;
+}
 
-  const stored = localStorage.getItem("cart");
-  if (!stored) return { items: [], totalItems: 0, subtotal: 0, total: 0 };
+const emptyCartState: CartState = {
+  cart: emptyCart,
+  totals: {
+    items: 0,
+    subtotal: 0,
+    shipping: 0,
+    freeShippingDist: 0,
+    tax: 0,
+    total: 0,
+  },
+};
 
-  const parsed = JSON.parse(stored) as Cart;
+const loadCartState = (): CartState => {
+  if (typeof window === "undefined") return emptyCartState;
+  const stored = localStorage.getItem("cart_state");
+  if (!stored) return emptyCartState;
+  try {
+    return JSON.parse(stored) as CartState;
+  } catch {
+    return emptyCartState;
+  }
+};
+
+const saveCartState = (state: CartState) => {
+  localStorage.setItem("cart_state", JSON.stringify(state));
+};
+
+const calculateFinalCartTotals = (
+  items: CartItem[],
+  freeThreshold: number,
+  flatRate: number,
+  taxRate: number
+): CartTotals => {
+  console.log("Calculating cart totals with:", {
+    items,
+    freeThreshold,
+    flatRate,
+    taxRate,
+  });
+  const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+  const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
+  const freeShippingDist = Math.max(freeThreshold - subtotal, 0);
+  const shipping = freeShippingDist > 0 ? flatRate : 0;
+  const tax = (taxRate / 100) * subtotal;
+  const total = subtotal + tax + shipping;
 
   return {
-    items: parsed.items ?? [],
-    totalItems: parsed.totalItems ?? 0,
-    subtotal: parsed.subtotal ?? 0,
-    total: parsed.total ?? 0,
+    items: totalItems,
+    subtotal,
+    shipping,
+    freeShippingDist,
+    tax,
+    total,
   };
 };
 
-// Save cart to localStorage
-const saveCart = (cart: Cart) => {
-  localStorage.setItem("cart", JSON.stringify(cart));
-};
-
-// Calculate subtotal & total
-export const calculateCartTotals = (items: CartItem[]) => {
-  const subtotal = items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
+// Generic helper to update cart items + totals
+const updateCart = (
+  state: CartState,
+  items: CartItem[],
+  siteSettings: {
+    freeShippingThreshold: number;
+    flatShippingRate: number;
+    taxRate: number;
+  }
+) => {
+  const cartTotals = calculateFinalCartTotals(
+    items,
+    siteSettings.freeShippingThreshold,
+    siteSettings.flatShippingRate,
+    siteSettings.taxRate
   );
 
-  const total = subtotal; // add taxes/shipping/discounts here if needed
+  state.cart.items = items;
+  state.cart.totalItems = cartTotals.items;
+  state.cart.subtotal = cartTotals.subtotal;
+  state.cart.total = cartTotals.total;
+  state.totals = cartTotals;
 
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  return { subtotal, total, items: totalItems };
+  saveCartState(state);
 };
 
-// -------------------- Slice --------------------
-
-interface CartState {
-  cart: Cart;
-}
-
-const initialState: CartState = {
-  cart: loadCart(),
-};
+// ---------------- Slice ----------------
+const initialState: CartState =
+  typeof window !== "undefined" ? loadCartState() : emptyCartState;
 
 const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    addToCart: (state, action: PayloadAction<Partial<CartItem>>) => {
-      const item = action.payload;
-
-      // Work on a local items array (never null)
-      const items: SafeType<CartItem[]> = state.cart.items
-        ? [...state.cart.items]
-        : ([] as any);
-
-      // Check if item with same productId and variantId exists
-      // If so, increment quantity instead of adding new item
-      const existingIndex = items.findIndex(
-        (cartItem) =>
-          cartItem.productId === item.productId &&
-          (cartItem.variantId ?? null) === (item.variantId ?? null)
+    addToCart: (
+      state,
+      action: PayloadAction<{ item: Partial<CartItem>; siteSettings: any }>
+    ) => {
+      const { item, siteSettings } = action.payload;
+      const items = [...(state.cart.items ?? [])];
+      const index = items.findIndex(
+        (i) =>
+          i.productId === item.productId &&
+          (i.variantId ?? null) === (item.variantId ?? null)
       );
-
-      if (existingIndex !== -1) {
-        items[existingIndex].quantity += item.quantity ?? 1;
-      } else {
-        // Determine price: variant price if available, else product price minus discount
-        const productPrice = item.variant?.price ?? item.product?.price ?? 0;
-        const finalPrice = productPrice - (item.product?.discount ?? 0);
-
+      if (index !== -1) items[index].quantity += item.quantity ?? 1;
+      else {
+        const price = item.variant?.price ?? item.product?.price ?? 0;
         items.push({
-          id: item.id,
-          productId: item.productId,
+          id: item.id ?? crypto.randomUUID(),
+          productId: item.productId!,
           variantId: item.variantId ?? null,
-          product: item.product,
+          product: item.product!,
           variant: item.variant ?? null,
-          quantity: 1,
-          price: finalPrice,
+          quantity: item.quantity ?? 1,
+          price: price - (item.product?.discount ?? 0),
         });
       }
-
-      // Recalculate totals
-      const totals = calculateCartTotals(items);
-      state.cart.items = items;
-      state.cart.totalItems = totals.items;
-      state.cart.subtotal = totals.subtotal;
-      state.cart.total = totals.total;
-
-      saveCart(state.cart as SafeType<Cart>);
+      updateCart(state, items, siteSettings);
     },
 
-    removeFromCart: (state, action: PayloadAction<CartItem>) => {
-      const item = action.payload;
-      const items: CartItem[] = state.cart.items
-        ? [...state.cart.items]
-        : ([] as any);
-      const existingIndex = items.findIndex(
-        (c) => c.productId === item.productId && c.variantId === item.variantId
+    removeFromCart: (
+      state,
+      action: PayloadAction<{ item: CartItem; siteSettings: any }>
+    ) => {
+      const { item, siteSettings } = action.payload;
+      let items = [...(state.cart.items ?? [])];
+      const index = items.findIndex(
+        (i) => i.productId === item.productId && i.variantId === item.variantId
       );
-      if (existingIndex === -1) return;
-      const quantityToRemove = item.quantity ?? 1;
-      if (items[existingIndex].quantity > quantityToRemove) {
-        items[existingIndex].quantity -= quantityToRemove;
-      } else {
-        items.splice(existingIndex, 1);
-      }
-      const totals = calculateCartTotals(items);
-      state.cart.items = items as any;
-      state.cart.totalItems = totals.items;
-      state.cart.subtotal = totals.subtotal;
-      state.cart.total = totals.total;
-      saveCart(state.cart as SafeType<Cart>);
+      if (index === -1) return;
+      if (items[index].quantity > (item.quantity ?? 1))
+        items[index].quantity -= item.quantity ?? 1;
+      else items.splice(index, 1);
+      updateCart(state, items, siteSettings);
     },
 
-    removeAllFromCart: (state, action: PayloadAction<CartItem>) => {
-      console.log("removeCompletely action called");
-      const item = action.payload;
-      const items: SafeType<CartItem[]> = state.cart.items
-        ? [...state.cart.items]
-        : ([] as any);
-      const filteredItems = items.filter(
-        (c) =>
-          !(c.productId === item.productId && c.variantId === item.variantId)
+    removeAllFromCart: (
+      state,
+      action: PayloadAction<{ item: CartItem; siteSettings: any }>
+    ) => {
+      const { item, siteSettings } = action.payload;
+      const items = (state.cart.items ?? []).filter(
+        (i) =>
+          !(i.productId === item.productId && i.variantId === item.variantId)
       );
-      const totals = calculateCartTotals(filteredItems);
-      state.cart.items = filteredItems;
-      state.cart.totalItems = totals.items;
-      state.cart.subtotal = totals.subtotal;
-      state.cart.total = totals.total;
-      saveCart(state.cart as SafeType<Cart>);
+      updateCart(state, items, siteSettings);
     },
 
     clearCart: (state) => {
       state.cart = { items: [], totalItems: 0, subtotal: 0, total: 0 };
-      localStorage.removeItem("cart");
+      state.totals = {
+        items: 0,
+        subtotal: 0,
+        shipping: 0,
+        freeShippingDist: 0,
+        tax: 0,
+        total: 0,
+      };
+      if (typeof window !== "undefined") localStorage.removeItem("cart_state");
     },
   },
 });
 
-// -------------------- Selectors --------------------
-
+// ---------------- Selectors ----------------
 export const selectCart = (state: { cart: CartState }) => state.cart.cart;
-export const selectCartItems = (state: { cart: CartState }) =>
-  state.cart.cart.items;
+export const selectCartTotals = (state: { cart: CartState }) =>
+  state.cart.totals;
 
-// -------------------- Exports --------------------
-
+// ---------------- Exports ----------------
 export const { addToCart, removeFromCart, removeAllFromCart, clearCart } =
   cartSlice.actions;
 export default cartSlice.reducer;

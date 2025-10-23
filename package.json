@@ -21,6 +21,7 @@
     "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
     "prisma": "npm run prisma --prefix backend",
     "merge-gshop": "node scripts/merge-gshop.js",
+    "typecheck": "concurrently \"tsc -p backend --noEmit\" \"tsc -p frontend --noEmit\" \"tsc -p shared --noEmit\"",
     "test": "jest"
   },
   "dependencies": {
