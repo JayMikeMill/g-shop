@@ -1,5 +1,5 @@
 import { Request } from "express";
-import { controllerHandler } from "@utils";
+import { controllerHandler } from "./controllerHandler";
 import { SystemSettingsService as S } from "@services";
 import { AnySystemSettings, SystemSettingsScope } from "shared/settings";
 

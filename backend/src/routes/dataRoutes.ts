@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { createCrudRoute as CR, reqAdminEdit, reqOwnerAll } from "@utils";
+import { createCrudRoute as CR, reqAdminEdit, reqOwnerAll } from "./crudRoute";
 
 const router = Router();
 

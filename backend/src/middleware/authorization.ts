@@ -1,12 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import dotenv from "dotenv";
-import path from "path";
-
 import { AuthService } from "@services";
 import { UserRole } from "shared/types";
-
-// Load environment variables
-dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 
 export const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 

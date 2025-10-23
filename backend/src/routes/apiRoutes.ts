@@ -75,12 +75,7 @@ router.put("/settings/admin/:scope", reqAdmin, updateSettings);
 //------------Health Check------------------------------
 router.get("/health", async (req, res) => {
   const result = await HealthService.check();
-
-  if (result.ok) {
-    res.status(200).json({ status: result.message });
-  } else {
-    res.status(500).json({ status: result.message });
-  }
+  res.status(result.ok ? 200 : 500).json(result);
 });
 
 export default router;

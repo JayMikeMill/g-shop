@@ -2,19 +2,22 @@
 import dotenv from "dotenv";
 import path from "path";
 
-export const isProduction = process.env.NODE_ENV?.trim() === "production";
+export const PRODUCTION = process.env.NODE_ENV?.trim() === "production";
 
-if (isProduction) {
+if (PRODUCTION) {
   dotenv.config({
-    quiet: true,
     path: path.resolve(__dirname, "../../.env.production"),
+    quiet: true,
   });
 } else {
   dotenv.config({
-    quiet: true,
     path: path.resolve(__dirname, "../../.env.development"),
+    quiet: true,
   });
 }
+
+export const VERBOSE_LOGGING =
+  process.env.VERBOSE_LOGGING === "true" ? true : false;
 
 // Import adapter types
 import {

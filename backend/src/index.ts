@@ -1,5 +1,5 @@
 import "./config/config";
-import "./utils/aliases";
+import "./config/aliases";
 import http from "http";
 import app from "./app";
 

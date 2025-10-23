@@ -39,7 +39,7 @@ export class DatabaseService {
     });
   }
 
-  async healthCheck(): Promise<boolean> {
+  async healthCheck(): Promise<{ status: "OK" | "ERROR"; latencyMs: number }> {
     if (!this._adapter)
       throw new Error("DatabaseService adapter not initialized!");
     return this._adapter.healthCheck();

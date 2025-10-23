@@ -8,14 +8,14 @@ export default function OrderSummary() {
 
   if (cart.items?.length === 0) {
     return (
-      <div className="surface-box mx-auto p-6 text-center">
+      <div className="mx-auto text-center">
         <p>Your order is empty.</p>
       </div>
     );
   }
 
   return (
-    <div className="surface-box p-6 flex flex-col gap-4">
+    <div className="flex flex-col gap-4">
       <h3 className="text-center text-xl font-semibold mb-4">Order Summary</h3>
 
       <div className="flex flex-col gap-3">

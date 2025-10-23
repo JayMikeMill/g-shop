@@ -1,4 +1,4 @@
-import { controllerHandler } from "@utils";
+import { controllerHandler } from "./controllerHandler";
 import { ShippingService as S } from "@services";
 
 export const verifyAddress = controllerHandler({

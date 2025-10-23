@@ -1,17 +1,20 @@
 import { DatabaseService as dbs } from "@services";
 
 export default class HealthService {
-  static async check() {
+  static async check(): Promise<{ ok: boolean; message: any }> {
     const start = Date.now();
 
     try {
-      const isHealthy = await dbs.healthCheck();
+      const dbStatus = await dbs.healthCheck();
 
-      if (isHealthy) {
+      if (dbStatus.status === "OK") {
         console.log(
           `✅ [${new Date().toISOString()}] Health check PASSED (${Date.now() - start}ms)`
         );
-        return { ok: true, message: "OK" };
+        return {
+          ok: true,
+          message: `(DB Latency: ${dbStatus.latencyMs}ms)`,
+        };
       } else {
         console.warn(
           `⚠️ [${new Date().toISOString()}] Health check FAILED - Database unreachable (${Date.now() - start}ms)`

@@ -1,4 +1,4 @@
-import { controllerHandler } from "@utils";
+import { controllerHandler } from "./controllerHandler";
 import { OrdersProcessingService as S } from "@services";
 
 export const placeOrder = controllerHandler({

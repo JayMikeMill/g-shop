@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { controllerHandler } from "@utils";
+import { controllerHandler } from "./controllerHandler";
 import { StorageService as S } from "@services";
 
 // Upload image
