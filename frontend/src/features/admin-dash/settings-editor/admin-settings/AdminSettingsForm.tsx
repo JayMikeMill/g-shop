@@ -15,7 +15,7 @@ import { AnimatedDropdownBox } from "@components/ui/custom/AnimatedDropdownBox";
 
 // Import types
 import type { AdminSettings } from "shared/settings";
-import type { Address, SafeType } from "shared/types";
+import type { SafeType } from "shared/types";
 
 import { useApi } from "@app/hooks";
 

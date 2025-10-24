@@ -1,6 +1,6 @@
 import { toMajorUnit } from "shared/utils";
 import { useCart } from "@app/hooks";
-import { useSiteSettings } from "@app/hooks";
+// import { useSiteSettings } from "@app/hooks";
 
 export interface CartTotalsViewProps {
   showTax?: boolean;
@@ -12,7 +12,7 @@ export default function CartTotalsView({
   className,
 }: CartTotalsViewProps) {
   const { totals } = useCart();
-  const { siteSettings } = useSiteSettings();
+  // const { siteSettings } = useSiteSettings();
 
   const freeShipping = totals.shipping === 0;
 

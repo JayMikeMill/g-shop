@@ -1,17 +1,15 @@
 import { useFormContext } from "react-hook-form";
 
-import { Label, AnimatedSelect, Input, NumberInput } from "@components/ui";
+import { Label, AnimatedSelect } from "@components/ui";
 
 import {
-  PaymentMethodKeys,
   TransactionStatusKeys,
   type Order,
-  type PaymentMethod,
   type TransactionStatus,
 } from "shared/types";
 
 const OrderTransactionForm: React.FC = () => {
-  const { register, getValues, control } = useFormContext<Order>();
+  const { getValues, control } = useFormContext<Order>();
 
   return (
     <div className="flex flex-col gap-md justify-left">
