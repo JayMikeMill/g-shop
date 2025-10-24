@@ -359,7 +359,7 @@ export function ImageEditor({
 }: {
   image?: string;
   onImageChange: (url?: string) => void;
-  processor: (
+  processor?: (
     file: File,
     onProgress?: (percent: number) => void
   ) => Promise<{ url: string }>;
