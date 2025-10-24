@@ -13,6 +13,7 @@ interface ImageSlotProps {
   onDragEnd?: () => void;
   draggable?: boolean;
   emptyText?: string;
+  single?: boolean;
 }
 
 export interface ImageEditorProps<T extends Record<string, any>> {
@@ -37,6 +38,7 @@ function ImageSlot({
   onDragEnd,
   draggable = true,
   emptyText = "+ Add Image",
+  single = false,
 }: ImageSlotProps) {
   const emptyBorder = src ? "" : "border-2 border-dashed border-gray-300";
   return (
@@ -47,8 +49,8 @@ function ImageSlot({
       onDragEnd={onDragEnd}
       onDragOver={(e) => e.preventDefault()}
       onClick={onClick}
-      className={`relative rounded-lg overflow-hidden flex-shrink-0 w-[100px] h-[100px]
-				md:w-full md:h-[100px] select-none cursor-pointer flex items-center 
+      className={`relative rounded-lg overflow-hidden flex-shrink-0 ${single ? "w-full h-full" : "w-[100px] h-[100px]"}
+				 select-none cursor-pointer flex items-center 
 				justify-center ${emptyBorder} hover:bg-gray-100 transition`}
     >
       {src ? (
@@ -56,7 +58,7 @@ function ImageSlot({
           src={src}
           alt="Preview"
           className="w-full h-full object-contain pointer-events-none transition-opacity duration-200"
-          style={{ opacity: processing ? 0.5 : 1 }}
+          style={{ opacity: processing ? 0.3 : 1 }}
         />
       ) : (
         <span className="text-center text-sm font-medium text-gray-500">
@@ -65,8 +67,8 @@ function ImageSlot({
       )}
 
       {processing && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-6 h-6 border-4 border-gray-200 border-t-primary rounded-full animate-spin" />
+        <div className="absolute inset-0 flex items-center justify-center bg-white/60">
+          <div className="w-8 h-8 border-4 border-gray-300 border-t-primary rounded-full animate-spin" />
         </div>
       )}
 
@@ -142,34 +144,34 @@ function BaseImageEditor<T extends Record<string, any>>({
     if (cropping) {
       setPendingCropFiles((prev) => [...prev, ...files]);
     } else {
-      // Process all files and update images in one go
+      // Add preview items instantly to images array
+      const previewItems = files.map(
+        (file) =>
+          ({
+            __preview: true,
+            url: URL.createObjectURL(file),
+          }) as unknown as T
+      );
+      onImagesChange([...images, ...previewItems]);
+
+      // Mark indexes as processing
+      const startIdx = images.length;
       setProcessingIndexes((prev) => [
         ...prev,
-        ...files.map((_, i) => images.length + i),
+        ...files.map((_, i) => startIdx + i),
       ]);
-      setPreviews((prev) => {
-        const copy = { ...prev };
-        files.forEach((file, i) => {
-          copy[images.length + i] = URL.createObjectURL(file);
-        });
-        return copy;
-      });
+
       try {
         const processedItems = await Promise.all(
           files.map((file) => processor(file))
         );
-        onImagesChange([...images, ...processedItems]);
+        // Replace preview items with processed items
+        const updatedImages = [...images, ...processedItems];
+        onImagesChange(updatedImages);
       } catch (err: any) {
         alert(err?.message || "Error processing image(s)");
       } finally {
         setProcessingIndexes((prev) => prev.filter((i) => i < images.length));
-        setPreviews((prev) => {
-          const copy = { ...prev };
-          files.forEach((_, i) => {
-            delete copy[images.length + i];
-          });
-          return copy;
-        });
       }
     }
 
@@ -220,24 +222,20 @@ function BaseImageEditor<T extends Record<string, any>>({
       dragOverItem.current = null;
       return;
     }
-    const newImages = [...images];
-    const dragged = newImages.splice(dragItem.current, 1)[0];
-    newImages.splice(dragOverItem.current, 0, dragged);
-    onImagesChange(newImages);
-    setIsDragging(false);
-    dragItem.current = null;
-    dragOverItem.current = null;
   };
 
   /** -------------------- Slot rendering -------------------- */
-  const renderSlot = (value: T | undefined, index: number) => {
+  const renderSlot = (value: T | undefined, index: number, single: boolean) => {
+    // If value is a preview item, use its url
     const src =
-      previews[index] ??
-      (value
-        ? getPreview
-          ? getPreview(value)
-          : (value as any).main
-        : undefined);
+      value && (value as any).__preview
+        ? (value as any).url
+        : (previews[index] ??
+          (value
+            ? getPreview
+              ? getPreview(value)
+              : (value as any).main
+            : undefined));
     return (
       <ImageSlot
         key={index}
@@ -257,6 +255,7 @@ function BaseImageEditor<T extends Record<string, any>>({
         onDragEnd={() => handleDragEnd()}
         draggable={!single}
         emptyText={emptyText}
+        single={single}
       />
     );
   };
@@ -310,12 +309,12 @@ function BaseImageEditor<T extends Record<string, any>>({
 
       {/* Render slots */}
       {single ? (
-        renderSlot(images[0], 0)
+        renderSlot(images[0], 0, true)
       ) : (
         <>
-          {images.map((img, idx) => renderSlot(img, idx))}
+          {images.map((img, idx) => renderSlot(img, idx, false))}
           <div
-            className="w-[100px] h-[100px] md:w-full md:h-[100px] flex-shrink-0 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-500 cursor-pointer hover:bg-gray-100 transition"
+            className="h-full aspect-[1/1]  flex-shrink-0 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-500 cursor-pointer hover:bg-gray-100 transition"
             onClick={() => {
               setTargetSlotIndex(images.length);
               fileInputRef.current?.click();
@@ -351,6 +350,7 @@ export function ImageEditor({
   return (
     <BaseImageEditor
       {...rest}
+      className={`${rest.className} ${url ? "w-full border-2 rounded-lg" : ""}`}
       images={url ? [{ url }] : []}
       onImagesChange={(arr) => onUrlChange(arr[0]?.url)}
       single

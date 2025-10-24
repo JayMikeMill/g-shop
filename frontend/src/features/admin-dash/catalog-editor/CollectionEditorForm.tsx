@@ -32,6 +32,7 @@ const CollectionEditorForm: React.FC<CollectionEditorFormProps> = ({
   onCancel,
   typeLabel,
 }) => {
+  console.log("CollectionEditorForm render with item:", item);
   const [isProcessingImages, setIsProcessingImages] = React.useState(false);
   const [isSaving, setIsSaving] = React.useState(false);
 
@@ -68,11 +69,11 @@ const CollectionEditorForm: React.FC<CollectionEditorFormProps> = ({
           <CircleSpinner text={`Saving ${typeLabel}...`} />
         </div>
       )}
-      <form onSubmit={handleSave} className="flex flex-col flex-1 h-0">
-        <div className="flex flex-col overflow-y-auto py-sm w-auto px-1 gap-md">
+      <form onSubmit={handleSave} className="flex flex-col h-full">
+        <div className="flex flex-col flex-1 overflow-y-auto py-sm px-1 gap-md">
           <CollectionFields setIsProcessingImages={setIsProcessingImages} />
         </div>
-        <div className="w-full flex flex-row gap-2 px-0 sm:px-0 items-center py-4 border-t">
+        <div className="flex flex-row border-t gap-2 px-0 py-md items-center">
           <Button
             variant="destructive"
             className="w-full h-12"
@@ -111,7 +112,7 @@ const CollectionFields: React.FC<{
 
   return (
     <>
-      <div className="flex flex-row gap-md min-w-0">
+      <div className="flex flex-row gap-md">
         <label className="flex flex-1 flex-col gap-1 text-sm w-auto font-semibold text-text">
           Name
           <Input
@@ -170,24 +171,27 @@ const CollectionFields: React.FC<{
           className="px-2 py-1 h-24 resize-none"
         />
       </label>
-      <div className="flex flex-row gap-2">
-        {/* Preview Image */}
+      <div className="flex w-full gap-2 h-28">
+        {/* Left: perfect square */}
+
         <ImageEditor
           image={images.preview ?? undefined}
           onImageChange={(img) =>
             setValue("images.preview", img ?? null, { shouldDirty: true })
           }
           emptyText="+ Add Preview Image"
-          className="w-32 aspect-[1/1]"
+          className="w-40"
         />
-        {/* Banner Image */}
+
+        {/* Right: fills remaining space */}
+
         <ImageEditor
           image={images.banner ?? undefined}
           onImageChange={(img) =>
             setValue("images.banner", img ?? null, { shouldDirty: true })
           }
           emptyText="+ Add Banner Image"
-          className="flex-1"
+          className="w-full"
         />
       </div>
     </>

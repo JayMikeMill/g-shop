@@ -9,6 +9,7 @@ interface CartItemViewProps {
   removeFromCart?: (item: CartItemViewType) => void;
   removeCompletely?: (item: CartItemViewType) => void;
   readOnly?: boolean;
+  onProductClick?: (productId?: string) => void;
 }
 
 export default function CartItemView({
@@ -17,6 +18,7 @@ export default function CartItemView({
   removeFromCart,
   removeCompletely,
   readOnly = false,
+  onProductClick,
 }: CartItemViewProps) {
   const imgSrc =
     item.product?.images?.[0]?.thumbnail ??
@@ -46,6 +48,7 @@ export default function CartItemView({
         src={imgSrc}
         alt={name}
         className="w-20 h-20 rounded-md bg-transparent object-contain"
+        onClick={() => (onProductClick ? onProductClick(item.productId) : null)}
       />
 
       <div className="flex flex-1 flex-col justify-center items-center sm:flex-row sm:gap-md sm:px-md ">

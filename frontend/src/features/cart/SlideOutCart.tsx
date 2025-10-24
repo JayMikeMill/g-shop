@@ -15,6 +15,7 @@ import { useEffect, useState, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { XButton } from "@components/ui";
 import CartContents from "./CartContents";
+import { useNavigate } from "@app/hooks";
 
 // Props for the slide-out cart component
 interface SlideOutCartProps {
@@ -26,6 +27,8 @@ const animateDuraation = 0.7;
 
 export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
   const [visible, setVisible] = useState(isOpen);
+
+  const navigate = useNavigate();
 
   // Keep local visibility state in sync with parent prop
   useEffect(() => {
@@ -55,6 +58,11 @@ export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
   // Notify parent when exit animation is complete
   const handleExitComplete = () => {
     if (!visible) onClose();
+  };
+
+  const handleProductClick = (productId?: string) => {
+    navigate(`/product/${productId}`);
+    handleClose();
   };
 
   return (
@@ -92,6 +100,7 @@ export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
               <CartContents
                 onProceedToCheckout={handleClose}
                 isSummary={false}
+                onProductClick={handleProductClick}
               />
             </div>
           </motion.div>

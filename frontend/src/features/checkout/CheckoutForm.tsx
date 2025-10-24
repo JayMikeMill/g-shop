@@ -3,7 +3,8 @@ import { useForm, FormProvider } from "react-hook-form";
 
 import type { Order, ShippingInfo } from "shared/types";
 
-import { useCart } from "@app/hooks";
+import { useCart, useNavigate } from "@app/hooks";
+
 import { createOrder } from "./createOrder";
 
 //import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,6 +27,7 @@ export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const { cart } = useCart();
+  const navigate = useNavigate();
 
   const methods = useForm<CheckoutFormType>({
     defaultValues: {
@@ -101,7 +103,12 @@ export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
             Order Summary
           </Label>
           <div className="flex flex-col gap-4 bg-surface">
-            <CartContents isSummary />
+            <CartContents
+              isSummary
+              onProductClick={(productId) => {
+                navigate(`/product/${productId}`);
+              }}
+            />
           </div>
         </div>
         <div className="flex flex-col bg-surface p-md gap-lg rounded-md shadow-md">

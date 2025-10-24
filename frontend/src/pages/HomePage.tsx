@@ -1,9 +1,9 @@
 import ProductCardList from "@features/products/ProductCardList";
-import { useDataApi } from "@app/hooks";
+import { useDataApi, useSiteSettings } from "@app/hooks";
 
 export default function HomePage() {
   const { products: apiProducts } = useDataApi();
-
+  const { siteSettings } = useSiteSettings();
   // Call the query hook directly
   const { data, isLoading } = apiProducts.getMany({ limit: 20 });
 
@@ -11,13 +11,13 @@ export default function HomePage() {
   const products = data?.data ?? [];
 
   return (
-    <div className="text-center py-xl font-sans text-text">
-      <h1 className="text-heading-lg font-bold text-title mb-md">
-        Explore Our Collection
-      </h1>
-      <p className="text-body-lg text-text-secondary mb-lg">
-        Find the perfect products for you, from our wide range of items.
-      </p>
+    <div className="text-center pb-xl font-sans text-text">
+      {siteSettings?.bannerURL && (
+        <div
+          className="w-full h-64 bg-cover bg-center mb-lg"
+          style={{ backgroundImage: `url(${siteSettings.bannerURL})` }}
+        />
+      )}
 
       <ProductCardList products={products} isLoading={isLoading} />
     </div>

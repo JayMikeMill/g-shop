@@ -38,11 +38,13 @@ export interface CartContentsProps {
   onProceedToCheckout?: () => void;
   isSummary?: boolean;
   className?: string;
+  onProductClick?: (productId?: string) => void;
 }
 
 export default function CartContents({
   onProceedToCheckout,
   isSummary = false,
+  onProductClick,
   className,
 }: CartContentsProps) {
   const navigate = useNavigate();
@@ -104,6 +106,7 @@ export default function CartContents({
                 removeFromCart={removeItem}
                 removeCompletely={removeCompletely}
                 readOnly={isSummary}
+                onProductClick={onProductClick}
               />
             </motion.div>
           ))}

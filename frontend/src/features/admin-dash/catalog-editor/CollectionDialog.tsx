@@ -1,6 +1,6 @@
 // src/components/CatalogDialog.tsx
 import type { CrudEditorInterface } from "../CrudEditorInterface";
-import { type Collection, type Category, emptyCollection } from "shared/types";
+import { type Collection, type Category } from "shared/types";
 import { AnimatedDialog } from "@components/ui";
 import CollectionEditorForm from "./CollectionEditorForm";
 
@@ -29,7 +29,7 @@ function CollectionDialogBase<T extends Collection>({
       sm:rounded-2xl sm:max-w-3xl px-md sm:px-lg"
     >
       <CollectionEditorForm
-        item={item ?? emptyCollection}
+        item={item as Collection | undefined}
         isAdding={isAdding}
         onCreate={onCreate as (item: Collection) => void}
         onModify={onModify as (item: Collection) => void}

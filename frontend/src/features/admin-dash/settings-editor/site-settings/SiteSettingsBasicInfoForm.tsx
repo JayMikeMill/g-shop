@@ -35,7 +35,7 @@ const SiteSettingsBasicInfoForm: React.FC = () => {
           image={logo ?? undefined}
           onImageChange={(img) => setValue("logoURL", img ?? null)}
           emptyText="Upload Site Logo"
-          className={logo ? "w-full border-2 rounded-lg" : ""}
+          className="h-28"
         />
       </div>
 
@@ -45,7 +45,7 @@ const SiteSettingsBasicInfoForm: React.FC = () => {
           image={banner ?? undefined}
           onImageChange={(img) => setValue("bannerURL", img ?? null)}
           emptyText="Upload Banner Image"
-          className={banner ? "w-full border-2 rounded-lg" : ""}
+          className="h-28"
         />
       </div>
 
