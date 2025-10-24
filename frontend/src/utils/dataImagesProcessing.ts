@@ -53,6 +53,28 @@ export async function processProductImages(
   };
 }
 
+// Process image only (no upload), returns only created blobs
+export async function processPreviewImage(
+  file: File,
+  onProgress?: (percent: number) => void
+): Promise<{ url: string }> {
+  let percent = 0;
+  console.log("Processing preview image...", file, file.size);
+  const previewBlob = await imageCompression(file, {
+    maxWidthOrHeight: 600,
+    maxSizeMB: MAX_PREVIEW_FILE_SIZE_MB,
+    fileType: "image/webp",
+    initialQuality: 0.75,
+    onProgress: (p) => {
+      percent = 60 + Math.round(p * 30);
+      onProgress?.(percent);
+    },
+  });
+
+  console.log("Processed preview image blob:", previewBlob.size);
+  return { url: URL.createObjectURL(previewBlob) };
+}
+
 export const uploadImageURL = async (file: string, name: string) => {
   const { uploadImage } = useApi().storage;
 
@@ -106,13 +128,14 @@ export const uploadCollectionImages = async (item: Collection) => {
     if (item.images.banner?.startsWith("blob:")) {
       item.images.banner = await uploadImageURL(
         item.images.banner,
-        `${item.name}_banner`
+        `${item.name}_banner?v=${Date.now()}`
       );
     }
     if (item.images.preview?.startsWith("blob:")) {
+      console.log("Uploading preview image..., ", item.images.preview);
       item.images.preview = await uploadImageURL(
         item.images.preview,
-        `${item.name}_preview`
+        `${item.name}_preview?v=${Date.now()}`
       );
     }
   } catch (error) {

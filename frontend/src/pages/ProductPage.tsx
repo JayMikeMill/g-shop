@@ -112,7 +112,7 @@ const ProductPage = () => {
                   <span className="tag-box">{discountLabel} OFF!</span>
                 </>
               ) : (
-                <span className="text-2xl text-blue-600 font-bold">
+                <span className="text-2xl text-foreground font-bold">
                   ${toMajorPriceString(product.price)}
                 </span>
               )}

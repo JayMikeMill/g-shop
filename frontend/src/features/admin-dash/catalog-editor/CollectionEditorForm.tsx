@@ -3,6 +3,7 @@ import { useForm, FormProvider, useFormContext } from "react-hook-form";
 import { Button, Input, Textarea, CircleSpinner } from "@components/ui";
 import { ImageEditor } from "@components/ui";
 import type { SafeType, Collection, CollectionImageSet } from "shared/types";
+import { processPreviewImage } from "@utils/dataImagesProcessing";
 
 interface CollectionEditorFormProps {
   item?: Collection;
@@ -31,7 +32,6 @@ const CollectionEditorForm: React.FC<CollectionEditorFormProps> = ({
   onCancel,
   typeLabel,
 }) => {
-  console.log("CollectionEditorForm render with item:", item);
   const [isProcessingImages, setIsProcessingImages] = React.useState(false);
   const [isSaving, setIsSaving] = React.useState(false);
 
@@ -61,7 +61,6 @@ const CollectionEditorForm: React.FC<CollectionEditorFormProps> = ({
     }
   });
 
-  console.log("Rendering CollectionEditorForm with item:", item);
   return (
     <FormProvider {...methods}>
       {isSaving && (
@@ -183,6 +182,7 @@ const CollectionFields: React.FC<{
           onImageChange={(img) =>
             setValue("images.preview", img ?? null, { shouldDirty: true })
           }
+          processor={processPreviewImage}
           emptyText="+ Add Preview Image"
           className="w-40"
         />
@@ -194,6 +194,7 @@ const CollectionFields: React.FC<{
           onImageChange={(img) =>
             setValue("images.banner", img ?? null, { shouldDirty: true })
           }
+          processor={processPreviewImage}
           emptyText="+ Add Banner Image"
           className="w-full"
         />

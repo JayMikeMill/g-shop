@@ -347,10 +347,22 @@ export function MultiImageEditor<T extends Record<string, any>>(
 export function ImageEditor({
   image: url,
   onImageChange: onUrlChange,
+  processor = async (file) => {
+    // Convert File to URL string
+    console.log("Processing file in ImageEditor:", file);
+    return {
+      url: URL.createObjectURL(file),
+    };
+  },
+
   ...rest
 }: {
   image?: string;
   onImageChange: (url?: string) => void;
+  processor: (
+    file: File,
+    onProgress?: (percent: number) => void
+  ) => Promise<{ url: string }>;
 } & Omit<
   ImageEditorProps<any>,
   "images" | "onImagesChange" | "single" | "processor" | "getPreview"
@@ -361,12 +373,9 @@ export function ImageEditor({
       className={`${rest.className} ${url ? "w-full border-2 rounded-lg" : ""}`}
       images={url ? [{ url }] : []}
       onImagesChange={(arr) => onUrlChange(arr[0]?.url)}
-      single
       getPreview={(item) => item.url as string}
-      processor={async (file) => {
-        // Convert File to URL string
-        return { url: URL.createObjectURL(file) };
-      }}
+      processor={processor}
+      single
     />
   );
 }
