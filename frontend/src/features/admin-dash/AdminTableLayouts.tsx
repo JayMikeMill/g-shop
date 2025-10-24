@@ -234,7 +234,7 @@ export const orderTable: TableLayout<Order> = {
           o.shippingInfo?.tracking ? (
             <div className="flex flex-col items-center justify-center gap-1">
               <span className="font-semibold whitespace-pre-wrap">
-                {`${o.shippingInfo.tracking}\n${o.shippingInfo.status}`}
+                {`${o.shippingInfo.tracking}\n status: ${o.shippingInfo.status}`}
               </span>
               <a
                 href={o.shippingInfo.labelUrl ?? "#"}
@@ -255,13 +255,13 @@ export const orderTable: TableLayout<Order> = {
                 className="text-blue-500 hover:underline"
                 onClick={async (e) => {
                   e.stopPropagation();
-                  rowActions?.setLoading(o.id!, "Buying shipping...");
+                  rowActions?.setLoading(o.id!, "Buying Shipping Label...");
                   const order = await buyOrderShipping(o.id!);
                   rowActions?.setItem(order!);
                   rowActions?.setLoading(o.id!, null);
                 }}
               >
-                Buy Shipping
+                Buy Shipping Label
               </a>
             </div>
           )

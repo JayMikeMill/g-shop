@@ -11,51 +11,36 @@ import {
 } from "shared/types";
 
 const OrderTransactionForm: React.FC = () => {
-  const { register, control } = useFormContext<Order>();
+  const { register, getValues, control } = useFormContext<Order>();
 
   return (
     <div className="flex flex-col gap-md justify-left">
       <div className="flex flex-row gap-md">
-        <div className="w-1/2">
+        <div className="flex flex-col w-1/2">
           <Label>Amount</Label>
-          <NumberInput
-            className="w-full"
-            variant="currency"
-            placeholder="Amount"
-            controlProps={{
-              control,
-              name: "transaction.amount",
-              rules: { valueAsNumber: true },
-            }}
-          />
+          <Label className="font-semibold">
+            {getValues("transaction.amount") !== undefined
+              ? `$${(getValues("transaction.amount")! / 100).toFixed(2)}`
+              : "N/A"}
+          </Label>
         </div>
-        <div className="w-1/2">
+        <div className="flex flex-col w-1/2">
           <Label>Currency</Label>
-          <Input
-            {...register("transaction.currency")}
-            type="text"
-            placeholder="Currency"
-          />
+          <Label className="font-semibold">
+            {getValues("transaction.currency") || "USD"}
+          </Label>
         </div>
       </div>
 
       <div className="flex flex-row gap-md">
         {/* Payment method options */}
-        <div className="w-1/2">
+        <div className="flex flex-col w-1/2">
           <Label>Method</Label>
-          <AnimatedSelect
-            items={Object.values(PaymentMethodKeys).map((key) => ({
-              value: key as PaymentMethod,
-              label: key as string,
-              render: () => <span>{key}</span>,
-            }))}
-            controlProps={{
-              control,
-              name: "transaction.method",
-            }}
-          />
+          <Label className="font-semibold">
+            {getValues("transaction.method") || "N/A"}
+          </Label>
         </div>
-        <div className="w-1/2">
+        <div className="flex flex-col w-1/2">
           <Label>Status</Label>
           <AnimatedSelect
             items={Object.values(TransactionStatusKeys).map((key) => ({

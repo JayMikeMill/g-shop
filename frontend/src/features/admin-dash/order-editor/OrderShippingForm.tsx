@@ -17,18 +17,23 @@ const OrderShippingForm: React.FC = () => {
       {/* Shipping method options */}
       <Label>Method: {getValues("shippingInfo.method")}</Label>
 
-      <Input
-        type="text"
-        placeholder="Tracking #"
-        {...register("shippingInfo.tracking")}
-        className="border rounded px-2 py-1 w-full"
-      />
-      <Input
-        type="number"
-        placeholder="Cost"
-        {...register("shippingInfo.cost", { valueAsNumber: true })}
-        className="border rounded px-2 py-1 w-full"
-      />
+      {/* Tracking number and cost */}
+      <div className="flex flex-col">
+        <Label>Tracking Number:</Label>
+        <Label className="font-semibold">
+          {getValues("shippingInfo.tracking") || "No tracking number"}
+        </Label>
+      </div>
+
+      <div className="flex flex-col">
+        <Label>Shipping Cost:</Label>
+        <Input
+          type="number"
+          placeholder="Cost"
+          {...register("shippingInfo.cost", { valueAsNumber: true })}
+          className="border rounded px-2 py-1 w-full"
+        />
+      </div>
     </div>
   );
 };
