@@ -1,5 +1,6 @@
 import { toMajorUnit } from "shared/utils";
 import { useCart } from "@app/hooks";
+import { useSiteSettings } from "@app/hooks";
 
 export interface CartTotalsViewProps {
   showTax?: boolean;
@@ -11,6 +12,7 @@ export default function CartTotalsView({
   className,
 }: CartTotalsViewProps) {
   const { totals } = useCart();
+  const { siteSettings } = useSiteSettings();
 
   const freeShipping = totals.shipping === 0;
 
@@ -26,9 +28,11 @@ export default function CartTotalsView({
           {freeShipping ? "FREE!" : toMajorUnit(totals.shipping).toFixed(2)}
         </span>
       </div>
-      {showTax && (
+      {showTax && totals.tax > 0 && (
         <div className="flex justify-between font-semibold text-textSecondary">
-          <span>Tax</span>
+          <span>
+            Sales Tax {/*({toMajorUnit(siteSettings?.taxRate ?? 0)}%)*/}
+          </span>
           <span>${toMajorUnit(totals.tax).toFixed(2)}</span>
         </div>
       )}

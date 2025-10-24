@@ -60,7 +60,7 @@ const calculateFinalCartTotals = (
   const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const freeShippingDist = Math.max(freeThreshold - subtotal, 0);
   const shipping = freeShippingDist > 0 ? flatRate : 0;
-  const tax = (taxRate / 100) * subtotal;
+  const tax = (taxRate / 10000) * subtotal;
   const total = subtotal + tax + shipping;
 
   return {

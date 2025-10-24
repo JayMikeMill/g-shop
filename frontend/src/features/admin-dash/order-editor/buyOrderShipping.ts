@@ -1,6 +1,7 @@
 import { useApi } from "@app/hooks";
 
-export function buyOrderShipping(orderId: string) {
+export async function buyOrderShipping(orderId: string) {
   const { buyOrderShipping } = useApi().orders;
-  buyOrderShipping(orderId);
+  const order = await buyOrderShipping(orderId);
+  return order;
 }

@@ -1,12 +1,5 @@
-import { SystemSettingsService } from "@services";
-import {
-  Address,
-  Order,
-  Product,
-  ProductVariant,
-  QueryObject,
-} from "shared/types";
-import { DatabaseService as dbs } from "@services";
+import { Address, Order } from "shared/types";
+import { DatabaseService as dbs, SystemSettingsService } from "@services";
 import { payment, shipping } from "@adapters/services";
 import { toMajorPriceString } from "shared/utils/PriceUtils";
 import { OrderProcessingApi } from "shared/interfaces";
@@ -102,34 +95,21 @@ class OrderProcessingService implements OrderProcessingApi {
     const order = await dbs.orders.getOne({ id: orderId });
     if (!order) throw new Error(`Order not found (id: ${orderId})`);
 
+    // Ensure shipping info exists
     const adminSettings = await SystemSettingsService.getAdminSettings();
-    const fromAddress: Address = {
-      name: "My Store",
-      street1: "1791 King Ave",
-      city: "Hamilton",
-      state: "OH",
-      postalCode: "45015",
-      country: "US",
-      phone: "614-555-1234",
-      email: "info@mystore.com",
-    };
-
-    const normalizedFrom = (await shipping.verifyAddress(fromAddress))
-      .normalizedAddress;
-    if (!normalizedFrom) throw new Error("Shipping origin address not set");
-
+    const fromAddress: Address = adminSettings?.shippingOrigin!;
     const toAddress = order.shippingInfo?.address;
+
+    // Validate addresses
+    if (!fromAddress)
+      throw new Error("System shipping origin address is not set");
     if (!toAddress) throw new Error("Order has no shipping address");
 
     const parcel = { length: 12, width: 8, height: 4, weight: 32 };
 
     // Create & purchase shipment in parallel
     const [shipment, purchasedShipment] = await (async () => {
-      const s = await shipping.createShipment(
-        normalizedFrom,
-        toAddress,
-        parcel
-      );
+      const s = await shipping.createShipment(fromAddress, toAddress, parcel);
       if (!s) throw new Error("Failed to create shipment");
       const p = await shipping.buyShipment(s.id);
       if (!p) throw new Error("Failed to buy shipment");

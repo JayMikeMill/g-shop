@@ -113,12 +113,14 @@ const SiteSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
       {/* Action buttons */}
 
       <form
-        className="sticky flex justify-center bg-transparent bottom-0 h-20 py-md"
+        className="sticky flex z-20 justify-center bg-transparent bottom-0 py-md pointer-events-none"
         onSubmit={methods.handleSubmit(handleSave)}
       >
-        <Button className="flex h-full w-auto text-xl" type="submit">
-          Save Site Settings
-        </Button>
+        <div className="flex flex-col h-full rounded-xl border shadow-md bg-surface p-sm pointer-events-auto">
+          <Button className="text-2xl h-full px-xl" type="submit">
+            Save Site Settings
+          </Button>
+        </div>
       </form>
     </FormProvider>
   );

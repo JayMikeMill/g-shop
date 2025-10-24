@@ -71,7 +71,6 @@ export async function processPreviewImage(
     },
   });
 
-  console.log("Processed preview image blob:", previewBlob.size);
   return { url: URL.createObjectURL(previewBlob) };
 }
 
@@ -123,7 +122,6 @@ export const uploadProductImages = async (item: Product): Promise<Product> => {
 export const uploadCollectionImages = async (item: Collection) => {
   if (!item.images) return item;
 
-  console.log("Uploading collection images...", item.images);
   try {
     if (item.images.banner?.startsWith("blob:")) {
       item.images.banner = await uploadImageURL(
@@ -132,7 +130,6 @@ export const uploadCollectionImages = async (item: Collection) => {
       );
     }
     if (item.images.preview?.startsWith("blob:")) {
-      console.log("Uploading preview image..., ", item.images.preview);
       item.images.preview = await uploadImageURL(
         item.images.preview,
         `${item.name}_preview?v=${Date.now()}`
