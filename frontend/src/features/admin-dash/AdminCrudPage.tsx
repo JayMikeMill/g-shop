@@ -86,6 +86,23 @@ export function AdminCrudPage<T extends { id?: string }>({
   const updateItem = api.update();
   const deleteItem = api.delete();
 
+  const setItem = (item: T) => {
+    setItems((prev) => prev.map((it) => (it.id === item.id ? item : it)));
+  };
+
+  const setLoading = (id: string, loadingMsg: string | null) => {
+    console.log("Setting loading state:", id, loadingMsg);
+    setRowsLoading((map) => {
+      const newMap = { ...map };
+      if (loadingMsg) {
+        newMap[id] = loadingMsg;
+      } else {
+        delete newMap[id];
+      }
+      return newMap;
+    });
+  };
+
   const handleSave = useCallback(
     async (item: T, isNew: boolean) => {
       closeEditor();
@@ -230,6 +247,7 @@ export function AdminCrudPage<T extends { id?: string }>({
           page={page}
           totalPages={totalPages}
           onRowClick={openEdit}
+          rowActions={{ setItem, setLoading }}
           onEndReached={() => {
             if (page < totalPages && !isListLoading)
               setPage((prev) => prev + 1);

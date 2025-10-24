@@ -229,7 +229,7 @@ export const orderTable: TableLayout<Order> = {
       id: "shipping",
       label: "Shipping",
       width: "250px",
-      render: (o) =>
+      render: (o, rowActions) =>
         renderCenteredColumn(
           o.shippingInfo?.tracking ? (
             <div className="flex flex-col items-center justify-center gap-1">
@@ -241,6 +241,9 @@ export const orderTable: TableLayout<Order> = {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-500 hover:underline"
+                onClick={async (e) => {
+                  e.stopPropagation();
+                }}
               >
                 Shipping Label
               </a>
@@ -250,9 +253,12 @@ export const orderTable: TableLayout<Order> = {
               <a
                 href="#"
                 className="text-blue-500 hover:underline"
-                onClick={(e) => {
-                  e.preventDefault();
-                  buyOrderShipping(o.id!);
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  rowActions?.setLoading(o.id!, "Buying shipping...");
+                  const order = await buyOrderShipping(o.id!);
+                  rowActions?.setItem(order!);
+                  rowActions?.setLoading(o.id!, null);
                 }}
               >
                 Buy Shipping

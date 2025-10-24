@@ -45,11 +45,16 @@ function TableHeader<T>({ columns }: { columns: TableColumn<T>[] }) {
   );
 }
 
+export type RowAction<T> = {
+  setItem: (item: T) => void;
+  setLoading: (id: string, loadingMsg: string | null) => void;
+};
+
 export interface TableColumn<T> {
   id: string;
   label: string;
   sortable?: boolean;
-  render?: (row: T) => ReactNode;
+  render?: (row: T, rowActions?: RowAction<T>) => ReactNode;
   renderHeader?: () => ReactNode;
   width?: string;
   className?: string;
@@ -67,6 +72,7 @@ export interface DynamicTableProps<T> {
   onRowClick?: (row: T) => void;
   objectsName?: string;
   onEndReached?: () => void;
+  rowActions?: RowAction<T>;
 }
 
 export const DynamicTable = <T extends { id?: string }>({
@@ -80,6 +86,7 @@ export const DynamicTable = <T extends { id?: string }>({
   onRowClick,
   objectsName = "Objects",
   onEndReached,
+  rowActions,
 }: DynamicTableProps<T>) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -157,7 +164,9 @@ export const DynamicTable = <T extends { id?: string }>({
                           minHeight: "40px",
                         }}
                       >
-                        {col.render ? col.render(row) : (row as any)[col.id]}
+                        {col.render
+                          ? col.render(row, rowActions)
+                          : (row as any)[col.id]}
                       </td>
                     ))}
 
@@ -212,7 +221,9 @@ export const DynamicTable = <T extends { id?: string }>({
                       className="border-r border-border text-center break-words relative"
                       style={{ width: col.width || "120px", minHeight: "40px" }}
                     >
-                      {col.render ? col.render(row) : (row as any)[col.id]}
+                      {col.render
+                        ? col.render(row, rowActions)
+                        : (row as any)[col.id]}
                     </td>
                   ))}
 
