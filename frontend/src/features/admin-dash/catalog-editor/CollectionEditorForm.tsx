@@ -17,10 +17,9 @@ interface CollectionEditorFormProps {
 const newCollection: Collection = {
   name: "",
   slug: "",
-  images: { id: "", banner: "", preview: "", thumbnail: "" },
+  images: { banner: "", preview: "", thumbnail: "" },
   description: "",
   seoTitle: "",
-  id: "",
 };
 
 const CollectionEditorForm: React.FC<CollectionEditorFormProps> = ({
@@ -62,6 +61,7 @@ const CollectionEditorForm: React.FC<CollectionEditorFormProps> = ({
     }
   });
 
+  console.log("Rendering CollectionEditorForm with item:", item);
   return (
     <FormProvider {...methods}>
       {isSaving && (
@@ -69,11 +69,13 @@ const CollectionEditorForm: React.FC<CollectionEditorFormProps> = ({
           <CircleSpinner text={`Saving ${typeLabel}...`} />
         </div>
       )}
-      <form onSubmit={handleSave} className="flex flex-col h-full">
-        <div className="flex flex-col flex-1 overflow-y-auto py-sm px-1 gap-md">
+      <form onSubmit={handleSave} className="flex flex-col h-full min-h-0">
+        <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-md">
           <CollectionFields setIsProcessingImages={setIsProcessingImages} />
         </div>
-        <div className="flex flex-row border-t gap-2 px-0 py-md items-center">
+
+        {/* Action buttons */}
+        <div className="flex flex-row bg-surface border-t gap-2 px-0 py-md items-center sticky bottom-0 z-10">
           <Button
             variant="destructive"
             className="w-full h-12"
@@ -111,7 +113,7 @@ const CollectionFields: React.FC<{
   const watchSeoKeywords = watch("seoKeywords") ?? [];
 
   return (
-    <>
+    <div className="flex flex-col gap-md py-md">
       <div className="flex flex-row gap-md">
         <label className="flex flex-1 flex-col gap-1 text-sm w-auto font-semibold text-text">
           Name
@@ -162,15 +164,17 @@ const CollectionFields: React.FC<{
             }}
           />
         </label>
+
+        <label className="flex flex-col gap-1 text-sm font-semibold text-text">
+          Description
+          <Textarea
+            placeholder="Description"
+            {...register("description")}
+            className="px-2 py-1 h-24 resize-none"
+          />
+        </label>
       </div>
-      <label className="flex flex-col gap-1 text-sm font-semibold text-text">
-        Description
-        <Textarea
-          placeholder="Description"
-          {...register("description")}
-          className="px-2 py-1 h-24 resize-none"
-        />
-      </label>
+
       <div className="flex w-full gap-2 h-28">
         {/* Left: perfect square */}
 
@@ -194,6 +198,6 @@ const CollectionFields: React.FC<{
           className="w-full"
         />
       </div>
-    </>
+    </div>
   );
 };

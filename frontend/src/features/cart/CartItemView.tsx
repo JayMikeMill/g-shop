@@ -10,6 +10,7 @@ interface CartItemViewProps {
   removeCompletely?: (item: CartItemViewType) => void;
   readOnly?: boolean;
   onProductClick?: (productId?: string) => void;
+  className?: string;
 }
 
 export default function CartItemView({
@@ -19,6 +20,7 @@ export default function CartItemView({
   removeCompletely,
   readOnly = false,
   onProductClick,
+  className,
 }: CartItemViewProps) {
   const imgSrc =
     item.product?.images?.[0]?.thumbnail ??
@@ -31,7 +33,7 @@ export default function CartItemView({
   const ogPrice = item.product?.price! * item.quantity;
   const finalPrice = item.price * item.quantity;
   return (
-    <div className="flex flex-row items-center border-b py-md relative">
+    <div className={`flex flex-row items-center py-md relative ${className}`}>
       {/* Trash can icon for removing item completely (not in readOnly mode) */}
       {!readOnly && removeCompletely && (
         <Button

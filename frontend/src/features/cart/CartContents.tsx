@@ -83,7 +83,7 @@ export default function CartContents({
       >
         {totals.freeShippingDist > 0 && (
           <div className="sticky flex top-md z-10  items-center justify-center">
-            <div className="font-semibold w-2/3 p-md mb-lg text-lg border bg-surface border-accent text-foreground text-center rounded-md">
+            <div className="font-semibold p-md w-full max-w-md mb-lg text-lg border bg-surface border-accent text-foreground text-center rounded-md">
               <p>
                 Add{" "}
                 <Label className="font-bold text-xl">
@@ -107,6 +107,7 @@ export default function CartContents({
                 removeCompletely={removeCompletely}
                 readOnly={isSummary}
                 onProductClick={onProductClick}
+                className={i < cartItems.length - 1 ? "border-b" : ""}
               />
             </motion.div>
           ))}

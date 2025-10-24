@@ -15,9 +15,7 @@ export default function CartTotalsView({
   const freeShipping = totals.shipping === 0;
 
   return (
-    <div
-      className={`flex flex-col border-t bg-surface p-md ${className ?? ""}`}
-    >
+    <div className={`flex flex-col bg-surface p-md ${className ?? ""}`}>
       <div className="flex justify-between font-semibold text-text">
         <span>Subtotal</span>
         <span>${toMajorUnit(totals.subtotal).toFixed(2)}</span>
@@ -37,7 +35,10 @@ export default function CartTotalsView({
       <div className="flex justify-between font-bold text-xl text-text">
         <span>Total</span>
         <span>
-          ${toMajorUnit(showTax ? totals.total : totals.subtotal).toFixed(2)}
+          $
+          {toMajorUnit(
+            showTax ? totals.total : totals.subtotal + totals.shipping
+          ).toFixed(2)}
         </span>
       </div>
     </div>

@@ -77,7 +77,6 @@ export const uploadProductImages = async (item: Product): Promise<Product> => {
       ) {
         const prefix = `${item.name}_image_${i}`;
 
-        console.log("Uploading product image blobs...", item.images[i]);
         item.images[i].main = await uploadImageURL(
           item.images[i].main,
           `${prefix}_main`

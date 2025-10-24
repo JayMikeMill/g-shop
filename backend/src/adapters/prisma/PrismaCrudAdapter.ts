@@ -86,6 +86,7 @@ export class PrismaCrudAdapter<T> implements CrudInterface<T> {
       return prismaNestedUpdate(existing, data, this.modelMetadata, action);
     }
 
+    console.log("Creating new nested data...", data);
     const created = prismaNestedUpdate(
       null,
       data,

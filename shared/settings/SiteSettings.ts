@@ -1,5 +1,7 @@
 // -------------------- Public Site Settings --------------------
 
+import { Collection } from "../types";
+
 export interface SiteSettings {
   // ------------------
   // Basic Info
@@ -10,6 +12,7 @@ export interface SiteSettings {
   logoURL?: string;
   bannerURL?: string;
   bannerMessage?: string;
+  homePageCollections?: Collection[];
   aboutPageContent?: string;
 
   // ------------------

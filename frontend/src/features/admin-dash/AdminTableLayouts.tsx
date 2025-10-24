@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type {
+  Category,
   Collection,
   Order,
   Product,
@@ -276,19 +277,21 @@ export const orderTable: TableLayout<Order> = {
 //===========================================================================
 // Categories
 //===========================================================================
-export const categoryTable: TableLayout<{
-  id: string;
-  name: string;
-  slug: string;
-  description?: string;
-}> = {
-  query: { select: ["id", "name", "slug", "description"] },
+export const categoryTable: TableLayout<Category> = {
+  query: { select: ["id", "name", "slug", "description", "images"] },
   columns: [
-    { id: "name", label: "Name", render: (row) => row.name },
-    { id: "slug", label: "Slug", render: (row) => row.slug },
+    {
+      id: "image",
+      label: "Image",
+      width: "120px",
+      render: (c) => renderImageOrPlaceholder(c.images?.preview ?? undefined),
+    },
+    { id: "name", label: "Name", width: "200px", render: (row) => row.name },
+    { id: "slug", label: "Slug", width: "200px", render: (row) => row.slug },
     {
       id: "description",
       label: "Description",
+      width: "400px",
       render: (row) => row.description?.slice(0, 50) + "...",
     },
   ],
@@ -298,13 +301,20 @@ export const categoryTable: TableLayout<{
 // Collections
 //===========================================================================
 export const collectionTable: TableLayout<Collection> = {
-  query: { select: ["name", "slug", "description"] },
+  query: { select: ["name", "slug", "description", "images"] },
   columns: [
-    { id: "name", label: "Name", render: (row) => row.name },
-    { id: "slug", label: "Slug", render: (row) => row.slug },
+    {
+      id: "image",
+      label: "Image",
+      width: "120px",
+      render: (c) => renderImageOrPlaceholder(c.images?.preview ?? undefined),
+    },
+    { id: "name", label: "Name", width: "200px", render: (row) => row.name },
+    { id: "slug", label: "Slug", width: "200px", render: (row) => row.slug },
     {
       id: "description",
       label: "Description",
+      width: "400px",
       render: (row) => row.description?.slice(0, 50) + "...",
     },
   ],

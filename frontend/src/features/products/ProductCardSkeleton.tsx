@@ -1,9 +1,12 @@
 import React from "react";
 
-const ProductCardSkeleton: React.FC = () => {
+const ProductCardSkeleton: React.FC<{ className?: string }> = ({
+  className,
+}) => {
   return (
     <div
-      className={`overflow-hidden border rounded-lg shadow-sm bg-surface animate-pulse`}
+      className={`overflow-hidden border rounded-lg 
+        shadow-sm bg-surface animate-pulse ${className}`}
     >
       {/* Image placeholder */}
       <div className="relative w-full pt-[100%] bg-surfaceAlt rounded-t-lg">

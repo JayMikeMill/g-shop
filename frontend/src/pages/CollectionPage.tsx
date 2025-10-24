@@ -26,7 +26,8 @@ export default function CollectionPage() {
   console.log("CollectionPage data:", data, isLoading, error, slug);
   const products = data?.products || [];
 
-  const collectionName = data?.name || "Collection";
+  const collectionName = data?.name || "";
+  const collectionDescription = data?.description || "";
 
   if (error) {
     return <div className="text-center py-xl">Failed to load products.</div>;
@@ -38,7 +39,7 @@ export default function CollectionPage() {
         {`${collectionName}`}
       </h1>
       <p className="text-body-lg text-text-secondary mb-lg">
-        Explore the products in this collection.
+        {collectionDescription}
       </p>
 
       <ProductCardList products={products} isLoading={isLoading} />

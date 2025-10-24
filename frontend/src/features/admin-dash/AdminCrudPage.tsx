@@ -33,6 +33,7 @@ export function AdminCrudPage<T extends { id?: string }>({
   pageSize = 3,
 }: Props<T>) {
   const [editorMode, setEditorMode] = useState<EditorMode>({ type: "idle" });
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [items, setItems] = useState<T[]>([]);
@@ -87,9 +88,8 @@ export function AdminCrudPage<T extends { id?: string }>({
 
   const handleSave = useCallback(
     async (item: T, isNew: boolean) => {
-      // Close editor immediately
       closeEditor();
-
+      setErrorMsg(null);
       let tempId = isNew ? "__new__" : item.id!;
 
       // Optimistically add or update the item in the list
@@ -98,7 +98,6 @@ export function AdminCrudPage<T extends { id?: string }>({
         return prev.map((it) => (it.id === tempId ? item : it));
       });
 
-      // Show loading indicator
       setRowsLoading((map) => ({
         ...map,
         [tempId]: `${isNew ? "Creating" : "Updating"} ${objectName}...`,
@@ -112,9 +111,15 @@ export function AdminCrudPage<T extends { id?: string }>({
           ? await createItem.mutateAsync(item)
           : await updateItem.mutateAsync(item as any);
 
-        console.log("Saved item:", saved);
-        // Replace the optimistic item with the actual saved item
-        setItems((prev) => prev.map((it) => (it.id === tempId ? saved : it)));
+        if (!saved) {
+          setItems((prev) => prev.filter((it) => it.id !== tempId));
+          setErrorMsg("Item could not be saved.");
+        } else {
+          setItems((prev) => prev.map((it) => (it.id === tempId ? saved : it)));
+        }
+      } catch (err) {
+        setItems((prev) => prev.filter((it) => it.id !== tempId));
+        setErrorMsg("Item could not be saved.");
       } finally {
         setRowsLoading((map) => {
           const newMap = { ...map };
@@ -173,6 +178,11 @@ export function AdminCrudPage<T extends { id?: string }>({
 
   return (
     <div className="flex flex-col h-full min-h-0 w-full min-w-0">
+      {errorMsg && (
+        <div className="bg-red-100 text-red-700 border border-red-300 rounded p-2 mb-2 text-center">
+          {errorMsg}
+        </div>
+      )}
       {/* Editor */}
       {Editor && (
         <CrudEditorWrapper

@@ -222,6 +222,14 @@ function BaseImageEditor<T extends Record<string, any>>({
       dragOverItem.current = null;
       return;
     }
+    // Reorder images
+    const updated = [...images];
+    const dragged = updated.splice(dragItem.current, 1)[0];
+    updated.splice(dragOverItem.current, 0, dragged);
+    onImagesChange(updated);
+    setIsDragging(false);
+    dragItem.current = null;
+    dragOverItem.current = null;
   };
 
   /** -------------------- Slot rendering -------------------- */

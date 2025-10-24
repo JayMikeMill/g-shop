@@ -113,61 +113,68 @@ export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
               <X size={24} />
             </XButton>
 
-            {/* Menu Items with staggered animation */}
+            {/* Menu Items split: main and bottom */}
             <motion.div
-              className="flex flex-col"
+              className="flex flex-col h-full justify-between"
               variants={menuItemsVariants}
               initial="hidden"
               animate="show"
               exit="hidden"
             >
-              <MenuItem
-                variants={itemVariants}
-                onClick={() => handleNavigate("/")}
-              >
-                Home
-              </MenuItem>
+              {/* Top section: admin, categories (scrollable) */}
+              <div className="flex-1 overflow-y-auto pr-2">
+                {user?.role === "ADMIN" && (
+                  <MenuItem
+                    variants={itemVariants}
+                    onClick={() => handleNavigate("/admin")}
+                  >
+                    Admin Dashboard
+                  </MenuItem>
+                )}
 
-              {user?.role === "ADMIN" && (
+                {categoriesList.length > 0 && (
+                  <div className="flex flex-col">
+                    {categoriesList.map((category) => (
+                      <MenuItem
+                        key={category.id}
+                        variants={itemVariants}
+                        onClick={() =>
+                          handleNavigate(`/category/${category.slug}`)
+                        }
+                      >
+                        {category.name}
+                      </MenuItem>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Bottom section: About and Logout/Login (pinned) */}
+              <div className="flex flex-col pb-4">
+                {user ? (
+                  <MenuItem
+                    variants={itemVariants}
+                    onClick={() => handleLogout()}
+                    className="text-destructive"
+                  >
+                    Logout
+                  </MenuItem>
+                ) : (
+                  <MenuItem
+                    variants={itemVariants}
+                    onClick={() => handleNavigate("/login")}
+                    className="text-primary"
+                  >
+                    Login
+                  </MenuItem>
+                )}
                 <MenuItem
                   variants={itemVariants}
-                  onClick={() => handleNavigate("/admin")}
+                  onClick={() => handleNavigate("/about")}
                 >
-                  Admin Dashboard
+                  About
                 </MenuItem>
-              )}
-
-              {categoriesList.length > 0 && (
-                <div className="flex flex-col">
-                  {categoriesList.map((category) => (
-                    <MenuItem
-                      key={category.id}
-                      variants={itemVariants}
-                      onClick={() =>
-                        handleNavigate(`/category/${category.slug}`)
-                      }
-                    >
-                      {category.name}
-                    </MenuItem>
-                  ))}
-                </div>
-              )}
-
-              {user && (
-                <MenuItem
-                  variants={itemVariants}
-                  onClick={() => handleLogout()}
-                >
-                  Logout
-                </MenuItem>
-              )}
-
-              <MenuItem
-                variants={itemVariants}
-                onClick={() => handleNavigate("/about")}
-              >
-                About
-              </MenuItem>
+              </div>
             </motion.div>
           </motion.div>
         </div>
@@ -181,11 +188,17 @@ interface MenuItemProps {
   children: React.ReactNode;
   onClick: () => void;
   variants?: Variants;
+  className?: string;
 }
 
-const MenuItem = ({ children, onClick, variants }: MenuItemProps) => {
+const MenuItem = ({
+  children,
+  onClick,
+  variants,
+  className,
+}: MenuItemProps) => {
   return (
-    <motion.div variants={variants} className="overflow-hidden">
+    <motion.div variants={variants} className={`overflow-hidden =`}>
       <Button
         onClick={onClick}
         className={`
@@ -193,11 +206,11 @@ const MenuItem = ({ children, onClick, variants }: MenuItemProps) => {
 					hover:bg-primary-50 hover:scale-[1.02]
 					border-b transition-colors flex items-center 
           transition-all duration-300
-          shadow-none
+          shadow-none rounded-none
           bg-transparent text-foreground
           hover:shadow-none 
           active:translate-none active:shadow-none
-          active:text-foregroundAlt
+          active:text-foregroundAlt ${className}
 				`}
       >
         <span>{children}</span>

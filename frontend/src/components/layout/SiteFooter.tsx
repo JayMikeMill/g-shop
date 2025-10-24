@@ -36,14 +36,6 @@ const SiteFooter: React.FC = () => {
                 About
               </button>
             </li>
-            <li>
-              <button
-                onClick={() => navigate("/cart")}
-                className="hover:text-primary transition-colors"
-              >
-                Cart
-              </button>
-            </li>
           </ul>
         </div>
 

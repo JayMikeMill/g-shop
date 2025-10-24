@@ -1,12 +1,11 @@
 import React from "react";
-import { XButton, TagBox, AnimatedSelect } from "@components/ui";
-
+import { XButton, TagBox } from "@components/ui";
 import type { Category, Collection, Product } from "shared/types";
-
-import { useDataApi } from "@app/hooks";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
-/* -------------------- ProductTagsEditor -------------------- */
+import { CollectionSelect } from "../components/CollectionSelect";
+
+/* -------------------- ProductCollectionsForm -------------------- */
 const ProductCollectionsForm: React.FC = () => {
   const { control } = useFormContext<Product>();
 
@@ -52,7 +51,7 @@ const ProductCollectionsForm: React.FC = () => {
       <CollectionSelect categories={true} onSelect={addCategory} />
 
       {categories.length > 0 && (
-        <div className="flex flex-wrap">
+        <div className="flex flex-wrap  gap-md">
           {categories.map((c, i) => (
             <div key={c.id ?? i} className="flex items-center gap-2">
               <TagBox className="bg-background text-base" text={c.name}>
@@ -66,7 +65,7 @@ const ProductCollectionsForm: React.FC = () => {
       <CollectionSelect onSelect={addCollection} />
 
       {collections.length > 0 && (
-        <div className="flex flex-wrap">
+        <div className="flex flex-wrap gap-md">
           {collections.map((c, i) => (
             <div key={c.id ?? i} className="flex items-center gap-2">
               <TagBox className="bg-background text-base" text={c.name}>
@@ -81,52 +80,3 @@ const ProductCollectionsForm: React.FC = () => {
 };
 
 export default ProductCollectionsForm;
-
-//==========================================================
-// Product Collection Select
-//==========================================================
-
-interface CollectionSelectProps {
-  onSelect: (collection: Collection | Category) => void;
-  categories?: boolean; // whether to show categories or tags
-}
-
-const CollectionSelect: React.FC<CollectionSelectProps> = ({
-  onSelect,
-  categories,
-}) => {
-  const api = categories ? useDataApi().categories : useDataApi().collections;
-
-  // Queries
-  const { data } = api.getMany({
-    select: ["id", "name"],
-  });
-
-  const collections = data?.data ?? [];
-
-  const handleSelect = (collection: Collection | Category) => {
-    onSelect(collection);
-  };
-
-  const dropdownItems = collections.map((c) => ({
-    value: c,
-    label: c.name,
-    render: (c: Collection | Category) => (
-      <div className="flex gap-2 items-center w-auto cursor-pointer">
-        <span>{c.name}</span>
-      </div>
-    ),
-  }));
-
-  return (
-    <div className="relative flex items-center gap-2 w-full">
-      <AnimatedSelect
-        items={dropdownItems}
-        onChange={handleSelect}
-        actionName={`Select ${categories ? "Category" : "Collection"}...`}
-        noItemsText={`No ${categories ? "Categories" : "Collections"}.`}
-        className="w-full"
-      />
-    </div>
-  );
-};

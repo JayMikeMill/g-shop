@@ -10,6 +10,7 @@ export const defaultSiteSettings: SiteSettings = {
   logoURL: "/assets/logo.png",
   bannerURL: "/assets/banner.jpg",
   bannerMessage: "Free shipping on orders over $50!",
+  homePageCollections: [],
   aboutPageContent: "Welcome to My Online Store.",
 
   // ------------------
