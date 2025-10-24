@@ -1,5 +1,5 @@
 import { useCart, useNavigate } from "@app/hooks";
-import { Button, Image, TagBox } from "@components/ui";
+import { Button, TagBox } from "@components/ui";
 import type { Product } from "shared/types";
 import {
   getProductDiscountPercent,

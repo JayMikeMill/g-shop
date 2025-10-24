@@ -11,6 +11,7 @@ import type { SiteSettings } from "shared/settings";
 import { useSiteSettings } from "@app/hooks";
 import { Button } from "@components/ui";
 import { uploadImageURL } from "@utils/dataImagesProcessing";
+import type { SafeType } from "shared/types";
 
 interface Props {
   settings: SiteSettings;
@@ -23,7 +24,7 @@ interface Props {
 const SiteSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
   const { fetchSettings } = useSiteSettings();
 
-  const methods = useForm<SiteSettings>({
+  const methods = useForm<SafeType<SiteSettings>>({
     //resolver: zodResolver(SiteSettingsSchema),
     defaultValues: settings,
     mode: "onChange",
