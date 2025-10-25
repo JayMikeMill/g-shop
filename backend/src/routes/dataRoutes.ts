@@ -1,9 +1,24 @@
 import { Router } from "express";
 
-import { createCrudRoute as CR, reqAdminEdit, reqOwnerAll } from "./crudRoute";
+import { createCrudRoute as CR, CRUDRouteMiddleware } from "./crudRoute";
 import { userDataAuth } from "@middleware/userDataAuth";
+import { dataAuth } from "@middleware/dataAuth";
 
 const router = Router();
+
+const reqAdminEdit: CRUDRouteMiddleware = {
+  create: dataAuth(["ADMIN"]),
+  update: dataAuth(["ADMIN"]),
+  delete: dataAuth(["ADMIN"]),
+};
+
+const reqOwnerAll: CRUDRouteMiddleware = {
+  create: dataAuth(["ADMIN", "OWNER"]),
+  readOne: dataAuth(["ADMIN", "OWNER"]),
+  readMany: dataAuth(["ADMIN"]), // Only admin can list all
+  update: dataAuth(["ADMIN", "OWNER"]),
+  delete: dataAuth(["ADMIN", "OWNER"]),
+};
 
 // ----------- Products/Product Sub Resources ----------------
 const TagsCrud = CR("productTagsPresets", reqAdminEdit);

@@ -52,7 +52,7 @@ const requireAdmin = (req: Request, res: Response, next: NextFunction) => {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  if (req.user.role !== "ADMIN") {
+  if (req.user.role !== "ADMIN" && req.user.role !== "SITE_OWNER") {
     return res.status(403).json({ error: "Forbidden: Admins only" });
   }
 

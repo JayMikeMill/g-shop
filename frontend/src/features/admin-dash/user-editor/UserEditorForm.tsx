@@ -6,6 +6,7 @@ import type { CrudEditorInterface } from "../CrudEditorInterface";
 import { UserRoleKeys, type User } from "shared/types/PrismaTypes";
 import type { SafeType, UserRole } from "shared/types";
 import { useUser } from "@app/hooks";
+
 const defaultUser: User = {
   email: "",
   passwordHash: "",
@@ -18,14 +19,13 @@ const defaultUser: User = {
 
 export const UserEditorForm: React.FC<CrudEditorInterface<User>> = ({
   item,
-  onCreate,
   onModify,
   onDelete,
   onCancel,
 }) => {
   const [password, setPassword] = React.useState("");
 
-  const { register } = useUser();
+  const { register, user } = useUser();
 
   const isNew = !item?.id || item.id === "";
   const methods = useForm<SafeType<User>>({
@@ -41,9 +41,20 @@ export const UserEditorForm: React.FC<CrudEditorInterface<User>> = ({
   }, [item, reset]);
 
   const onSubmit = (data: User) => {
-    if (isNew) register(data, password);
-    else onModify(data as User & { id: string });
+    if (isNew) {
+      register(data, password);
+    } else onModify(data as User & { id: string });
   };
+
+  // Determine if the current user is allowed to modify the user being edited
+  const userRole = user?.role;
+  const modifyingRole = item?.role;
+  const allowed =
+    userRole === "SITE_OWNER" || // SITE_OWNER can modify anyone
+    (userRole === "ADMIN" && // ADMIN can modify non-admins
+      (user?.id === item?.id || // ADMIN can modify self
+        // ADMIN cannot modify other ADMIN or SITE_OWNER
+        (modifyingRole !== "SITE_OWNER" && modifyingRole !== "ADMIN")));
 
   return (
     <FormProvider {...methods}>
@@ -58,31 +69,43 @@ export const UserEditorForm: React.FC<CrudEditorInterface<User>> = ({
             <div className="flex flex-row gap-md">
               <div className="flex flex-col w-full">
                 <label>First Name</label>
-                <Input {...methods.register("firstName", { required: true })} />
+                <Input
+                  {...methods.register("firstName", { required: true })}
+                  disabled={!allowed}
+                />
               </div>
               <div className="flex flex-col w-full">
                 <label>Last Name</label>
-                <Input {...methods.register("lastName", { required: true })} />
+                <Input
+                  {...methods.register("lastName", { required: true })}
+                  disabled={!allowed}
+                />
               </div>
             </div>
             <div className="flex flex-col w-full">
               <label>Email</label>
-              <Input {...methods.register("email", { required: true })} />
+              <Input
+                {...methods.register("email", { required: true })}
+                disabled={!allowed}
+              />
             </div>
             <div className="flex flex-col w-full">
               <label>Phone</label>
-              <Input {...methods.register("phone")} />
+              <Input {...methods.register("phone")} disabled={!allowed} />
             </div>
             <div className="flex flex-row gap-md">
               <div className="flex flex-col w-full">
                 <label>Role</label>
                 <AnimatedSelect<UserRole>
-                  items={Object.values(UserRoleKeys).map((role) => ({
-                    value: role,
-                    label: role,
-                    render: (item) => <span>{item}</span>,
-                  }))}
+                  items={Object.values(UserRoleKeys)
+                    .filter((role) => role !== "SITE_OWNER")
+                    .map((role) => ({
+                      value: role,
+                      label: role,
+                      render: (item) => <span>{item}</span>,
+                    }))}
                   controlProps={{ control, name: "role" }}
+                  disabled={!allowed}
                 />
               </div>
               <div className="flex flex-col w-full">
@@ -93,6 +116,7 @@ export const UserEditorForm: React.FC<CrudEditorInterface<User>> = ({
                     { value: false, label: "NO" },
                   ]}
                   controlProps={{ control, name: "isVerified" }}
+                  disabled={!allowed}
                 />
               </div>
             </div>
@@ -102,13 +126,14 @@ export const UserEditorForm: React.FC<CrudEditorInterface<User>> = ({
                 <Input
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  disabled={!allowed}
                 />
               </div>
             )}
           </div>
         </div>
         <div className="flex flex-row bg-surface border-t gap-2 px-0 py-md items-center sticky bottom-0 z-10">
-          {!isNew && (
+          {!isNew && allowed && modifyingRole !== "SITE_OWNER" && (
             <Button
               className="flex flex-1"
               variant="destructive"
@@ -126,9 +151,11 @@ export const UserEditorForm: React.FC<CrudEditorInterface<User>> = ({
           >
             Cancel
           </Button>
-          <Button className="flex flex-1" type="submit" variant="default">
-            {isNew ? "Create User" : "Save Changes"}
-          </Button>
+          {allowed && (
+            <Button className="flex flex-1" type="submit" variant="default">
+              {isNew ? "Register User" : "Save Changes"}
+            </Button>
+          )}
         </div>
       </form>
     </FormProvider>

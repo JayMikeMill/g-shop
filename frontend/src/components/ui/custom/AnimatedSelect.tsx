@@ -19,6 +19,7 @@ interface AnimatedSelectProps<T> {
 
   controlProps?: { control: Control<any>; name: string; rules?: any };
   actionSelector?: boolean;
+  disabled?: boolean;
 }
 
 export const AnimatedSelect = <T,>({
@@ -30,6 +31,7 @@ export const AnimatedSelect = <T,>({
   className,
   menuClassName,
   controlProps,
+  disabled = false,
 }: AnimatedSelectProps<T>) => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -72,6 +74,7 @@ export const AnimatedSelect = <T,>({
 						rounded-md border px-2 py-1 w-full text-left flex justify-between
 						${open ? "ring-2 ring-accent" : ""}`}
           onClick={() => setOpen((p) => !p)}
+          disabled={disabled}
         >
           <span className={"w-full " + menuClassName}>{displayedLabel}</span>
           <span>{open ? "▲" : "▼"}</span>

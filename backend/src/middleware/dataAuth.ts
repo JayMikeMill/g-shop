@@ -15,12 +15,17 @@ function hasId<T>(obj: any): obj is { id: any } {
 function dataAuthorization(roles: AuthRole[]) {
   return async (req: Request, res: Response, next: NextFunction) => {
     // Site owners have all access
-    roles.push("SITE_OWNER");
 
+    console.log("Data Authorization Middleware Invoked with roles:", roles);
     try {
       // No user attached
       if (!req.user?.role)
         return res.status(401).json({ error: "Unauthorized" });
+
+      if (req.user.role === "SITE_OWNER") {
+        // SITE_OWNER has full access
+        return next();
+      }
 
       // Check if user role is allowed
       if (roles.includes(req.user.role)) return next();
