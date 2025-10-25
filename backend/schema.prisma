@@ -26,8 +26,8 @@ datasource db {
 //////////////////////////////////////////////////////////////////
 enum UserRole {
   USER
-  STAFF
   ADMIN
+  SITE_OWNER
 }
 
 enum OrderStatus {

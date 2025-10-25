@@ -14,6 +14,9 @@ function hasId<T>(obj: any): obj is { id: any } {
 
 function dataAuthorization(roles: AuthRole[]) {
   return async (req: Request, res: Response, next: NextFunction) => {
+    // Site owners have all access
+    roles.push("SITE_OWNER");
+
     try {
       // No user attached
       if (!req.user?.role)

@@ -6,7 +6,11 @@ import { PRODUCTION } from "@config";
 export const register = controllerHandler({
   handler: async ({ user, password }, req): Promise<AuthResponse> => {
     // Prevent non-admins from creating admin accounts
-    if (user.role === "ADMIN" && req.user?.role !== "ADMIN") {
+    if (
+      user.role === "ADMIN" &&
+      req.user?.role !== "ADMIN" &&
+      req.user?.role !== "SITE_OWNER"
+    ) {
       return {
         user: null,
         success: false,

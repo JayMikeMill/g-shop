@@ -1,17 +1,16 @@
 import React from "react";
 import { useForm, FormProvider } from "react-hook-form";
-import { Button } from "@components/ui";
+import { AnimatedSelect, Button } from "@components/ui";
 import { Input } from "@components/ui";
 import type { CrudEditorInterface } from "../CrudEditorInterface";
-import type { User } from "shared/types/PrismaTypes";
-import type { SafeType } from "shared/types";
+import { UserRoleKeys, type User } from "shared/types/PrismaTypes";
+import type { SafeType, UserRole } from "shared/types";
 
 const defaultUser: User = {
   email: "",
   passwordHash: "",
   firstName: "",
   lastName: "",
-  phone: "",
   role: "USER",
   isVerified: false,
   failedLoginAttempts: 0,
@@ -29,7 +28,7 @@ export const UserEditorForm: React.FC<CrudEditorInterface<User>> = ({
     defaultValues: item ?? defaultUser,
     mode: "onChange",
   });
-  const { handleSubmit, reset } = methods;
+  const { handleSubmit, reset, control } = methods;
 
   React.useEffect(() => {
     reset(item ?? defaultUser);
@@ -53,35 +52,54 @@ export const UserEditorForm: React.FC<CrudEditorInterface<User>> = ({
         onSubmit={handleSubmit(onSubmit)}
         style={{ minWidth: 320 }}
       >
-        <div className="flex-1 min-h-0 overflow-y-auto px-md py-md">
-          <label>Email</label>
-          <Input {...methods.register("email", { required: true })} />
-          <label>First Name</label>
-          <Input {...methods.register("firstName", { required: true })} />
-          <label>Last Name</label>
-          <Input {...methods.register("lastName", { required: true })} />
-          <label>Phone</label>
-          <Input {...methods.register("phone")} />
-          <label>Role</label>
-          <select {...methods.register("role", { required: true })}>
-            <option value="USER">User</option>
-            <option value="STAFF">Staff</option>
-            <option value="ADMIN">Admin</option>
-          </select>
-          <label>Verified</label>
-          <select {...methods.register("isVerified", { required: true })}>
-            <option value="true">Yes</option>
-            <option value="false">No</option>
-          </select>
-          <label>Failed Login Attempts</label>
-          <Input
-            type="number"
-            {...methods.register("failedLoginAttempts", {
-              valueAsNumber: true,
-            })}
-          />
+        <div className="flex-1 min-h-0  p-md">
+          <div className="flex flex-col gap-md">
+            <div className="flex flex-row gap-md">
+              <div className="flex flex-col w-full">
+                <label>First Name</label>
+                <Input {...methods.register("firstName", { required: true })} />
+              </div>
+              <div className="flex flex-col w-full">
+                <label>Last Name</label>
+                <Input {...methods.register("lastName", { required: true })} />
+              </div>
+            </div>
+            <div className="flex flex-col w-full">
+              <label>Email</label>
+              <Input {...methods.register("email", { required: true })} />
+            </div>
+            <div className="flex flex-col w-full">
+              <label>Phone</label>
+              <Input {...methods.register("phone")} />
+            </div>
+            <div className="flex flex-row gap-md">
+              <div className="flex flex-col w-full">
+                <label>Role</label>
+                <AnimatedSelect<UserRole>
+                  items={Object.values(UserRoleKeys)
+                    .filter((role) => role != "SITE_OWNER")
+                    .map((role) => ({
+                      value: role,
+                      label: role,
+                      render: (item) => <span>{item}</span>,
+                    }))}
+                  controlProps={{ control, name: "role" }}
+                />
+              </div>
+              <div className="flex flex-col w-full">
+                <label>Verified</label>
+                <AnimatedSelect<Boolean>
+                  items={[
+                    { value: true, label: "YES" },
+                    { value: false, label: "NO" },
+                  ]}
+                  controlProps={{ control, name: "isVerified" }}
+                />
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="sticky bottom-0 z-10 bg-surface py-md flex gap-2 px-md justify-center border-t">
+        <div className="flex flex-row bg-surface border-t gap-2 px-0 py-md items-center sticky bottom-0 z-10">
           {!isNew && (
             <Button
               className="flex flex-1"

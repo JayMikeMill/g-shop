@@ -77,17 +77,17 @@ const CollectionEditorForm: React.FC<CollectionEditorFormProps> = ({
         <div className="flex flex-row bg-surface border-t gap-2 px-0 py-md items-center sticky bottom-0 z-10">
           <Button
             variant="destructive"
-            className="w-full h-12"
+            className="w-full"
             onClick={onDelete && (() => onDelete(item?.id!))}
           >
             Delete
           </Button>
-          <Button variant="flat" className="w-full h-12" onClick={onCancel}>
+          <Button variant="flat" className="w-full" onClick={onCancel}>
             Cancel
           </Button>
           <Button
             type="submit"
-            className="w-full h-12"
+            className="w-full"
             disabled={isProcessingImages}
           >
             {isProcessingImages
