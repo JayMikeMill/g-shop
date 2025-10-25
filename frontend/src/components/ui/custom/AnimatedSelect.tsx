@@ -70,7 +70,7 @@ export const AnimatedSelect = <T,>({
           type="button"
           className={`bg-backgroundAlt text-base shadow-sm h-9 transition-all 
 						rounded-md border px-2 py-1 w-full text-left flex justify-between
-						${open ? "ring-2 ring-ring" : ""}`}
+						${open ? "ring-2 ring-accent" : ""}`}
           onClick={() => setOpen((p) => !p)}
         >
           <span className={"w-full " + menuClassName}>{displayedLabel}</span>

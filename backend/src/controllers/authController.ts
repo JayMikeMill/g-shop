@@ -1,5 +1,5 @@
 import { controllerHandler } from "./controllerHandler";
-import { AuthService as S } from "@services";
+import { AuthService } from "@services";
 import { AuthResponse } from "shared/interfaces";
 import { PRODUCTION } from "@config";
 
@@ -15,25 +15,23 @@ export const register = controllerHandler({
       };
     }
 
-    return S.register(user, password);
+    return AuthService.register(user, password);
   },
 });
 
 export const login = controllerHandler({
   handler: async ({ email, password }, req, res): Promise<AuthResponse> => {
-    const { token, user, success, status, message } = await S.authenticate(
-      email,
-      password
-    );
+    const { token, user, success, status, message } =
+      await AuthService.authenticate(email, password);
 
     if (!success) return { user, success, status, message };
 
     // Set HTTP-only cookie
-    res.cookie("auth_token", token, {
+    res.cookie("session", token, {
       httpOnly: true,
       secure: PRODUCTION, // true in production
       sameSite: PRODUCTION ? "none" : "lax",
-      maxAge: 1000 * 60 * 60 * 24, // 1 day
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
     });
 
     return { user, success, status, message };
@@ -42,9 +40,9 @@ export const login = controllerHandler({
 
 export const logout = controllerHandler({
   handler: async (id, req, res): Promise<AuthResponse> => {
-    await S.logout();
+    await AuthService.logout();
     // Clear cookie
-    res.clearCookie("auth_token");
+    res.clearCookie("session");
     return {
       user: null,
       success: true,
