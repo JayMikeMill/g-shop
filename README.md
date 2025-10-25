@@ -74,3 +74,30 @@ Parts of the **initial scaffolding and setup** of this project were assisted by 
 ---
 
 ## 🗂️ Project Structure
+
+This is a **monorepo** with three main folders:
+
+- **`/backend`** - Express.js API server that handles all database operations, authentication, payments, and shipping
+- **`/frontend`** - React storefront and admin dashboard where users shop and admins manage everything
+- **`/shared`** - TypeScript types and utilities used by both frontend and backend
+
+### How It Works
+
+**For Customers:**
+
+- Browse products on the storefront (`/frontend/src/pages/HomePage.tsx`)
+- Add items to cart, checkout with Stripe payments
+- Create accounts and view order history
+
+**For Admins:**
+
+- Access admin dashboard at `/admin` route
+- Manage products, orders, users, and site settings
+- All admin functionality is in `/frontend/src/features/admin-dash/`
+
+**For Developers:**
+
+- Backend API routes are in `/backend/src/routes/`
+- Frontend components are organized by feature in `/frontend/src/features/`
+- Database schema is in `/backend/prisma/schema.prisma`
+- Shared types ensure frontend and backend stay in sync
