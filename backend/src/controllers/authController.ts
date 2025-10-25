@@ -5,6 +5,16 @@ import { PRODUCTION } from "@config";
 
 export const register = controllerHandler({
   handler: async ({ user, password }, req): Promise<AuthResponse> => {
+    // Prevent creating SITE_OWNER accounts
+    if (user.role === "SITE_OWNER") {
+      return {
+        user: null,
+        success: false,
+        status: "ERROR",
+        message: "Cannot create SITE_OWNER accounts",
+      };
+    }
+
     // Prevent non-admins from creating admin accounts
     if (
       user.role === "ADMIN" &&

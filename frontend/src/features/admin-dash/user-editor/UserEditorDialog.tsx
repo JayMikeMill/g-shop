@@ -1,6 +1,6 @@
 import React from "react";
 import { UserEditorForm } from "./UserEditorForm";
-import { AnimatedDialog, Button } from "@components/ui";
+import { AnimatedDialog } from "@components/ui";
 import type { CrudEditorInterface } from "@features/admin-dash";
 import type { User } from "shared/types/PrismaTypes";
 
