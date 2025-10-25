@@ -19,16 +19,15 @@ export const CategoryBar: React.FC<CategoryBarProps> = ({
     <div
       className={`w-full bg-surface border-y flex flex-col justify-center py-4 px-2 ${className}`}
     >
-      <h2 className="text-lg font-semibold">Categories</h2>
-      <div className="w-full flex flex-wrap gap-6 justify-center items-center py-4 px-2">
+      <div className="w-full flex flex-wrap gap-xl justify-center items-center py-4 px-2">
         {categories.map((cat) => (
           <div
             key={cat.id}
-            className="flex flex-col items-center gap-2 cursor-pointer"
+            className="flex flex-col items-center gap-sm cursor-pointer hover:scale-105 transition-transform"
             style={{ flex: "0 1 100px", maxWidth: "120px" }}
             onClick={() => onCategoryClick?.(cat)}
           >
-            <div className="flex items-center justify-center w-16 h-16">
+            <div className="flex items-center justify-center w-32 h-32">
               <img
                 src={cat.images?.preview ?? ""}
                 alt={cat.name}
@@ -36,7 +35,7 @@ export const CategoryBar: React.FC<CategoryBarProps> = ({
                 onClick={() => navigate(`/category/${cat.slug}`)}
               />
             </div>
-            <span className="mt-2 text-sm text-center font-medium text-gray-700">
+            <span className="mt-2 text-md font-semibold text-center">
               {cat.name}
             </span>
           </div>

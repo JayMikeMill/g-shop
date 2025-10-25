@@ -49,7 +49,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       onClick={handleCardClick}
     >
       {/* Image container with aspect ratio, always contains image */}
-      <div className="relative flex items-center justify-center aspect-square overflow-hidden rounded-t-lg bg-surfaceAlt w-full">
+      <div className="relative flex p-md items-center justify-center aspect-square overflow-hidden rounded-t-lg bg-surfaceAlt w-full">
         {product.images && product.images.length > 0 ? (
           <img
             src={product.images[0].preview}
