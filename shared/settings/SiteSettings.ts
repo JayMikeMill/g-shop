@@ -7,6 +7,7 @@ export interface SiteSettings {
   // Basic Info
   // ------------------
   siteName: string;
+  siteIconURL?: string;
   siteDescription?: string;
   siteTagline?: string;
   logoURL?: string;

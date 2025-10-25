@@ -50,6 +50,7 @@
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@types/react-easy-crop": "^1.16.0",
+    "@types/react-helmet": "^6.1.11",
     "@types/react-places-autocomplete": "^7.2.14",
     "@types/react-redux": "^7.1.34",
     "@vitejs/plugin-react": "^5.0.0",

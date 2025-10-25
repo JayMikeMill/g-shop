@@ -5,6 +5,7 @@ export const defaultSiteSettings: SiteSettings = {
   // Basic Info
   // ------------------
   siteName: "My Online Store",
+  siteIconURL: "/assets/icon.png",
   siteTagline: "Quality products, fast delivery",
   siteDescription: "The best place to buy amazing products.",
   logoURL: "/assets/logo.png",

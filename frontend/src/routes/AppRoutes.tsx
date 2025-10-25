@@ -19,11 +19,18 @@ import LoginPage from "@pages/LoginPage";
 import AccountPage from "@pages/AccountPage";
 import OrderConfirmationPage from "@pages/OrderConfirmationPage";
 import CollectionPage from "@pages/CollectionPage";
+import SiteHeader from "@components/layout/SiteHeader";
+import SiteFooter from "@components/layout/SiteFooter";
+
+import { useLocation } from "react-router-dom";
 
 export default function AppRoutes() {
+  const adminPages = useLocation().pathname.startsWith("/admin");
+
   return (
-    <div>
+    <div className="bg-background">
       <ScrollToTop />
+      {!adminPages && <SiteHeader />}
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/category/:slug" element={<CollectionPage />} />
@@ -38,6 +45,7 @@ export default function AppRoutes() {
 
         {adminRoutes.map((r) => r)}
       </Routes>
+      {!adminPages && <SiteFooter />}
     </div>
   );
 }

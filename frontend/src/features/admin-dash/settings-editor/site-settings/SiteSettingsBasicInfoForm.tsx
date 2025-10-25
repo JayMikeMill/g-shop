@@ -15,6 +15,7 @@ import type { SiteSettings } from "shared/settings";
 const SiteSettingsBasicInfoForm: React.FC = () => {
   const { register, setValue, watch, control } = useFormContext<SiteSettings>();
 
+  const icon = watch("siteIconURL");
   const logo = watch("logoURL");
   const banner = watch("bannerURL");
 
@@ -37,10 +38,6 @@ const SiteSettingsBasicInfoForm: React.FC = () => {
 
   const remCollection = (index: number) => removeCollection(index);
 
-  console.log("Rendering SiteSettingsBasicInfoForm with logo and banner:", {
-    logo,
-    banner,
-  });
   return (
     <div className="flex flex-col gap-md">
       <div className="flex flex-col">
@@ -58,6 +55,15 @@ const SiteSettingsBasicInfoForm: React.FC = () => {
         <Input {...register("siteTagline")} />
       </div>
 
+      <div className="flex flex-col">
+        <Label>Site Icon</Label>
+        <ImageEditor
+          image={icon ?? undefined}
+          onImageChange={(img) => setValue("siteIconURL", img ?? undefined)}
+          emptyText="+Upload Site Icon"
+          className="h-28 w-28"
+        />
+      </div>
       <div className="flex flex-col">
         <Label>Site Logo</Label>
         <ImageEditor

@@ -37,6 +37,11 @@ const SiteSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
   const uploadImagesAndGetURLs = async (
     data: SiteSettings
   ): Promise<SiteSettings> => {
+    // Upload icon
+    const iconURL = data.siteIconURL
+      ? await uploadImageURL(data.siteIconURL, "site-icon.png")
+      : undefined;
+
     // Upload logo
     const logoURL = data.logoURL
       ? await uploadImageURL(data.logoURL, "site-logo.png")
@@ -49,18 +54,21 @@ const SiteSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
 
     // Append a lightweight version query to force the viewer to update only
     // if overwritten the image with the same URL
+    const versionedIconURL = iconURL ? `${iconURL}?v=${Date.now()}` : undefined;
     const versionedLogoURL = logoURL ? `${logoURL}?v=${Date.now()}` : undefined;
     const versionedBannerURL = bannerURL
       ? `${bannerURL}?v=${Date.now()}`
       : undefined;
 
     console.log("Uploaded image URLs:", {
+      iconURL: versionedIconURL,
       logoURL: versionedLogoURL,
       bannerURL: versionedBannerURL,
     });
 
     return {
       ...data,
+      siteIconURL: versionedIconURL,
       logoURL: versionedLogoURL,
       bannerURL: versionedBannerURL,
     };
