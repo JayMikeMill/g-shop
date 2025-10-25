@@ -1,69 +1,76 @@
-# React + TypeScript + Vite
+# E-Commerce Platform with Full Admin Dashboard (MVP)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, full-stack e-commerce web application featuring a complete admin dashboard and dynamic storefront. Built as a fully functional MVP to demonstrate scalable, maintainable full-stack development.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Project Overview
 
-## Expanding the ESLint configuration
+This project is a **fully functional e-commerce MVP**, including both a **dynamic storefront** and a **comprehensive administrator dashboard**. Key features include:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Add, manage, and organize **products, categories, and collections**
+- Support **product variants** (size, color, etc.)
+- **Stock updates** occur automatically when orders are placed
+- Manage **orders**, generate **shipping labels**, and verify addresses
+- Fully **customizable site settings**: banners, icons, site name, theme colors, tax rules, shipping limits
+- **Basic user accounts**: sign up, log in, and authentication
+- Responsive design for **desktop and mobile devices**
+- Smooth UI interactions and animations with **Framer Motion**
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+This MVP demonstrates the ability to implement **complex full-stack functionality** with clean architecture and maintainable code.
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 🏗️ Tech Stack
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+**Frontend:**
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- TypeScript, React, Vite
+- React Router for SPA navigation
+- Tailwind CSS + Shadcn UI for custom components
+- Framer Motion for animations
+- React Hook Form + Zod for form validation
+- Redux for global state
+- TanStack Query for caching and optimized data fetching
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+**Backend:**
+
+- Express.js with CORS and cookie-parser
+- Axios for API communication
+- JWT + Argon2 for authentication
+- Prisma ORM with PostgreSQL (via Supabase)
+- Stripe for payments
+- EasyPost for shipping and address verification
+
+**Infrastructure & Deployment:**
+
+- Frontend deployed on **Vercel**
+- Backend deployed on **Render**
+- Image storage using **ImgBB** and **Supabase**
+- Environment variables managed via `.env`
+
+**Code Quality:**
+
+- ESLint for static analysis
+- Prettier for consistent formatting
+
+---
+
+## 🤖 AI Assistance
+
+Parts of the **initial scaffolding and setup** of this project were assisted by AI tools. However, all **core implementation, integration, debugging, and final functionality** were completed manually. Every feature was **fully implemented, tested, and connected**, ensuring a production-ready MVP. This highlights the ability to **leverage modern tools while demonstrating strong full-stack skills**.
+
+---
+
+## 🔥 Key Highlights
+
+- **Full-stack functionality:** Frontend and backend fully integrated with persistent data
+- **E-commerce logic:** Product variants, stock updates upon order placement, dynamic site settings, shipping, and payment integration
+- **Performance optimizations:** Efficient caching, lazy loading, and optimized React rendering
+- **Scalable architecture:** Clear separation of `frontend`, `backend`, and `shared` types/utilities
+- **Professional UI/UX:** Fully responsive, interactive dashboards
+- **Secure authentication:** Basic user accounts with JWT authentication and Argon2 password hashing
+
+---
+
+## 🗂️ Project Structure
