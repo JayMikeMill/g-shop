@@ -28,7 +28,7 @@ export default function ProductCardList({
   if (horizontal) {
     return (
       <div
-        className={`flex gap-sm py-md sm:gap-md lg:gap-lg px-sm sm:px-md overflow-x-auto overflow-y-hidden ${className} scrollbar-hide`}
+        className={`flex gap-sm py-md sm:gap-md px-sm sm:px-md overflow-x-auto overflow-y-hidden ${className} scrollbar-hide`}
       >
         {isLoading
           ? Array.from({ length: 4 }).map((_, index) => (
