@@ -3,10 +3,7 @@ import admin from "firebase-admin";
 import path from "path";
 
 // Path to your service account key
-const serviceAccount = path.resolve(
-  __dirname,
-  "./NailStoreFirebaseServiceAccount.json"
-);
+const serviceAccount = path.resolve(__dirname, "./serviceAccountKey.json");
 
 let initalized = false;
 export function initializeFirebase() {

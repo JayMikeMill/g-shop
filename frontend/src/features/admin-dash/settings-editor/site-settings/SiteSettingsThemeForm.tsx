@@ -2,6 +2,7 @@ import React from "react";
 import { useFormContext } from "react-hook-form";
 import { ColorPickerButton, Label, NumberInput } from "@components/ui";
 import { applyThemeColors } from "@features/site-settings/theme";
+import type { SiteSettings } from "shared/settings/SiteSettings";
 
 const colorKeys = [
   "backgroundColor",
@@ -22,27 +23,7 @@ const SiteSettingsThemeForm: React.FC = () => {
   const { control, watch, setValue } = useFormContext();
   const values = watch();
 
-  applyThemeColors(
-    {
-      background: values?.backgroundColor || "#ffffff",
-      backgroundAlt: values?.backgroundAltColor || "#f0f0f0",
-      foreground: values?.foregroundColor || "#f5f5f5",
-      foregroundAlt: values?.foregroundAltColor || "#333333",
-      surface: values?.surfaceColor || "#ffffff",
-      surfaceAlt: values?.surfaceAltColor || "#f5f5f5",
-      primary: values?.primaryColor || "#59c2ff",
-      secondary: values?.secondaryColor || "#6D28D9",
-      border: values?.borderColor || "#e0e0e0",
-      accent: values?.accentColor || "#10B981",
-      destructive: "#EF4444",
-    },
-    {
-      primary: true,
-      secondary: true,
-      accent: true,
-      destructive: true,
-    }
-  );
+  updateThemeColors(values as SiteSettings);
 
   // Function to format label: remove "Color" and capitalize first letter
   const formatLabel = (key: string) =>
@@ -87,3 +68,29 @@ const SiteSettingsThemeForm: React.FC = () => {
 };
 
 export default SiteSettingsThemeForm;
+
+function updateThemeColors(settings: SiteSettings) {
+  if (settings && settings?.backgroundColor) {
+    applyThemeColors(
+      {
+        background: settings?.backgroundColor || "#ffffff",
+        backgroundAlt: settings?.backgroundAltColor || "#f0f0f0",
+        foreground: settings?.foregroundColor || "#f5f5f5",
+        foregroundAlt: settings?.foregroundAltColor || "#333333",
+        surface: settings?.surfaceColor || "#ffffff",
+        surfaceAlt: settings?.surfaceAltColor || "#f5f5f5",
+        primary: settings?.primaryColor || "#59c2ff",
+        secondary: settings?.secondaryColor || "#6D28D9",
+        border: settings?.borderColor || "#e0e0e0",
+        accent: settings?.accentColor || "#10B981",
+        destructive: "#EF4444",
+      },
+      {
+        primary: true,
+        secondary: true,
+        accent: true,
+        destructive: true,
+      }
+    );
+  }
+}
