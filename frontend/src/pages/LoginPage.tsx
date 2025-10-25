@@ -52,7 +52,8 @@ export default function LoginPage() {
       clearErrors();
 
       // Navigate based on role
-      if (user!.role === "ADMIN") navigate("/admin");
+      if (user!.role === "ADMIN" || user!.role === "SITE_OWNER")
+        navigate("/admin");
       else navigate("/");
     } catch (err: any) {
       // Show error from login

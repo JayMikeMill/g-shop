@@ -42,7 +42,9 @@ export const adminRoutes: JSX.Element[] = [
     key="dashboard"
     path="/admin"
     element={
-      <ProtectedRoute allowedRoles={[UserRoleKeys.ADMIN]}>
+      <ProtectedRoute
+        allowedRoles={[UserRoleKeys.ADMIN, UserRoleKeys.SITE_OWNER]}
+      >
         <AdminDashboardPage />
       </ProtectedRoute>
     }

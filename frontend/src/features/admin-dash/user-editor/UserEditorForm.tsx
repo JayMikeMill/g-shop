@@ -5,7 +5,7 @@ import { Input } from "@components/ui";
 import type { CrudEditorInterface } from "../CrudEditorInterface";
 import { UserRoleKeys, type User } from "shared/types/PrismaTypes";
 import type { SafeType, UserRole } from "shared/types";
-
+import { useUser } from "@app/hooks";
 const defaultUser: User = {
   email: "",
   passwordHash: "",
@@ -23,26 +23,26 @@ export const UserEditorForm: React.FC<CrudEditorInterface<User>> = ({
   onDelete,
   onCancel,
 }) => {
-  const isNew = !item?.id;
+  const [password, setPassword] = React.useState("");
+
+  const { register } = useUser();
+
+  const isNew = !item?.id || item.id === "";
   const methods = useForm<SafeType<User>>({
-    defaultValues: item ?? defaultUser,
+    defaultValues: isNew ? defaultUser : (item ?? defaultUser),
     mode: "onChange",
   });
-  const { handleSubmit, reset, control } = methods;
+  const { handleSubmit, reset, control, getValues } = methods;
+
+  console.log("UserEditorForm item:", isNew, getValues());
 
   React.useEffect(() => {
     reset(item ?? defaultUser);
   }, [item, reset]);
 
   const onSubmit = (data: User) => {
-    // Convert isVerified from string to boolean
-    const fixedData = {
-      ...data,
-      isVerified: String(data.isVerified) === "true",
-      id: item?.id ?? data.id ?? "",
-    };
-    if (isNew) onCreate(fixedData);
-    else onModify(fixedData as User & { id: string });
+    if (isNew) register(data, password);
+    else onModify(data as User & { id: string });
   };
 
   return (
@@ -51,6 +51,7 @@ export const UserEditorForm: React.FC<CrudEditorInterface<User>> = ({
         className="flex flex-col h-full min-h-0"
         onSubmit={handleSubmit(onSubmit)}
         style={{ minWidth: 320 }}
+        autoComplete="new-password"
       >
         <div className="flex-1 min-h-0  p-md">
           <div className="flex flex-col gap-md">
@@ -76,13 +77,11 @@ export const UserEditorForm: React.FC<CrudEditorInterface<User>> = ({
               <div className="flex flex-col w-full">
                 <label>Role</label>
                 <AnimatedSelect<UserRole>
-                  items={Object.values(UserRoleKeys)
-                    .filter((role) => role != "SITE_OWNER")
-                    .map((role) => ({
-                      value: role,
-                      label: role,
-                      render: (item) => <span>{item}</span>,
-                    }))}
+                  items={Object.values(UserRoleKeys).map((role) => ({
+                    value: role,
+                    label: role,
+                    render: (item) => <span>{item}</span>,
+                  }))}
                   controlProps={{ control, name: "role" }}
                 />
               </div>
@@ -97,6 +96,15 @@ export const UserEditorForm: React.FC<CrudEditorInterface<User>> = ({
                 />
               </div>
             </div>
+            {isNew && (
+              <div className="flex flex-col w-full">
+                <label>Password</label>
+                <Input
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+            )}
           </div>
         </div>
         <div className="flex flex-row bg-surface border-t gap-2 px-0 py-md items-center sticky bottom-0 z-10">

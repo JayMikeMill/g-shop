@@ -28,6 +28,7 @@ export const reqOwnerAll: CRUDRouteMiddleware = {
   update: dataAuth(["ADMIN", "OWNER"]),
   delete: dataAuth(["ADMIN", "OWNER"]),
 };
+
 export function createCrudRoute(
   domain: DatabaseDomain,
   middleware?: CRUDRouteMiddleware
@@ -49,9 +50,7 @@ export function createCrudRoute(
 
   // ---------------- CREATE ----------------
   const createHandler = wrapHandler((req) => crud.create(req.body));
-  if (middleware?.create?.length)
-    router.post("/", middleware?.create, createHandler);
-  else router.post("/", createHandler);
+  router.post("/", middleware?.create, createHandler);
 
   // ---------------- READ ----------------
   // getOne
@@ -59,13 +58,13 @@ export function createCrudRoute(
     return crud.getOne(req.body);
   });
 
-  if (middleware?.readOne?.length)
+  if (middleware?.readOne)
     router.post("/one/", middleware?.readOne, getOneHandler);
   else router.post("/one/", getOneHandler);
 
   // getMany
   const getManyHandler = wrapHandler((req) => crud.getMany(req.body));
-  if (middleware?.readMany?.length)
+  if (middleware?.readMany)
     router.post("/many", middleware?.readMany, getManyHandler);
   else router.post("/many", getManyHandler);
 
@@ -73,13 +72,12 @@ export function createCrudRoute(
   const updateHandler = wrapHandler((req) =>
     crud.update({ ...req.body, id: req.params.id })
   );
-  if (middleware?.update?.length)
-    router.put("/:id", middleware?.update, updateHandler);
+  if (middleware?.update) router.put("/:id", middleware?.update, updateHandler);
   else router.put("/:id", updateHandler);
 
   // ---------------- DELETE ----------------
   const deleteHandler = wrapHandler((req) => crud.delete(req.params.id));
-  if (middleware?.delete?.length)
+  if (middleware?.delete)
     router.delete("/:id", middleware?.delete, deleteHandler);
   else router.delete("/:id", deleteHandler);
 

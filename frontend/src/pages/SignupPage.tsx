@@ -58,7 +58,8 @@ export default function SignupPage() {
 
       // Success → login -> redirect user
       await loginUser(newUser!.email, data.password);
-      if (newUser!.role === "ADMIN") navigate("/admin");
+      if (newUser!.role === "ADMIN" || newUser!.role === "SITE_OWNER")
+        navigate("/admin");
       else navigate("/");
     } catch (err: any) {
       setError("confirmPassword", {

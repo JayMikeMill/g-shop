@@ -123,7 +123,7 @@ export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
             >
               {/* Top section: admin, categories (scrollable) */}
               <div className="flex-1 overflow-y-auto pr-2">
-                {user?.role === "ADMIN" && (
+                {(user?.role === "ADMIN" || user?.role === "SITE_OWNER") && (
                   <MenuItem
                     variants={itemVariants}
                     onClick={() => handleNavigate("/admin")}

@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import { createCrudRoute as CR, reqAdminEdit, reqOwnerAll } from "./crudRoute";
+import { userDataAuth } from "@middleware/userDataAuth";
 
 const router = Router();
 
@@ -20,6 +21,6 @@ router.use("/orders", CR("orders", reqOwnerAll));
 
 // ---------------- Users ----------------
 router.use(`/users/reviews`, CR("productReviews", reqOwnerAll));
-router.use("/users", CR("users", reqOwnerAll));
+router.use("/users", CR("users", userDataAuth));
 
 export default router;
