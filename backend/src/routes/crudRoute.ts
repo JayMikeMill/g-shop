@@ -7,30 +7,30 @@ import { DatabaseDomain } from "shared/interfaces/Database";
 
 export type CRUDRouteAuth = AuthRole[];
 
-export type CRUDRouteOptions = {
-  create?: CRUDRouteAuth;
-  readOne?: CRUDRouteAuth;
-  readMany?: CRUDRouteAuth;
-  update?: CRUDRouteAuth;
-  delete?: CRUDRouteAuth;
+export type CRUDRouteMiddleware = {
+  create?: any;
+  readOne?: any;
+  readMany?: any;
+  update?: any;
+  delete?: any;
 };
 
-export const reqAdminEdit: CRUDRouteOptions = {
-  create: ["ADMIN"],
-  update: ["ADMIN"],
-  delete: ["ADMIN"],
+export const reqAdminEdit: CRUDRouteMiddleware = {
+  create: dataAuth(["ADMIN"]),
+  update: dataAuth(["ADMIN"]),
+  delete: dataAuth(["ADMIN"]),
 };
 
-export const reqOwnerAll: CRUDRouteOptions = {
-  create: ["ADMIN", "OWNER"],
-  readOne: ["ADMIN", "OWNER"],
-  readMany: ["ADMIN"], // Only admin can list all
-  update: ["ADMIN", "OWNER"],
-  delete: ["ADMIN", "OWNER"],
+export const reqOwnerAll: CRUDRouteMiddleware = {
+  create: dataAuth(["ADMIN", "OWNER"]),
+  readOne: dataAuth(["ADMIN", "OWNER"]),
+  readMany: dataAuth(["ADMIN"]), // Only admin can list all
+  update: dataAuth(["ADMIN", "OWNER"]),
+  delete: dataAuth(["ADMIN", "OWNER"]),
 };
 export function createCrudRoute(
   domain: DatabaseDomain,
-  options?: CRUDRouteOptions
+  middleware?: CRUDRouteMiddleware
 ) {
   const router = Router();
 
@@ -49,8 +49,8 @@ export function createCrudRoute(
 
   // ---------------- CREATE ----------------
   const createHandler = wrapHandler((req) => crud.create(req.body));
-  if (options?.create?.length)
-    router.post("/", dataAuth(options.create), createHandler);
+  if (middleware?.create?.length)
+    router.post("/", middleware?.create, createHandler);
   else router.post("/", createHandler);
 
   // ---------------- READ ----------------
@@ -59,28 +59,28 @@ export function createCrudRoute(
     return crud.getOne(req.body);
   });
 
-  if (options?.readOne?.length)
-    router.post("/one/", dataAuth(options.readOne), getOneHandler);
+  if (middleware?.readOne?.length)
+    router.post("/one/", middleware?.readOne, getOneHandler);
   else router.post("/one/", getOneHandler);
 
   // getMany
   const getManyHandler = wrapHandler((req) => crud.getMany(req.body));
-  if (options?.readMany?.length)
-    router.post("/many", dataAuth(options.readMany), getManyHandler);
+  if (middleware?.readMany?.length)
+    router.post("/many", middleware?.readMany, getManyHandler);
   else router.post("/many", getManyHandler);
 
   // ---------------- UPDATE ----------------
   const updateHandler = wrapHandler((req) =>
     crud.update({ ...req.body, id: req.params.id })
   );
-  if (options?.update?.length)
-    router.put("/:id", dataAuth(options.update), updateHandler);
+  if (middleware?.update?.length)
+    router.put("/:id", middleware?.update, updateHandler);
   else router.put("/:id", updateHandler);
 
   // ---------------- DELETE ----------------
   const deleteHandler = wrapHandler((req) => crud.delete(req.params.id));
-  if (options?.delete?.length)
-    router.delete("/:id", dataAuth(options.delete), deleteHandler);
+  if (middleware?.delete?.length)
+    router.delete("/:id", middleware?.delete, deleteHandler);
   else router.delete("/:id", deleteHandler);
 
   return router;
