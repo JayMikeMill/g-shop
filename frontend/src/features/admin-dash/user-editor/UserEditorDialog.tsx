@@ -1,4 +1,5 @@
 import React from "react";
+import { UserEditorForm } from "./UserEditorForm";
 import { AnimatedDialog, Button } from "@components/ui";
 import type { CrudEditorInterface } from "@features/admin-dash";
 import type { User } from "shared/types/PrismaTypes";
@@ -9,6 +10,8 @@ export const UserEditorDialog: React.FC<CrudEditorInterface<User>> = ({
   item,
   //onCreate,
   //onModify,
+  onCreate,
+  onModify,
   onDelete,
   onCancel,
 }) => (
@@ -19,14 +22,12 @@ export const UserEditorDialog: React.FC<CrudEditorInterface<User>> = ({
     className={`flex flex-col overflow-hidden w-full h-full 
       rounded-none sm:rounded-2xl sm:max-w-2xl sm:px-lg`}
   >
-    <Button
-      onClick={() => {
-        if (item?.id) onDelete(item.id);
-      }}
-      className="absolute top-4 right-4"
-    >
-      Delete User
-    </Button>
-    <>TODO: Implement User Form</>
+    <UserEditorForm
+      item={item}
+      onCreate={onCreate}
+      onModify={onModify}
+      onDelete={onDelete}
+      onCancel={onCancel}
+    />
   </AnimatedDialog>
 );
