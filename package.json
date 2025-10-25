@@ -20,8 +20,8 @@
   "scripts": {
     "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
     "prisma": "npm run prisma --prefix backend",
-    "merge-gshop": "node scripts/merge-gshop.js",
     "typecheck": "concurrently \"tsc -p backend --noEmit\" \"tsc -p frontend --noEmit\" \"tsc -p shared --noEmit\"",
+    "backup": "powershell -Command \"pg_dump --dbname='postgresql://postgres.xbbovndnldxrkoozastv:GShopY3`$hua711@aws-1-us-east-2.pooler.supabase.com:5432/postgres' --file=('gshop_backup_' + (Get-Date -Format 'yyyy-MM-dd_HH-mm-ss') + '.sql' | Out-String).Trim()\"",
     "test": "jest"
   },
   "dependencies": {

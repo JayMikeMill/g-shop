@@ -32,9 +32,7 @@ export const UserEditorForm: React.FC<CrudEditorInterface<User>> = ({
     defaultValues: isNew ? defaultUser : (item ?? defaultUser),
     mode: "onChange",
   });
-  const { handleSubmit, reset, control, getValues } = methods;
-
-  console.log("UserEditorForm item:", isNew, getValues());
+  const { handleSubmit, reset, control } = methods;
 
   React.useEffect(() => {
     reset(item ?? defaultUser);
