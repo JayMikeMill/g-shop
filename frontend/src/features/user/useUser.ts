@@ -38,10 +38,6 @@ export function useUser(): AuthApi & { user: User | null; loading: boolean } {
       dispatch(setLoading(true));
       try {
         const response = await apiRegister(newUser, password);
-        if (response.success && response.user) {
-          dispatch(setUser(response.user));
-          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(response.user));
-        }
         return response;
       } catch (err) {
         console.error("Registration failed:", err);

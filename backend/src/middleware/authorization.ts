@@ -25,7 +25,7 @@ export const getAuthUser = async (
   try {
     if (process.env.REQUIRE_AUTH === "false") return next();
 
-    const token = req.cookies.auth_token;
+    const token = req.cookies.session;
 
     if (!token) {
       req.user = undefined;

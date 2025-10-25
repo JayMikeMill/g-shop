@@ -26,6 +26,7 @@ export const login = controllerHandler({
 
     if (!success) return { user, success, status, message };
 
+    console.log("Generated auth token:", token);
     // Set HTTP-only cookie
     res.cookie("session", token, {
       httpOnly: true,
