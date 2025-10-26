@@ -6,7 +6,7 @@ A modern, full-stack e-commerce web application featuring a complete admin dashb
 
 ---
 
-# 🌐 [*Live Site → gshop-pied.vercel.app/demo-mode*](https://gshop-pied.vercel.app/demo-mode)
+# 🌐 [*Live Site → gshop-pied.vercel.app/*](https://gshop-pied.vercel.app/)
 
 ---
 
