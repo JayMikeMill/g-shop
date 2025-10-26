@@ -1,3 +1,7 @@
+# 🌐 [**Live Site → gshop-pied.vercel.app/demo-mode**](https://gshop-pied.vercel.app/demo-mode)
+
+---
+
 # E-Commerce Platform with Full Admin Dashboard (MVP)
 
 A modern, full-stack e-commerce web application featuring a complete admin dashboard and dynamic storefront. Built as a fully functional MVP to demonstrate scalable, maintainable full-stack development.
