@@ -58,6 +58,7 @@ const renderImageOrPlaceholder = (src?: string) =>
 export type TableLayout<T> = {
   query: QueryObject<T>;
   columns: TableColumn<T>[];
+  customKebabRender?: (row: T, defaultKebab: ReactNode) => ReactNode;
 };
 
 //===========================================================================
@@ -68,8 +69,24 @@ export const userTable: TableLayout<User> = {
   columns: [
     { id: "id", label: "User ID", width: "200px", render: (row) => row.id },
     { id: "email", label: "Email", width: "200px", render: (row) => row.email },
-    { id: "role", label: "Role", width: "120px", render: (row) => row.role },
+    {
+      id: "role",
+      label: "Role",
+      width: "120px",
+      render: (u) => {
+        return renderCenteredColumn(
+          <span className="font-semibold text-text">{u.role}</span>
+        );
+      },
+    },
   ],
+  customKebabRender: (user, defaultKebab) => {
+    // Hide kebab menu for SITE_OWNER users
+    if (user.role === "SITE_OWNER") {
+      return null;
+    }
+    return defaultKebab;
+  },
 };
 
 //===========================================================================

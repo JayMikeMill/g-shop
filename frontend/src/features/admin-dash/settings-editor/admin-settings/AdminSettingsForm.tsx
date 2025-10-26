@@ -91,9 +91,6 @@ const AdminSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
           >
             <AdminSettingsAnalyticsForm />
           </AnimatedDropdownBox>
-          <button className="btn btn-primary mt-lg" type="submit">
-            Save Admin Settings
-          </button>
         </div>
       </form>
       {/* Action buttons */}

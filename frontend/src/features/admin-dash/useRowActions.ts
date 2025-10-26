@@ -7,6 +7,8 @@ export function useRowActions() {
     {}
   );
 
+  const [hiddenKebabs, setHiddenKebabs] = useState<Record<string, boolean>>({});
+
   const withRowAction = useCallback(
     async (fn: () => Promise<void>, rowId: string, action: RowActionMsg) => {
       setRowsLoading((map) => ({ ...map, [rowId]: action }));
@@ -25,5 +27,11 @@ export function useRowActions() {
     []
   );
 
-  return { rowsLoading, withRowAction, setRowsLoading };
+  return {
+    withRowAction,
+    rowsLoading,
+    setRowsLoading,
+    hiddenKebabs,
+    setHiddenKebabs,
+  };
 }

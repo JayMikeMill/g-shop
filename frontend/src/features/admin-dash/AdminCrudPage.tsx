@@ -40,9 +40,9 @@ export function AdminCrudPage<T extends { id?: string }>({
   const [loadingNextPage, setLoadingNextPage] = useState(false);
 
   const api = useDataApi()[apiKey] as any;
-  const { query, columns } = tableLayout;
+  const { query, columns, customKebabRender } = tableLayout;
 
-  const { rowsLoading, withRowAction, setRowsLoading } = useRowActions();
+  const { withRowAction, rowsLoading, setRowsLoading } = useRowActions();
 
   // --- Event handlers ---
   const openCreate = () => setEditorMode({ type: "creating" });
@@ -174,21 +174,28 @@ export function AdminCrudPage<T extends { id?: string }>({
       id: "menu",
       label: "",
       width: "48px",
-      render: (row: T) => (
-        <KebabMenu
-          options={[
-            {
-              label: "Edit",
-              onClick: () => openEdit(row),
-            },
-            {
-              label: "Delete",
-              onClick: () => handleDelete(row.id!),
-              className: "text-red-600",
-            },
-          ]}
-        />
-      ),
+      render: (row: T) => {
+        const defaultKebab = (
+          <KebabMenu
+            options={[
+              {
+                label: "Edit",
+                onClick: () => openEdit(row),
+              },
+              {
+                label: "Delete",
+                onClick: () => handleDelete(row.id!),
+                className: "text-red-600",
+              },
+            ]}
+          />
+        );
+
+        // Use custom kebab render if provided, otherwise use default
+        return customKebabRender
+          ? customKebabRender(row, defaultKebab)
+          : defaultKebab;
+      },
     },
     ...columns,
   ];
