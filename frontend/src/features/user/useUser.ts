@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "@app/useApp";
-import { setLoading, setUser, clearUser } from "./userSlice";
+import { setLoading, setUser, clearUser, setIsDemoUser } from "./userSlice";
 import { useCallback, useEffect } from "react";
 import { useApi } from "@app/hooks";
 import type { User } from "shared/types";
@@ -7,9 +7,13 @@ import type { AuthApi, AuthResponse } from "shared/interfaces";
 
 const USER_STORAGE_KEY = "userData";
 
-export function useUser(): AuthApi & { user: User | null; loading: boolean } {
+export function useUser(): AuthApi & {
+  user: User | null;
+  loading: boolean;
+  isDemoUser: boolean;
+} {
   const dispatch = useAppDispatch();
-  const { user, loading } = useAppSelector((state) => state.user);
+  const { user, loading, isDemoUser } = useAppSelector((state) => state.user);
   const {
     register: apiRegister,
     login: apiLogin,
@@ -113,5 +117,5 @@ export function useUser(): AuthApi & { user: User | null; loading: boolean } {
     }
   }, [dispatch, apiLogout]);
 
-  return { user, loading, register, login, logout };
+  return { user, loading, isDemoUser, register, login, logout };
 }

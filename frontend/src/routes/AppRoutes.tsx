@@ -23,6 +23,7 @@ import SiteHeader from "@components/layout/SiteHeader";
 import SiteFooter from "@components/layout/SiteFooter";
 
 import { useLocation } from "react-router-dom";
+import DemoModePage from "@pages/DemoModePage";
 
 export default function AppRoutes() {
   const adminPages = useLocation().pathname.startsWith("/admin");
@@ -42,7 +43,7 @@ export default function AppRoutes() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/account" element={<AccountPage />} />
-
+        <Route path="/demo-mode" element={<DemoModePage />} />
         {adminRoutes.map((r) => r)}
       </Routes>
       {!adminPages && <SiteFooter />}
