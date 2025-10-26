@@ -61,11 +61,14 @@ export const ProductImagesViewer: React.FC<ProductImagesViewerProps> = ({
           loop={false}
         >
           {images.map((img, idx) => (
-            <SwiperSlide key={idx} className="flex justify-center items-center">
+            <SwiperSlide
+              key={idx}
+              className="flex  bg-surface border border-2 rounded-xl justify-center items-center"
+            >
               <Image
                 src={img.main}
                 alt={`Product ${idx}`}
-                className="object-contain w-full h-96 cursor-pointer"
+                className="object-contain   w-full h-96 cursor-pointer"
                 onClick={(e) => {
                   const arrow = (e.target as HTMLElement).closest(
                     ".custom-swiper-next, .custom-swiper-prev"
@@ -97,7 +100,7 @@ export const ProductImagesViewer: React.FC<ProductImagesViewerProps> = ({
               <Image
                 src={img.preview}
                 alt={`Thumb ${idx}`}
-                className={`object-contain w-20 h-20 cursor-pointer border rounded-md transition-all ${
+                className={`object-contain w-20 h-20 bg-surface cursor-pointer border rounded-md transition-all ${
                   idx === activeIndex ? "border-primary border-4" : ""
                 }`}
               />

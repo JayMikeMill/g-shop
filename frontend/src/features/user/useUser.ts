@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "@app/useApp";
-import { setLoading, setUser, clearUser, setIsDemoUser } from "./userSlice";
+import { setLoading, setUser, clearUser } from "./userSlice";
 import { useCallback, useEffect } from "react";
 import { useApi } from "@app/hooks";
 import type { User } from "shared/types";

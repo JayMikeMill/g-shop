@@ -8,12 +8,12 @@ export function Image({ loader = true, ...props }: ImageProps) {
   const [loaded, setLoaded] = useState(false);
 
   return (
-    <div className={`relative ${loader && !loaded ? "w-full h-full" : ""}`}>
+    <div className={`relative w-full h-full`}>
       <img
         {...props}
-        className={`${props.className ?? ""} transition-opacity duration-200 ${
+        className={` transition-opacity duration-200 ${
           loaded ? "opacity-100" : "opacity-0"
-        }`}
+        } ${props.className ?? ""}`}
         onLoad={(e) => {
           setLoaded(true);
           if (props.onLoad) props.onLoad(e);

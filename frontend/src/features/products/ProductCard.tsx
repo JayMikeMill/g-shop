@@ -1,5 +1,5 @@
 import { useCart, useNavigate } from "@app/hooks";
-import { Button, TagBox } from "@components/ui";
+import { Button, TagBox, Image } from "@components/ui";
 import type { Product } from "shared/types";
 import {
   getProductDiscountPercent,
@@ -51,11 +51,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
       {/* Image container with aspect ratio, always contains image */}
       <div className="relative flex p-md items-center justify-center aspect-square overflow-hidden rounded-t-lg bg-surfaceAlt w-full">
         {product.images && product.images.length > 0 ? (
-          <img
+          <Image
             src={product.images[0].preview}
             alt={product.name}
-            className="w-full h-full object-contain"
-            style={{ minWidth: 0, minHeight: 0 }}
+            className=" w-full h-full object-contain"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-textSecondary">
@@ -89,7 +88,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       <div className="flex flex-col p-md flex-1 min-h-0">
         <h3
           className="text-md  text-left .font-semibold line-clamp-2"
-          style={{ minHeight: "2.5rem" }}
+          style={{ minHeight: "3.2rem" }}
         >
           {product.name}
         </h3>

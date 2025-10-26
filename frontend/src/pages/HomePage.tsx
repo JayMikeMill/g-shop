@@ -79,6 +79,17 @@ export default function HomePage() {
         </h1>
       )}
 
+      {/*disclaimer for demo site no associated with brands*/}
+      {isDemoUser && (
+        <div className="bg-gray-100 border border-gray-300 text-gray-700 px-4 py-3 rounded relative mb-lg">
+          <p className="text-sm">
+            Disclaimer: This is a demo e-commerce site. All brands and products
+            are for demonstration only and not affiliated with any real
+            companies.
+          </p>
+        </div>
+      )}
+
       <CategoryBar categories={categoriesList} />
 
       {/* Render all but the first collection horizontally */}
