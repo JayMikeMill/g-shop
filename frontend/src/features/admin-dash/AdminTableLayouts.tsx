@@ -82,7 +82,7 @@ export const userTable: TableLayout<User> = {
   ],
   customKebabRender: (user, defaultKebab) => {
     // Hide kebab menu for SITE_OWNER users
-    if (user.role === "SITE_OWNER") {
+    if (user.role === "SITE_OWNER" || user.email === "demosite@gmail.com") {
       return null;
     }
     return defaultKebab;

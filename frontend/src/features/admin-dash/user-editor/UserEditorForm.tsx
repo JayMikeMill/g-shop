@@ -47,12 +47,16 @@ export const UserEditorForm: React.FC<CrudEditorInterface<User>> = ({
   // Determine if the current user is allowed to modify the user being edited
   const userRole = user?.role;
   const modifyingRole = item?.role;
-  const allowed =
+  let allowed =
     userRole === "SITE_OWNER" || // SITE_OWNER can modify anyone
     (userRole === "ADMIN" && // ADMIN can modify non-admins
       (user?.id === item?.id || // ADMIN can modify self
         // ADMIN cannot modify other ADMIN or SITE_OWNER
         (modifyingRole !== "SITE_OWNER" && modifyingRole !== "ADMIN")));
+
+  if (item?.email === "demosite@gmail.com") {
+    allowed = false;
+  }
 
   return (
     <FormProvider {...methods}>
