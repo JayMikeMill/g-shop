@@ -4,9 +4,30 @@
 
 A modern, full-stack e-commerce web application featuring a complete admin dashboard and dynamic storefront. Built as a fully functional MVP to demonstrate scalable, maintainable full-stack development.
 
+### 🌐 [Live Site Link On Vercel](https://gshop-pied.vercel.app/)
+
 ---
 
-# 🌐 Live Site Link → [CLICK HERE](https://gshop-pied.vercel.app/)
+## 🖼️ Preview Images
+
+### 💻 Desktop
+<p align="center">
+	<img src="./resources/readme-images/desktop-3.png" width="45%">
+	<img src="./resources/readme-images/desktop-2.png" width="45%">
+</p>
+<p align="center">
+	<img src="./resources/readme-images/desktop-1.png" width="45%">
+	<img src="./resources/readme-images/desktop-4.png" width="45%">
+</p>
+
+### 📱 Mobile
+
+<p align="center">
+	<img src="./resources/readme-images/mobile-6.jpg" width="24%">
+  <img src="./resources/readme-images/mobile-3.jpg" width="24%">
+  <img src="./resources/readme-images/mobile-5.jpg" width="24%">
+  <img src="./resources/readme-images/mobile-7.jpg" width="24%">
+</p>
 
 ---
 
