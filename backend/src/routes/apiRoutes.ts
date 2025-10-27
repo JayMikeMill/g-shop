@@ -41,6 +41,8 @@ import {
   uploadImage,
 } from "@controllers/storageController";
 
+import { onRegisterUser } from "@middleware/userPermissions";
+
 // Initialize Multer
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -48,7 +50,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 const router = Router();
 
 // ---------------- Auth ----------------
-router.post("/auth/register", getAuthUser, register);
+router.post("/auth/register", getAuthUser, onRegisterUser, register);
 router.post("/auth/login", login);
 router.post("/auth/logout", logout);
 

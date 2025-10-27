@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import { createCrudRoute as CR, CRUDRouteMiddleware } from "./crudRoute";
-import { userDataAuth } from "@middleware/userDataAuth";
+import { userDataAuth } from "@middleware/userPermissions";
 import { dataAuth } from "@middleware/dataAuth";
 
 const router = Router();
