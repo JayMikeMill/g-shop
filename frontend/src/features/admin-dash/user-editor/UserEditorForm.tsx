@@ -6,7 +6,6 @@ import type { CrudEditorInterface } from "../CrudEditorInterface";
 import { UserRoleKeys, type User } from "shared/types/PrismaTypes";
 import type { SafeType, UserRole } from "shared/types";
 import { useUser } from "@app/hooks";
-import { all } from "axios";
 import { userCanModify } from "shared/utils";
 
 const defaultUser: User = {

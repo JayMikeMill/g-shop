@@ -19,7 +19,6 @@ import {
 import { TagBox, Image, type TableColumn } from "@components/ui";
 import { buyOrderShipping } from "./order-editor/buyOrderShipping";
 
-import { useUser } from "@app/hooks";
 // --- Helpers ---
 const renderTagArray = (
   items?: { name: string; color?: string; textColor?: string }[]
