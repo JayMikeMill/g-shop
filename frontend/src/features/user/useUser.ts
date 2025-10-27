@@ -13,12 +13,14 @@ export function useUser(): AuthApi & {
   isDemoUser: boolean;
 } {
   const dispatch = useAppDispatch();
-  const { user, loading, isDemoUser } = useAppSelector((state) => state.user);
+  const { user, loading } = useAppSelector((state) => state.user);
   const {
     register: apiRegister,
     login: apiLogin,
     logout: apiLogout,
   } = useApi().auth;
+
+  const isDemoUser = user?.email === "demouser@gmail.com";
 
   //==================================================
   // Load user from localStorage on mount
