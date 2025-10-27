@@ -76,20 +76,12 @@ const calculateFinalCartTotals = (
 };
 
 // Generic helper to update cart items + totals
-const updateCart = (
-  state: CartState,
-  items: CartItem[],
-  siteSettings: {
-    freeShippingThreshold: number;
-    flatShippingRate: number;
-    taxRate: number;
-  }
-) => {
+const updateCart = (state: CartState, items: CartItem[], siteSettings: any) => {
   const cartTotals = calculateFinalCartTotals(
     items,
-    siteSettings.freeShippingThreshold,
-    siteSettings.flatShippingRate,
-    siteSettings.taxRate
+    siteSettings?.freeShippingThreshold ?? 0,
+    siteSettings?.flatShippingRate ?? 0,
+    siteSettings?.taxRate ?? 0
   );
 
   state.cart.items = items;
@@ -180,6 +172,17 @@ const cartSlice = createSlice({
       const { siteSettings } = action.payload;
       updateCart(state, state.cart.items as CartItem[], siteSettings);
     },
+  },
+  // ---------------- Extra Reducers ----------------
+  // Listen to other actions to update cart as needed
+  extraReducers: (builder) => {
+    // Listen to site settings changes and recalculate cart
+    builder.addCase("siteSettings/setSiteSettings", (state, action: any) => {
+      const siteSettings = action.payload;
+      if (siteSettings && state.cart.items && state.cart.items.length > 0) {
+        updateCart(state, state.cart.items as CartItem[], siteSettings);
+      }
+    });
   },
 });
 

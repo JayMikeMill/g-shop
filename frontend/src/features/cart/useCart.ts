@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector, useSiteSettings } from "@app/hooks";
+import { useAppDispatch, useAppSelector } from "@app/hooks";
 import {
   addToCart,
   removeFromCart,
@@ -6,7 +6,6 @@ import {
   clearCart,
   selectCart,
   selectCartTotals,
-  refreshCart,
 } from "./cartSlice";
 import type { CartItem } from "shared/types";
 import { useCallback } from "react";
@@ -15,37 +14,35 @@ export function useCart() {
   const dispatch = useAppDispatch();
   const cart = useAppSelector(selectCart);
   const totals = useAppSelector(selectCartTotals);
-  const { siteSettings } = useSiteSettings();
 
-  const settingsPayload = {
-    freeShippingThreshold: siteSettings?.freeShippingThreshold ?? 0,
-    flatShippingRate: siteSettings?.flatShippingRate ?? 0,
-    taxRate: siteSettings?.taxRate ?? 0,
-  };
+  // Get site settings directly from Redux store
+  const siteSettings = useAppSelector(
+    (state) => state.siteSettings?.siteSettings
+  );
 
   const addItem = useCallback(
-    (item: Partial<CartItem>) =>
-      dispatch(addToCart({ item, siteSettings: settingsPayload })),
-    [dispatch, settingsPayload]
+    (item: Partial<CartItem>) => {
+      dispatch(addToCart({ item, siteSettings }));
+    },
+    [dispatch, siteSettings]
   );
 
   const removeItem = useCallback(
-    (item: CartItem) =>
-      dispatch(removeFromCart({ item, siteSettings: settingsPayload })),
-    [dispatch, settingsPayload]
+    (item: CartItem) => {
+      dispatch(removeFromCart({ item, siteSettings }));
+    },
+    [dispatch, siteSettings]
   );
 
   const removeCompletely = useCallback(
-    (item: CartItem) =>
-      dispatch(removeAllFromCart({ item, siteSettings: settingsPayload })),
-    [dispatch, settingsPayload]
+    (item: CartItem) => {
+      dispatch(removeAllFromCart({ item, siteSettings }));
+    },
+    [dispatch, siteSettings]
   );
 
   const clear = useCallback(() => dispatch(clearCart()), [dispatch]);
 
-  const refresh = useCallback(() => {
-    dispatch(refreshCart({ siteSettings: settingsPayload }));
-  }, [dispatch, settingsPayload]);
   return {
     cart,
     cartTotals: totals,
@@ -53,6 +50,5 @@ export function useCart() {
     removeCartItem: removeItem,
     removeAllCartItem: removeCompletely,
     clearCart: clear,
-    refreshCart: refresh,
   };
 }

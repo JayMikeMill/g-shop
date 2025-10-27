@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import AppRoutes from "./routes/AppRoutes";
 import type { SiteSettings } from "shared/settings";
-import { useSiteSettings } from "@app/hooks";
+import { useSiteSettings, useCart } from "@app/hooks";
 import { applySettingsTheme } from "@features/site-settings/theme";
 
 export default function App() {
@@ -14,7 +14,6 @@ export default function App() {
   // Refresh cart only once when siteSettings are first loaded
   useEffect(() => {
     if (siteSettings) {
-      //useCart().refreshCart();
       applySiteSettings(siteSettings);
     }
   }, [siteSettings]);
