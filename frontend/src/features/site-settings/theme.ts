@@ -1,4 +1,5 @@
 // frontend/src/theme.ts
+import type { SiteSettings } from "shared/settings";
 import twShades from "tw-color-shades";
 
 /**
@@ -24,4 +25,29 @@ export function applyThemeColors(
       }
     }
   }
+}
+
+export function applySettingsTheme(settings: SiteSettings) {
+  // apply default theme colors
+  applyThemeColors(
+    {
+      background: settings?.backgroundColor || "#ffffff",
+      backgroundAlt: settings?.backgroundAltColor || "#f0f0f0",
+      foreground: settings?.foregroundColor || "#f5f5f5",
+      foregroundAlt: settings?.foregroundAltColor || "#333333",
+      surface: settings?.surfaceColor || "#ffffff",
+      surfaceAlt: settings?.surfaceAltColor || "#f5f5f5",
+      primary: settings?.primaryColor || "#59c2ff",
+      secondary: settings?.secondaryColor || "#6D28D9",
+      border: settings?.borderColor || "#e0e0e0",
+      accent: settings?.accentColor || "#10B981",
+      destructive: "#EF4444",
+    },
+    {
+      primary: true,
+      secondary: true,
+      accent: true,
+      destructive: true,
+    }
+  );
 }

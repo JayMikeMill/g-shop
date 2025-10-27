@@ -16,8 +16,6 @@ const OrderStatusHistoryForm: React.FC = () => {
     name: "statusHistory",
   });
 
-  console.log({ fields });
-
   return (
     <div className="flex flex-col gap-sm">
       <div className="flex flex-col">

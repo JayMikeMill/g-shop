@@ -91,7 +91,6 @@ export function AdminCrudPage<T extends { id?: string }>({
   };
 
   const setLoading = (id: string, loadingMsg: string | null) => {
-    console.log("Setting loading state:", id, loadingMsg);
     setRowsLoading((map) => {
       const newMap = { ...map };
       if (loadingMsg) {
@@ -123,7 +122,9 @@ export function AdminCrudPage<T extends { id?: string }>({
       if (preSaveHook) item = await preSaveHook(item, isNew);
 
       try {
-        console.log("Saving item:", item);
+        if (process.env.NODE_ENV === "development")
+          console.log("Saving item:", item);
+
         const saved = isNew
           ? await createItem.mutateAsync(item)
           : await updateItem.mutateAsync(item as any);
@@ -132,6 +133,9 @@ export function AdminCrudPage<T extends { id?: string }>({
           setItems((prev) => prev.filter((it) => it.id !== tempId));
           setErrorMsg("Item could not be saved.");
         } else {
+          if (process.env.NODE_ENV === "development")
+            console.log("Saved item:", saved);
+
           setItems((prev) => prev.map((it) => (it.id === tempId ? saved : it)));
         }
       } catch (err) {

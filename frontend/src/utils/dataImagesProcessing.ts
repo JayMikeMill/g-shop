@@ -59,7 +59,9 @@ export async function processPreviewImage(
   onProgress?: (percent: number) => void
 ): Promise<{ url: string }> {
   let percent = 0;
-  console.log("Processing preview image...", file, file.size);
+  if (process.env.NODE_ENV === "development")
+    console.log("Processing preview image...", file, file.size);
+
   const previewBlob = await imageCompression(file, {
     maxWidthOrHeight: 600,
     maxSizeMB: MAX_PREVIEW_FILE_SIZE_MB,

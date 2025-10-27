@@ -23,11 +23,20 @@ export default function CollectionPage() {
     include: ["products.images", "products.tags"],
   });
 
-  console.log("CollectionPage data:", data, isLoading, error, slug);
   const products = data?.products || [];
 
   const collectionName = data?.name || "";
   const collectionDescription = data?.description || "";
+
+  if (process.env.NODE_ENV === "development")
+    console.log(
+      "CollectionPage render - domain:",
+      domain,
+      "slug:",
+      slug,
+      "data:",
+      data
+    );
 
   if (error) {
     return <div className="text-center py-xl">Failed to load products.</div>;

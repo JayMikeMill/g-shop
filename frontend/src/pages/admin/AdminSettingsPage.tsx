@@ -45,12 +45,14 @@ function GenericSettingsPage<T>({
     newSettings: T,
     preSaveHook?: (settings: T) => Promise<T>
   ) => {
-    console.log("Saving settings:", settingsScope, newSettings);
     setIsSaving(true);
     try {
       if (preSaveHook) {
         newSettings = await preSaveHook(newSettings);
       }
+      if (process.env.NODE_ENV === "development")
+        console.log("Saving settings:", settingsScope, newSettings);
+
       await settings.updateSettings(
         settingsScope,
         newSettings as AnySystemSettings

@@ -33,17 +33,12 @@ export const DateTimeInput: React.FC<DateTimeInputProps> = ({
     inputValue: Date | null,
     handleChange?: (value: Date) => void
   ) => (
-    console.log({ inputValue, value }),
-    (
-      <Input
-        type="datetime-local"
-        className={"px-0 text-center" + className}
-        value={toInputValue(inputValue)}
-        onChange={
-          handleChange && ((e) => handleChange(toDate(e.target.value)!))
-        }
-      />
-    )
+    <Input
+      type="datetime-local"
+      className={"px-0 text-center" + className}
+      value={toInputValue(inputValue)}
+      onChange={handleChange && ((e) => handleChange(toDate(e.target.value)!))}
+    />
   );
 
   if (controlProps) {

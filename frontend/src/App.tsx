@@ -1,23 +1,45 @@
-import AppRoutes from "./routes/AppRoutes";
-import { useSiteSettings, useCart } from "@app/hooks";
 import { useEffect } from "react";
+import AppRoutes from "./routes/AppRoutes";
+import type { SiteSettings } from "shared/settings";
+import { useSiteSettings, useCart } from "@app/hooks";
+import { applySettingsTheme } from "@features/site-settings/theme";
 
 export default function App() {
   const { siteSettings, fetchSettings } = useSiteSettings();
   const { refreshCart } = useCart();
+
   useEffect(() => {
     fetchSettings();
   }, []);
+
+  // Refresh cart only once when siteSettings are first loaded
+  useEffect(() => {
+    if (siteSettings) {
+      refreshCart();
+      applySiteSettings(siteSettings);
+    }
+  }, [siteSettings]);
 
   if (!siteSettings) {
     return null;
   }
 
-  // Refresh cart to apply any site settings changes
-  refreshCart();
+  return (
+    <div>
+      <main>
+        <AppRoutes />
+      </main>
+    </div>
+  );
+}
+
+function applySiteSettings(settings: SiteSettings) {
+  applySettingsTheme(settings);
+
+  console.log("Aquired settings initializing app...", settings);
 
   // Update title
-  document.title = siteSettings?.siteName || "My Store";
+  document.title = settings?.siteName || "My Store";
 
   // Update favicon
   let link: HTMLLinkElement | null =
@@ -27,13 +49,5 @@ export default function App() {
     link.rel = "icon";
     document.head.appendChild(link);
   }
-  link.href = siteSettings.siteIconURL || "/favicon.ico";
-
-  return (
-    <div>
-      <main>
-        <AppRoutes />
-      </main>
-    </div>
-  );
+  link.href = settings.siteIconURL || "/favicon.ico";
 }

@@ -42,7 +42,8 @@ export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
   const stripeFormRef = useRef<StripePaymentFormHandle>(null);
 
   const handleSubmit = async (data: CheckoutFormType) => {
-    console.log("Checking out with data:", data);
+    if (process.env.NODE_ENV === "development")
+      console.log("Checking out with data:", data);
 
     try {
       const { order: newOrder, error } = await createOrder(
@@ -63,11 +64,13 @@ export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
       }
       if (!newOrder) throw new Error("Order creation failed");
 
-      console.log("Order created:", newOrder);
+      if (process.env.NODE_ENV === "development")
+        console.log("Order created:", newOrder);
 
       const billingAddress = newOrder.shippingInfo!.address!;
 
-      console.log("Submitting payment...", billingAddress);
+      if (process.env.NODE_ENV === "development")
+        console.log("Submitting payment...", billingAddress);
 
       // Create payment method
       const paymentMethod =
@@ -75,7 +78,8 @@ export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
 
       if (!paymentMethod) throw new Error("Payment method creation failed");
 
-      console.log("Payment method created:", paymentMethod);
+      if (process.env.NODE_ENV === "development")
+        console.log("Payment method created:", paymentMethod);
 
       onSubmit(newOrder, paymentMethod);
     } catch (err) {

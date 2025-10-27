@@ -38,7 +38,9 @@ export default function HomePage() {
   // Separate first collection and the rest
   const restCollections = featCollections;
 
-  console.log("HomePage render - isDemoUser:", isDemoUser);
+  if (process.env.NODE_ENV === "development")
+    console.log("HomePage render - isDemoUser:", isDemoUser);
+
   return (
     <div className="flex flex-col text-center pb-xl font-sans text-text gap-md">
       {siteSettings?.bannerURL && (

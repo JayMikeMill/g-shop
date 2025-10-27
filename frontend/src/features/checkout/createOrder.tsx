@@ -21,14 +21,17 @@ export async function createOrder(
     return { order: null, error: "ADDRESS_VERIFICATION_FAILED" };
   }
 
-  console.log("Address verified with EasyPost:", shippingInfo.address);
+  if (process.env.NODE_ENV === "development")
+    console.log("Address verified with EasyPost:", shippingInfo.address);
 
   // Calculate order totals
   const tax = cart.total * 0.065;
   const shippingCost = shippingInfo.cost ?? 0;
   const total = cart.total + tax + shippingCost;
 
-  console.log("Creating order with totals:", { tax, shippingCost, total });
+  if (process.env.NODE_ENV === "development")
+    console.log("Creating order with totals:", { tax, shippingCost, total });
+
   // Return Order object
   const order: Order = {
     tax: tax,
@@ -83,7 +86,8 @@ async function verifyAddress(
     );
   }
 
-  console.log("Address verified:", result);
+  if (process.env.NODE_ENV === "development")
+    console.log("Address verified:", result);
 
   return {
     ...shippingInfo,

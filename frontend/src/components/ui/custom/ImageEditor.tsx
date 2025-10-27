@@ -349,7 +349,9 @@ export function ImageEditor({
   onImageChange: onUrlChange,
   processor = async (file) => {
     // Convert File to URL string
-    console.log("Processing file in ImageEditor:", file);
+    if (process.env.NODE_ENV === "development")
+      console.log("Processing file in ImageEditor:", file);
+
     return {
       url: URL.createObjectURL(file),
     };

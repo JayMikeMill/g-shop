@@ -58,7 +58,8 @@ const ProductPage = () => {
     });
   };
 
-  console.log("Rendering ProductPage for product:", product, selectedVariant);
+  if (process.env.NODE_ENV === "development")
+    console.log("Rendering ProductPage for product:", product, selectedVariant);
 
   return (
     <div className="p-mt-xl p-md">

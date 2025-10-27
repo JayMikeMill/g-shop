@@ -50,12 +50,14 @@ const calculateFinalCartTotals = (
   flatRate: number,
   taxRate: number
 ): CartTotals => {
-  console.log("Calculating cart totals with:", {
-    items,
-    freeThreshold,
-    flatRate,
-    taxRate,
-  });
+  if (process.env.NODE_ENV === "development")
+    console.log("Calculating cart totals with:", {
+      items,
+      freeThreshold,
+      flatRate,
+      taxRate,
+    });
+
   const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
   const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const freeShippingDist = Math.max(freeThreshold - subtotal, 0);
