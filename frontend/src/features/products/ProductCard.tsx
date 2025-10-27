@@ -54,7 +54,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <Image
             src={product.images[0].preview}
             alt={product.name}
-            className=" w-full h-full object-contain"
+            className="w-full h-full"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-textSecondary">
