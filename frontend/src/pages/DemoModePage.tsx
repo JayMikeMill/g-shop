@@ -8,13 +8,15 @@ export default function DemoModePage() {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
 
+  const demoEmail = "demouser@gmail.com";
+  const demoPassword = "demo1234";
   const handleDemoLogin = async () => {
     try {
       setError(null);
       await logoutUser();
       const { user: loggedInUser, status } = await loginUser(
-        "demouser@gmail.com",
-        "demo1234"
+        demoEmail,
+        demoPassword
       );
 
       if (status !== "SUCCESS" || !loggedInUser) {
@@ -53,9 +55,9 @@ export default function DemoModePage() {
             <strong>Demo Credentials:</strong>
           </p>
           <p className="text-sm text-blue-700">
-            Email: demosite@gmail.com
+            Email: {demoEmail}
             <br />
-            Password: demo1234
+            Password: {demoPassword}
           </p>
         </div>
 
