@@ -67,9 +67,7 @@ export default function HomePage() {
           className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative"
           role="alert"
         >
-          <strong className="font-bold">Demo Mode Active!</strong>
           <span className="block sm:inline">
-            {" "}
             You are logged in as a demo user.
           </span>
           {/* link to admin dashboard on new line */}
@@ -78,7 +76,7 @@ export default function HomePage() {
               href="/admin"
               className="underline ml-2 font-bold text-xl text-blue-600"
             >
-              Click here to go to Admin Dashboard!
+              Click here to go to Admin Dashboard
             </a>
           </div>
         </div>
