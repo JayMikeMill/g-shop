@@ -13,7 +13,7 @@ export default function DemoModePage() {
       setError(null);
       await logoutUser();
       const { user: loggedInUser, status } = await loginUser(
-        "demosite@gmail.com",
+        "demouser@gmail.com",
         "demo1234"
       );
 

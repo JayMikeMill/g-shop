@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Button, DynamicTable, Input, KebabMenu } from "@components/ui";
 import { Search } from "lucide-react";
 import type { CrudEditorInterface } from "@features/admin-dash/CrudEditorInterface";
-import { useDataApi } from "@app/hooks";
+import { useDataApi, useUser } from "@app/hooks";
 import type { TableLayout } from "./AdminTableLayouts";
 
 import { CrudEditorWrapper } from "./CrudEditorWrapper";
@@ -41,7 +41,7 @@ export function AdminCrudPage<T extends { id?: string }>({
 
   const api = useDataApi()[apiKey] as any;
   const { query, columns, customKebabRender } = tableLayout;
-
+  const { user } = useUser();
   const { withRowAction, rowsLoading, setRowsLoading } = useRowActions();
 
   // --- Event handlers ---
@@ -197,7 +197,7 @@ export function AdminCrudPage<T extends { id?: string }>({
 
         // Use custom kebab render if provided, otherwise use default
         return customKebabRender
-          ? customKebabRender(row, defaultKebab)
+          ? customKebabRender(user, row, defaultKebab)
           : defaultKebab;
       },
     },

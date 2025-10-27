@@ -45,7 +45,7 @@ export default function HomePage() {
     <div className="flex flex-col text-center pb-xl font-sans text-text gap-md">
       {siteSettings?.bannerURL && (
         <div
-          className="w-full h-40 max-h-64 sm:h-64 md:h-80 lg:h-96 bg-cover bg-center mb-lg"
+          className="w-full h-40 max-h-64 sm:h-64 md:h-80 lg:h-96 bg-cover bg-center"
           style={{
             backgroundImage: `url(${siteSettings.bannerURL})`,
             objectFit: "cover",
@@ -53,9 +53,18 @@ export default function HomePage() {
         />
       )}
 
+      {/*disclaimer for demo site no associated with brands*/}
+
+      <div className="bg-gray-100 border border-gray-300 text-gray-700 px-4 py-3 rounded relative">
+        <p className="text-sm">
+          Disclaimer: This is a demo e-commerce site. All brands and products
+          are for demonstration only and not affiliated with any real companies.
+        </p>
+      </div>
+
       {isDemoUser && (
         <div
-          className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative mb-lg"
+          className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative"
           role="alert"
         >
           <strong className="font-bold">Demo Mode Active!</strong>
@@ -79,17 +88,6 @@ export default function HomePage() {
         <h1 className="text-xl sm:text-2xl font-bold mb-lg px-sm">
           {siteSettings.bannerMessage}
         </h1>
-      )}
-
-      {/*disclaimer for demo site no associated with brands*/}
-      {isDemoUser && (
-        <div className="bg-gray-100 border border-gray-300 text-gray-700 px-4 py-3 rounded relative mb-lg">
-          <p className="text-sm">
-            Disclaimer: This is a demo e-commerce site. All brands and products
-            are for demonstration only and not affiliated with any real
-            companies.
-          </p>
-        </div>
       )}
 
       <CategoryBar categories={categoriesList} />

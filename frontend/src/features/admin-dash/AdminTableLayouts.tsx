@@ -13,11 +13,13 @@ import {
   getFinalPriceString,
   getTotalOrderItems,
   toMajorPriceString,
+  userCanModify,
 } from "shared/utils";
 
 import { TagBox, Image, type TableColumn } from "@components/ui";
 import { buyOrderShipping } from "./order-editor/buyOrderShipping";
 
+import { useUser } from "@app/hooks";
 // --- Helpers ---
 const renderTagArray = (
   items?: { name: string; color?: string; textColor?: string }[]
@@ -58,7 +60,11 @@ const renderImageOrPlaceholder = (src?: string) =>
 export type TableLayout<T> = {
   query: QueryObject<T>;
   columns: TableColumn<T>[];
-  customKebabRender?: (row: T, defaultKebab: ReactNode) => ReactNode;
+  customKebabRender?: (
+    user: User | null,
+    row: T,
+    defaultKebab: ReactNode
+  ) => ReactNode;
 };
 
 //===========================================================================
@@ -80,9 +86,9 @@ export const userTable: TableLayout<User> = {
       },
     },
   ],
-  customKebabRender: (user, defaultKebab) => {
+  customKebabRender: (currentUser, user, defaultKebab) => {
     // Hide kebab menu for SITE_OWNER users
-    if (user.role === "SITE_OWNER" || user.email === "demosite@gmail.com") {
+    if (!userCanModify(currentUser, user)) {
       return null;
     }
     return defaultKebab;

@@ -6,6 +6,8 @@ import type { CrudEditorInterface } from "../CrudEditorInterface";
 import { UserRoleKeys, type User } from "shared/types/PrismaTypes";
 import type { SafeType, UserRole } from "shared/types";
 import { useUser } from "@app/hooks";
+import { all } from "axios";
+import { userCanModify } from "shared/utils";
 
 const defaultUser: User = {
   email: "",
@@ -45,18 +47,7 @@ export const UserEditorForm: React.FC<CrudEditorInterface<User>> = ({
   };
 
   // Determine if the current user is allowed to modify the user being edited
-  const userRole = user?.role;
-  const modifyingRole = item?.role;
-  let allowed =
-    userRole === "SITE_OWNER" || // SITE_OWNER can modify anyone
-    (userRole === "ADMIN" && // ADMIN can modify non-admins
-      (user?.id === item?.id || // ADMIN can modify self
-        // ADMIN cannot modify other ADMIN or SITE_OWNER
-        (modifyingRole !== "SITE_OWNER" && modifyingRole !== "ADMIN")));
-
-  if (item?.email === "demosite@gmail.com") {
-    allowed = false;
-  }
+  const allowed = userCanModify(user, item);
 
   return (
     <FormProvider {...methods}>
@@ -135,7 +126,7 @@ export const UserEditorForm: React.FC<CrudEditorInterface<User>> = ({
           </div>
         </div>
         <div className="flex flex-row bg-surface border-t gap-2 px-0 py-md items-center sticky bottom-0 z-10">
-          {!isNew && allowed && modifyingRole !== "SITE_OWNER" && (
+          {allowed && (
             <Button
               className="flex flex-1"
               variant="destructive"
