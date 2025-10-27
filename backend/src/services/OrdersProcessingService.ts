@@ -36,12 +36,10 @@ class OrderProcessingService implements OrderProcessingApi {
       // 2️⃣ Prepare metadata for payment
       const metadata: Record<string, string> = {};
       order.items.forEach((item, index) => {
-        const prefix = `item_${index}_`;
-        metadata[`${prefix}productId`] = item.product.id ?? "unknown";
-        metadata[`${prefix}variantId`] = item.variant?.id ?? "unknown";
-        metadata[`${prefix}name`] = item.product.name ?? "unknown";
-        metadata[`${prefix}quantity`] = String(item.quantity || 1);
-        metadata[`${prefix}price`] = String(toMajorPriceString(item.price));
+        const itemName = item.product.name ?? "unknown";
+        const quantity = item.quantity || 1;
+        const total = toMajorPriceString(item.price); // assuming this gives the total for that line
+        metadata[`item_${index}`] = `${itemName}_x${quantity}_$${total}`;
       });
 
       // 3️⃣ Authorize payment

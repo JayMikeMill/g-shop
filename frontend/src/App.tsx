@@ -6,7 +6,6 @@ import { applySettingsTheme } from "@features/site-settings/theme";
 
 export default function App() {
   const { siteSettings, fetchSettings } = useSiteSettings();
-  const { refreshCart } = useCart();
 
   useEffect(() => {
     fetchSettings();
@@ -15,7 +14,7 @@ export default function App() {
   // Refresh cart only once when siteSettings are first loaded
   useEffect(() => {
     if (siteSettings) {
-      refreshCart();
+      useCart().refreshCart();
       applySiteSettings(siteSettings);
     }
   }, [siteSettings]);
