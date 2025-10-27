@@ -8,7 +8,9 @@ export class SupabaseStorageAdapter implements StorageAdapter {
   private supabase: SupabaseClient;
   private bucketName: string;
 
-  constructor(bucketName: string = "gshop-public") {
+  constructor(
+    bucketName: string = process.env.SUPABASE_BUCKET || "default-bucket"
+  ) {
     if (!SUPABASE_URL) throw new Error("SUPABASE_URL not set");
     if (!SUPABASE_SERVICE_KEY)
       throw new Error("SUPABASE_SERVICE_ROLE_KEY not set");
