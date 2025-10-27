@@ -46,14 +46,14 @@ export default function SiteHeader() {
 
         {/* Center: Logo */}
         <div
-          className="flex flex-col items-center justify-center cursor-pointer"
+          className="flex flex-col flex-1 items-center h-full justify-center cursor-pointer px-4"
           onClick={() => navigate("/")}
         >
           <Image
             src={siteSettings?.logoURL}
             loader={false}
             alt="Logo"
-            className="max-h-10"
+            className="h-full"
           />
         </div>
 

@@ -8,7 +8,7 @@ export function Image({ loader = true, ...props }: ImageProps) {
   const [loaded, setLoaded] = useState(false);
 
   return (
-    <div className={`relative ${props.className} flex-1`}>
+    <div className={`relative flex-1 ${props.className} `}>
       <img
         {...props}
         className={` transition-opacity duration-200 object-contain 
