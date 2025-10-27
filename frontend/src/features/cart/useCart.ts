@@ -6,6 +6,7 @@ import {
   clearCart,
   selectCart,
   selectCartTotals,
+  refreshCart,
 } from "./cartSlice";
 import type { CartItem } from "shared/types";
 import { useCallback } from "react";
@@ -42,5 +43,16 @@ export function useCart() {
 
   const clear = useCallback(() => dispatch(clearCart()), [dispatch]);
 
-  return { cart, totals, addItem, removeItem, removeCompletely, clear };
+  const refresh = useCallback(() => {
+    dispatch(refreshCart({ siteSettings: settingsPayload }));
+  }, [dispatch, settingsPayload]);
+  return {
+    cart,
+    cartTotals: totals,
+    addCartItem: addItem,
+    removeCartItem: removeItem,
+    removeAllCartItem: removeCompletely,
+    clearCart: clear,
+    refreshCart: refresh,
+  };
 }

@@ -174,6 +174,10 @@ const cartSlice = createSlice({
       };
       if (typeof window !== "undefined") localStorage.removeItem("cart_state");
     },
+    refreshCart: (state, action: PayloadAction<{ siteSettings: any }>) => {
+      const { siteSettings } = action.payload;
+      updateCart(state, state.cart.items as CartItem[], siteSettings);
+    },
   },
 });
 
@@ -183,6 +187,11 @@ export const selectCartTotals = (state: { cart: CartState }) =>
   state.cart.totals;
 
 // ---------------- Exports ----------------
-export const { addToCart, removeFromCart, removeAllFromCart, clearCart } =
-  cartSlice.actions;
+export const {
+  addToCart,
+  removeFromCart,
+  removeAllFromCart,
+  refreshCart,
+  clearCart,
+} = cartSlice.actions;
 export default cartSlice.reducer;

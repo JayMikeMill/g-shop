@@ -17,7 +17,7 @@ const ProductPage = () => {
   const { id } = useParams<{ id: string }>();
 
   // Cart context, API hooks
-  const { addItem } = useCart();
+  const { addCartItem } = useCart();
   const { products } = useDataApi();
 
   // Fetch product data
@@ -49,7 +49,7 @@ const ProductPage = () => {
 
   // Handle adding product to cart
   const handleAddToCart = () => {
-    addItem({
+    addCartItem({
       productId: product.id!,
       product,
       variantId: selectedVariant?.id ?? undefined,

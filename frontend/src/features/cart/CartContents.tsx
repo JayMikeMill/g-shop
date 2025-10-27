@@ -49,7 +49,8 @@ export default function CartContents({
 }: CartContentsProps) {
   const navigate = useNavigate();
 
-  const { cart, totals, addItem, removeItem, removeCompletely } = useCart();
+  const { cart, cartTotals, addCartItem, removeCartItem, removeAllCartItem } =
+    useCart();
 
   const cartItems = cart.items || [];
 
@@ -81,13 +82,13 @@ export default function CartContents({
           show: { transition: { staggerChildren: staggerDuration } },
         }}
       >
-        {totals.freeShippingDist > 0 && (
+        {cartTotals.freeShippingDist > 0 && (
           <div className="sticky flex top-md z-10  items-center justify-center">
             <div className="font-semibold p-md w-full max-w-md mb-lg text-lg border bg-surface border-accent text-foreground text-center rounded-md">
               <p>
                 Add{" "}
                 <Label className="font-bold text-xl">
-                  ${toMajorUnit(totals.freeShippingDist).toFixed(2)}
+                  ${toMajorUnit(cartTotals.freeShippingDist).toFixed(2)}
                 </Label>{" "}
                 for free shipping!
               </p>
@@ -102,9 +103,9 @@ export default function CartContents({
             >
               <CartItemView
                 item={item}
-                addToCart={addItem}
-                removeFromCart={removeItem}
-                removeCompletely={removeCompletely}
+                addToCart={addCartItem}
+                removeFromCart={removeCartItem}
+                removeCompletely={removeAllCartItem}
                 readOnly={isSummary}
                 onProductClick={onProductClick}
                 className={i < cartItems.length - 1 ? "border-b" : ""}

@@ -85,7 +85,7 @@ export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
 
           {/* Slide-out cart panel */}
           <motion.div
-            className={`fixed top-0 right-0 flex flex-col h-full sm:w-[600px] 
+            className={`fixed top-0 right-0 flex flex-col h-full sm:w-1/2 
               flex flex-col bg-surface shadow-xl rounded-none sm:rounded-l-lg`}
             initial={{ x: "100%" }}
             animate={{ x: 0 }}

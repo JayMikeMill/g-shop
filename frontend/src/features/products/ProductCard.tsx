@@ -21,11 +21,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
   className,
 }) => {
   const navigate = useNavigate();
-  const { addItem } = useCart();
+  const { addCartItem } = useCart();
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
-    addItem({
+    addCartItem({
       productId: product.id,
       product: product,
       quantity: 1,

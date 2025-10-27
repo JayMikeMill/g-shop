@@ -1,10 +1,10 @@
 import AppRoutes from "./routes/AppRoutes";
-import { useSiteSettings } from "@features/site-settings/useSiteSettings";
+import { useSiteSettings, useCart } from "@app/hooks";
 import { useEffect } from "react";
 
 export default function App() {
   const { siteSettings, fetchSettings } = useSiteSettings();
-
+  const { refreshCart } = useCart();
   useEffect(() => {
     fetchSettings();
   }, []);
@@ -12,6 +12,9 @@ export default function App() {
   if (!siteSettings) {
     return null;
   }
+
+  // Refresh cart to apply any site settings changes
+  refreshCart();
 
   // Update title
   document.title = siteSettings?.siteName || "My Store";

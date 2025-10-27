@@ -7,7 +7,7 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const { clear: clearCart } = useCart();
+  const { clearCart } = useCart();
   const { placeOrder } = useApi().orders;
 
   const onSubmit = async (order: any, paymentMethod: any) => {
