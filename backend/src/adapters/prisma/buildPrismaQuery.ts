@@ -143,6 +143,25 @@ function mapOperator(op: QueryCondition["operator"]): string {
 }
 
 //============================================================
+// Deep merge helper for nested include/select objects
+//============================================================
+function mergeDeep(target: any, source: any) {
+  for (const key of Object.keys(source)) {
+    if (
+      key in target &&
+      typeof target[key] === "object" &&
+      target[key] !== null &&
+      typeof source[key] === "object" &&
+      source[key] !== null
+    ) {
+      mergeDeep(target[key], source[key]);
+    } else {
+      target[key] = source[key];
+    }
+  }
+}
+
+//============================================================
 // Build Nested Prisma Select/Include from dot paths or NestedInclude
 //============================================================
 export function buildNestedPrisma(
@@ -152,7 +171,7 @@ export function buildNestedPrisma(
 
   for (const field of fields) {
     if (typeof field === "string") {
-      Object.assign(root, dotToNested(field, true));
+      mergeDeep(root, dotToNested(field, true));
     } else {
       const nested = {
         select: field.select
@@ -167,7 +186,7 @@ export function buildNestedPrisma(
           ? { [field.orderBy]: field.order === "desc" ? "desc" : "asc" }
           : undefined,
       };
-      Object.assign(root, dotToNested(String(field.field), nested));
+      mergeDeep(root, dotToNested(String(field.field), nested));
     }
   }
 
