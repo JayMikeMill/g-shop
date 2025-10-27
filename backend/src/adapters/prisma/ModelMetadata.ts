@@ -12,6 +12,8 @@
  * This metadata is used by generic CRUD operations and nested update helpers.
  */
 
+import { dotToNested } from "shared/types";
+
 //////////////////////////////
 // --- TYPES & DEFAULTS --- //
 //////////////////////////////
@@ -131,36 +133,11 @@ function buildBaseSearch<T>(fieldMeta: FieldMeta): (keyof T)[] | undefined {
  * Only includes fields with `include: true` or `owned: true`
  */
 export function buildBaseInclude(fieldMeta: FieldMeta): any {
-  const includePaths: string[] = [];
-
-  // Convert fieldMeta keys with include: true into dot-path strings
-  for (const [key, cfg] of Object.entries(fieldMeta)) {
-    if (cfg && cfg.include) {
-      includePaths.push(key);
-    }
-  }
-
-  // Now build the nested object from dot-paths
   const root: any = {};
-
-  for (const path of includePaths) {
-    const parts = path.split(".");
-    let current = root;
-
-    for (let i = 0; i < parts.length; i++) {
-      const leaf = i === parts.length - 1;
-      const key = parts[i];
-
-      if (leaf) {
-        current[key] = true;
-      } else {
-        if (!current[key] || current[key] === true) current[key] = {};
-        if (!("include" in current[key]))
-          current[key] = { include: current[key] };
-        current = current[key].include;
-      }
+  for (const [key, cfg] of Object.entries(fieldMeta)) {
+    if (cfg?.include) {
+      Object.assign(root, dotToNested(key));
     }
   }
-
   return root;
 }

@@ -1,4 +1,10 @@
-import { QueryObject, QueryCondition, NestedInclude } from "shared/types";
+import {
+  type QueryObject,
+  type QueryCondition,
+  type NestedInclude,
+  dotToNested,
+} from "shared/types";
+
 import { ModelMetadata } from "./ModelMetadata";
 
 type PrismaFindParams = {
@@ -78,12 +84,35 @@ export function buildPrismaWhere<T>(
     if (!searchFields || searchFields.length === 0)
       throw new Error("searchFields must be defined for search queries.");
 
-    where.OR = searchFields.map((field) => ({
-      [String(field)]: { contains: query.search },
-    }));
+    where.OR = searchFields.map((field) =>
+      dotToNestedWhere(String(field), query.search!)
+    );
   }
 
   return where;
+}
+
+function dotToNestedWhere(path: string, searchValue: string) {
+  const parts = path.split(".");
+  const root: any = {};
+  let current = root;
+
+  for (let i = 0; i < parts.length; i++) {
+    const key = parts[i];
+    const isLeaf = i === parts.length - 1;
+
+    if (isLeaf) {
+      current[key] = {
+        contains: searchValue,
+        mode: "insensitive", // <-- makes it non-case-sensitive
+      };
+    } else {
+      current[key] = current[key] || {};
+      current = current[key];
+    }
+  }
+
+  return root;
 }
 
 //============================================================
@@ -114,9 +143,6 @@ function mapOperator(op: QueryCondition["operator"]): string {
 }
 
 //============================================================
-// Build Nested Prisma Select/Include
-//============================================================
-//============================================================
 // Build Nested Prisma Select/Include from dot paths or NestedInclude
 //============================================================
 export function buildNestedPrisma(
@@ -125,58 +151,23 @@ export function buildNestedPrisma(
   const root: any = {};
 
   for (const field of fields) {
-    // Handle simple string include/select path like "products.images"
     if (typeof field === "string") {
-      const parts = field.split(".");
-      let current = root;
-
-      for (let i = 0; i < parts.length; i++) {
-        const key = parts[i];
-        const isLeaf = i === parts.length - 1;
-
-        if (!current[key]) {
-          current[key] = isLeaf ? true : { include: {} };
-        } else if (!isLeaf && current[key] === true) {
-          current[key] = { include: {} };
-        }
-
-        if (!isLeaf) current = current[key].include;
-      }
-    }
-
-    // Handle NestedInclude objects
-    else {
-      const parts = String(field.field).split(".");
-      let current = root;
-
-      for (let i = 0; i < parts.length; i++) {
-        const key = parts[i];
-        const isLeaf = i === parts.length - 1;
-
-        if (!current[key]) {
-          current[key] = isLeaf ? {} : { include: {} };
-        } else if (!isLeaf && current[key] === true) {
-          current[key] = { include: {} };
-        }
-
-        if (isLeaf) {
-          current[key] = {
-            select: field.select
-              ? buildNestedPrisma(field.select.map(String))
-              : undefined,
-            include: field.include
-              ? buildNestedPrisma(field.include.map(String))
-              : undefined,
-            take: field.take,
-            skip: field.skip,
-            orderBy: field.orderBy
-              ? { [field.orderBy]: field.order === "desc" ? "desc" : "asc" }
-              : undefined,
-          };
-        } else {
-          current = current[key].include;
-        }
-      }
+      Object.assign(root, dotToNested(field, true));
+    } else {
+      const nested = {
+        select: field.select
+          ? buildNestedPrisma(field.select.map(String))
+          : undefined,
+        include: field.include
+          ? buildNestedPrisma(field.include.map(String))
+          : undefined,
+        take: field.take,
+        skip: field.skip,
+        orderBy: field.orderBy
+          ? { [field.orderBy]: field.order === "desc" ? "desc" : "asc" }
+          : undefined,
+      };
+      Object.assign(root, dotToNested(String(field.field), nested));
     }
   }
 

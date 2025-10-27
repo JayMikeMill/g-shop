@@ -82,3 +82,49 @@ export function isQueryObject<T>(obj: any): obj is QueryObject<T> {
   if (!obj || typeof obj !== "object") return false;
   return QUERY_KEYS.some((key) => key in obj);
 }
+
+/**
+ * Convert a dot-path string into a nested object suitable for Prisma
+ *
+ * Example:
+ *   dotToNested("shippingInfo.address.name", { contains: "g" })
+ *   =>
+ *   {
+ *     shippingInfo: {
+ *       include: {
+ *         address: {
+ *           name: { contains: "g" }
+ *         }
+ *       }
+ *     }
+ *   }
+ *
+ * options.wrapRelationWith: "some" | "every" => for array relations
+ */
+export function dotToNested(
+  path: string,
+  leafValue: any = true,
+  options?: { wrapRelationWith?: "some" | "every" }
+): any {
+  const parts = path.split(".");
+  const root: any = {};
+  let current = root;
+
+  for (let i = 0; i < parts.length; i++) {
+    const key = parts[i];
+    const isLeaf = i === parts.length - 1;
+
+    if (isLeaf) {
+      current[key] = leafValue;
+    } else {
+      current[key] = { include: {} };
+      current = current[key].include;
+    }
+  }
+
+  if (options?.wrapRelationWith) {
+    return { [options.wrapRelationWith]: root };
+  }
+
+  return root;
+}
