@@ -210,6 +210,8 @@ export interface Product {
   finalPrice: number;
   description: string;
   stock?: number | null;
+  materials?: string[] | null;
+  features?: string[] | null;
   reviewCount?: number | null;
   averageRating?: number | null;
   status: ProductStatus;

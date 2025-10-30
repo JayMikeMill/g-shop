@@ -23,8 +23,6 @@ export const getAuthUser = async (
   next: NextFunction
 ) => {
   try {
-    if (process.env.REQUIRE_AUTH === "false") return next();
-
     const token = req.cookies.session;
 
     if (!token) {

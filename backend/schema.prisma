@@ -192,6 +192,8 @@ model Product {
   finalPrice     Int                @default(0)
   description    String
   stock          Int?
+  materials      Json? /// ![string[]]
+  features       Json? /// ![string[]]
   reviewCount    Int?               @default(0) @map("review_count")
   averageRating  Float?             @default(0.0) @map("average_rating")
   status         ProductStatus      @default(ACTIVE)

@@ -11,7 +11,7 @@ if (PRODUCTION) {
   });
 } else {
   dotenv.config({
-    path: path.resolve(__dirname, "../../.env.development"),
+    path: path.resolve(__dirname, "../../.env"),
     quiet: true,
   });
 }
