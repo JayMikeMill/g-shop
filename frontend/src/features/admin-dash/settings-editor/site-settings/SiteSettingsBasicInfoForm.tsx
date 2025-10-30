@@ -7,6 +7,7 @@ import {
   ImageEditor,
   TagBox,
   XButton,
+  Toggle,
 } from "@components/ui";
 import { CollectionSelect } from "../../components/CollectionSelect";
 import type { Collection } from "shared/types";
@@ -18,6 +19,8 @@ const SiteSettingsBasicInfoForm: React.FC = () => {
   const icon = watch("siteIconURL");
   const logo = watch("logoURL");
   const banner = watch("bannerURL");
+
+  const disclaimerEnabled = watch("demoSiteDisclaimer");
 
   const {
     fields: collections,
@@ -119,6 +122,12 @@ const SiteSettingsBasicInfoForm: React.FC = () => {
           className="h-80"
         />
       </div>
+      <Toggle
+        checked={!!disclaimerEnabled}
+        onToggle={(v) => setValue("demoSiteDisclaimer", v)}
+      >
+        Demo Site Disclaimer {disclaimerEnabled ? "Enabled" : "Disabled"}
+      </Toggle>
     </div>
   );
 };

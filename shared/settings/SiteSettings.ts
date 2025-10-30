@@ -15,6 +15,7 @@ export interface SiteSettings {
   bannerMessage?: string;
   homePageCollections?: Collection[];
   aboutPageContent?: string;
+  demoSiteDisclaimer?: boolean;
 
   // ------------------
   // Theme & Appearance

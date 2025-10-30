@@ -15,6 +15,8 @@ export default function HomePage() {
 
   const categoriesList = catData?.data ?? [];
 
+  const demoSiteDisclaimer = siteSettings?.demoSiteDisclaimer ?? false;
+
   if (siteSettings?.homePageCollections?.length) {
     const collectionIds = siteSettings.homePageCollections.map((c) => c.id);
 
@@ -55,16 +57,19 @@ export default function HomePage() {
 
       {/*disclaimer for demo site no associated with brands*/}
 
-      <div className="bg-gray-100 border border-gray-300 text-gray-700 px-4 py-3 rounded relative">
-        <p className="text-sm">
-          Disclaimer: This is a demo e-commerce site. All brands and products
-          are for demonstration only and not affiliated with any real companies.
-        </p>
-      </div>
+      {demoSiteDisclaimer && (
+        <div className="bg-gray-100 border border-gray-300 text-gray-700 p-md rounded relative">
+          <p className="text-sm">
+            Disclaimer: This is a demo e-commerce site. All brands and products
+            are for demonstration only and not affiliated with any real
+            companies.
+          </p>
+        </div>
+      )}
 
       {isDemoUser && (
         <div
-          className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative"
+          className="bg-yellow-100 border border-yellow-400 text-yellow-700 p-md rounded relative"
           role="alert"
         >
           <span className="block sm:inline">
@@ -83,7 +88,7 @@ export default function HomePage() {
       )}
 
       {siteSettings?.bannerMessage && (
-        <h1 className="text-xl sm:text-2xl font-bold mb-lg px-sm">
+        <h1 className="text-xl sm:text-2xl font-bold px-sm">
           {siteSettings.bannerMessage}
         </h1>
       )}
