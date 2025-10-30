@@ -7,8 +7,9 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const queryClient = new QueryClient();
 
+const showDevTools = false;
 function QueryDevTools() {
-  return process.env.NODE_ENV === "development" ? (
+  return showDevTools && process.env.NODE_ENV === "development" ? (
     <ReactQueryDevtools initialIsOpen={false} />
   ) : null;
 }

@@ -169,10 +169,11 @@ const ProductPage = () => {
       </div>
 
       {/* Place AI Chat anywhere, page decides placement */}
-      <div className="fixed  bottom-6 right-0">
+      <div className="fixed bottom-6 right-0 px-md">
         <ProductPageAIChat
-          className="w-full px-md sm:w-[400px]"
+          className="w-full sm:w-[300px]"
           product={product}
+          initialOpen={true}
         />
       </div>
     </div>

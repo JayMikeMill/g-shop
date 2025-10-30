@@ -72,6 +72,7 @@ class AiService implements AIServiceApi {
             content: `${prompt}\n\nQuestion: ${question}`,
           },
         ],
+        max_tokens: 100,
       });
 
       const answer = response.choices[0].message?.content?.trim() || "";
