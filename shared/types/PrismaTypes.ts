@@ -217,6 +217,7 @@ export interface Product {
   averageRating?: number | null;
   status: ProductStatus;
   dimensions?: ProductDimensions | null;
+  shipDimensions?: ProductShippingDimensions | null;
   tags?: ProductTag[];
   images?: ProductImageSet[];
   options?: ProductOption[];
@@ -267,6 +268,16 @@ export interface ProductVariant {
 }
 
 export interface ProductDimensions {
+  id?: string;
+  product?: Product;
+  productId?: string;
+  weight?: number | null;
+  length?: number | null;
+  width?: number | null;
+  height?: number | null;
+}
+
+export interface ProductShippingDimensions {
   id?: string;
   product?: Product;
   productId?: string;

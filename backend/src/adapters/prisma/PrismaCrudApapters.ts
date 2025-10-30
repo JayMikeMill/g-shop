@@ -14,6 +14,7 @@ import type {
   SystemSettings,
 } from "shared/types";
 import { FieldConfigDefaults } from "./ModelMetadata";
+import { features } from "process";
 
 //==================================================
 // CRUD Configuration
@@ -50,12 +51,15 @@ export const CrudProps = {
     fieldMeta: {
       id: { search },
       name: { search },
+      materials: { json },
+      features: { json },
       description: { search },
       images: { owned, include },
       tags: { owned, include },
       options: { owned, include },
       variants: { owned, include },
       dimensions: { owned, include },
+      shipDimensions: { owned, include },
       categories: { manyToMany, include },
       collections: { manyToMany, include },
       reviews: { owned, include },

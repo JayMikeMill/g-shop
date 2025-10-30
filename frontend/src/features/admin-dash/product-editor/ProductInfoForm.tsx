@@ -4,7 +4,6 @@ import { AnimatedSelect, Input, Label, NumberInput } from "@components/ui";
 
 import type { DiscountType, Product } from "shared/types";
 import { getProductFinalPrice } from "shared/utils";
-import ProductDimensionsForm from "./ProductDimensionsForm";
 
 export const ProductInfoForm: React.FC = () => {
   const { register, getValues, watch, control, setValue } =
@@ -99,12 +98,6 @@ export const ProductInfoForm: React.FC = () => {
             }}
           />
         </div>
-      </div>
-
-      {/* Dimensions Editor */}
-      <div className="flex flex-col">
-        <label>Dimensions</label>
-        <ProductDimensionsForm />
       </div>
     </div>
   );

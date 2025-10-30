@@ -121,6 +121,10 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
               <AnimatedDropdownBox title="Product Info" openInitially>
                 <ProductInfoForm />
               </AnimatedDropdownBox>
+              {/* Dimensions Editor */}
+              <AnimatedDropdownBox title="Dimensions" openInitially>
+                <ProductDimensionsForm />
+              </AnimatedDropdownBox>
 
               {/* Description Editor */}
               <AnimatedDropdownBox title="Product Description" openInitially>
