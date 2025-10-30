@@ -1,22 +1,21 @@
-
-
 # E-Commerce Platform with Full Admin Dashboard (MVP)
 
 A modern, full-stack e-commerce web application featuring a complete admin dashboard and dynamic storefront. Built as a fully functional MVP to demonstrate scalable, maintainable full-stack development.
 
-### 🌐 [*Live Demo - Click Here*](https://gshop-pied.vercel.app/demo-mode)
+### 🌐 [_Live Demo - Click Here_](https://gshop-pied.vercel.app/demo-mode)
 
 ---
 
 ## 🖼️ Preview Images
 
 ### 💻 Desktop
+
 <p align="center">
 	<img src="./resources/readme-images/desktop-3.png" width="45%">
-	<img src="./resources/readme-images/desktop-2.png" width="45%">
+	<img src="./resources/readme-images/desktop-5.png" width="45%">
 </p>
 <p align="center">
-	<img src="./resources/readme-images/desktop-1.png" width="45%">
+	<img src="./resources/readme-images/desktop-6.png" width="45%">
 	<img src="./resources/readme-images/desktop-4.png" width="45%">
 </p>
 
@@ -24,7 +23,7 @@ A modern, full-stack e-commerce web application featuring a complete admin dashb
 
 <p align="center">
 	<img src="./resources/readme-images/mobile-6.jpg" width="24%">
-  <img src="./resources/readme-images/mobile-3.jpg" width="24%">
+  <img src="./resources/readme-images/mobile-9.jpg" width="24%">
   <img src="./resources/readme-images/mobile-5.jpg" width="24%">
   <img src="./resources/readme-images/mobile-7.jpg" width="24%">
 </p>
