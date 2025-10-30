@@ -45,7 +45,10 @@ export function userPermissions(
         user.role === "SITE_OWNER" ||
         user.role === "ADMIN" ||
         (targetUser.role === "USER" && idMatch),
-      delete: user.role === "SITE_OWNER",
+      delete:
+        user.role === "SITE_OWNER" ||
+        user.role === "ADMIN" ||
+        (targetUser.role === "USER" && idMatch),
     };
   }
 
