@@ -9,10 +9,17 @@ import { inputStyle } from "../primitives/Input";
 
 type Variant = "wholeNumber" | "currency" | "percent" | "weight" | "size";
 
+interface ConversionConfig {
+  displayUnit: string; // Unit shown to user (e.g., "oz", "in")
+  storageMultiplier: number; // Multiply display value by this to get storage value
+  decimalScale?: number; // Override decimal places for this unit
+}
+
 interface NumberInputProps {
   variant?: Variant;
   controlProps?: { control: Control<any>; name: string; rules?: any }; // RHF integration
   unitConversion?: boolean; // multiply/divide by 100
+  autoConversion?: ConversionConfig; // automatic unit conversion
   value?: number; // for standalone usage
   onChange?: (value: number | null) => void; // for standalone usage
   className?: string;
@@ -55,6 +62,7 @@ export const NumberInput: React.FC<NumberInputProps & NumericFormatProps> = ({
   variant = "currency",
   controlProps,
   unitConversion = false,
+  autoConversion,
   value,
   onChange,
   className,
@@ -68,31 +76,49 @@ export const NumberInput: React.FC<NumberInputProps & NumericFormatProps> = ({
     if (variant === "currency" || variant === "percent") unitConversion = true;
 
     // Apply unit conversion for display and value
-    const displayValue =
-      unitConversion && inputValue != null ? inputValue / 100 : inputValue;
+    let displayValue = inputValue;
+    let formatProps = formatProp[variant];
+
+    if (autoConversion && inputValue != null) {
+      // Convert from storage units to display units
+      displayValue = inputValue / autoConversion.storageMultiplier;
+      // Override format props with conversion config
+      formatProps = {
+        ...formatProps,
+        suffix: autoConversion.displayUnit,
+        decimalScale: autoConversion.decimalScale ?? formatProps.decimalScale,
+      };
+    } else if (unitConversion) {
+      displayValue = inputValue != null ? inputValue / 100 : inputValue;
+    }
 
     return (
       <NumericFormat
         value={displayValue}
         onFocus={(e) => e.target.select()}
         onValueChange={(values: NumberFormatValues) => {
-          const newValue =
-            values.floatValue != null
-              ? unitConversion
-                ? values.floatValue * 100
-                : values.floatValue
-              : null;
+          let newValue = values.floatValue;
+
+          if (newValue != null) {
+            if (autoConversion) {
+              // Convert from display units to storage units
+              newValue = newValue * autoConversion.storageMultiplier;
+            } else if (unitConversion) {
+              newValue = newValue * 100;
+            }
+          }
+
           // If nonNullable is true, set empty to 0
           if (nonNullable && newValue == null) {
             inputOnChange(0);
           } else {
-            inputOnChange(newValue);
+            inputOnChange(newValue ?? null);
           }
         }}
         placeholder="-"
         allowNegative={false}
         className={inputStyle + className + " text-center min-w-0"}
-        {...formatProp[variant]}
+        {...formatProps}
         {...props}
       />
     );

@@ -43,21 +43,25 @@ const SiteSettingsBasicInfoForm: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-md">
+      {/* Site Name */}
       <div className="flex flex-col">
         <Label>Site Name</Label>
         <Input {...register("siteName")} required />
       </div>
 
+      {/* Site Description */}
       <div className="flex flex-col">
         <Label>Site Description</Label>
         <Textarea {...register("siteDescription")} />
       </div>
 
+      {/* Site Tagline */}
       <div className="flex flex-col">
         <Label>Site Tagline</Label>
         <Input {...register("siteTagline")} />
       </div>
 
+      {/* Site Icon Image */}
       <div className="flex flex-col">
         <Label>Site Icon</Label>
         <ImageEditor
@@ -67,6 +71,8 @@ const SiteSettingsBasicInfoForm: React.FC = () => {
           className="h-28 w-28"
         />
       </div>
+
+      {/* Logo Image */}
       <div className="flex flex-col">
         <Label>Site Logo</Label>
         <ImageEditor
@@ -77,6 +83,7 @@ const SiteSettingsBasicInfoForm: React.FC = () => {
         />
       </div>
 
+      {/* Banner Image */}
       <div className="flex flex-col">
         <Label>Banner Image</Label>
         <ImageEditor
@@ -87,9 +94,29 @@ const SiteSettingsBasicInfoForm: React.FC = () => {
         />
       </div>
 
+      {/* Banner Message */}
       <div className="flex flex-col">
         <Label>Banner Message</Label>
         <Input {...register("bannerMessage")} />
+      </div>
+
+      {/* Measurement System */}
+      <div className="flex flex-col gap-sm">
+        <Label>Measurement System</Label>
+        <div className="flex gap-md">
+          <Toggle
+            checked={watch("measurementSystem") === "METRIC"}
+            onToggle={() => setValue("measurementSystem", "METRIC")}
+          >
+            Metric (cm, kg)
+          </Toggle>
+          <Toggle
+            checked={watch("measurementSystem") === "IMPERIAL"}
+            onToggle={() => setValue("measurementSystem", "IMPERIAL")}
+          >
+            Imperial (in, lbs)
+          </Toggle>
+        </div>
       </div>
 
       {/*  Home Page Collections  */}
@@ -113,6 +140,7 @@ const SiteSettingsBasicInfoForm: React.FC = () => {
         )}
       </div>
 
+      {/* About Page Content */}
       <div className="flex flex-col">
         <Label>About Page Content (HTML)</Label>
         <Textarea
@@ -122,6 +150,8 @@ const SiteSettingsBasicInfoForm: React.FC = () => {
           className="h-80"
         />
       </div>
+
+      {/* Demo Site Disclaimer */}
       <Toggle
         checked={!!disclaimerEnabled}
         onToggle={(v) => setValue("demoSiteDisclaimer", v)}

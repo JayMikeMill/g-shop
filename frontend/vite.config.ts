@@ -34,7 +34,6 @@ export default defineConfig({
       "@models": path.resolve(__dirname, "./src/models"),
       "@data": path.resolve(__dirname, "./src/data"),
       "@styles": path.resolve(__dirname, "./src/styles"),
-      "@api": path.resolve(__dirname, "./src/api"),
       "@ui": path.resolve(__dirname, "./src/components/"),
     },
   },

@@ -19,12 +19,15 @@ import ProductDimensionsForm from "./ProductDimensionsForm";
 import ProductTagsForm from "./ProductTagsForm";
 import ProductInfoForm from "./ProductInfoForm";
 import ProductCollectionsForm from "./ProductCollectionsForm";
+import { ProductDescriptionForm } from "./ProductDescriptionForm";
 
 const newProduct: SafeType<Product> = {
   name: "",
   price: 0,
   finalPrice: 0,
   description: "",
+  materials: [],
+  features: [],
   status: "ACTIVE", // or whichever default makes sense
 };
 
@@ -119,16 +122,14 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
                 <ProductInfoForm />
               </AnimatedDropdownBox>
 
+              {/* Description Editor */}
+              <AnimatedDropdownBox title="Product Description" openInitially>
+                <ProductDescriptionForm />
+              </AnimatedDropdownBox>
               {/* Tags Editor */}
               <AnimatedDropdownBox title="Product Tags" openInitially>
                 <ProductTagsForm />
               </AnimatedDropdownBox>
-
-              {/* Dimensions Editor */}
-              <AnimatedDropdownBox title="Dimensions" openInitially>
-                <ProductDimensionsForm />
-              </AnimatedDropdownBox>
-
               {/* Collections Editor */}
               <AnimatedDropdownBox title="Categories/Collections" openInitially>
                 <ProductCollectionsForm />

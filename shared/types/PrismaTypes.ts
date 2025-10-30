@@ -212,6 +212,7 @@ export interface Product {
   stock?: number | null;
   materials?: string[] | null;
   features?: string[] | null;
+  details?: string | null;
   reviewCount?: number | null;
   averageRating?: number | null;
   status: ProductStatus;

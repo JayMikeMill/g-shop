@@ -16,6 +16,7 @@ export interface SiteSettings {
   homePageCollections?: Collection[];
   aboutPageContent?: string;
   demoSiteDisclaimer?: boolean;
+  measurementSystem?: "METRIC" | "IMPERIAL";
 
   // ------------------
   // Theme & Appearance

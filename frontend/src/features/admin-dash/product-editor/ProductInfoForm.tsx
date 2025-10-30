@@ -1,14 +1,10 @@
 import React, { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
-import {
-  AnimatedSelect,
-  Input,
-  Label,
-  NumberInput,
-  Textarea,
-} from "@components/ui";
+import { AnimatedSelect, Input, Label, NumberInput } from "@components/ui";
+
 import type { DiscountType, Product } from "shared/types";
 import { getProductFinalPrice } from "shared/utils";
+import ProductDimensionsForm from "./ProductDimensionsForm";
 
 export const ProductInfoForm: React.FC = () => {
   const { register, getValues, watch, control, setValue } =
@@ -20,19 +16,26 @@ export const ProductInfoForm: React.FC = () => {
 
   const discountTypeSymbol = discountType === "PERCENTAGE" ? "%" : "$";
 
+  // Update final price when price, discount, or discount type changes
   useEffect(() => {
     setValue("finalPrice", getProductFinalPrice(getValues()));
   }, [price, discount, discountType, setValue, getValues]);
+
   return (
     <div className="flex flex-col flex-1 gap-md overflow-hidden p-0.5">
+      {/* Name */}
       <div className="flex flex-col">
         <Label>Name</Label>
         <Input placeholder="Product Name" {...register("name")} required />
       </div>
+
+      {/* Long Name */}
       <div className="flex flex-col">
         <Label>Long Name</Label>
         <Input placeholder="Product Name" {...register("longName")} required />
       </div>
+
+      {/* Price */}
       <div className="flex flex-col flex-1 gap-xs sm:gap-md">
         <div className="flex flex-col">
           <Label className="text-center">Price</Label>
@@ -47,6 +50,7 @@ export const ProductInfoForm: React.FC = () => {
           />
         </div>
 
+        {/* Discount */}
         <div className="flex flex-1 flex-col">
           <Label className="text-center">Discount</Label>
           <div className="flex flex-1 flex-row gap-xs min-w-0">
@@ -80,8 +84,8 @@ export const ProductInfoForm: React.FC = () => {
             />
           </div>
         </div>
-        {/* Select (stays small / fixed) */}
 
+        {/* Final Price */}
         <div className="flex flex-col">
           <Label className="text-center">Final</Label>
           <NumberInput
@@ -97,14 +101,10 @@ export const ProductInfoForm: React.FC = () => {
         </div>
       </div>
 
+      {/* Dimensions Editor */}
       <div className="flex flex-col">
-        <Label>Description</Label>
-        <Textarea
-          {...register("description")}
-          placeholder="Product Description"
-          required
-          className="px-md py-1 h-40 resize-none"
-        />
+        <label>Dimensions</label>
+        <ProductDimensionsForm />
       </div>
     </div>
   );

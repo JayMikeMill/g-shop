@@ -42,6 +42,7 @@ import {
 } from "@controllers/storageController";
 
 import { onRegisterUser } from "@middleware/userPermissions";
+import { generateProductDescription as genPD } from "@controllers/aiController";
 
 // Initialize Multer
 const upload = multer({ storage: multer.memoryStorage() });
@@ -68,6 +69,9 @@ router.post("/shipping/track", trackShipment);
 router.post("/storage/image", reqAdmin, upload.single("file"), uploadImage);
 router.post("/storage/file", reqAdmin, upload.single("file"), uploadFile);
 router.delete("/storage/:id", reqAdmin, deleteFile);
+
+// ---------------- Ai Routes  ----------------
+router.post("/ai/generate-product-description", reqAdmin, genPD);
 
 // ---------------- System Settings  ----------------
 router.get("/settings/site", getSiteSettings);

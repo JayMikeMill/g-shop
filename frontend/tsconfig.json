@@ -40,7 +40,6 @@
       "@data/*": ["src/data/*"],
       "@config/*": ["src/config/*"],
       "@styles/*": ["src/styles/*"],
-      "@api": ["src/api"],
       "@ui": ["src/components/ui"]
     }
   },

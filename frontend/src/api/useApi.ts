@@ -8,6 +8,7 @@ import type {
   ShipmentRate,
   AddressVerificationResult,
   ShipmentTrackingResult,
+  Product,
 } from "shared/types";
 
 import type {
@@ -23,6 +24,8 @@ import type {
   ShippingApi,
   SystemSettingsApi,
   StorageApi,
+  AIServiceApi,
+  ApiResponse,
 } from "shared/interfaces";
 
 export function useApi(): {
@@ -30,6 +33,7 @@ export function useApi(): {
   orders: OrderProcessingApi;
   shipping: ShippingApi;
   storage: StorageApi;
+  ai: AIServiceApi;
   settings: SystemSettingsApi;
 } {
   return {
@@ -111,6 +115,19 @@ export function useApi(): {
         del<{ success: boolean }>(`/storage`, { url }).then(
           (res) => res.success
         ),
+    },
+
+    // ===============================
+    //  Ai Services
+    // ===============================
+    ai: {
+      generateProductDescription: (
+        product: Product
+      ): Promise<ApiResponse<string>> =>
+        post<ApiResponse<string>>(
+          `/ai/generate-product-description`,
+          product
+        ).then((res) => res),
     },
 
     // ===============================

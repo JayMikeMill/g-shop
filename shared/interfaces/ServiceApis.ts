@@ -3,6 +3,7 @@ import type {
   AddressVerificationResult,
   Order,
   Parcel,
+  Product,
   ShipmentRate,
   ShipmentTrackingResult,
   SystemSettingsScope,
@@ -10,6 +11,12 @@ import type {
 } from "../types";
 
 import type { AnySystemSettings, SiteSettings } from "../settings";
+
+export type ApiResponse<T = any> = {
+  success: boolean;
+  message?: string;
+  data?: T;
+};
 
 // Authentication interface
 export type AuthStatus =
@@ -19,12 +26,10 @@ export type AuthStatus =
   | "USER_NOT_FOUND"
   | "ERROR";
 
-export type AuthResponse = {
+export interface AuthResponse extends Omit<ApiResponse, "data"> {
   user: User | null;
-  success: boolean;
   status: AuthStatus;
-  message?: string;
-};
+}
 
 export interface AuthApi {
   register(user: User, password: string): Promise<AuthResponse>;
@@ -63,6 +68,11 @@ export interface ShippingApi {
   verifyAddress(address: Address): Promise<AddressVerificationResult>;
   getRates(from: Address, to: Address, parcel: Parcel): Promise<ShipmentRate[]>;
   trackShipment(trackingNumber: string): Promise<ShipmentTrackingResult>;
+}
+
+//  Open Ai interface
+export interface AIServiceApi {
+  generateProductDescription(product: Product): Promise<ApiResponse<string>>;
 }
 
 //  System Settings interface

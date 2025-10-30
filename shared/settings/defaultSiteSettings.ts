@@ -14,6 +14,7 @@ export const defaultSiteSettings: SiteSettings = {
   homePageCollections: [],
   aboutPageContent: "Welcome to My Online Store.",
   demoSiteDisclaimer: false,
+  measurementSystem: "IMPERIAL",
 
   // ------------------
   // Theme & Appearance
