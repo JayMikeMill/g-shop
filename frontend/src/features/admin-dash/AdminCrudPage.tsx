@@ -179,26 +179,33 @@ export function AdminCrudPage<T extends { id?: string }>({
       label: "",
       width: "48px",
       render: (row: T) => {
-        const defaultKebab = (
-          <KebabMenu
-            options={[
-              {
+        const defaultKebab = (edit: boolean, del: boolean) => {
+          if (!edit && !del) return null;
+          const editOp = edit
+            ? {
                 label: "Edit",
                 onClick: () => openEdit(row),
-              },
-              {
+              }
+            : null;
+          const delOp = del
+            ? {
                 label: "Delete",
                 onClick: () => handleDelete(row.id!),
                 className: "text-red-600",
-              },
-            ]}
-          />
-        );
+              }
+            : null;
+
+          return (
+            <KebabMenu
+              options={[...(editOp ? [editOp] : []), ...(delOp ? [delOp] : [])]}
+            />
+          );
+        };
 
         // Use custom kebab render if provided, otherwise use default
         return customKebabRender
           ? customKebabRender(user, row, defaultKebab)
-          : defaultKebab;
+          : defaultKebab(true, true);
       },
     },
     ...columns,

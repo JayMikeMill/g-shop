@@ -13,7 +13,7 @@ import {
   getFinalPriceString,
   getTotalOrderItems,
   toMajorPriceString,
-  userCanModify,
+  userPermissions,
 } from "shared/utils";
 
 import { TagBox, Image, type TableColumn } from "@components/ui";
@@ -62,7 +62,7 @@ export type TableLayout<T> = {
   customKebabRender?: (
     user: User | null,
     row: T,
-    defaultKebab: ReactNode
+    defaultKebab: (edit: boolean, del: boolean) => ReactNode
   ) => ReactNode;
 };
 
@@ -87,10 +87,9 @@ export const userTable: TableLayout<User> = {
   ],
   customKebabRender: (currentUser, user, defaultKebab) => {
     // Hide kebab menu for SITE_OWNER users
-    if (!userCanModify(currentUser, user)) {
-      return null;
-    }
-    return defaultKebab;
+    const permision = userPermissions(currentUser, user);
+    console.log("Permissions for user", user.id, ":", permision);
+    return defaultKebab(permision.edit, permision.delete);
   },
 };
 

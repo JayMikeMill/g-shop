@@ -18,7 +18,7 @@ export const UserEditorDialog: React.FC<CrudEditorInterface<User>> = ({
   <AnimatedDialog
     open={!!open}
     onClose={onCancel}
-    title={item?.id ? "Edit User" : "Create User"}
+    title={item?.id ? "Edit User" : "Register New User"}
     className={`flex flex-col overflow-hidden w-full h-full 
       rounded-none sm:rounded-2xl sm:max-w-2xl sm:px-lg`}
   >

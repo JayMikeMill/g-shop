@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { AuthService } from "@services";
-import { UserRole } from "shared/types";
+import { User, UserRole } from "shared/types";
 
 export const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 
@@ -13,7 +13,7 @@ export type AuthRole = UserRole | "OWNER";
 
 declare module "express-serve-static-core" {
   interface Request {
-    user?: { id: string; role?: AuthRole };
+    user?: User;
   }
 }
 
@@ -32,7 +32,7 @@ export const getAuthUser = async (
       const { user, success, message } = await AuthService.verifyToken(token);
 
       if (success && user) {
-        req.user = { id: user.id!, role: user.role };
+        req.user = user;
       } else {
         throw new Error(message || "Token verification failed");
       }

@@ -2,6 +2,7 @@ import { CRUDRouteMiddleware } from "routes/crudRoute";
 import { dataAuth } from "./dataAuth";
 import { NextFunction, Request, Response } from "express";
 import { DatabaseService as dbs } from "@services";
+import { User, userPermissions } from "shared";
 
 /**
  * Middleware to handle user creation authorization.
@@ -9,12 +10,13 @@ import { DatabaseService as dbs } from "@services";
  */
 let hasSiteOwner: boolean | null = null;
 
-async function checkFirstSiteOwner() {
+async function checkHasSiteOwner() {
   if (hasSiteOwner === null) {
     const result = await dbs.users.getMany({ role: "SITE_OWNER" });
     hasSiteOwner = result && result.total > 0;
   }
-  return !hasSiteOwner;
+
+  return hasSiteOwner;
 }
 
 export const onRegisterUser = async (
@@ -25,13 +27,16 @@ export const onRegisterUser = async (
   const { user: creatingUser } = req.body;
 
   try {
-    if (await checkFirstSiteOwner()) {
+    // Check if SITE_OWNER exists, if not,
+    // make the first created user the SITE_OWNER
+    if (!(await checkHasSiteOwner())) {
       creatingUser.role = "SITE_OWNER";
       hasSiteOwner = true;
       return next();
     }
 
     // Prevent creating SITE_OWNER accounts
+    // only one SITE_OWNER allowed
     if (creatingUser.role === "SITE_OWNER") {
       return res.status(403).json({
         user: null,
@@ -75,26 +80,19 @@ export const onModifyUser = async (
 
   try {
     const modifyingUser = await dbs.users.getOne({ id: req.params.id });
+
     if (!modifyingUser)
       return res.status(404).json({ error: "User not found" });
 
-    // Protect SITE_OWNER
-    if (
-      modifyingUser.role === "SITE_OWNER" &&
-      !(user.role === "SITE_OWNER" && user.id === modifyingUser.id)
-    ) {
-      console.log("Attempt to modify SITE_OWNER by non-SITE_OWNER, denying");
-      return res.status(403).json({ error: "Cannot modify SITE_OWNER user" });
-    }
+    const permissions = userPermissions(user as User, modifyingUser);
 
-    // Protect ADMIN
-    if (
-      modifyingUser.role === "ADMIN" &&
-      user.role !== "SITE_OWNER" &&
-      !(user.role === "ADMIN" && user.id === modifyingUser.id)
-    ) {
-      console.log("Attempt to modify ADMIN by non-owner, denying");
-      return res.status(403).json({ error: "Cannot modify ADMIN user" });
+    if (!permissions.edit) {
+      console.log(
+        "User does not have permission to modify target user, denying"
+      );
+      return res
+        .status(403)
+        .json({ error: "Insufficient permissions to modify user" });
     }
 
     next();
@@ -121,16 +119,15 @@ export const onDeleteUser = async (
     if (!modifyingUser)
       return res.status(404).json({ error: "User not found" });
 
-    // Prevent deletion of SITE_OWNER
-    if (modifyingUser.role === "SITE_OWNER") {
-      console.log("Attempt to delete SITE_OWNER, denying");
-      return res.status(403).json({ error: "Cannot delete SITE_OWNER user" });
-    }
+    const permissions = userPermissions(user as User, modifyingUser);
 
-    // Prevent deletion of ADMIN by non-SITE_OWNER
-    if (modifyingUser.role === "ADMIN" && user.role !== "SITE_OWNER") {
-      console.log("Attempt to delete ADMIN by non-SITE_OWNER, denying");
-      return res.status(403).json({ error: "Cannot delete ADMIN user" });
+    if (!permissions.delete) {
+      console.log(
+        "User does not have permission to delete target user, denying"
+      );
+      return res
+        .status(403)
+        .json({ error: "Insufficient permissions to delete user" });
     }
 
     next();
