@@ -32,7 +32,7 @@ export function ChatBubble({
   toggleOpen,
   typing = false,
   className,
-  userIconUrl,
+  //userIconUrl,
   aiIconUrl,
 }: ChatBubbleProps) {
   // Replace messagesEndRef with container ref
