@@ -31,7 +31,7 @@ export const ProductImagesViewer: React.FC<ProductImagesViewerProps> = ({
 	opacity-60 md:hover:opacity-100`;
 
   return (
-    <div className="flex flex-col items-center w-full max-w-md md:max-w-lg">
+    <div className="relative z-0 flex flex-col items-center w-full max-w-md md:max-w-lg">
       {/* Main Swiper */}
       <div className="w-full relative">
         <div ref={prevRef} className={scrollButtonClass + " left-0"}>
@@ -63,12 +63,12 @@ export const ProductImagesViewer: React.FC<ProductImagesViewerProps> = ({
           {images.map((img, idx) => (
             <SwiperSlide
               key={idx}
-              className="flex  bg-surface border border-2 rounded-xl justify-center items-center"
+              className="flex bg-surface border border-2 rounded-xl justify-center items-center"
             >
               <Image
                 src={img.main}
                 alt={`Product ${idx}`}
-                className="object-contain   w-full h-96 cursor-pointer"
+                className="object-contain  w-full h-96 cursor-pointer"
                 onClick={(e) => {
                   const arrow = (e.target as HTMLElement).closest(
                     ".custom-swiper-next, .custom-swiper-prev"

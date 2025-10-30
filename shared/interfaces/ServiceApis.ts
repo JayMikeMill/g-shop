@@ -73,6 +73,10 @@ export interface ShippingApi {
 //  Open Ai interface
 export interface AIServiceApi {
   generateProductDescription(product: Product): Promise<ApiResponse<string>>;
+  askAboutProduct(
+    product: Product,
+    question: string
+  ): Promise<ApiResponse<string>>;
 }
 
 //  System Settings interface

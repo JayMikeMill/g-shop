@@ -11,6 +11,7 @@ import ProductImagesViewer from "@features/products/ProductImagesViewer";
 import { Button, TagBox } from "@components/ui";
 import { toMajorPriceString } from "shared/utils";
 import { ProductPageSkeleton } from "@features/products/ProductPageSkeleton";
+import ProductPageAIChat from "@features/products/ProductPageAIChat";
 
 const ProductPage = () => {
   // Get product ID from URL params
@@ -62,8 +63,8 @@ const ProductPage = () => {
     console.log("Rendering ProductPage for product:", product, selectedVariant);
 
   return (
-    <div className="p-mt-xl p-md">
-      <div className="flex flex-col md:flex-row justify-center md:items-start pb-sm">
+    <div className="relative">
+      <div className="flex flex-col p-mt-xl p-md  md:flex-row justify-center md:items-start pb-sm">
         {/* Small screen: Name & Price above image */}
         <div className="flex flex-col gap-2 md:hidden items-center w-full px-md">
           <h1 className="text-2xl font-bold text-text text-center">
@@ -165,6 +166,14 @@ const ProductPage = () => {
             </Button>
           </div>
         </div>
+      </div>
+
+      {/* Place AI Chat anywhere, page decides placement */}
+      <div className="fixed  bottom-6 right-0">
+        <ProductPageAIChat
+          className="w-full px-md sm:w-[400px]"
+          product={product}
+        />
       </div>
     </div>
   );

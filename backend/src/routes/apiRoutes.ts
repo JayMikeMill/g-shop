@@ -29,20 +29,25 @@ import {
   updateSettings,
 } from "@controllers/systemSettingsController";
 
-// Middleware
-import { getAuthUser, reqAdmin } from "@middleware/authorization";
-
-// Services
-import { HealthService } from "@services";
-
+// Storage Controllers
 import {
   deleteFile,
   uploadFile,
   uploadImage,
 } from "@controllers/storageController";
 
+// AI Controllers
+import {
+  askAboutProduct,
+  generateProductDescription as genPD,
+} from "@controllers/aiController";
+
+// Services
+import { HealthService } from "@services";
+
+// Middleware
+import { getAuthUser, reqAdmin } from "@middleware/authorization";
 import { onRegisterUser } from "@middleware/userPermissions";
-import { generateProductDescription as genPD } from "@controllers/aiController";
 
 // Initialize Multer
 const upload = multer({ storage: multer.memoryStorage() });
@@ -72,6 +77,7 @@ router.delete("/storage/:id", reqAdmin, deleteFile);
 
 // ---------------- Ai Routes  ----------------
 router.post("/ai/generate-product-description", reqAdmin, genPD);
+router.post("/ai/ask-about-product", reqAdmin, askAboutProduct);
 
 // ---------------- System Settings  ----------------
 router.get("/settings/site", getSiteSettings);

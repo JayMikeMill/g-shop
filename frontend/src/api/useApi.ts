@@ -128,6 +128,15 @@ export function useApi(): {
           `/ai/generate-product-description`,
           product
         ).then((res) => res),
+
+      askAboutProduct: (
+        product: Product,
+        question: string
+      ): Promise<ApiResponse<string>> =>
+        post<ApiResponse<string>>(`/ai/ask-about-product`, {
+          product,
+          question,
+        }).then((res) => res),
     },
 
     // ===============================
