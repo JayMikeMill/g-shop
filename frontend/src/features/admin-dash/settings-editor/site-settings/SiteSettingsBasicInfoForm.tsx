@@ -101,16 +101,18 @@ const SiteSettingsBasicInfoForm: React.FC = () => {
       </div>
 
       {/* Measurement System */}
-      <div className="flex flex-col gap-sm">
+      <div className="flex flex-col">
         <Label>Measurement System</Label>
         <div className="flex gap-md">
           <Toggle
+            className="flex-1"
             checked={watch("measurementSystem") === "METRIC"}
             onToggle={() => setValue("measurementSystem", "METRIC")}
           >
             Metric (cm, kg)
           </Toggle>
           <Toggle
+            className="flex-1"
             checked={watch("measurementSystem") === "IMPERIAL"}
             onToggle={() => setValue("measurementSystem", "IMPERIAL")}
           >

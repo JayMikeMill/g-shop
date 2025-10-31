@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useApi } from "@app/hooks";
+import { useApi, useSiteSettings } from "@app/hooks";
 
 import { CircleSpinner, LoaderBar } from "@components/ui";
 import SiteSettingsForm from "@features/admin-dash/settings-editor/site-settings/SiteSettingsForm";
@@ -21,6 +21,7 @@ function GenericSettingsPage<T>({
   emptySettings: T;
 }) {
   const { settings } = useApi();
+  const { fetchSettings: refeshSiteSettings } = useSiteSettings();
   const [currentSettings, setCurrentSettings] = useState<T>(emptySettings);
   const [isFetching, setIsFetching] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -57,7 +58,10 @@ function GenericSettingsPage<T>({
         settingsScope,
         newSettings as AnySystemSettings
       );
+
       fetchSettings();
+
+      if (settingsScope === "SITE") refeshSiteSettings();
     } catch (err) {
       alert("Failed to save settings");
       console.error(err);
