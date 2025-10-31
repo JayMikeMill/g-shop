@@ -31,7 +31,7 @@ const ProductSearchOverlay: React.FC<ProductSearchPanelProps> = ({
       <div className="fixed inset-0  z-10" onClick={onClose} />
 
       {/* Mobile search bar: only visible on mobile, full width, above results */}
-      <div className="flex flex-row md:hidden w-full bg-white px-4 py-3 flex items-center relative z-20">
+      <div className="flex flex-row sm:hidden w-full bg-white px-4 py-3 flex items-center relative z-20">
         <div className="relative w-full">
           <Input
             placeholder="Search products..."
@@ -53,10 +53,10 @@ const ProductSearchOverlay: React.FC<ProductSearchPanelProps> = ({
         className="bg-surface shadow-lg rounded-b w-full max-w-full mx-auto flex flex-col pb-xl  relative z-20"
         style={{ maxHeight: "80vh", overflowY: "auto" }}
       >
-        <div className="flex items-center justify-between mb-2 md:flex">
+        <div className="flex items-center justify-between mb-2 sm:flex">
           <span className="font-semibold text-lg px-md">Search Results</span>
           <button
-            className="hidden md:inline text-gray-500 hover:text-gray-700"
+            className="hidden sm:inline text-gray-500 hover:text-gray-700"
             style={{ fontSize: 32, lineHeight: 1 }}
             onClick={onClose}
           >

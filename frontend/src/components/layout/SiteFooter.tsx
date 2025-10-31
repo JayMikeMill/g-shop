@@ -7,9 +7,9 @@ const SiteFooter: React.FC = () => {
   const { siteSettings } = useSiteSettings();
   return (
     <footer className="bg-surface text-text font-sans py-8">
-      <div className="max-w-[1200px] mx-auto px-8 flex flex-col md:flex-row justify-between gap-8 flex-wrap">
+      <div className="max-w-[1200px] mx-auto px-8 flex flex-col sm:flex-row justify-between gap-8 flex-wrap">
         {/* Logo / Info */}
-        <div className="flex-1 min-w-[250px] mb-6 md:mb-0">
+        <div className="flex-1 min-w-[250px] mb-6 sm:mb-0">
           <h2 className="text-title font-bold mb-4">
             {siteSettings?.siteName}
           </h2>
@@ -17,7 +17,7 @@ const SiteFooter: React.FC = () => {
         </div>
 
         {/* Quick Links */}
-        <div className="flex-1 min-w-[250px] mb-6 md:mb-0">
+        <div className="flex-1 min-w-[250px] mb-6 sm:mb-0">
           <h2 className="text-lg font-semibold mb-4">Quick Links</h2>
           <ul className="space-y-2">
             <li>

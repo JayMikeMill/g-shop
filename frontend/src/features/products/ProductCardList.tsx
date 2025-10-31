@@ -1,6 +1,7 @@
 import ProductCardSkeleton from "./ProductCardSkeleton";
 import ProductCard from "./ProductCard";
 import type { Product } from "shared/types";
+import { useMemo } from "react";
 
 interface ProductCardListProps {
   products: Product[];
@@ -22,9 +23,11 @@ export default function ProductCardList({
   randomize = false,
 }: ProductCardListProps) {
   // Shuffle products if randomize is true
-  const displayProducts = randomize
-    ? [...products].sort(() => Math.random() - 0.5)
-    : products;
+  const displayProducts = useMemo(() => {
+    if (!randomize) return products;
+    return [...products].sort(() => Math.random() - 0.5);
+  }, [products, randomize]);
+
   if (horizontal) {
     return (
       <div

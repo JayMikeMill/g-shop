@@ -54,7 +54,7 @@ const ProductSearch: React.FC<ProductSearchProps> = ({
     <>
       <ProductSearchBar onSearch={setSearchQuery} onFocus={onOpen} />
       <Search
-        className="text-primary md:hidden flex items-center justify-center w-8 h-8 rounded-full"
+        className="text-primary sm:hidden flex items-center justify-center w-8 h-8 rounded-full"
         size={12}
         onClick={handleSearchButtonClick}
       />

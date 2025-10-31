@@ -14,7 +14,7 @@ const ProductSearchBar: React.FC<ProductSearchBarProps> = ({
   const [query, setQuery] = useState("");
 
   return (
-    <div className="relative w-full hidden md:flex">
+    <div className="relative w-full hidden sm:flex">
       <Input
         type="text"
         placeholder={`Search Products...`}

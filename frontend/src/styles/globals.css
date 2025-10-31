@@ -6,6 +6,8 @@
 /* Custom global styles */
 @layer base {
   :root {
+    --zoom: 0.85; /* default desktop zoom */
+
     /* 🎨 Base surfaces */
     --background: #ffffff; /* app/page background */
     --backgroundAlt: #ffffff; /* app/page background */
@@ -96,6 +98,15 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  .app-zoom {
+    zoom: var(--zoom);
+  }
+
+  /* Compensate for full-height sections */
+  .full-screen {
+    height: calc(100vh / var(--zoom)); /* divide by zoom factor */
   }
 }
 

@@ -29,9 +29,10 @@ export default function AppRoutes() {
   const adminPages = useLocation().pathname.startsWith("/admin");
 
   return (
-    <div className="bg-background">
+    <div className="app-zoom bg-background">
       <ScrollToTop />
       {!adminPages && <SiteHeader />}
+
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/category/:slug" element={<CollectionPage />} />
@@ -46,6 +47,7 @@ export default function AppRoutes() {
         <Route path="/demo-mode" element={<DemoModePage />} />
         {adminRoutes.map((r) => r)}
       </Routes>
+
       {!adminPages && <SiteFooter />}
     </div>
   );

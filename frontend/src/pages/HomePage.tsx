@@ -102,7 +102,7 @@ export default function HomePage() {
             key={collection.id}
             className="flex flex-col border-y bg-surface"
           >
-            <h2 className="text-2xl font-semibold pt-md">{collection.name}</h2>
+            <h2 className="text-2xl font-semibold py-md">{collection.name}</h2>
             <ProductCardList
               products={collection.products || []}
               isLoading={isLoading}

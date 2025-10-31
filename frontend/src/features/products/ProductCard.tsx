@@ -10,7 +10,7 @@ import {
 interface ProductCardProps {
   product: Product;
   showAddToCartButton?: boolean;
-  onProductClick?: () => void;
+  onProductClick?: (e: React.MouseEvent) => void;
   className?: string;
 }
 
@@ -33,8 +33,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
     });
   };
 
-  const handleCardClick = () => {
-    if (onProductClick) onProductClick();
+  const handleCardClick = (e: React.MouseEvent) => {
+    if (onProductClick) onProductClick(e);
     navigate(`/Product/${product.id}`);
   };
 

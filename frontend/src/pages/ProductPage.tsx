@@ -64,9 +64,9 @@ const ProductPage = () => {
 
   return (
     <div className="relative">
-      <div className="flex flex-col p-mt-xl p-md  md:flex-row justify-center md:items-start pb-sm">
+      <div className="flex flex-col p-mt-xl p-md  sm:flex-row justify-center sm:items-start pb-sm">
         {/* Small screen: Name & Price above image */}
-        <div className="flex flex-col gap-2 md:hidden items-center w-full px-md">
+        <div className="flex flex-col gap-2 sm:hidden items-center w-full px-md">
           <h1 className="text-2xl font-bold text-text text-center">
             {product.longName || product.name}
           </h1>
@@ -92,13 +92,13 @@ const ProductPage = () => {
         </div>
 
         {/* Product Images */}
-        <div className="w-full md:w-auto flex justify-center pb-4">
+        <div className="w-full sm:w-auto flex justify-center pb-4">
           <ProductImagesViewer images={product.images ?? []} />
         </div>
 
         {/* Product Details */}
-        <div className="flex flex-col gap-md w-full md:w-auto text-left self-start px-md">
-          <div className="hidden md:flex flex-col gap-sm">
+        <div className="flex flex-col gap-md w-full sm:w-auto text-left self-start px-md">
+          <div className="hidden sm:flex flex-col gap-sm">
             <h1 className="text-xl font-bold text-text">
               {product.longName || product.name}
             </h1>
