@@ -25,7 +25,9 @@ export default function App() {
   return (
     <div>
       <main>
-        <AppRoutes />
+        <div className="bg-background sm:app-zoom">
+          <AppRoutes />
+        </div>
       </main>
     </div>
   );

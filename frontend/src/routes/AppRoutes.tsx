@@ -29,7 +29,7 @@ export default function AppRoutes() {
   const adminPages = useLocation().pathname.startsWith("/admin");
 
   return (
-    <div className="app-zoom bg-background">
+    <div>
       <ScrollToTop />
       {!adminPages && <SiteHeader />}
 

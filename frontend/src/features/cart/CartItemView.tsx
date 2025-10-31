@@ -29,9 +29,12 @@ export default function CartItemView({
     "";
 
   const name = item.product?.name ?? "Unknown Product";
+  const safeName = name.replace(/-/g, "\u2011");
+
   const selectedOptions = item.variant ? parseVariantOptions(item.variant) : [];
   const ogPrice = item.product?.price! * item.quantity;
   const finalPrice = item.price * item.quantity;
+
   return (
     <div className={`flex flex-row items-center py-md relative ${className}`}>
       {/* Trash can icon for removing item completely (not in readOnly mode) */}
@@ -49,14 +52,14 @@ export default function CartItemView({
       <Image
         src={imgSrc}
         alt={name}
-        className="w-20 h-20 rounded-md bg-transparent object-contain"
+        className="h-20 sm:ml-lg min-w-20 max-w-20 rounded-md bg-transparent object-contain"
         onClick={() => (onProductClick ? onProductClick(item.productId) : null)}
       />
 
       <div className="flex flex-1 flex-col justify-center items-center sm:flex-row sm:gap-md sm:px-md ">
         {/* Item name and variant options */}
         <div className="flex flex-1 flex-col">
-          <p className="font-semibold text-center">{name}</p>
+          <p className="font-semibold text-center">{safeName}</p>
           {selectedOptions.length > 0 && (
             <div className="flex flex-wrap gap-1 justify-center">
               {selectedOptions.map((opt, idx) => (
