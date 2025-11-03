@@ -2,7 +2,7 @@
 
 A modern, full-stack e-commerce web application featuring a dynamic storefront, a comprehensive admin dashboard, and **cutting-edge AI-powered tools** for product management and customer engagement. Built as a fully functional MVP to showcase scalable, maintainable full-stack development with AI integration.
 
-### 🌐 [_Live Demo - Click Here_](https://gshop-pied.vercel.app/demo-mode)
+### 🌐 [_Live Demo - Click Here_](https://main.d22nzzi4zwdyek.amplifyapp.com/demo-mode)
 
 ---
 
