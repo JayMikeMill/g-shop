@@ -7,19 +7,8 @@
     "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/index.ts",
     "build:shared": "cd ../shared && tsc",
     "build": "npm run build:shared && tsc",
-    "start": "set NODE_ENV=production && node -r module-alias/register dist/index.js",
+    "start": "cross-env NODE_ENV=production && node -r module-alias/register dist/index.js",
     "prisma": "node prisma/run-prisma.js"
-  },
-  "_moduleDirectories": [
-    "node_modules_custom"
-  ],
-  "_moduleAliases": {
-    "@root": ".",
-    "@config": "/config",
-    "@adapters": "/adapters",
-    "@middleware": "/middleware",
-    "@services": "/services",
-    "@utils": "/utils"
   },
   "keywords": [],
   "author": "",
@@ -34,6 +23,7 @@
     "better-sqlite3": "^12.2.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "cross-env": "^10.1.0",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "firebase-admin": "^13.5.0",
@@ -41,7 +31,7 @@
     "module-alias": "^2.2.3",
     "multer": "^2.0.2",
     "openai": "^6.7.0",
-    "shared": "*",
+    "shared": "file:../shared",
     "sqlite3": "^5.1.7",
     "stripe": "^18.5.0",
     "ts-node-dev": "^2.0.0"
