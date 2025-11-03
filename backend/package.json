@@ -16,7 +16,7 @@
   "type": "commonjs",
   "dependencies": {
     "@easypost/api": "^8.2.0",
-    "@prisma/client": "^6.16.3",
+    "@prisma/client": "^6.18.0",
     "@supabase/supabase-js": "^2.76.1",
     "argon2": "^0.44.0",
     "axios": "^1.12.2",

@@ -1,0 +1,8 @@
+**/*
+!backend/**
+!shared/**
+!package.json
+!package-lock.json
+!Dockerfile
+!.elasticbeanstalk/**
+!.ebextensions/**
