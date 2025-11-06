@@ -74,20 +74,20 @@ const CollectionEditorForm: React.FC<CollectionEditorFormProps> = ({
         </div>
 
         {/* Action buttons */}
-        <div className="flex flex-row bg-surface border-t gap-2 px-0 py-md items-center sticky bottom-0 z-10">
+        <div className="flex flex-row bg-surface h-14 border-t gap-sm p-sm items-center sticky bottom-0 z-10">
           <Button
             variant="destructive"
-            className="w-full"
+            className="h-full w-1/3"
             onClick={onDelete && (() => onDelete(item?.id!))}
           >
             Delete
           </Button>
-          <Button variant="flat" className="w-full" onClick={onCancel}>
+          <Button variant="flat" className="h-full w-1/3" onClick={onCancel}>
             Cancel
           </Button>
           <Button
             type="submit"
-            className="w-full"
+            className="h-full w-1/3"
             disabled={isProcessingImages}
           >
             {isProcessingImages
@@ -169,7 +169,7 @@ const CollectionFields: React.FC<{
           <Textarea
             placeholder="Description"
             {...register("description")}
-            className="px-2 py-1 h-24 resize-none"
+            className="px-2 py-1 h-16 resize-none"
           />
         </label>
       </div>

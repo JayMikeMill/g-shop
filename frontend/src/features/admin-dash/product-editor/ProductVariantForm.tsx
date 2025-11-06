@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useFormContext, useFieldArray, useWatch } from "react-hook-form";
-import { NumberInput } from "@components/ui";
+import { NumberInput, TagBox } from "@components/ui";
 import type { Product } from "shared/types";
 import { parseVariantOptions } from "shared/utils";
 import { generateVariants } from "@utils/productUtils";
@@ -50,12 +50,11 @@ export const ProductVariantForm: React.FC = () => {
         >
           <div className="flex flex-wrap gap-1 mt-1 justify-center w-[40%]">
             {parseVariantOptions(variant).map((opt, optIdx) => (
-              <span
+              <TagBox
                 key={`variant-${idx}-opt-${optIdx}`}
-                className="options-tag"
-              >
-                {`${opt.name}:${opt.value} `}
-              </span>
+                text={`${opt.name}:${opt.value} `}
+                className="bg-primary text-foregroundAlt text-md"
+              />
             ))}
           </div>
 

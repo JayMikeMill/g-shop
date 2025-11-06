@@ -134,7 +134,7 @@ export const MobileNavBar: React.FC = () => {
 
       {/* Sub-items row */}
       {currentSection?.subItems?.length && (
-        <div className="flex flex-row w-full overflow-x-auto border-b border-border h-8 bg-background">
+        <div className="flex flex-row w-full overflow-x-auto border-b border-border h-10 bg-background">
           {currentSection.subItems.map((sub) => (
             <NavButton
               key={sub.to}

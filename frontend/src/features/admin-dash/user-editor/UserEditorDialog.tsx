@@ -20,7 +20,7 @@ export const UserEditorDialog: React.FC<CrudEditorInterface<User>> = ({
     onClose={onCancel}
     title={item?.id ? "Edit User" : "Register New User"}
     className={`flex flex-col overflow-hidden w-full h-full 
-      rounded-none sm:rounded-2xl sm:max-w-2xl sm:px-lg`}
+      rounded-none sm:rounded-2xl sm:max-w-2xl sm:px-lg sm:max-h-[95%]`}
   >
     <UserEditorForm
       item={item}

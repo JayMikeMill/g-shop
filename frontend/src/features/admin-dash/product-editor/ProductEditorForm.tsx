@@ -115,62 +115,69 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
       >
         <div className="flex flex-1 flex-col sm:flex-row sm:gap-md sm:py-md overflow-hidden min-h-0">
           {/* Main Editor */}
-          <div className="flex-1 flex flex-col gap-md overflow-y-auto pb-md sm:border sm:rounded-lg">
-            <div className="flex flex-col gap-sm p-sm sm:p-md sm:gap-md">
-              {/* Info Editor */}
-              <AnimatedDropdownBox title="Product Info" openInitially>
-                <ProductInfoForm />
-              </AnimatedDropdownBox>
-              {/* Dimensions Editor */}
-              <AnimatedDropdownBox title="Dimensions" openInitially>
-                <ProductDimensionsForm />
-              </AnimatedDropdownBox>
+          <div className="flex-1 flex flex-col gap-md overflow-y-auto sm:border sm:rounded-lg">
+            <div className="flex flex-col gap-sm p-sm lg:gap-sm lg:flex-row">
+              <div className="flex flex-col gap-sm sm:gap-md lg:w-1/2">
+                {/* Info Editor */}
+                <AnimatedDropdownBox title="Product Info" openInitially>
+                  <ProductInfoForm />
+                </AnimatedDropdownBox>
 
-              {/* Description Editor */}
-              <AnimatedDropdownBox title="Product Description" openInitially>
-                <ProductDescriptionForm />
-              </AnimatedDropdownBox>
-              {/* Tags Editor */}
-              <AnimatedDropdownBox title="Product Tags" openInitially>
-                <ProductTagsForm />
-              </AnimatedDropdownBox>
-              {/* Collections Editor */}
-              <AnimatedDropdownBox title="Categories/Collections" openInitially>
-                <ProductCollectionsForm />
-              </AnimatedDropdownBox>
+                {/* Description Editor */}
+                <AnimatedDropdownBox title="Product Description" openInitially>
+                  <ProductDescriptionForm />
+                </AnimatedDropdownBox>
+              </div>
+              <div className="flex flex-col gap-sm sm:gap-md lg:w-1/2">
+                {/* Collections Editor */}
+                <AnimatedDropdownBox
+                  title="Categories/Collections"
+                  openInitially
+                >
+                  <ProductCollectionsForm />
+                </AnimatedDropdownBox>
 
-              {/* Options Editor */}
-              <AnimatedDropdownBox title="Options" openInitially>
-                <ProductOptionsForm />
-              </AnimatedDropdownBox>
+                {/* Dimensions Editor */}
+                <AnimatedDropdownBox title="Dimensions" openInitially>
+                  <ProductDimensionsForm />
+                </AnimatedDropdownBox>
 
-              {/* Variants */}
-              <AnimatedDropdownBox
-                customTitle={<ProductVariantHeader />}
-                autoSyncOpen={!!options?.length}
-                disabled={!options?.length}
-              >
-                <ProductVariantForm />
-              </AnimatedDropdownBox>
+                {/* Tags Editor */}
+                <AnimatedDropdownBox title="Product Tags" openInitially>
+                  <ProductTagsForm />
+                </AnimatedDropdownBox>
+
+                {/* Options Editor */}
+                <AnimatedDropdownBox title="Options" openInitially>
+                  <ProductOptionsForm />
+                </AnimatedDropdownBox>
+
+                {/* Variants */}
+                <AnimatedDropdownBox
+                  customTitle={<ProductVariantHeader />}
+                  autoSyncOpen={!!options?.length}
+                  disabled={!options?.length}
+                >
+                  <ProductVariantForm />
+                </AnimatedDropdownBox>
+                {/* Delete Button */}
+                {!isAdding && (
+                  <Button
+                    variant="destructive"
+                    className="h-12 w-1/2 self-center"
+                    type="button"
+                    onClick={handleDelete}
+                  >
+                    Delete Product
+                  </Button>
+                )}
+              </div>
             </div>
-
-            {/* Delete Button */}
-            {!isAdding && (
-              <Button
-                variant="destructive"
-                className="h-12 w-1/2 self-center"
-                type="button"
-                onClick={handleDelete}
-              >
-                Delete Product
-              </Button>
-            )}
           </div>
 
           {/* Image Editor */}
-          <div className="flex flex-col sm:w-1/3">
+          <div className="flex flex-col sm:gap-md">
             <MultiImageEditor<ProductImageSet>
-              className="mb-sm sm:mb-md"
               images={images ?? []}
               onImagesChange={(imgs) =>
                 methods.setValue("images", imgs as ProductImageSet[], {
@@ -182,7 +189,7 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
             />
 
             {/* Footer Buttons */}
-            <div className="w-full flex flex-row p-md gap-2 sm:px-0 items-center sm:flex-col sm:gap-2">
+            <div className="w-full flex flex-row gap-2 p-sm sm:p-0 items-center sm:flex-col sm:gap-2">
               <Button
                 className="w-full h-12 sm:hidden"
                 type="button"

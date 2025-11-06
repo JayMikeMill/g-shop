@@ -1,4 +1,3 @@
-import { m } from "framer-motion";
 import type { ReactNode } from "react";
 import { useEffect, useRef } from "react";
 
@@ -10,7 +9,7 @@ function TableSkeletonRow({
   columns: TableColumn<any>[];
   rowHeight: string;
 }) {
-  const contentRows = Math.min(3, Math.floor(parseInt(rowHeight) / 40));
+  const contentRows = Math.min(3, Math.floor(parseInt(rowHeight) / 30));
   return (
     <tr className="animate-pulse">
       {columns.map((col) => (

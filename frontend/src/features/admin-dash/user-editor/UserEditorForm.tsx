@@ -127,10 +127,12 @@ export const UserEditorForm: React.FC<CrudEditorInterface<User>> = ({
             )}
           </div>
         </div>
-        <div className="flex flex-row bg-surface border-t gap-2 px-0 py-md items-center sticky bottom-0 z-10">
+
+        {/* Action buttons */}
+        <div className="flex flex-row bg-surface h-14 border-t gap-sm p-sm items-center sticky bottom-0 z-10">
           {permission.delete && (
             <Button
-              className="flex flex-1"
+              className="h-full w-1/3"
               variant="destructive"
               type="button"
               onClick={() => item?.id && onDelete(item.id)}
@@ -139,7 +141,7 @@ export const UserEditorForm: React.FC<CrudEditorInterface<User>> = ({
             </Button>
           )}
           <Button
-            className="flex flex-1"
+            className="h-full w-1/3"
             variant="flat"
             type="button"
             onClick={onCancel}
@@ -147,7 +149,7 @@ export const UserEditorForm: React.FC<CrudEditorInterface<User>> = ({
             Cancel
           </Button>
           {permission.edit && (
-            <Button className="flex flex-1" type="submit" variant="default">
+            <Button className="h-full w-1/3" type="submit" variant="default">
               {isNew ? "Register User" : "Save Changes"}
             </Button>
           )}

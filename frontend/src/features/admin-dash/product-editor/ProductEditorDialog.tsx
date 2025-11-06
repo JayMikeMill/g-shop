@@ -18,7 +18,7 @@ function ProductEditorDialog({
       onClose={onCancel}
       title={item?.id ? "Edit Product" : "Create Product"}
       className={`flex flex-col overflow-hidden w-full h-full rounded-none 
-        sm:rounded-2xl sm:max-w-3xl sm:px-lg`}
+        sm:rounded-2xl sm:px-lg sm:max-w-[90%] sm:max-h-[95%]`}
     >
       <ProductEditorForm
         item={item}

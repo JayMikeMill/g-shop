@@ -121,7 +121,7 @@ export const userTable: TableLayout<User> = {
 //===========================================================================
 export const productTable: TableLayout<Product> = {
   minWidth: "1400px",
-  rowHeight: "120px",
+  rowHeight: "100px",
   query: {
     select: [
       "images",
@@ -177,6 +177,18 @@ export const productTable: TableLayout<Product> = {
         ),
     },
     {
+      id: "categories",
+      label: "Categories",
+      width: "15%",
+      render: (p) => renderTagArray(p.categories),
+    },
+    {
+      id: "collections",
+      label: "Collections",
+      width: "15%",
+      render: (p) => renderTagArray(p.collections),
+    },
+    {
       id: "tags",
       label: "Tags",
       width: "15%",
@@ -189,19 +201,6 @@ export const productTable: TableLayout<Product> = {
           }))
         ),
     },
-    {
-      id: "categories",
-      label: "Categories",
-      width: "15%",
-      render: (p) => renderTagArray(p.categories),
-    },
-    {
-      id: "collections",
-      label: "Collections",
-      width: "15%",
-      render: (p) => renderTagArray(p.collections),
-    },
-
     {
       id: "description",
       label: "Description",

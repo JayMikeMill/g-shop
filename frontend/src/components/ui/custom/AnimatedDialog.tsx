@@ -65,6 +65,7 @@ export const AnimatedDialog: React.FC<AnimatedDialogProps> = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
+          style={{ backdropFilter: "blur(2px)" }}
         >
           {/* Background overlay */}
           <motion.div

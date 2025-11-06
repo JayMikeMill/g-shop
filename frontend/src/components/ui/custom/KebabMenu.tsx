@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export interface KebabMenuOption {
   label: string;
@@ -56,25 +57,32 @@ const KebabMenu: React.FC<KebabMenuProps> = ({
           <circle cx="16" cy="10" r="2" fill="#555" />
         </svg>
       </button>
-      {open && (
-        <div
-          className={`absolute top-full left-0 min-w-[100px] bg-white shadow-lg rounded z-10 py-1 border border-gray-200 ${menuClassName}`}
-        >
-          {options.map((opt, idx) => (
-            <button
-              key={idx}
-              onClick={(e) => {
-                e.stopPropagation();
-                setOpen(false);
-                opt.onClick();
-              }}
-              className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${opt.className || "text-gray-700"}`}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-      )}
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className={`absolute top-full left-0 min-w-[100px] bg-surface shadow-lg rounded z-10 border border-border ${menuClassName}`}
+          >
+            {options.map((opt, idx) => (
+              <button
+                key={idx}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpen(false);
+                  opt.onClick();
+                }}
+                className={`w-full text-left px-4 py-2 text-md font-semibold hover:bg-primary-50 transition-colors ${opt.className || "text-foreground"}`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

@@ -25,8 +25,8 @@ function CollectionDialogBase<T extends Collection>({
       title={isAdding ? `Add ${typeLabel}` : `Edit ${typeLabel}`}
       open={!!open}
       onClose={onCancel}
-      className="flex flex-col overflow-hidden rounded-none pl-2 w-full h-full 
-      sm:rounded-2xl sm:max-w-3xl px-md sm:px-lg"
+      className="flex flex-col overflow-hidden rounded-none w-full h-full 
+      sm:rounded-2xl sm:max-w-3xl sm:px-lg sm:max-h-[95%]"
     >
       <CollectionEditorForm
         item={item as Collection | undefined}
