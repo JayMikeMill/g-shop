@@ -18,7 +18,7 @@ export const OrderEditorDialog: React.FC<CrudEditorInterface<Order>> = ({
     onClose={onCancel}
     title={item?.id ? "Edit Order" : "Create Order"}
     className={`flex flex-col overflow-hidden w-full h-full 
-      rounded-none sm:rounded-2xl sm:max-w-2xl sm:px-lg`}
+      rounded-none sm:rounded-2xl sm:max-w-[90%] sm:px-lg sm:max-h-[95%]`}
   >
     <OrderEditorForm
       item={item}

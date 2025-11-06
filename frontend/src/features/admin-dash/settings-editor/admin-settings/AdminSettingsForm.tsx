@@ -61,34 +61,18 @@ const AdminSettingsForm: React.FC<Props> = ({ settings, onSave }) => {
         onSubmit={methods.handleSubmit(handleSave)}
       >
         <div className="flex flex-col w-full gap-sm sm:w-1/2 sm:gap-md">
-          <AnimatedDropdownBox
-            className=" gap-lg p-md w-full"
-            title="Contact Settings"
-            openInitially={true}
-          >
+          <AnimatedDropdownBox title="Contact Settings" openInitially={true}>
             <AdminSettingsContactForm />
           </AnimatedDropdownBox>
-          <AnimatedDropdownBox
-            className=" gap-lg p-md w-full"
-            title="Shipping Origin"
-            openInitially={true}
-          >
+          <AnimatedDropdownBox title="Shipping Origin" openInitially={true}>
             <AdminSettingsShippingOriginForm />
           </AnimatedDropdownBox>
         </div>
         <div className="flex flex-col w-full gap-sm sm:w-1/2 sm:gap-md">
-          <AnimatedDropdownBox
-            className=" gap-lg p-md w-full"
-            title="Features Settings"
-            openInitially={true}
-          >
+          <AnimatedDropdownBox title="Features Settings" openInitially={true}>
             <AdminSettingsFeaturesForm />
           </AnimatedDropdownBox>
-          <AnimatedDropdownBox
-            className=" gap-lg p-md w-full"
-            title="Analytics Settings"
-            openInitially={true}
-          >
+          <AnimatedDropdownBox title="Analytics Settings" openInitially={true}>
             <AdminSettingsAnalyticsForm />
           </AnimatedDropdownBox>
         </div>

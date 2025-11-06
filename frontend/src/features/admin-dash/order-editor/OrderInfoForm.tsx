@@ -24,7 +24,7 @@ const OrderInfoForm: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex flex-row items-center justify-between pt-md">
+      <div className="flex flex-col items-center">
         <Label> Order Status</Label>
         <AnimatedSelect
           className="w-40"

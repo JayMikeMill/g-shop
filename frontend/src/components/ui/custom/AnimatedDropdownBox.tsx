@@ -4,6 +4,7 @@ import { Button } from "../primitives/Button";
 
 interface AnimatedDropdownBoxProps {
   className?: string;
+  contentClassName?: string;
   title?: string;
   customTitle?: React.ReactNode;
   children: React.ReactNode;
@@ -15,6 +16,7 @@ interface AnimatedDropdownBoxProps {
 
 export const AnimatedDropdownBox: React.FC<AnimatedDropdownBoxProps> = ({
   className,
+  contentClassName,
   title,
   customTitle,
   children,
@@ -37,7 +39,9 @@ export const AnimatedDropdownBox: React.FC<AnimatedDropdownBoxProps> = ({
   const [clip, setClip] = useState(!openInitially);
 
   return (
-    <div className={`border border-border rounded-md w-full max-w-full`}>
+    <div
+      className={`border border-border rounded-md w-full max-w-full ${className}`}
+    >
       <Button
         variant="blank"
         className={`flex justify-between items-center bg-primary-100
@@ -58,7 +62,9 @@ export const AnimatedDropdownBox: React.FC<AnimatedDropdownBoxProps> = ({
         onAnimationComplete={() => setClip(!open)}
         className={clip ? "overflow-hidden" : ""}
       >
-        <div className={`p-4 flex flex-col ${className}`}>{children}</div>
+        <div className={`p-4 flex flex-col ${contentClassName}`}>
+          {children}
+        </div>
       </motion.div>
     </div>
   );

@@ -56,55 +56,89 @@ const OrderEditorForm: React.FC<Props> = ({
     else onCreate(data);
   });
 
+  // action buttons function
+  const renderActionButtons = () => {
+    return (
+      <div className="flex flex-row lg:flex-col bg-surface h-14 border-t gap-sm p-sm items-center sticky bottom-0 z-10">
+        <div className="hidden w-1/2" />
+        {methods.watch("id") && (
+          <Button
+            className="h-full w-1/3 lg:w-full"
+            variant="destructive"
+            type="button"
+            onClick={handleDelete}
+          >
+            Delete Order
+          </Button>
+        )}
+        <Button
+          className="h-full w-1/3 lg:w-full"
+          variant="flat"
+          onClick={handleCancel}
+        >
+          Cancel
+        </Button>
+        <Button className="h-full w-1/3 lg:w-full" type="submit">
+          {methods.watch("id") ? "Save Changes" : "Create Order"}
+        </Button>
+      </div>
+    );
+  };
+
   return (
     <FormProvider {...methods}>
       <form
-        className="flex flex-col flex-1 overflow-y-auto gap-sm sm:gap-md relative"
+        className="flex flex-col lg:flex-row h-full min-h-0 relative"
         onSubmit={handleSave}
       >
-        <div className="flex flex-col gap-sm p-sm sm:p-md sm:gap-md">
-          <AnimatedDropdownBox title="Order Info" openInitially={true}>
-            <OrderInfoForm />
-          </AnimatedDropdownBox>
-          <AnimatedDropdownBox
-            className="p-0"
-            title="Order Items"
-            openInitially={true}
-          >
-            <OrderItemsForm />
-          </AnimatedDropdownBox>
-          <AnimatedDropdownBox title="Shipping Info" openInitially={true}>
-            <OrderShippingForm />
-          </AnimatedDropdownBox>
-          <AnimatedDropdownBox title="Transaction" openInitially={true}>
-            <OrderTransactionForm />
-          </AnimatedDropdownBox>
-          <AnimatedDropdownBox title="Status History" openInitially={true}>
-            <OrderStatusHistoryForm />
-          </AnimatedDropdownBox>
-          <AnimatedDropdownBox title="Notes" openInitially={true}>
-            <OrderNotesForm />
-          </AnimatedDropdownBox>
+        <div className="hidden lg:flex flex-col gap-md items-middle lg:w-[250px] py-md border-r">
+          <OrderInfoForm />
+          {renderActionButtons()}
         </div>
-        {/* Action buttons */}
-        <div className="sticky bottom-0 z-10 bg-surface py-md flex gap-2 px-md justify-center border-t">
-          {methods.watch("id") && (
-            <Button
-              className="flex flex-1"
-              variant="destructive"
-              type="button"
-              onClick={handleDelete}
+
+        <div className="flex flex-col flex-1 overflow-y-auto gap-sm p-sm sm:p-md sm:gap-md lg:flex-row">
+          <div className="flex flex-col gap-sm sm:gap-md lg:w-1/2">
+            {/* Order Info */}
+            <AnimatedDropdownBox
+              className="lg:hidden"
+              title="Order Info"
+              openInitially={true}
             >
-              Delete Order
-            </Button>
-          )}
-          <Button className="flex flex-1" variant="flat" onClick={handleCancel}>
-            Cancel
-          </Button>
-          <Button className="flex flex-1" type="submit">
-            {methods.watch("id") ? "Save Changes" : "Create Order"}
-          </Button>
+              <OrderInfoForm />
+            </AnimatedDropdownBox>
+
+            {/* Status History */}
+            <AnimatedDropdownBox title="Status History" openInitially={true}>
+              <OrderStatusHistoryForm />
+            </AnimatedDropdownBox>
+
+            {/* Order Items */}
+            <AnimatedDropdownBox
+              contentClassName="p-0"
+              title="Order Items"
+              openInitially={true}
+            >
+              <OrderItemsForm />
+            </AnimatedDropdownBox>
+
+            {/* Transaction Info */}
+            <AnimatedDropdownBox title="Transaction" openInitially={true}>
+              <OrderTransactionForm />
+            </AnimatedDropdownBox>
+          </div>
+          <div className="flex flex-col gap-sm sm:gap-md lg:w-1/2">
+            {/* Shipping Info */}
+            <AnimatedDropdownBox title="Shipping Info" openInitially={true}>
+              <OrderShippingForm />
+            </AnimatedDropdownBox>
+
+            {/* Notes */}
+            <AnimatedDropdownBox title="Notes" openInitially={true}>
+              <OrderNotesForm />
+            </AnimatedDropdownBox>
+          </div>
         </div>
+        <div className="lg:hidden">{renderActionButtons()}</div>
       </form>
     </FormProvider>
   );

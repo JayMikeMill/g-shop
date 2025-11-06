@@ -36,11 +36,12 @@ const OrderItemsForm: React.FC = () => {
           quantity: item.quantity,
           price: item.price,
         }))}
+        minWidth="0px"
         columns={[
           {
             id: "product",
             label: "Product",
-            width: "200px",
+            width: "70%",
             render: (i) => (
               <Label className="w-full overflow-hidden text-ellipsis whitespace-nowrap">
                 {i.product}
@@ -50,13 +51,13 @@ const OrderItemsForm: React.FC = () => {
           {
             id: "quantity",
             label: "Qty.",
-            width: "20px",
+            width: "10%",
             render: (i) => <Label>{i.quantity}</Label>,
           },
           {
             id: "price",
             label: "Price",
-            width: "60px",
+            width: "20%",
             render: (i) => <Label>{toMajorUnit(i.price).toFixed(2)}</Label>,
           },
         ]}

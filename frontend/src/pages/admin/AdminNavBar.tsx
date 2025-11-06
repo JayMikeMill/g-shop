@@ -35,17 +35,17 @@ interface NavBarItem {
 
 const navBarItems: NavBarItem[] = [
   { label: "Orders", to: "/admin/orders" },
-  { label: "Users", to: "/admin/users" },
+
   {
     label: "Catalog",
     to: "/admin/catalog/products",
     subItems: [
+      { label: "Products", to: "/admin/catalog/products" },
       { label: "Categories", to: "/admin/catalog/categories" },
       { label: "Collections", to: "/admin/catalog/collections" },
-      { label: "Products", to: "/admin/catalog/products" },
     ],
   },
-
+  { label: "Users", to: "/admin/users" },
   {
     label: "Settings",
     to: "/admin/settings/site",
