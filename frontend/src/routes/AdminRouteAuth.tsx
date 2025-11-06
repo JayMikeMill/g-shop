@@ -3,15 +3,15 @@ import { useUser } from "@features/user/useUser";
 import { useNavigate } from "react-router-dom";
 import type { UserRole } from "shared/types";
 
-interface ProtectedRouteProps {
+interface AdminRouteAuthProps {
   allowedRoles: UserRole[];
   children: JSX.Element;
 }
 
-export function ProtectedRoute({
+export function AdminRouteAuth({
   allowedRoles,
   children,
-}: ProtectedRouteProps) {
+}: AdminRouteAuthProps) {
   const navigate = useNavigate();
   const { user, loading } = useUser();
 

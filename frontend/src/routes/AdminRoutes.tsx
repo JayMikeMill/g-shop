@@ -1,6 +1,6 @@
 import { lazy, type JSX } from "react";
 import { Navigate, Route } from "react-router-dom";
-import { ProtectedRoute } from "./ProtectedRoute";
+import { AdminRouteAuth } from "./AdminRouteAuth";
 import { UserRoleKeys } from "shared/types/PrismaTypes";
 
 // Lazy imports (default exports)
@@ -42,15 +42,18 @@ export const adminRoutes: JSX.Element[] = [
     key="dashboard"
     path="/admin"
     element={
-      <ProtectedRoute
+      <AdminRouteAuth
         allowedRoles={[UserRoleKeys.ADMIN, UserRoleKeys.SITE_OWNER]}
       >
         <AdminDashboardPage />
-      </ProtectedRoute>
+      </AdminRouteAuth>
     }
   >
     {/* Default redirect */}
-    <Route index element={<Navigate to="catalog" replace />} />
+    <Route index element={<Navigate to="orders" replace />} />
+    {/* Other routes */}
+    <Route path="orders" element={<AdminOrdersPage />} />
+    <Route path="users" element={<AdminUsersPage />} />
 
     {/* Catalog parent route with default */}
     <Route path="catalog">
@@ -59,10 +62,6 @@ export const adminRoutes: JSX.Element[] = [
       <Route path="categories" element={<AdminCategoriesPage />} />
       <Route path="collections" element={<AdminCollectionsPage />} />
     </Route>
-
-    {/* Other routes */}
-    <Route path="orders" element={<AdminOrdersPage />} />
-    <Route path="users" element={<AdminUsersPage />} />
 
     {/* Settings parent route with default */}
     <Route path="settings">

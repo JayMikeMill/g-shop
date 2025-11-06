@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { Button } from "@components/ui";
 import { useUser } from "@features/user/useUser";
-import { DesktopNav, MobileNav } from "./AdminNav";
+import { DesktopNavBar, MobileNavBar } from "./AdminNavBar";
 import { useNavigate } from "react-router-dom";
 
 export default function AdminDashboardPage() {
@@ -26,7 +26,7 @@ export default function AdminDashboardPage() {
 
       {/* Mobile top nav (sticky below header) */}
       <div className="sm:hidden sticky top-16 z-10 bg-background">
-        <MobileNav />
+        <MobileNavBar />
       </div>
 
       {/* Main layout */}
@@ -34,7 +34,7 @@ export default function AdminDashboardPage() {
         {/* Desktop sidebar (sticky) */}
         <aside className="hidden sm:flex sm:flex-col sm:w-60 border-r border-border p-3 overflow-y-auto sticky top-16">
           <h2 className="text-lg font-semibold text-center mb-2">Navigation</h2>
-          <DesktopNav />
+          <DesktopNavBar />
         </aside>
 
         {/* Main content scrollable only */}

@@ -27,24 +27,25 @@ const NavButton: React.FC<NavButtonProps> = ({
 };
 
 // ------------------ Data ------------------
-interface NavItem {
+interface NavBarItem {
   label: string;
   to: string;
   subItems?: { label: string; to: string }[];
 }
 
-const navItems: NavItem[] = [
+const navBarItems: NavBarItem[] = [
+  { label: "Orders", to: "/admin/orders" },
+  { label: "Users", to: "/admin/users" },
   {
     label: "Catalog",
     to: "/admin/catalog/products",
     subItems: [
-      { label: "Products", to: "/admin/catalog/products" },
       { label: "Categories", to: "/admin/catalog/categories" },
       { label: "Collections", to: "/admin/catalog/collections" },
+      { label: "Products", to: "/admin/catalog/products" },
     ],
   },
-  { label: "Orders", to: "/admin/orders" },
-  { label: "Users", to: "/admin/users" },
+
   {
     label: "Settings",
     to: "/admin/settings/site",
@@ -56,14 +57,14 @@ const navItems: NavItem[] = [
 ];
 
 // ------------------ DesktopNav ------------------
-export const DesktopNav: React.FC = () => {
+export const DesktopNavBar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
   return (
     <div className="flex flex-col">
-      {navItems.map((item) => {
-        const topPath = item.subItems?.[0]?.to ?? item.to;
+      {navBarItems.map((item) => {
+        const topPath = item.to ?? item.subItems?.[0]?.to;
         const isActive = location.pathname.startsWith(topPath);
 
         return (
@@ -96,12 +97,12 @@ export const DesktopNav: React.FC = () => {
 };
 
 // ------------------ MobileNav ------------------
-export const MobileNav: React.FC = () => {
+export const MobileNavBar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
   // Determine which section contains the current route
-  const currentSection = navItems.find((item) => {
+  const currentSection = navBarItems.find((item) => {
     // Check top-level path
     if (location.pathname === item.to) return true;
 
@@ -115,9 +116,9 @@ export const MobileNav: React.FC = () => {
     <div className="flex flex-col w-full">
       {/* Top-level row */}
       <div className="flex flex-row w-full overflow-x-auto border-b border-border h-10 bg-background">
-        {navItems.map((item) => {
+        {navBarItems.map((item) => {
           const isActive = currentSection?.label === item.label;
-          const topPath = item.subItems?.[0]?.to ?? item.to;
+          const topPath = item.to ?? item.subItems?.[0]?.to;
 
           return (
             <NavButton

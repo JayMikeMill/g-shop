@@ -254,11 +254,13 @@ export function AdminCrudPage<T extends { id?: string }>({
       </div>
 
       {/* Table */}
-      <div className="flex-1 min-h-0 overflow-auto">
+      <div className="flex-1 min-h-0">
         <DynamicTable<T>
           objectsName={objectsName}
           columns={columnsWithMenu}
           data={items}
+          minWidth={tableLayout.minWidth}
+          rowHeight={tableLayout.rowHeight}
           loading={page === 1 && isListLoading}
           loadingNextPage={loadingNextPage}
           rowsLoading={rowsLoading}

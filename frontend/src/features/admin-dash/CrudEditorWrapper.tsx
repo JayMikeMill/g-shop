@@ -26,11 +26,7 @@ export function CrudEditorWrapper<T>({
   if (editorMode.type === "idle") return null;
 
   if (isItemLoading) {
-    return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30">
-        <CircleSpinner text={`Loading ${objectName}...`} />
-      </div>
-    );
+    return <CircleSpinner text={`Loading ${objectName}...`} />;
   }
 
   return (

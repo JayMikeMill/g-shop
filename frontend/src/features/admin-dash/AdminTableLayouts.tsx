@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import type {
-  Category,
   Collection,
   Order,
   Product,
@@ -23,14 +22,17 @@ import { buyOrderShipping } from "./order-editor/buyOrderShipping";
 const renderTagArray = (
   items?: { name: string; color?: string; textColor?: string }[]
 ) => (
-  <div className="flex flex-wrap items-center justify-center gap-sm">
+  <div
+    className="flex flex-wrap items-center justify-center gap-xs"
+    style={{ maxHeight: "100%" }}
+  >
     {items?.map((item, idx) => (
       <TagBox
         key={idx}
         text={item.name}
         color={item.color}
         textColor={item.textColor}
-        className={`bg-${item.color ?? "surface"} text-${item.textColor ?? "foreground"} h-6 text-md font-normal whitespace-nowrap`}
+        className={`bg-${item.color ?? "surface"} text-${item.textColor ?? "foreground"} h-5 text-md font-normal whitespace-nowrap`}
       />
     ))}
   </div>
@@ -57,6 +59,8 @@ const renderImageOrPlaceholder = (src?: string) =>
 
 // --- Type ---
 export type TableLayout<T> = {
+  minWidth?: string;
+  rowHeight?: string;
   query: QueryObject<T>;
   columns: TableColumn<T>[];
   customKebabRender?: (
@@ -71,13 +75,32 @@ export type TableLayout<T> = {
 //===========================================================================
 export const userTable: TableLayout<User> = {
   query: { select: ["id", "email", "role"] },
+  rowHeight: "40px",
   columns: [
-    { id: "id", label: "User ID", width: "200px", render: (row) => row.id },
-    { id: "email", label: "Email", width: "200px", render: (row) => row.email },
+    {
+      id: "id",
+      label: "User ID",
+      width: "30%",
+      render: (u) => {
+        return renderCenteredColumn(
+          <span className="font-semibold text-text">{u.id}</span>
+        );
+      },
+    },
+    {
+      id: "email",
+      label: "Email",
+      width: "50%",
+      render: (row) => {
+        return renderCenteredColumn(
+          <span className="font-semibold text-text">{row.email}</span>
+        );
+      },
+    },
     {
       id: "role",
       label: "Role",
-      width: "120px",
+      width: "20%",
       render: (u) => {
         return renderCenteredColumn(
           <span className="font-semibold text-text">{u.role}</span>
@@ -97,6 +120,8 @@ export const userTable: TableLayout<User> = {
 // Products
 //===========================================================================
 export const productTable: TableLayout<Product> = {
+  minWidth: "1400px",
+  rowHeight: "120px",
   query: {
     select: [
       "images",
@@ -114,23 +139,23 @@ export const productTable: TableLayout<Product> = {
     {
       id: "image",
       label: "Image",
-      width: "120px",
+      width: "10%",
       render: (p) => renderImageOrPlaceholder(p.images?.[0]?.thumbnail),
     },
     {
       id: "name",
       label: "Name",
-      width: "160px",
+      width: "15%",
       sortable: true,
       render: (p) =>
         renderCenteredColumn(
-          <span className="font-semibold text-text">{p.name}</span>
+          <span className="font-semibold text-text px-sm">{p.name}</span>
         ),
     },
     {
       id: "price",
       label: "Price",
-      width: "120px",
+      width: "10%",
       sortable: true,
       render: (p) =>
         renderCenteredColumn(
@@ -154,7 +179,7 @@ export const productTable: TableLayout<Product> = {
     {
       id: "tags",
       label: "Tags",
-      width: "140px",
+      width: "15%",
       render: (p) =>
         renderTagArray(
           p.tags?.map((tag) => ({
@@ -167,23 +192,23 @@ export const productTable: TableLayout<Product> = {
     {
       id: "categories",
       label: "Categories",
-      width: "140px",
+      width: "15%",
       render: (p) => renderTagArray(p.categories),
     },
     {
       id: "collections",
       label: "Collections",
-      width: "140px",
+      width: "15%",
       render: (p) => renderTagArray(p.collections),
     },
 
     {
       id: "description",
       label: "Description",
-      width: "300px",
+      width: "25%",
       render: (p) =>
         renderFlexStart(
-          <span className="font-semibold text-text line-clamp-3">
+          <span className="px-sm font-semibold text-text line-clamp-3">
             {p.description}
           </span>
         ),
@@ -195,6 +220,7 @@ export const productTable: TableLayout<Product> = {
 // Orders
 //===========================================================================
 export const orderTable: TableLayout<Order> = {
+  rowHeight: "80px",
   query: {
     include: ["shippingInfo.address", "items"],
     searchFields: [
@@ -213,7 +239,7 @@ export const orderTable: TableLayout<Order> = {
     {
       id: "createdAt",
       label: "Created/Status",
-      width: "200px",
+      width: "25%",
       render: (o) =>
         renderCenteredColumn(
           <>
@@ -235,7 +261,7 @@ export const orderTable: TableLayout<Order> = {
     {
       id: "total",
       label: "Total",
-      width: "120px",
+      width: "15%",
       render: (o) =>
         renderCenteredColumn(
           <>
@@ -249,7 +275,7 @@ export const orderTable: TableLayout<Order> = {
     {
       id: "shipping",
       label: "Shipping",
-      width: "250px",
+      width: "30%",
       render: (o, rowActions) =>
         renderCenteredColumn(
           o.shippingInfo?.tracking ? (
@@ -291,35 +317,12 @@ export const orderTable: TableLayout<Order> = {
     {
       id: "address",
       label: "Shipping Address",
-      width: "360px",
+      width: "40%",
       render: (o) => (
-        <span className="font-semibold text-center whitespace-pre-wrap">
+        <span className="font-semibold text-center whitespace-pre-wrap line-clamp-3">
           {formatAddress(o.shippingInfo?.address)}
         </span>
       ),
-    },
-  ],
-};
-
-//===========================================================================
-// Categories
-//===========================================================================
-export const categoryTable: TableLayout<Category> = {
-  query: { select: ["id", "name", "slug", "description", "images"] },
-  columns: [
-    {
-      id: "image",
-      label: "Image",
-      width: "120px",
-      render: (c) => renderImageOrPlaceholder(c.images?.preview ?? undefined),
-    },
-    { id: "name", label: "Name", width: "200px", render: (row) => row.name },
-    { id: "slug", label: "Slug", width: "200px", render: (row) => row.slug },
-    {
-      id: "description",
-      label: "Description",
-      width: "400px",
-      render: (row) => row.description?.slice(0, 50) + "...",
     },
   ],
 };
@@ -329,19 +332,20 @@ export const categoryTable: TableLayout<Category> = {
 //===========================================================================
 export const collectionTable: TableLayout<Collection> = {
   query: { select: ["name", "slug", "description", "images"] },
+  rowHeight: "100px",
   columns: [
     {
       id: "image",
       label: "Image",
-      width: "120px",
+      width: "15%",
       render: (c) => renderImageOrPlaceholder(c.images?.preview ?? undefined),
     },
-    { id: "name", label: "Name", width: "200px", render: (row) => row.name },
-    { id: "slug", label: "Slug", width: "200px", render: (row) => row.slug },
+    { id: "name", label: "Name", width: "15%", render: (row) => row.name },
+    { id: "slug", label: "Slug", width: "15%", render: (row) => row.slug },
     {
       id: "description",
       label: "Description",
-      width: "400px",
+      width: "55%",
       render: (row) => row.description?.slice(0, 50) + "...",
     },
   ],
