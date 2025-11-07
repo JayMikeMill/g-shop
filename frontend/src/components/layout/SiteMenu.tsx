@@ -29,6 +29,25 @@ export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
     if (e.key === "Escape") handleClose();
   }, []);
 
+  // Mobile back button handling
+  useEffect(() => {
+    if (!visible) return;
+
+    // Push a dummy history entry
+    history.pushState(null, document.title);
+
+    const handlePopState = () => {
+      handleClose(); // Close menu
+      history.pushState(null, document.title); // prevent actual back
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [visible]);
+
   useEffect(() => {
     if (visible) {
       const prev = document.body.style.overflow;
