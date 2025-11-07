@@ -10,8 +10,8 @@ const baseButton = `
   inline-flex items-center justify-center px-6 py-2 gap-2 whitespace-nowrap 
   text-md font-semibold rounded-md 
   cursor-pointer transition-all duration-200 
-  hover:-translate-y-[0.1rem] hover:shadow-sm 
-  active:-translate-y-[0.2rem] active:shadow-md
+  hover:shadow-[0_0_5px_0]
+  active:shadow-[0_0_10px_0]
   disabled:pointer-events-none disabled:opacity-50
 `;
 
@@ -22,7 +22,9 @@ const buttonVariants = cva("", {
         baseButton +
         `
         bg-primary text-primary-foreground 
-        active:bg-primary-600`,
+        hover:shadow-primary
+        active:shadow-primary
+        active:bg-primary-400`,
       bare: `
         bg-transparent text-foreground`,
 
@@ -30,16 +32,20 @@ const buttonVariants = cva("", {
         baseButton +
         `
         bg-destructive text-destructive-foreground 
-        active:bg-destructive-600`,
+        hover:shadow-destructive
+        active:shadow-destructive
+        active:bg-destructive-400`,
       outline:
         baseButton +
         `
         border border-input bg-background shadow-sm 
-        hover:bg-surface`,
+        hover:shadow-background
+        active:shadow-background`,
       secondary:
         baseButton +
         `
-        bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80`,
+        bg-secondary text-secondary-foreground 
+        shadow-sm hover:bg-secondary/80`,
       ghost:
         baseButton +
         `
@@ -49,8 +55,10 @@ const buttonVariants = cva("", {
         `
         bg-transparent text-base shadow-none
         border border-input
+        hover:shadow-border
+        active:shadow-border
         hover:bg-primary-100 hover:text-base
-        active:bg-primary-400`,
+        active:bg-primary-50`,
       flatLink:
         baseButton +
         `

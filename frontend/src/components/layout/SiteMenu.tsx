@@ -87,10 +87,10 @@ export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
         >
           {/* Overlay */}
           <motion.div
-            className="absolute inset-0 bg-black"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.3 }}
-            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+            initial={{ opacity: 0, filter: "blur(0px)" }}
+            animate={{ opacity: 1, filter: "blur(0px)" }}
+            exit={{ opacity: 0, filter: "blur(0px)" }}
             transition={{ duration: 0.2, ease: "easeInOut" }}
             onClick={handleClose}
           />
@@ -122,7 +122,7 @@ export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
               exit="hidden"
             >
               {/* Top section: admin, categories (scrollable) */}
-              <div className="flex-1 overflow-y-auto pr-2">
+              <div className="flex-1 overflow-y-auto">
                 {(user?.role === "ADMIN" || user?.role === "SITE_OWNER") && (
                   <MenuItem
                     variants={itemVariants}

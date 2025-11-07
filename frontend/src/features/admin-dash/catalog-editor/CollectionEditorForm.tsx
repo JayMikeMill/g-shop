@@ -63,11 +63,8 @@ const CollectionEditorForm: React.FC<CollectionEditorFormProps> = ({
 
   return (
     <FormProvider {...methods}>
-      {isSaving && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/30">
-          <CircleSpinner text={`Saving ${typeLabel}...`} />
-        </div>
-      )}
+      <CircleSpinner open={isSaving} text={`Saving ${typeLabel}...`} />
+
       <form onSubmit={handleSave} className="flex flex-col h-full min-h-0">
         <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-md">
           <CollectionFields setIsProcessingImages={setIsProcessingImages} />

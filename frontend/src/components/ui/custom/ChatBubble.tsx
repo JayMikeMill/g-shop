@@ -76,7 +76,7 @@ export function ChatBubble({
           {/* Messages */}
           <div
             ref={messagesContainerRef}
-            className="flex-1 p-md overflow-y-auto space-y-md"
+            className="flex-1 p-md overflow-y-auto overflow-x-hidden space-y-md"
           >
             {messages.map((m, i) => (
               <motion.div

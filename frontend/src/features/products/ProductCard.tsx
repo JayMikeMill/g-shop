@@ -44,7 +44,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <div
-      className={`flex flex-col overflow-hidden cursor-pointer transition-all duration-300 border rounded-lg shadow-sm hover:shadow-lg bg-surface hover:scale-[1.02] ${className}`}
+      className={`flex flex-col overflow-hidden cursor-pointer transition-all duration-150 border rounded-lg shadow-sm hover:shadow-lg bg-surface hover:scale-[1.02] ${className}`}
       style={{ minWidth: 0 }}
       onClick={handleCardClick}
     >

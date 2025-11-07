@@ -28,7 +28,7 @@ export default function CheckoutPage() {
   return (
     <div className="flex flex-col flex-1 gap-lg max-w-[700px] p-sm mx-auto font-sans text-text">
       <CheckoutForm onSubmit={onSubmit} />
-      {loading && <CircleSpinner text={`Processing payment...`} />}
+      <CircleSpinner open={loading} text={`Processing payment...`} />
     </div>
   );
 }

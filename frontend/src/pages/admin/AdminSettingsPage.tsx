@@ -83,11 +83,7 @@ function GenericSettingsPage<T>({
     <div className="flex-1 overflow-y-auto relative">
       <Editor settings={currentSettings} onSave={handleSave} />
 
-      {isSaving && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30">
-          <CircleSpinner text="Saving settings..." />
-        </div>
-      )}
+      <CircleSpinner open={isSaving} text="Saving settings..." />
     </div>
   );
 }

@@ -75,10 +75,10 @@ export default function SlideOutCart({ isOpen, onClose }: SlideOutCartProps) {
         >
           {/* Background overlay */}
           <motion.div
-            className="absolute inset-0 bg-black"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.4 }}
-            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+            initial={{ opacity: 0, filter: "blur(0px)" }}
+            animate={{ opacity: 1, filter: "blur(0px)" }}
+            exit={{ opacity: 0, filter: "blur(0px)" }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
             onClick={handleClose}
           />
