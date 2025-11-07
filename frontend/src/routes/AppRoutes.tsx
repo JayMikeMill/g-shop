@@ -12,6 +12,7 @@ import HomePage from "@pages/HomePage";
 import ProductPage from "@pages/ProductPage";
 import CheckoutPage from "@pages/CheckoutPage";
 import AboutPage from "@pages/AboutPage";
+import FAQPage from "@pages/FaqPage";
 
 // User pages
 import SignupPage from "@pages/SignupPage";
@@ -24,9 +25,12 @@ import SiteFooter from "@components/layout/SiteFooter";
 
 import { useLocation } from "react-router-dom";
 import DemoModePage from "@pages/DemoModePage";
+import { StoreAiBubble } from "@components/layout/StoreAiChat";
 
 export default function AppRoutes() {
-  const adminPages = useLocation().pathname.startsWith("/admin");
+  const currentPath = useLocation().pathname;
+  const adminPages = currentPath.startsWith("/admin");
+  const storeAiPages = currentPath == "/";
 
   return (
     <div>
@@ -40,15 +44,18 @@ export default function AppRoutes() {
         <Route path="/product/:id" element={<ProductPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
-        <Route path="/about" element={<AboutPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/account" element={<AccountPage />} />
         <Route path="/demo-mode" element={<DemoModePage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/faq" element={<FAQPage />} />
         {adminRoutes.map((r) => r)}
       </Routes>
 
       {!adminPages && <SiteFooter />}
+
+      {storeAiPages && <StoreAiBubble />}
     </div>
   );
 }

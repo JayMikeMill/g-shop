@@ -38,6 +38,7 @@ import {
 
 // AI Controllers
 import {
+  askAboutStore,
   askAboutProduct,
   generateProductDescription as genPD,
 } from "@controllers/aiController";
@@ -76,8 +77,9 @@ router.post("/storage/file", reqAdmin, upload.single("file"), uploadFile);
 router.delete("/storage/:id", reqAdmin, deleteFile);
 
 // ---------------- Ai Routes  ----------------
+router.post("/ai/ask-about-store", askAboutStore);
+router.post("/ai/ask-about-product", askAboutProduct);
 router.post("/ai/generate-product-description", reqAdmin, genPD);
-router.post("/ai/ask-about-product", reqAdmin, askAboutProduct);
 
 // ---------------- System Settings  ----------------
 router.get("/settings/site", getSiteSettings);

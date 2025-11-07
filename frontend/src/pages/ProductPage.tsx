@@ -4,18 +4,20 @@ import { useState } from "react";
 import type { ProductVariant } from "shared/types";
 
 // Cart state management
-import { useCart, useDataApi } from "@app/hooks";
+import { useCart, useDataApi, useApi } from "@app/hooks";
 
 import ProductOptionSelector from "@features/products/ProductOptionsSelector";
 import ProductImagesViewer from "@features/products/ProductImagesViewer";
 import { Button, TagBox } from "@components/ui";
 import { toMajorPriceString } from "shared/utils";
 import { ProductPageSkeleton } from "@features/products/ProductPageSkeleton";
-import ProductPageAIChat from "@features/products/ProductPageAIChat";
+
+import { AIChatBubble } from "@components/ui";
 
 const ProductPage = () => {
   // Get product ID from URL params
   const { id } = useParams<{ id: string }>();
+  const { askAboutProduct } = useApi().ai;
 
   // Cart context, API hooks
   const { addCartItem } = useCart();
@@ -168,12 +170,19 @@ const ProductPage = () => {
         </div>
       </div>
 
-      {/* Place AI Chat anywhere, page decides placement */}
+      {/* Place AI Chat Bubble Bottom Right */}
       <div className="fixed bottom-6 right-0 px-md">
-        <ProductPageAIChat
-          className="w-full sm:w-[300px]"
-          product={product}
-          initialOpen={true}
+        <AIChatBubble
+          className="w-full sm:w-[500px]"
+          title="Product Assistant"
+          systemMessage={`Hello! I am here to help you with any 
+            questions you have about the product "${product.name}". 
+            Feel free to ask me anything related to its features, 
+            specifications, usage, or any other details you would 
+            like to know.`}
+          apiCall={askAboutProduct}
+          apiArgs={[product]}
+          initialOpen={false}
         />
       </div>
     </div>

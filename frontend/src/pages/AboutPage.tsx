@@ -6,10 +6,12 @@ const AboutPage: React.FC = () => {
 
   return (
     <div className="max-w-3xl mx-auto py-12 px-4 text-center">
-      {siteSettings?.aboutPageContent && (
-        <span
-          dangerouslySetInnerHTML={{ __html: siteSettings.aboutPageContent }}
-        />
+      {siteSettings?.aboutContentHtml && (
+        <div className="max-w-3xl mx-auto py-12 px-4 prose prose-lg">
+          <div
+            dangerouslySetInnerHTML={{ __html: siteSettings.aboutContentHtml }}
+          />
+        </div>
       )}
     </div>
   );

@@ -36,6 +36,14 @@ const SiteFooter: React.FC = () => {
                 About
               </button>
             </li>
+            <li>
+              <button
+                onClick={() => navigate("/faq")}
+                className="hover:text-primary transition-colors"
+              >
+                FAQ
+              </button>
+            </li>
           </ul>
         </div>
 

@@ -23,7 +23,7 @@ export const CategoryBar: React.FC<CategoryBarProps> = ({
         {categories.map((cat) => (
           <div
             key={cat.id}
-            className="flex flex-col items-center gap-sm cursor-pointer hover:scale-105 transition-transform"
+            className="flex flex-col items-center gap-sm cursor-pointer hover:scale-110 transition-transform"
             style={{ flex: "0 1 100px", maxWidth: "120px" }}
             onClick={() => onCategoryClick?.(cat)}
           >

@@ -12,7 +12,15 @@ export const defaultSiteSettings: SiteSettings = {
   bannerURL: "/assets/banner.jpg",
   bannerMessage: "Free shipping on orders over $50!",
   homePageCollections: [],
-  aboutPageContent: "Welcome to My Online Store.",
+
+  aboutContentHtml:
+    "<h2>About Us</h2><p>Welcome to our online store. We are committed to providing the best products and services.</p>",
+  aboutContent:
+    "Welcome to our online store. We are committed to providing the best products and services.",
+  FAQContentHtml:
+    "<h2>Frequently Asked Questions</h2><p>Here are some common questions...</p>",
+  FAQContent: "",
+
   demoSiteDisclaimer: false,
   measurementSystem: "IMPERIAL",
 

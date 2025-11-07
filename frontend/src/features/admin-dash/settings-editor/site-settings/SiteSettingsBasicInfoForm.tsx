@@ -146,7 +146,18 @@ const SiteSettingsBasicInfoForm: React.FC = () => {
       <div className="flex flex-col">
         <Label>About Page Content (HTML)</Label>
         <Textarea
-          {...register("aboutPageContent")}
+          {...register("aboutContentHtml")}
+          rows={6}
+          placeholder="Your content here..."
+          className="h-80"
+        />
+      </div>
+
+      {/* FAQ Page Content */}
+      <div className="flex flex-col">
+        <Label>FAQ Page Content (HTML)</Label>
+        <Textarea
+          {...register("FAQContentHtml")}
           rows={6}
           placeholder="Your content here..."
           className="h-80"

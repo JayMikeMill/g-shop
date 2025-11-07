@@ -14,7 +14,10 @@ export interface SiteSettings {
   bannerURL?: string;
   bannerMessage?: string;
   homePageCollections?: Collection[];
-  aboutPageContent?: string;
+  aboutContentHtml?: string;
+  aboutContent?: string;
+  FAQContentHtml?: string;
+  FAQContent?: string;
   demoSiteDisclaimer?: boolean;
   measurementSystem?: "METRIC" | "IMPERIAL";
 

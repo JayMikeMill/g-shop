@@ -121,6 +121,24 @@ export function useApi(): {
     //  Ai Services
     // ===============================
     ai: {
+      askAboutStore: (
+        question: string,
+        history: string
+      ): Promise<ApiResponse<string>> =>
+        post<ApiResponse<string>>(`/ai/ask-about-store`, {
+          question,
+          history,
+        }).then((res) => res),
+      askAboutProduct: (
+        product: Product,
+        question: string,
+        history: string
+      ): Promise<ApiResponse<string>> =>
+        post<ApiResponse<string>>(`/ai/ask-about-product`, {
+          product,
+          question,
+          history,
+        }).then((res) => res),
       generateProductDescription: (
         product: Product
       ): Promise<ApiResponse<string>> =>
@@ -128,15 +146,6 @@ export function useApi(): {
           `/ai/generate-product-description`,
           product
         ).then((res) => res),
-
-      askAboutProduct: (
-        product: Product,
-        question: string
-      ): Promise<ApiResponse<string>> =>
-        post<ApiResponse<string>>(`/ai/ask-about-product`, {
-          product,
-          question,
-        }).then((res) => res),
     },
 
     // ===============================
