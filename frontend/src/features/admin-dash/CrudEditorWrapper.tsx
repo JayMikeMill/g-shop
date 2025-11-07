@@ -25,17 +25,18 @@ export function CrudEditorWrapper<T>({
 }: Props<T>) {
   if (editorMode.type === "idle") return null;
 
+  if (isItemLoading) {
+    return <CircleSpinner text={`Loading ${objectName}...`} />;
+  }
+
   return (
-    <div>
-      {isItemLoading && <CircleSpinner text={`Loading ${objectName}...`} />}
-      <Editor
-        open
-        item={editingItem ?? null}
-        onCreate={(item) => handleSave(item, true)}
-        onModify={(item) => handleSave(item, false)}
-        onDelete={handleDelete}
-        onCancel={closeEditor}
-      />
-    </div>
+    <Editor
+      open
+      item={editingItem ?? null}
+      onCreate={(item) => handleSave(item, true)}
+      onModify={(item) => handleSave(item, false)}
+      onDelete={handleDelete}
+      onCancel={closeEditor}
+    />
   );
 }

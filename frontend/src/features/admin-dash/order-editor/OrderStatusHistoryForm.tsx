@@ -45,7 +45,8 @@ const OrderStatusHistoryForm: React.FC = () => {
         timestamp: string;
       }>
         className="rounded-none"
-        data={[...items].reverse().map((item) => ({
+        data={[...items].reverse().map((item, i) => ({
+          id: String(i),
           status: item.status,
           timestamp: formatMMDDYYYY(item.timestamp!),
         }))}
