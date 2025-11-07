@@ -12,7 +12,7 @@ import HomePage from "@pages/HomePage";
 import ProductPage from "@pages/ProductPage";
 import CheckoutPage from "@pages/CheckoutPage";
 import AboutPage from "@pages/AboutPage";
-import FAQPage from "@pages/FaqPage";
+import FAQPage from "@pages/FAQPage";
 
 // User pages
 import SignupPage from "@pages/SignupPage";
