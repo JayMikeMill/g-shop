@@ -33,6 +33,7 @@ enum UserRole {
 
 enum OrderStatus {
   PENDING
+  PROCESSING
   PAID
   SHIPPED
   DELIVERED
@@ -42,9 +43,10 @@ enum OrderStatus {
 
 enum TransactionStatus {
   PENDING
+  FAILED
+  AUTHORIZED
   PAID
   REFUNDED
-  FAILED
 }
 
 enum PaymentMethod {
@@ -392,13 +394,14 @@ model Order {
   user           User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
   userId         String?
   status         OrderStatus          @default(PENDING)
-  total          Int
+  subtotal       Int?
   tax            Int?
   shippingCost   Int?
+  total          Int
   transaction    Transaction?
   shippingInfo   ShippingInfo?
+  statusHistory  Json? /// ![{status: OrderStatus, timestamp: Date}[]]
   items          OrderItem[]
-  statusHistory  OrderStatusHistory[]
   invoices       Invoice[]
   notes          String?
   createdAt      DateTime             @default(now())
@@ -420,20 +423,13 @@ model Transaction {
   id              String            @id @default(uuid())
   order           Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId         String            @unique
+  transactionRef  String?
   billingAddress  Address?
   amount          Int
   currency        String
   method          PaymentMethod
   status          TransactionStatus
   gatewayResponse Json?
-}
-
-model OrderStatusHistory {
-  id        String      @id @default(uuid())
-  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  orderId   String
-  status    OrderStatus
-  timestamp DateTime    @default(now())
 }
 
 model Invoice {

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+
 import type {
   Collection,
   Order,
@@ -7,6 +8,7 @@ import type {
   User,
 } from "shared/types";
 import {
+  formatMMDDYYYY,
   formatAddress,
   getProductDiscountLabel,
   getFinalPriceString,
@@ -237,24 +239,18 @@ export const orderTable: TableLayout<Order> = {
   columns: [
     {
       id: "createdAt",
-      label: "Created/Status",
+      label: "Status",
       width: "25%",
       render: (o) =>
         renderCenteredColumn(
-          <>
-            <span style={{ whiteSpace: "pre-line" }}>
-              {new Date(o.createdAt ?? "").toLocaleString([], {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true,
-              })}
-            </span>
-            <div className="border-b border-black w-full" />
+          <div className="flex flex-col">
             <span className="font-semibold">{o.status}</span>
-          </>
+            <span style={{ whiteSpace: "pre-line" }}>
+              {formatMMDDYYYY(
+                o.statusHistory?.[o.statusHistory.length - 1]?.timestamp!
+              )}
+            </span>
+          </div>
         ),
     },
     {

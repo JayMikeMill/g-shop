@@ -13,6 +13,12 @@ const OrderTransactionForm: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-md justify-left">
+      <div className="flex flex-col w-1/2">
+        <Label>Transaction ID</Label>
+        <Label className="font-semibold">
+          {getValues("transaction.transactionRef") || "(no transaction id)"}
+        </Label>
+      </div>
       <div className="flex flex-row gap-md">
         <div className="flex flex-col w-1/2">
           <Label>Amount</Label>

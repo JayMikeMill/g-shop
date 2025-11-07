@@ -116,7 +116,7 @@ export const ProductEditorForm: React.FC<CrudEditorInterface<Product>> = ({
         <div className="flex flex-1 flex-col sm:flex-row sm:gap-md sm:py-md overflow-hidden min-h-0">
           {/* Main Editor */}
           <div className="flex-1 flex flex-col gap-md overflow-y-auto sm:border sm:rounded-lg">
-            <div className="flex flex-col gap-sm p-sm lg:gap-sm lg:flex-row">
+            <div className="flex flex-col gap-sm p-sm lg:flex-row">
               <div className="flex flex-col gap-sm sm:gap-md lg:w-1/2">
                 {/* Info Editor */}
                 <AnimatedDropdownBox title="Product Info" openInitially>

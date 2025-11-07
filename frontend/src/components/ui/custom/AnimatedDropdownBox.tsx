@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Button } from "../primitives/Button";
 
@@ -26,17 +26,37 @@ export const AnimatedDropdownBox: React.FC<AnimatedDropdownBoxProps> = ({
   autoSyncOpen,
 }) => {
   const [internalOpen, setInternalOpen] = useState(openInitially);
-
-  // If external `open` is passed, respect it; otherwise, use internal
   const open = externalOpen ?? internalOpen;
 
-  // Auto-sync effect
+  // Clip content while animating
+  const [clip, setClip] = useState(!openInitially);
+
+  // Ref + height measurement
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState(0);
+
+  // Auto-sync controlled prop
   useEffect(() => {
     if (autoSyncOpen !== undefined) setInternalOpen(autoSyncOpen);
   }, [autoSyncOpen]);
 
-  // Fix: initialize clip based on starting open state
-  const [clip, setClip] = useState(!openInitially);
+  // Recompute height whenever content changes
+  useEffect(() => {
+    if (!contentRef.current) return;
+
+    const measure = () => {
+      setHeight(contentRef.current!.scrollHeight);
+    };
+
+    // Initial measure
+    measure();
+
+    // Observe content size changes
+    const observer = new ResizeObserver(measure);
+    observer.observe(contentRef.current);
+
+    return () => observer.disconnect();
+  }, [children]);
 
   return (
     <div
@@ -45,24 +65,26 @@ export const AnimatedDropdownBox: React.FC<AnimatedDropdownBoxProps> = ({
       <Button
         variant="blank"
         className={`flex justify-between items-center bg-primary-100
-				rounded-md w-full px-md py-sm font-semibold 
-				${disabled ? "cursor-not-allowed" : ""} ${open ? "rounded-b-none" : ""}`}
+          rounded-md w-full px-md py-sm font-semibold 
+          ${disabled ? "cursor-not-allowed" : ""} ${open ? "rounded-b-none" : ""}`}
         onClick={() => !disabled && setInternalOpen((prev) => !prev)}
       >
         {customTitle ?? title}
         {!disabled && <span>{open ? "▲" : "▼"}</span>}
       </Button>
 
-      {/* Animate height, clip children only while animating */}
       <motion.div
         initial={false}
-        animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }}
+        animate={{ maxHeight: open ? height : 0, opacity: open ? 1 : 0 }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
         onAnimationStart={() => setClip(true)}
         onAnimationComplete={() => setClip(!open)}
         className={clip ? "overflow-hidden" : ""}
       >
-        <div className={`p-4 flex flex-col ${contentClassName}`}>
+        <div
+          ref={contentRef}
+          className={`flex flex-col p-4 ${contentClassName}`}
+        >
           {children}
         </div>
       </motion.div>

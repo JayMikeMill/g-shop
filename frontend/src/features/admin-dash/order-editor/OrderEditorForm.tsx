@@ -108,13 +108,17 @@ const OrderEditorForm: React.FC<Props> = ({
             </AnimatedDropdownBox>
 
             {/* Status History */}
-            <AnimatedDropdownBox title="Status History" openInitially={true}>
+            <AnimatedDropdownBox
+              contentClassName="!p-0"
+              title="Order Status History"
+              openInitially={true}
+            >
               <OrderStatusHistoryForm />
             </AnimatedDropdownBox>
 
             {/* Order Items */}
             <AnimatedDropdownBox
-              contentClassName="p-0"
+              contentClassName="!p-0"
               title="Order Items"
               openInitially={true}
             >

@@ -29,6 +29,7 @@ const OrderItemsForm: React.FC = () => {
         quantity: number;
         price: number;
       }>
+        className="rounded-none"
         data={items.map((item) => ({
           id: item.id,
           image: item.product.images?.[0]?.thumbnail,
@@ -36,14 +37,15 @@ const OrderItemsForm: React.FC = () => {
           quantity: item.quantity,
           price: item.price,
         }))}
-        minWidth="0px"
+        minWidth="200px"
+        rowHeight="40px"
         columns={[
           {
             id: "product",
             label: "Product",
             width: "70%",
             render: (i) => (
-              <Label className="w-full overflow-hidden text-ellipsis whitespace-nowrap">
+              <Label className="block w-full px-sm overflow-hidden text-ellipsis whitespace-nowrap">
                 {i.product}
               </Label>
             ),
@@ -51,19 +53,21 @@ const OrderItemsForm: React.FC = () => {
           {
             id: "quantity",
             label: "Qty.",
-            width: "10%",
+            width: "60px",
             render: (i) => <Label>{i.quantity}</Label>,
           },
           {
             id: "price",
             label: "Price",
-            width: "20%",
-            render: (i) => <Label>{toMajorUnit(i.price).toFixed(2)}</Label>,
+            width: "80px",
+            render: (i) => (
+              <Label>{toMajorUnit(i.price * i.quantity).toFixed(2)}</Label>
+            ),
           },
         ]}
       />
 
-      <div className="flex flex-col border-b pb-md space-y-1 p-md self-center w-full">
+      <div className="flex flex-col  p-md self-center w-full">
         <div className="flex justify-between">
           <span className="text-md">Subtotal:</span>
           <span className="text-md">${((subTotal ?? 0) / 100).toFixed(2)}</span>
@@ -78,7 +82,7 @@ const OrderItemsForm: React.FC = () => {
           <span className="text-md">Tax:</span>
           <span className="text-md">${((tax ?? 0) / 100).toFixed(2)}</span>
         </div>
-        <div className="flex justify-between font-bold">
+        <div className="flex justify-between font-bold border-t pt-sm">
           <span className="text-md">Order Total:</span>
           <span className="text-md">${((total ?? 0) / 100).toFixed(2)}</span>
         </div>

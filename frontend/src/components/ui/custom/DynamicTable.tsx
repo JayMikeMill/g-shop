@@ -89,6 +89,7 @@ export interface DynamicTableProps<T> {
   objectsName?: string;
   onEndReached?: () => void;
   rowActions?: RowAction<T>;
+  className?: string;
 }
 
 export const DynamicTable = <T extends { id?: string }>({
@@ -105,6 +106,7 @@ export const DynamicTable = <T extends { id?: string }>({
   objectsName = "Objects",
   onEndReached,
   rowActions,
+  className,
 }: DynamicTableProps<T>) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -127,7 +129,9 @@ export const DynamicTable = <T extends { id?: string }>({
   // Loading skeleton
   if (loading) {
     return (
-      <div className="w-full h-full shadow-surface border border-border rounded bg-background">
+      <div
+        className={`w-full h-full shadow-surface border border-border rounded bg-background ${className}`}
+      >
         <table
           className={`w-full border-collapse table-fixed font-sans`}
           style={{ minWidth }}
@@ -150,7 +154,9 @@ export const DynamicTable = <T extends { id?: string }>({
   // Empty state
   if (data.length === 0) {
     return (
-      <div className="overflow-auto shadow-surface border border-border rounded h-full">
+      <div
+        className={`overflow-auto shadow-surface border border-border rounded h-full ${className}`}
+      >
         <table
           className={`w-full border-collapse table-fixed font-sans`}
           style={{ minWidth }}
@@ -176,7 +182,7 @@ export const DynamicTable = <T extends { id?: string }>({
     <div className="flex flex-col h-full">
       <div
         ref={scrollRef}
-        className="overflow-auto shadow-surface border border-border rounded h-full"
+        className={`overflow-auto shadow-surface border border-border rounded h-full ${className}`}
         onScroll={handleScroll}
       >
         <table
@@ -211,7 +217,7 @@ export const DynamicTable = <T extends { id?: string }>({
                   ))}
 
                   {loadingMsg && (
-                    <div
+                    <td
                       className="absolute inset-0 flex items-center justify-left pointer-events-none bg-black/20 animate-pulse"
                       style={{
                         textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
@@ -221,7 +227,7 @@ export const DynamicTable = <T extends { id?: string }>({
                       <span className="font-bold text-2xl text-white animate-pulse p-xl">
                         {loadingMsg}
                       </span>
-                    </div>
+                    </td>
                   )}
                 </tr>
               );

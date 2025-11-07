@@ -3,7 +3,7 @@ import { DatabaseService as dbs, SystemSettingsService } from "@services";
 import { payment, shipping } from "@adapters/services";
 import { toMajorPriceString } from "shared/utils/PriceUtils";
 import { OrderProcessingApi } from "shared/interfaces";
-
+import { OrderStatusKeys, TransactionStatusKeys } from "shared/types";
 /**
  * OrderProcessingService handles:
  *  - Placing orders
@@ -30,6 +30,11 @@ class OrderProcessingService implements OrderProcessingApi {
     try {
       if (!order.items?.length) throw new Error("Order has no items");
 
+      order.status = OrderStatusKeys.PENDING;
+      order.statusHistory = [
+        { status: OrderStatusKeys.PENDING, timestamp: new Date() },
+      ];
+
       // 1️⃣ Check stock (optimized to fetch all products & variants in parallel)
       await this.stockAvailable(order, dbs);
 
@@ -55,6 +60,16 @@ class OrderProcessingService implements OrderProcessingApi {
           "Payment authorization failed. Try another payment method."
         );
 
+      order.transaction!.status = TransactionStatusKeys.AUTHORIZED;
+      order.transaction!.transactionRef = paymentResult.id;
+      order.status = OrderStatusKeys.PROCESSING;
+      order.statusHistory!.push({
+        status: OrderStatusKeys.PROCESSING,
+        timestamp: new Date(),
+      });
+
+      console.log("Stock verified, creating order...", order);
+
       // 4️⃣ Create order and update stock in a transaction
       let newOrder: Order | undefined;
       await dbs.transaction(async (tx) => {
@@ -64,18 +79,40 @@ class OrderProcessingService implements OrderProcessingApi {
         // Create order
         newOrder = await tx.orders.create(order);
 
+        if (!newOrder) throw new Error("Failed to create order");
+
         // Update stock for products & variants sequentially for pool safety
         await this.updateStockSafe(order, tx);
       });
 
+      if (!newOrder) throw new Error("Failed to create order");
+
       // 5️⃣ Capture payment
       const captureResult = await payment.capturePayment(paymentResult.id);
+
       if (captureResult.status !== "CAPTURED")
         throw new Error("Payment capture failed");
 
+      newOrder.transaction!.transactionRef = captureResult.id;
+      newOrder.transaction!.status = TransactionStatusKeys.PAID;
+      newOrder.status = OrderStatusKeys.PAID;
+      newOrder.statusHistory!.push({
+        status: OrderStatusKeys.PAID,
+        timestamp: new Date(),
+      });
+
+      const finalOrder = await dbs.orders.update({ ...newOrder } as Order & {
+        id: string;
+      });
+
+      if (!finalOrder)
+        throw new Error("Failed to update order after payment capture");
+
+      console.log("Order placed successfully:", finalOrder);
+
       return {
         success: true,
-        data: { newOrder: newOrder!, payment: captureResult },
+        data: { newOrder: finalOrder!, payment: captureResult },
       };
     } catch (error) {
       console.error("Error placing order:", error);

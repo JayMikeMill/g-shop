@@ -19,7 +19,7 @@ export const CircleSpinner: React.FC<CircleSpinnerProps> = ({ text }) => {
         />
         {text && (
           <span
-            className="text-3xl text-white"
+            className="text-3xl text-white pointer-events-none font-semibold"
             style={{
               textShadow: "0 0 5px rgba(0,0,0,1)",
             }}

@@ -26,7 +26,7 @@ interface CheckoutFormProps {
 export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const { cart } = useCart();
+  const { cart, cartTotals } = useCart();
   const navigate = useNavigate();
 
   const methods = useForm<CheckoutFormType>({
@@ -48,6 +48,7 @@ export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
     try {
       const { order: newOrder, error } = await createOrder(
         cart,
+        cartTotals,
         data.shippingInfo as ShippingInfo
       );
 

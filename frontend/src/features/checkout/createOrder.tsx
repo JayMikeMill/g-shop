@@ -1,4 +1,5 @@
 import { useApi } from "@app/hooks";
+import type { CartTotals } from "@features/cart/cartSlice";
 import {
   type ShippingInfo,
   TransactionStatusKeys,
@@ -10,6 +11,7 @@ import {
 
 export async function createOrder(
   cart: Cart,
+  cartTotals: CartTotals,
   shippingInfo: ShippingInfo
 ): Promise<{
   order: Order | null;
@@ -24,19 +26,14 @@ export async function createOrder(
   if (process.env.NODE_ENV === "development")
     console.log("Address verified with EasyPost:", shippingInfo.address);
 
-  // Calculate order totals
-  const tax = cart.total * 0.065;
-  const shippingCost = shippingInfo.cost ?? 0;
-  const total = cart.total + tax + shippingCost;
-
   if (process.env.NODE_ENV === "development")
-    console.log("Creating order with totals:", { tax, shippingCost, total });
+    console.log("Creating order with totals:", cartTotals);
 
   // Return Order object
   const order: Order = {
-    tax: tax,
-    shippingCost,
-    total: total,
+    tax: cartTotals.tax,
+    shippingCost: cartTotals.shipping,
+    total: cartTotals.total,
     status: OrderStatusKeys.PENDING,
     items: cart.items
       ?.filter((item) => item.product !== undefined)
@@ -46,17 +43,11 @@ export async function createOrder(
         quantity: item.quantity,
         price: item.price,
       })),
-    statusHistory: [
-      {
-        status: OrderStatusKeys.PENDING,
-        timestamp: new Date(),
-      },
-    ],
-    shippingInfo,
+    shippingInfo: { ...shippingInfo, cost: cartTotals.shipping },
     transaction: {
       billingAddress: shippingInfo.address,
       method: PaymentMethodKeys.STRIPE,
-      amount: cart.total,
+      amount: cartTotals.total,
       currency: "USD",
       status: TransactionStatusKeys.PENDING,
     },

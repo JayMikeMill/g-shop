@@ -20,6 +20,7 @@ export const UserRoleKeys = {
 
 export type OrderStatus =
   | "PENDING"
+  | "PROCESSING"
   | "PAID"
   | "SHIPPED"
   | "DELIVERED"
@@ -28,6 +29,7 @@ export type OrderStatus =
 
 export const OrderStatusKeys = {
   PENDING: "PENDING",
+  PROCESSING: "PROCESSING",
   PAID: "PAID",
   SHIPPED: "SHIPPED",
   DELIVERED: "DELIVERED",
@@ -35,13 +37,19 @@ export const OrderStatusKeys = {
   REFUNDED: "REFUNDED",
 } satisfies Record<string, OrderStatus>;
 
-export type TransactionStatus = "PENDING" | "PAID" | "REFUNDED" | "FAILED";
+export type TransactionStatus =
+  | "PENDING"
+  | "FAILED"
+  | "AUTHORIZED"
+  | "PAID"
+  | "REFUNDED";
 
 export const TransactionStatusKeys = {
   PENDING: "PENDING",
+  FAILED: "FAILED",
+  AUTHORIZED: "AUTHORIZED",
   PAID: "PAID",
   REFUNDED: "REFUNDED",
-  FAILED: "FAILED",
 } satisfies Record<string, TransactionStatus>;
 
 export type PaymentMethod =
@@ -403,13 +411,14 @@ export interface Order {
   user?: User | null;
   userId?: string | null;
   status: OrderStatus;
-  total: number;
+  subtotal?: number | null;
   tax?: number | null;
   shippingCost?: number | null;
+  total: number;
   transaction?: Transaction | null;
   shippingInfo?: ShippingInfo | null;
+  statusHistory?: { status: OrderStatus; timestamp: Date }[] | null;
   items?: OrderItem[];
-  statusHistory?: OrderStatusHistory[];
   invoices?: Invoice[];
   notes?: string | null;
   createdAt?: Date;
@@ -431,20 +440,13 @@ export interface Transaction {
   id?: string;
   order?: Order;
   orderId?: string;
+  transactionRef?: string | null;
   billingAddress?: Address | null;
   amount: number;
   currency: string;
   method: PaymentMethod;
   status: TransactionStatus;
   gatewayResponse?: JsonValue | null;
-}
-
-export interface OrderStatusHistory {
-  id?: string;
-  order?: Order;
-  orderId?: string;
-  status: OrderStatus;
-  timestamp: Date;
 }
 
 export interface Invoice {

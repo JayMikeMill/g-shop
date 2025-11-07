@@ -1,11 +1,11 @@
+import { Label } from "@components/ui";
 import { useFormContext } from "react-hook-form";
-import { AnimatedSelect, Label } from "@components/ui";
-import { OrderStatusKeys, type OrderStatus } from "shared/types";
 
 const OrderInfoForm: React.FC = () => {
-  const { control, watch } = useFormContext();
+  const { watch } = useFormContext();
   const orderId = watch("id");
   const userId = watch("userId");
+  const status = watch("status");
 
   return (
     <div className="flex flex-col">
@@ -26,19 +26,9 @@ const OrderInfoForm: React.FC = () => {
 
       <div className="flex flex-col items-center">
         <Label> Order Status</Label>
-        <AnimatedSelect
-          className="w-40"
-          menuClassName="text-center"
-          items={Object.values(OrderStatusKeys).map((key) => ({
-            value: key as OrderStatus,
-            label: key as string,
-            render: () => <span>{key}</span>,
-          }))}
-          controlProps={{
-            control,
-            name: "status",
-          }}
-        />
+        <Label className="text-xl font-bold mt-sm">
+          {status ?? "No status"}
+        </Label>
       </div>
     </div>
   );

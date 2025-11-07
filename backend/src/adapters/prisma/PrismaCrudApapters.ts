@@ -84,6 +84,7 @@ export const CrudProps = {
     fieldMeta: {
       id: { search },
       userId: { search },
+      statusHistory: { json },
       shippingInfo: { owned, include },
       "shippingInfo.address": { owned, include },
       items: { owned, include },
@@ -92,7 +93,6 @@ export const CrudProps = {
       transaction: { owned, include },
       "transaction.billingAddress": { owned, include },
       "transaction.gatewayResponse": { json },
-      statusHistory: { owned, include },
       invoices: { owned, include },
     },
   },
