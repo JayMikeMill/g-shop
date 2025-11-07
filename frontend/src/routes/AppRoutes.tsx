@@ -30,8 +30,13 @@ import { StoreAiBubble } from "@components/layout/StoreAiChat";
 export default function AppRoutes() {
   const currentPath = useLocation().pathname;
   const adminPages = currentPath.startsWith("/admin");
-  const storeAiPages = currentPath == "/";
-
+  const storeAiPages =
+    currentPath == "/" ||
+    currentPath.startsWith("/category") ||
+    currentPath.startsWith("/collection") ||
+    currentPath.startsWith("/home") ||
+    currentPath.startsWith("/about") ||
+    currentPath.startsWith("/faq");
   return (
     <div>
       <ScrollToTop />

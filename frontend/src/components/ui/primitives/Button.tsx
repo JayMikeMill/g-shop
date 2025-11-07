@@ -8,7 +8,7 @@ import { XIcon } from "lucide-react";
 // ----------------------
 const baseButton = `
   inline-flex items-center justify-center px-6 py-2 gap-2 whitespace-nowrap 
-  text-md font-semibold rounded-md 
+  text-md font-semibold rounded-md select-none
   cursor-pointer transition-all duration-200 
   hover:shadow-[0_0_5px_0]
   active:shadow-[0_0_10px_0]

@@ -5,9 +5,9 @@ const AboutPage: React.FC = () => {
   const { siteSettings } = useSiteSettings();
 
   return (
-    <div className="max-w-3xl mx-auto py-12 px-4 text-center">
+    <div className="max-w-3xl mx-auto  px-4 text-center">
       {siteSettings?.aboutContentHtml && (
-        <div className="max-w-3xl mx-auto py-12 px-4 prose prose-lg">
+        <div className="max-w-3xl mx-auto py-lg prose prose-lg">
           <div
             dangerouslySetInnerHTML={{ __html: siteSettings.aboutContentHtml }}
           />

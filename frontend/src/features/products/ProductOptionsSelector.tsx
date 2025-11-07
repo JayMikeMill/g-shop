@@ -163,13 +163,7 @@ const ProductOptionSelector: React.FC<ProductOptionSelectorProps> = ({
                     key={val}
                     disabled={!enabled}
                     onClick={() => handleOptionClick(opt.name, val)}
-                    className={`${
-                      selected
-                        ? "bg-primary text-text border-primary"
-                        : !enabled
-                          ? "opacity-50 cursor-not-allowed bg-surface text-text border-border"
-                          : "bg-surface text-text border-border hover:bg-primaryDark"
-                    }`}
+                    className={`${selected ? "ring-accent ring-4" : ""}`}
                   >
                     {val}
                   </Button>

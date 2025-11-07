@@ -174,6 +174,12 @@ export default function SiteMenu({ isOpen, onClose }: SiteMenuProps) {
                 >
                   About
                 </MenuItem>
+                <MenuItem
+                  variants={itemVariants}
+                  onClick={() => handleNavigate("/faq")}
+                >
+                  FAQs
+                </MenuItem>
               </div>
             </motion.div>
           </motion.div>

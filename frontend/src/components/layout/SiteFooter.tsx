@@ -33,7 +33,7 @@ const SiteFooter: React.FC = () => {
                 onClick={() => navigate("/about")}
                 className="hover:text-primary transition-colors"
               >
-                About
+                About Us
               </button>
             </li>
             <li>
@@ -41,7 +41,7 @@ const SiteFooter: React.FC = () => {
                 onClick={() => navigate("/faq")}
                 className="hover:text-primary transition-colors"
               >
-                FAQ
+                FAQs
               </button>
             </li>
           </ul>

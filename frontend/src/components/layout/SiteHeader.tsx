@@ -68,15 +68,13 @@ export default function SiteHeader() {
 
           {/* User icon or Login link */}
           {user ? (
-            <div
+            <Button
               onClick={handleUserClick}
-              className={`w-9 h-9 flex min-w-9 items-center justify-center 
-                rounded-full bg-primary text-white font-bold cursor-pointer
-                 hover:opacity-90 transition`}
+              className="!rounded-full w-9 h-9 flex min-w-9"
               title={`${user.firstName} ${user.lastName}`}
             >
               {user.email?.[0]?.toUpperCase() || "?"}
-            </div>
+            </Button>
           ) : (
             <Button variant="flatLink" onClick={() => navigate("/login")}>
               Login

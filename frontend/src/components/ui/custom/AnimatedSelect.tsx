@@ -70,15 +70,17 @@ export const AnimatedSelect = <T,>({
       <div ref={ref} className={`relative ${className ?? ""}`}>
         <button
           type="button"
-          className={`bg-backgroundAlt text-base shadow-sm h-9 transition-all 
+          className={`bg-backgroundAlt select-none text-base shadow-sm h-9 transition-all 
 						rounded-md border px-2 py-1 w-full text-left flex justify-between
             disabled:opacity-50
 						${open ? "ring-2 ring-accent" : ""}`}
           onClick={() => setOpen((p) => !p)}
           disabled={disabled}
         >
-          <span className={"w-full " + menuClassName}>{displayedLabel}</span>
-          <span>{open ? "▲" : "▼"}</span>
+          <span className={"w-full select-none" + menuClassName}>
+            {displayedLabel}
+          </span>
+          <span className="select-none">{open ? "▲" : "▼"}</span>
         </button>
 
         <AnimatePresence>
@@ -88,7 +90,7 @@ export const AnimatedSelect = <T,>({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -30 }}
               transition={{ duration: 0.25, ease: "easeInOut" }}
-              className={`absolute top-full left-0 z-20 mt-1 w-full 
+              className={`absolute top-full select-none drag-none left-0 z-20 mt-1 w-full 
 								max-h-60 overflow-y-auto bg-backgroundAlt shadow-none
 								border border-border rounded-md shadow-sm
 								${menuClassName ?? ""}`}

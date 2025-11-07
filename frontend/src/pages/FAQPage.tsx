@@ -5,7 +5,7 @@ const FAQPage: React.FC = () => {
   const { siteSettings } = useSiteSettings();
 
   return (
-    <div className="max-w-3xl mx-auto py-12 px-4 text-center">
+    <div className="max-w-3xl mx-auto py-lg text-center">
       {siteSettings?.FAQContentHtml && (
         <div
           dangerouslySetInnerHTML={{ __html: siteSettings.FAQContentHtml }}
